@@ -11,6 +11,7 @@ import com.sports.unity.XMPPManager.XMPPClient;
 import com.sports.unity.XMPPManager.XMPPService;
 import com.sports.unity.common.model.ContactsHandler;
 import com.sports.unity.common.model.TinyDB;
+import com.sports.unity.common.model.UserProfileHandler;
 import com.sports.unity.util.ActivityActionHandler;
 import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
@@ -19,6 +20,7 @@ import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.ExtensionElement;
 import org.jivesoftware.smackx.pubsub.AccessModel;
+import org.jivesoftware.smackx.pubsub.ConfigureForm;
 import org.jivesoftware.smackx.pubsub.EventElement;
 import org.jivesoftware.smackx.pubsub.ItemsExtension;
 import org.jivesoftware.smackx.pubsub.LeafNode;
@@ -60,6 +62,7 @@ public class PubSubMessaging {
     private static final String GROUP_INVITATION_MESSAGE_TYPE = "i";
     private static final String GROUP_MEMBER_REMOVED_MESSAGE_TYPE = "r";
     private static final String GROUP_MEMBER_ADDED_MESSAGE_TYPE = "a";
+    private static final String GROUP_INFO_CHANGED = "c";
 
     synchronized public static PubSubMessaging getInstance() {
         if (PUB_SUB_MESSAGING == null) {
@@ -91,12 +94,7 @@ public class PubSubMessaging {
         form.getAccessModel();
         form.setSubscribe(true);
         form.setPublishModel(PublishModel.publishers);
-
-//        if( groupImage != null ) {
-//            form.setTitle(groupTitle + "~!~" + groupImage);
-//        } else {
         form.setTitle(groupTitle);
-//        }
 
         form.addField("pubsub#notification_type", FormField.Type.text_single);
         form.setAnswer("pubsub#notification_type", "normal");
@@ -108,10 +106,58 @@ public class PubSubMessaging {
             LeafNode leaf = (LeafNode) pubSubManager.createNode(groupJid, form);
             String ownerJID = TinyDB.getInstance(context).getString(TinyDB.KEY_USER_JID) + "@mm.io";
 
+            success = UserProfileHandler.uploadDisplayPic(context, groupJid, groupImage);
+
             PubSubUtil.updateAffiliations(leaf.getId(), ownerJID, membersJid);
             PubSubUtil.updateSubscriptions(leaf.getId(), ownerJID, membersJid);
 
             success = true;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            handleConnectionException(ex);
+        }
+
+        return success;
+    }
+
+    private boolean loadAndUpdateGroupTitle(Context context, int chatId, String groupJid){
+        boolean success = false;
+        try {
+            ConfigureForm form = PubSubUtil.getNodeConfig(groupJid);
+            String title = form.getTitle();
+
+            SportsUnityDBHelper.getInstance(context).updateContactName(chatId, title);
+
+            success = true;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            handleConnectionException(ex);
+        }
+        return success;
+    }
+
+    public boolean updateGroupInfo(String groupJid, String groupTitle, String groupImage, Context context) {
+        boolean success = false;
+        try {
+            CustomConfigurationForm form = new CustomConfigurationForm(DataForm.Type.submit);
+            form.setTitle(groupTitle);
+
+            PubSubUtil.sendNodeConfig(groupJid, form);
+            success = UserProfileHandler.uploadDisplayPic(context, groupJid, groupImage);
+
+            if( success ) {
+                success = false;
+                sendIntimationAboutGroupInfoChanged(context, groupJid, groupTitle);
+
+                SportsUnityDBHelper sportsUnityDBHelper = SportsUnityDBHelper.getInstance(context);
+                byte[] groupImageBytes = null;
+                if (groupImage != null) {
+                    groupImageBytes = Base64.decode(groupImage, Base64.DEFAULT);
+                }
+                sportsUnityDBHelper.updateGroupInfo(groupJid, groupTitle, groupImageBytes);
+
+                success = true;
+            }
         } catch (Exception ex) {
             ex.printStackTrace();
             handleConnectionException(ex);
@@ -279,6 +325,28 @@ public class PubSubMessaging {
         }
     }
 
+    public void sendIntimationAboutGroupInfoChanged(Context context, String groupJid, String title) {
+        TinyDB tinyDB = TinyDB.getInstance(context);
+        try {
+            String from = tinyDB.getString(TinyDB.KEY_USER_JID);
+
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put(MESSAGE_TYPE, GROUP_INFO_CHANGED);
+            jsonObject.put(MESSAGE_FROM, from);
+            jsonObject.put(GROUP_SERVER_ID, groupJid);
+            jsonObject.put(MESSAGE_TEXT_DATA, title);
+
+            String payLoad = encodeSimpleMessagePayload(jsonObject);
+            SimplePayload simplePayload = new SimplePayload("message", "pubsub:text:message", "<message xmlns='pubsub:text:message'>" + payLoad + "</message>");
+            PayloadItem item = new PayloadItem(simplePayload);
+
+            publishItem(item, groupJid);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            handleConnectionException(ex);
+        }
+    }
+
     public void handlePubSubMessage(Context context, org.jivesoftware.smack.packet.Message message) {
         String stanzaId = message.getStanzaId();
 
@@ -340,6 +408,9 @@ public class PubSubMessaging {
                             } else if (messageType.equals(GROUP_MEMBER_ADDED_MESSAGE_TYPE)) {
                                 handleMembersAdded(context, groupJID);
                                 ContactsHandler.getInstance().addCallToUpdateRequiredContactChat(context);
+                            } else if (messageType.equals(GROUP_INFO_CHANGED)) {
+                                handleGroupInfoChanged(context, groupJID);
+                                ContactsHandler.getInstance().addCallToUpdateRequiredContactChat(context);
                             }
                         }
                     } else {
@@ -355,6 +426,32 @@ public class PubSubMessaging {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+    }
+
+    public boolean loadGroupInfo(Context context, int chatId, String groupJid){
+        boolean success = false;
+        success = loadAndUpdateGroupTitle( context, chatId, groupJid);
+        if( success ) {
+            success = loadAffiliations(context, chatId, groupJid);
+            if( success ){
+                String imageContent = UserProfileHandler.getInstance().downloadDisplayPic(context, groupJid);
+                if( imageContent == null ){
+                    success = false;
+                } else {
+                    byte[] groupImageBytes = null;
+                    if (imageContent != null) {
+                        groupImageBytes = Base64.decode(imageContent, Base64.DEFAULT);
+                    }
+
+                    if( imageContent.length() > 0 ){
+                        SportsUnityDBHelper sportsUnityDBHelper = SportsUnityDBHelper.getInstance(context);
+                        sportsUnityDBHelper.updateGroupInfo(groupJid, sportsUnityDBHelper.getUserNameByJid(groupJid), groupImageBytes);
+                    }
+                    success = true;
+                }
+            }
+        }
+        return success;
     }
 
     public boolean loadAffiliations(Context context, int chatId, String groupJid) {
@@ -425,7 +522,6 @@ public class PubSubMessaging {
         try {
             PubSubUtil.unsubscribe(jid, groupJID);
 
-            //TODO make call to let other members know.
             success = true;
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -468,8 +564,7 @@ public class PubSubMessaging {
                         ActivityActionHandler.getInstance().dispatchCommonEvent(ActivityActionHandler.CHAT_LIST_KEY);
                     }
 
-                    //TODO to get image belongs to particular group.
-                    byte[] image = null;
+                    byte[] image = contact.image;
                     XMPPService.displayNotification(context, text, from, mimeType, chatId, true, groupJID, image, contact.availableStatus, contact.status);
                 } catch (XMPPException.XMPPErrorException e) {
                     e.printStackTrace();
@@ -495,6 +590,10 @@ public class PubSubMessaging {
             sportsUnityDBHelper.updateChatEntry(SportsUnityDBHelper.getDummyMessageRowId(), nodeId);
 
             ActivityActionHandler.getInstance().dispatchCommonEvent(ActivityActionHandler.CHAT_LIST_KEY);
+        } else {
+            sportsUnityDBHelper.updateUserBlockStatus(chatId, false);
+
+            ActivityActionHandler.getInstance().dispatchCommonEvent(ActivityActionHandler.CHAT_LIST_KEY);
         }
     }
 
@@ -505,7 +604,7 @@ public class PubSubMessaging {
             String currentUserJID = TinyDB.getInstance(context).getString(TinyDB.KEY_USER_JID);
             int contactId = sportsUnityDBHelper.getContactIdFromJID(currentUserJID);
 
-            sportsUnityDBHelper.updateChatBlockStatus(chatId, true);
+            sportsUnityDBHelper.updateUserBlockStatus(chatId, true);
             sportsUnityDBHelper.deleteGroupMember(chatId, contactId);
 
             ActivityActionHandler.getInstance().dispatchCommonEvent(ActivityActionHandler.CHAT_LIST_KEY);
@@ -522,6 +621,14 @@ public class PubSubMessaging {
     }
 
     private void handleMembersAdded(Context context, String groupJid) {
+        SportsUnityDBHelper sportsUnityDBHelper = SportsUnityDBHelper.getInstance(context);
+        int chatId = sportsUnityDBHelper.getChatEntryID(groupJid);
+        if( chatId != SportsUnityDBHelper.DEFAULT_ENTRY_ID ) {
+            sportsUnityDBHelper.updateChatUpdateRequired(chatId, true);
+        }
+    }
+
+    private void handleGroupInfoChanged(Context context, String groupJid){
         SportsUnityDBHelper sportsUnityDBHelper = SportsUnityDBHelper.getInstance(context);
         int chatId = sportsUnityDBHelper.getChatEntryID(groupJid);
         if( chatId != SportsUnityDBHelper.DEFAULT_ENTRY_ID ) {

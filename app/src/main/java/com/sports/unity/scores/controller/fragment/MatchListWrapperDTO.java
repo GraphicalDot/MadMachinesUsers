@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * Created by madmachines on 8/3/16.
  */
-public class MatchListWrapperDTO  implements  Comparable<MatchListWrapperDTO>{
+public class MatchListWrapperDTO implements Comparable<MatchListWrapperDTO> {
     private String day;
     private String leagueName;
     private ArrayList<JSONObject> list;
@@ -69,20 +69,20 @@ public class MatchListWrapperDTO  implements  Comparable<MatchListWrapperDTO>{
         return this.epochTime.compareTo(another.epochTime);
     }
 
-    public void reorderList(){
+    public void reorderList() {
         try {
             ArrayList<JSONObject> completedMatchesList = new ArrayList<>();
 
-            for(int index=0;index< list.size();index++) {
+            for (int index = 0; index < list.size(); index++) {
                 JSONObject jsonObject = list.get(0);
                 String status = null;
-                if( ! jsonObject.isNull("status") ){
+                if (!jsonObject.isNull("status")) {
                     status = jsonObject.getString("status");
                 } else {
                     status = jsonObject.getString("match_status");
                 }
 
-                if( "f".equalsIgnoreCase(status) || "ft".equalsIgnoreCase(status) ){
+                if ("f".equalsIgnoreCase(status) || "ft".equalsIgnoreCase(status) || "aet".equalsIgnoreCase(status)) {
                     list.remove(0);
                     completedMatchesList.add(jsonObject);
                 } else {
@@ -92,15 +92,15 @@ public class MatchListWrapperDTO  implements  Comparable<MatchListWrapperDTO>{
 
             list.addAll(completedMatchesList);
 
-            if( list.size() > 0 ){
+            if (list.size() > 0) {
                 JSONObject jsonObject = list.get(0);
-                if( ! jsonObject.isNull("match_date_epoch") ) {
+                if (!jsonObject.isNull("match_date_epoch")) {
                     epochTime = jsonObject.getLong("match_date_epoch");
                 } else {
                     epochTime = jsonObject.getLong("match_time");
                 }
 
-                if( ! jsonObject.isNull("status") ){
+                if (!jsonObject.isNull("status")) {
                     status = jsonObject.getString("status");
                 } else {
                     status = jsonObject.getString("match_status");
@@ -109,7 +109,7 @@ public class MatchListWrapperDTO  implements  Comparable<MatchListWrapperDTO>{
                 //nothing
             }
 
-        }catch (Exception ex){
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
 

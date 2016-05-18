@@ -3,9 +3,11 @@ package com.sports.unity.scoredetails.footballdetail.fooballadaptersanddto;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Color;
-import android.graphics.Typeface;
+import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
+import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,7 +18,7 @@ import com.amulyakhare.textdrawable.TextDrawable;
 import com.sports.unity.R;
 import com.sports.unity.common.model.FontTypeface;
 
-import java.util.List;
+import java.util.ArrayList;
 import java.util.Map;
 
 /**
@@ -24,12 +26,13 @@ import java.util.Map;
  */
 public class CompleteFootballMatchStatAdapter extends RecyclerView.Adapter<CompleteFootballMatchStatAdapter.ViewHolder> {
 
-    private final Map<String,CompleteFootballMatchStatDTO> map;
+    private ArrayList<CompleteFootballMatchStatDTO> dataStatsList;
     private Context context;
 
+    private int barWidth = 0;
 
-    public CompleteFootballMatchStatAdapter(Map<String,CompleteFootballMatchStatDTO> map, Context context) {
-        this.map = map;
+    public CompleteFootballMatchStatAdapter(ArrayList<CompleteFootballMatchStatDTO> dataStatsList, Context context) {
+        this.dataStatsList = dataStatsList;
         this.context = context;
 
     }
@@ -38,8 +41,12 @@ public class CompleteFootballMatchStatAdapter extends RecyclerView.Adapter<Compl
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = null;
         try {
-            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.completed_football_match_stats_card, parent, false);
+            if( barWidth == 0 ){
+                int sideMargin = parent.getContext().getResources().getDimensionPixelSize(R.dimen.activity_horizontal_margin);
+                barWidth = (int)((parent.getWidth() - sideMargin*2) * .40f);
+            }
 
+            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.completed_football_match_stats_card, parent, false);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -51,8 +58,7 @@ public class CompleteFootballMatchStatAdapter extends RecyclerView.Adapter<Compl
         try {
 
             TextDrawable drawable = null;
-            holder.setIsRecyclable(false);
-            holder.dto = map.get(getKeyForPostions(position));
+            holder.dto = dataStatsList.get(position);
             String value = holder.dto.getTvLable();
             holder.tvLable.setText(value);
             drawable = getTextDrawable(holder.dto.getIvLeftStatus());
@@ -60,8 +66,9 @@ public class CompleteFootballMatchStatAdapter extends RecyclerView.Adapter<Compl
             drawable = getTextDrawable(holder.dto.getIvRightStatus());
             holder.ivRightStatus.setImageDrawable(drawable);
             holder.ivCenterStatus.setImageDrawable(getCentralImageResource(value));
-            holder.redView.getLayoutParams().width = holder.dto.getLeftGraphValue();
-            holder.blueView.getLayoutParams().width = holder.dto.getRightGraphValue();
+
+            holder.redView.setPadding( (int)(barWidth * holder.dto.getLeftGraphValue()), 0, 0, 0);
+            holder.blueView.setPadding(0, 0, (int)(barWidth * holder.dto.getRightGraphValue()), 0);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -74,7 +81,7 @@ public class CompleteFootballMatchStatAdapter extends RecyclerView.Adapter<Compl
                 key = "POSSESION (%)";
                 break;
             case 1:
-                key ="SHOTS";
+                key = "SHOTS";
                 break;
             case 2:
                 key = "SHOTS ON TARGET";
@@ -82,14 +89,14 @@ public class CompleteFootballMatchStatAdapter extends RecyclerView.Adapter<Compl
             case 3:
                 key = "CORNERS";
                 break;
-            case 4 :
+            case 4:
                 key = "FOULS";
                 break;
             case 5:
                 key = "OFFSIDES";
                 break;
         }
-       return  key;
+        return key;
     }
 
     private Drawable getBackgroundDrawable(int width, int color) {
@@ -186,13 +193,12 @@ public class CompleteFootballMatchStatAdapter extends RecyclerView.Adapter<Compl
  */
     @Override
     public int getItemCount() {
-        return map.size();
+        return dataStatsList.size();
     }
 
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        public final View mView;
-        public CompleteFootballMatchStatDTO dto;
+        private CompleteFootballMatchStatDTO dto;
         private TextView tvLable;
         private ImageView ivLeftStatus;
         private ImageView ivRightStatus;
@@ -203,15 +209,12 @@ public class CompleteFootballMatchStatAdapter extends RecyclerView.Adapter<Compl
 
         public ViewHolder(View view) {
             super(view);
-            mView = view;
             tvLable = (TextView) view.findViewById(R.id.tv_lable);
             ivLeftStatus = (ImageView) view.findViewById(R.id.iv_left_status);
             ivRightStatus = (ImageView) view.findViewById(R.id.iv_right_status);
             ivCenterStatus = (ImageView) view.findViewById(R.id.iv_center_status);
-            redView = view.findViewById(R.id.vw_red);
-            blueView = view.findViewById(R.id.vw_blue);
-
-
+            redView = view.findViewById(R.id.fl_red);
+            blueView = view.findViewById(R.id.fl_blue);
         }
     }
 }

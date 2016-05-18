@@ -16,10 +16,13 @@ import android.util.Log;
 import com.sports.unity.Database.DBUtil;
 import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.R;
+import com.sports.unity.XMPPManager.RosterHandler;
 import com.sports.unity.XMPPManager.XMPPClient;
 import com.sports.unity.XMPPManager.XMPPService;
 import com.sports.unity.common.controller.FriendRequestsActivity;
 import com.sports.unity.common.model.ContactsHandler;
+import com.sports.unity.common.model.TinyDB;
+import com.sports.unity.common.model.UserUtil;
 import com.sports.unity.messages.controller.activity.ChatScreenActivity;
 import com.sports.unity.util.ActivityActionHandler;
 import com.sports.unity.util.CommonUtil;
@@ -369,6 +372,7 @@ public class PersonalMessaging {
                     } else {
                         ActivityActionHandler.getInstance().acceptRequestStatusEvent(ActivityActionHandler.USER_PROFILE_KEY, jid, null);
                     }
+                    RosterHandler.getInstance(context).checkForPendingEntriesToBeAddedInRoster();
                 }
             } else {
                 sportsUnityDBHelper.updateServerReceived(receiptId);
@@ -578,15 +582,20 @@ public class PersonalMessaging {
 
     public boolean sendFriendRequest(String jid) {
         boolean success = false;
+        String userJid = TinyDB.getInstance(context).getString(TinyDB.KEY_USER_JID);
+        Contacts contact = sportsUnityDBHelper.getContactByJid(userJid);
+        String name = contact.getName();
+        if (name == null) {
+            name = "unknown";
+        }
         Message message = new Message();
         message.setStanzaId(message.getStanzaId().concat("REQUEST"));
         message.setTo(jid.concat("@mm.io"));
-        message.setBody("friend request");
+        message.setBody(name);
         try {
             XMPPClient.getConnection().sendStanza(message);
             sportsUnityDBHelper.createRequestStatusEntry(sportsUnityDBHelper.getContactIdFromJID(jid), message.getStanzaId());
             success = true;
-            Log.d("maxchat", "adding and waiting");
         } catch (SmackException.NotConnectedException e) {
             e.printStackTrace();
         }
@@ -598,7 +607,7 @@ public class PersonalMessaging {
         if (message.getStanzaId().contains("REQUEST")) {
             Contacts contact = sportsUnityDBHelper.getContactByJid(jid);
             if (contact == null) {
-                sportsUnityDBHelper.addToContacts("", null, jid, ContactsHandler.getInstance().defaultStatus, null, Contacts.AVAILABLE_BY_PEOPLE_AROUND_ME);
+                sportsUnityDBHelper.addToContacts(message.getBody(), null, jid, ContactsHandler.getInstance().defaultStatus, null, Contacts.AVAILABLE_BY_PEOPLE_AROUND_ME);
                 sportsUnityDBHelper.updateContactFriendRequestStatus(jid, Contacts.PENDING_REQUESTS_TO_PROCESS);
                 contact = sportsUnityDBHelper.getContactByJid(jid);
                 displayNotificationForFriendRequest(contact);
@@ -632,6 +641,7 @@ public class PersonalMessaging {
                     ActivityActionHandler.getInstance().receivedRequestStatusEvent(ActivityActionHandler.USER_PROFILE_KEY, jid, null, ActivityActionHandler.EVENT_FRIEND_REQUEST_ACCEPTED);
                     displayNotificationForFriendRequestAccepted(contact);
                 }
+                RosterHandler.getInstance(context).checkForPendingEntriesToBeAddedInRoster();
             }
         }
     }
@@ -665,7 +675,9 @@ public class PersonalMessaging {
         NotificationManager mNotifyMgr =
                 (NotificationManager) context.getSystemService(context.NOTIFICATION_SERVICE);
 
-        mNotifyMgr.notify(mNotificationId, mBuilder.build());
+        if (UserUtil.isUserRegistered() && UserUtil.isProfileCreated()) {
+            mNotifyMgr.notify(mNotificationId, mBuilder.build());
+        }
     }
 
     private void displayNotificationForFriendRequestAccepted(Contacts contact) {
@@ -693,6 +705,9 @@ public class PersonalMessaging {
         NotificationManager mNotifyMgr =
                 (NotificationManager) context.getSystemService(context.NOTIFICATION_SERVICE);
 
-        mNotifyMgr.notify(mNotificationId, mBuilder.build());
+        if (UserUtil.isUserRegistered() && UserUtil.isProfileCreated()) {
+            mNotifyMgr.notify(mNotificationId, mBuilder.build());
+        }
+
     }
 }

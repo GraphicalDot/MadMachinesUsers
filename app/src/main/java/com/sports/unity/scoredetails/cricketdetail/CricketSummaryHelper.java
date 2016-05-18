@@ -1,9 +1,11 @@
 package com.sports.unity.scoredetails.cricketdetail;
 
 import android.content.Intent;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -37,6 +39,9 @@ public class CricketSummaryHelper extends BasicVolleyRequestResponseViewHelper {
     private String matchName = "";
     private String date = "";
     private String matchStatus = "";
+
+    private SwipeRefreshLayout swipeRefreshLayout = null;
+    private View contentLayout = null;
 
     private TextView tvUmpiresName;
     private TextView tvMatchReferee;
@@ -80,9 +85,9 @@ public class CricketSummaryHelper extends BasicVolleyRequestResponseViewHelper {
     @Override
     public CustomComponentListener getCustomComponentListener(View view) {
         ViewGroup errorLayout = (ViewGroup) view.findViewById(R.id.error);
-        ProgressBar progressBar = (ProgressBar)view.findViewById(R.id.progress);
+        ProgressBar progressBar = (ProgressBar) view.findViewById(R.id.progress);
 
-        MatchSummaryComponentListener componentListener = new MatchSummaryComponentListener( getRequestTag(), progressBar, errorLayout);
+        MatchSummaryComponentListener componentListener = new MatchSummaryComponentListener(getRequestTag(), progressBar, errorLayout, contentLayout, swipeRefreshLayout);
         return componentListener;
     }
 
@@ -95,7 +100,7 @@ public class CricketSummaryHelper extends BasicVolleyRequestResponseViewHelper {
     public String getRequestCallName() {
         boolean completed = ScoresUtil.isCricketMatchCompleted(matchStatus);
         String callName = null;
-        if( completed ) {
+        if (completed) {
             callName = ScoresContentHandler.CALL_NAME_CRICKET_MATCH_SUMMARY;
         } else {
             //nothing
@@ -116,10 +121,10 @@ public class CricketSummaryHelper extends BasicVolleyRequestResponseViewHelper {
     @Override
     public void requestContent() {
         boolean completed = ScoresUtil.isCricketMatchCompleted(matchStatus);
-        if( completed ) {
+        if (completed) {
             super.requestContent();
         } else {
-            //nothing
+            swipeRefreshLayout.setRefreshing(false);
         }
     }
 
@@ -129,10 +134,15 @@ public class CricketSummaryHelper extends BasicVolleyRequestResponseViewHelper {
 
     private void initView(View view) {
         boolean isUpcoming = ScoresUtil.isCricketMatchUpcoming(matchStatus);
-        if( isUpcoming ){
+        if (isUpcoming) {
             View playerOfTheMatchLayout = view.findViewById(R.id.player_of_the_match_layout);
             playerOfTheMatchLayout.setVisibility(View.GONE);
         }
+
+        contentLayout = view.findViewById(R.id.content_layout);
+        contentLayout.setVisibility(View.GONE);
+
+        swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_refresh_layout);
 
         ivPlayerProfileView = (ImageView) view.findViewById(R.id.iv_player_profile_image);
         playerName = (TextView) view.findViewById(R.id.tv_player_name);
@@ -157,7 +167,19 @@ public class CricketSummaryHelper extends BasicVolleyRequestResponseViewHelper {
             if (isUpcoming) {
                 view.findViewById(R.id.umpires_layout).setVisibility(View.GONE);
                 view.findViewById(R.id.refree_layout).setVisibility(View.GONE);
+                contentLayout.setVisibility(View.VISIBLE);
+                swipeRefreshLayout.setEnabled(false);
             }
+
+
+            swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+
+                @Override
+                public void onRefresh() {
+                    requestContent();
+                }
+
+            });
         }
 
         ivPlayerProfileView.setOnClickListener(new View.OnClickListener() {
@@ -166,7 +188,7 @@ public class CricketSummaryHelper extends BasicVolleyRequestResponseViewHelper {
                 if (cricketMatchSummaryParser != null) {
                     try {
                         String playerId = cricketMatchSummaryParser.getPlayerId();
-                        Intent intent = PlayerCricketBioDataActivity.createIntent( v.getContext(), playerId, playerName.getText().toString());
+                        Intent intent = PlayerCricketBioDataActivity.createIntent(v.getContext(), playerId, playerName.getText().toString());
                         v.getContext().startActivity(intent);
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -182,7 +204,7 @@ public class CricketSummaryHelper extends BasicVolleyRequestResponseViewHelper {
                 if (cricketMatchSummaryParser != null) {
                     try {
                         String playerId = cricketMatchSummaryParser.getPlayerId();
-                        Intent intent = PlayerCricketBioDataActivity.createIntent( v.getContext(), playerId, playerName.getText().toString());
+                        Intent intent = PlayerCricketBioDataActivity.createIntent(v.getContext(), playerId, playerName.getText().toString());
                         v.getContext().startActivity(intent);
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -212,29 +234,27 @@ public class CricketSummaryHelper extends BasicVolleyRequestResponseViewHelper {
 
     private boolean renderDisplay() {
         boolean success = false;
-
         try {
             if (!response.isNull("data")) {
                 JSONArray dataArray = response.getJSONArray("data");
                 for (int i = 0; i < dataArray.length(); i++) {
-                    final JSONObject matchObject = dataArray.getJSONObject(i);
+                    JSONObject matchObject = dataArray.getJSONObject(i);
                     cricketMatchSummaryParser = new CompletedCricketMatchSummaryParser();
                     cricketMatchSummaryParser.setJsonObject(matchObject);
                     JSONObject matchSummary = cricketMatchSummaryParser.getMatchSummary();
                     cricketMatchSummaryParser.setCricketSummary(matchSummary);
-                    JSONObject manOftheMatch = cricketMatchSummaryParser.getManOfMatchDetails();
-                    cricketMatchSummaryParser.setManOfTheMatch(manOftheMatch);
-                    final JSONObject batting = cricketMatchSummaryParser.getBattingDetails();
-                    cricketMatchSummaryParser.setBatting(batting);
-                    final JSONObject umpire = cricketMatchSummaryParser.getUmpireDetails();
-                    cricketMatchSummaryParser.setUmpire(umpire);
-                    final JSONObject bowling = cricketMatchSummaryParser.getBowlingDetails();
-                    if (bowling != null) {
-                        cricketMatchSummaryParser.setBowling(bowling);
-                    }
 
-                    {
-                        Glide.with( ivPlayerProfileView.getContext()).load(cricketMatchSummaryParser.getPlayerImage()).placeholder(R.drawable.ic_user).into(ivPlayerProfileView);
+                    JSONObject manOfTheMatch = cricketMatchSummaryParser.getManOfMatchDetails();
+                    cricketMatchSummaryParser.setManOfTheMatch(manOfTheMatch);
+                    if( manOfTheMatch != null && manOfTheMatch.length() > 0 ){
+                        JSONObject batting = cricketMatchSummaryParser.getBattingDetails();
+                        cricketMatchSummaryParser.setBatting(batting);
+                        JSONObject bowling = cricketMatchSummaryParser.getBowlingDetails();
+                        if (bowling != null) {
+                            cricketMatchSummaryParser.setBowling(bowling);
+                        }
+
+                        Glide.with(ivPlayerProfileView.getContext()).load(cricketMatchSummaryParser.getPlayerImage()).placeholder(R.drawable.ic_user).dontAnimate().into(ivPlayerProfileView);
                         playerName.setText(cricketMatchSummaryParser.getPlayerName());
                         tvPlayerRun.setText(cricketMatchSummaryParser.getruns());
                         if (cricketMatchSummaryParser.getBalls().trim().equalsIgnoreCase("0".trim())) {
@@ -251,8 +271,12 @@ public class CricketSummaryHelper extends BasicVolleyRequestResponseViewHelper {
                     }
 
                     {
-                        tvUmpiresName.setText(cricketMatchSummaryParser.getFirstUmpire() + ", " + cricketMatchSummaryParser.secondFirstUmpire());
-                        tvMatchReferee.setText(cricketMatchSummaryParser.getRefree());
+                        JSONObject umpire = cricketMatchSummaryParser.getUmpireDetails();
+                        cricketMatchSummaryParser.setUmpire(umpire);
+                        if (umpire != null && umpire.length() > 0) {
+                            tvUmpiresName.setText(cricketMatchSummaryParser.getFirstUmpire() + ", " + cricketMatchSummaryParser.secondFirstUmpire());
+                            tvMatchReferee.setText(cricketMatchSummaryParser.getRefree());
+                        }
                     }
 
                 }
@@ -261,7 +285,7 @@ public class CricketSummaryHelper extends BasicVolleyRequestResponseViewHelper {
             }
 
             success = true;
-        }catch (Exception ex){
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
 
@@ -270,8 +294,8 @@ public class CricketSummaryHelper extends BasicVolleyRequestResponseViewHelper {
 
     public class MatchSummaryComponentListener extends CustomComponentListener {
 
-        public MatchSummaryComponentListener(String requestTag, ProgressBar progressBar, ViewGroup errorLayout){
-            super(requestTag, progressBar, errorLayout);
+        public MatchSummaryComponentListener(String requestTag, ProgressBar progressBar, ViewGroup errorLayout, View contentLayout, SwipeRefreshLayout swipeRefreshLayout) {
+            super(requestTag, progressBar, errorLayout, contentLayout, swipeRefreshLayout);
         }
 
         @Override
@@ -288,8 +312,8 @@ public class CricketSummaryHelper extends BasicVolleyRequestResponseViewHelper {
         @Override
         public void changeUI(String tag) {
             boolean success = renderDisplay();
-            if( success ){
-                //nothing
+            if (success) {
+                contentLayout.setVisibility(View.VISIBLE);
             } else {
                 showErrorLayout();
             }

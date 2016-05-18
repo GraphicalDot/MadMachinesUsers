@@ -2,6 +2,7 @@ package com.sports.unity.scores.viewhelper;
 
 import android.content.Context;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,13 +40,14 @@ public class MatchCommentaryHelper extends BasicVolleyRequestResponseViewHelper 
     private ArrayList<CommentriesModel> response = null;
     private ArrayList<CommentriesModel> commentaries = new ArrayList<>();
 
-    private RecyclerView mRecyclerView;
+    private SwipeRefreshLayout swipeRefreshLayout = null;
+    private View contentLayout = null;
+
     private BroadcastListAdapter mAdapter;
-    private SwipeRefreshLayout swipeRefreshLayout;
 
     private View tvEmptyView;
 
-    public MatchCommentaryHelper(String title, String matchStatus){
+    public MatchCommentaryHelper(String title, String matchStatus) {
         this.title = title;
         this.matchStatus = matchStatus;
     }
@@ -90,14 +92,14 @@ public class MatchCommentaryHelper extends BasicVolleyRequestResponseViewHelper 
     @Override
     public CustomComponentListener getCustomComponentListener(View view) {
         ViewGroup errorLayout = (ViewGroup) view.findViewById(R.id.error);
-        ProgressBar progressBar = (ProgressBar)view.findViewById(R.id.progress);
+        ProgressBar progressBar = (ProgressBar) view.findViewById(R.id.progress);
 
-        MatchCommentaryComponentListener matchCommentaryComponentListener = new MatchCommentaryComponentListener( getRequestTag(), progressBar, errorLayout);
+        MatchCommentaryComponentListener matchCommentaryComponentListener = new MatchCommentaryComponentListener(getRequestTag(), progressBar, errorLayout, contentLayout, swipeRefreshLayout);
         return matchCommentaryComponentListener;
     }
 
     @Override
-    public void initialiseViews(View view){
+    public void initialiseViews(View view) {
         initViews(view);
     }
 
@@ -105,42 +107,35 @@ public class MatchCommentaryHelper extends BasicVolleyRequestResponseViewHelper 
         this.requestParameters = requestParameters;
     }
 
-    private void initViews(View view){
+    private void initViews(View view) {
 //        boolean upcoming = ScoresUtil.isCricketMatchUpcoming(matchStatus);
 
         tvEmptyView = view.findViewById(R.id.tv_empty_view);
-        swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.commentary_refresh);
+        swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_refresh_layout);
 
-//        if( upcoming ){
-//            tvEmptyView.setVisibility(View.VISIBLE);
-//            swipeRefreshLayout.setVisibility(View.GONE);
-//        } else {
-            mRecyclerView = (RecyclerView) view.findViewById(R.id.my_recycler_view);
-            mRecyclerView.setLayoutManager(new org.solovyev.android.views.llm.LinearLayoutManager(view.getContext(), VERTICAL, false));
-            mRecyclerView.setNestedScrollingEnabled(false);
+        contentLayout = view.findViewById(R.id.content_layout);
 
-            String sportsType = getRequestParameters().get(ScoresContentHandler.PARAM_SPORTS_TYPE);
-            mAdapter = new BroadcastListAdapter(sportsType, commentaries, view.getContext());
-            mRecyclerView.setAdapter(mAdapter);
-            mAdapter.notifyDataSetChanged();
+        RecyclerView.LayoutManager manager = new LinearLayoutManager(view.getContext());
+        RecyclerView mRecyclerView = (RecyclerView) contentLayout;
+        mRecyclerView.setLayoutManager(manager);
 
-//        swipeRefreshLayout.setRefreshing(true);
-            swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+        String sportsType = getRequestParameters().get(ScoresContentHandler.PARAM_SPORTS_TYPE);
+        mAdapter = new BroadcastListAdapter(sportsType, commentaries, view.getContext());
+        mRecyclerView.setAdapter(mAdapter);
+        mAdapter.notifyDataSetChanged();
 
-                @Override
-                public void onRefresh() {
-//                swipeRefreshLayout.setRefreshing(true);
-                    requestContent();
-                }
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
 
-            });
-//        }
+            @Override
+            public void onRefresh() {
+                requestContent();
+            }
+
+        });
     }
 
     private void renderDisplay() {
-//        swipeRefreshLayout.setRefreshing(false);
-
-        if ( response.size() > 0 ) {
+        if (response.size() > 0) {
             commentaries.clear();
             commentaries.addAll(response);
             mAdapter.notifyDataSetChanged();
@@ -150,55 +145,35 @@ public class MatchCommentaryHelper extends BasicVolleyRequestResponseViewHelper 
 
             tvEmptyView.setVisibility(View.GONE);
         } else {
-            tvEmptyView.setVisibility(View.VISIBLE);
+            if( commentaries.size() > 0 ){
+                //nothing
+            } else {
+                tvEmptyView.setVisibility(View.VISIBLE);
+            }
         }
     }
 
     public class MatchCommentaryComponentListener extends CustomComponentListener {
 
-        public MatchCommentaryComponentListener(String requestTag, ProgressBar progressBar, ViewGroup errorLayout){
-            super(requestTag, progressBar, errorLayout);
+        public MatchCommentaryComponentListener(String requestTag, ProgressBar progressBar, ViewGroup errorLayout, View contentLayout, SwipeRefreshLayout swipeRefreshLayout) {
+            super(requestTag, progressBar, errorLayout, contentLayout, swipeRefreshLayout);
         }
 
         @Override
         public boolean handleContent(String tag, String content) {
             boolean success = false;
-            try{
+            try {
                 response = ScoresJsonParser.parseListOfMatchCommentaries(content);
                 success = true;
-            }catch (Exception ex){
+            } catch (Exception ex) {
                 ex.printStackTrace();
             }
             return success;
         }
 
         @Override
-        protected void showProgress() {
-            if( commentaries.size() == 0 ) {
-                super.showProgress();
-            }
-
-            if( swipeRefreshLayout != null ) {
-                swipeRefreshLayout.setRefreshing(true);
-            }
-        }
-
-        @Override
-        protected void hideProgress() {
-            super.hideProgress();
-
-            if( swipeRefreshLayout != null ) {
-                swipeRefreshLayout.setRefreshing(false);
-            }
-        }
-
-        @Override
-        protected void showErrorLayout() {
-            if( commentaries.size() == 0 ){
-                super.showErrorLayout();
-            } else {
-                Toast.makeText( tvEmptyView.getContext(), R.string.common_message_internet_not_available, Toast.LENGTH_SHORT).show();
-            }
+        protected boolean isContentLayoutAvailable() {
+            return commentaries.size() > 0;
         }
 
         @Override

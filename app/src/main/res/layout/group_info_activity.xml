@@ -33,21 +33,20 @@
                     app:civ_border_color="@color/gray4"
                     app:civ_border_width="@dimen/group_image_border" />
 
-                <TextView
+                <EditText
                     android:id="@+id/group_name"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_marginLeft="@dimen/group_name_margin_horizontal"
                     android:layout_marginRight="@dimen/group_name_margin_horizontal"
                     android:layout_marginTop="@dimen/group_name_margin_top"
-                    android:background="@drawable/round_edge_gray_box"
                     android:gravity="center"
                     android:padding="@dimen/group_name_padding"
                     android:singleLine="true"
                     android:ellipsize="end"
                     android:text="IPL-T20"
                     android:textSize="@dimen/font_size_large"
-                    android:textStyle="bold" />
+                    android:textColor="@android:color/black" />
 
                 <TextView
                     android:id="@+id/group_info"
@@ -64,6 +63,7 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/participants_list_layout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginBottom="@dimen/group_part_margin_top"

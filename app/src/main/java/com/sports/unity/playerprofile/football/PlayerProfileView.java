@@ -151,11 +151,10 @@ public class PlayerProfileView extends CustomVolleyCallerActivity {
 
             JSONObject dataObject = datArray.getJSONObject(0);
             JSONArray otherComptetionArray = dataObject.getJSONArray("other_competitions");
-
             playerName.setText(dataObject.getString("name"));
             nationality.setText(dataObject.getString("Nationality"));
             positionValue.setText(dataObject.getString("Position"));
-            squadNumber.setText(dataObject.getString("Jersey"));
+            //squadNumber.setText(dataObject.getString("Jersey"));
             playerAge.setText(dataObject.getString("Age"));
 
             Glide.with(PlayerProfileView.this).load(dataObject.getString("player_image")).placeholder(R.drawable.ic_user).dontAnimate().into(playerProfileImage);
@@ -168,7 +167,7 @@ public class PlayerProfileView extends CustomVolleyCallerActivity {
                 dto = new PlayerScoreCardDTO();
                 dto.setTeamName(comtObject.getString("team"));
                 dto.setLeagueName(comtObject.getString("league"));
-                dto.setNoOfAssists(comtObject.getString("assists"));
+                dto.setNoOfAssists("25");
                 dto.setNoOfGames(comtObject.getString("games"));
                 dto.setNoOfgoals(comtObject.getString("goals"));
                 dto.setNoOfYellowCard(comtObject.getString("yellow_card"));

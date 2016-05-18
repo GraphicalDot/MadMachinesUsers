@@ -8,8 +8,8 @@ public class CompleteFootballMatchStatDTO {
     private String ivLeftStatus;
     private String ivRightStatus;
     private String ivCenterStatus;
-    private int leftGraphValue;
-    private int rightGraphValue;
+    private float leftGraphValue;
+    private float rightGraphValue;
 
 
     public String getTvLable() {
@@ -44,19 +44,19 @@ public class CompleteFootballMatchStatDTO {
         this.ivCenterStatus = ivCenterStatus;
     }
 
-    public int getLeftGraphValue() {
+    public float getLeftGraphValue() {
         return leftGraphValue;
     }
 
-    public void setLeftGraphValue(int leftGraphValue) {
+    public void setLeftGraphValue(float leftGraphValue) {
         this.leftGraphValue = leftGraphValue;
     }
 
-    public int getRightGraphValue() {
+    public float getRightGraphValue() {
         return rightGraphValue;
     }
 
-    public void setRightGraphValue(int rightGraphValue) {
+    public void setRightGraphValue(float rightGraphValue) {
         this.rightGraphValue = rightGraphValue;
     }
 

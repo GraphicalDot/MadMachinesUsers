@@ -30,6 +30,7 @@ import android.widget.ProgressBar;
 
 import com.github.clans.fab.FloatingActionButton;
 import com.sports.unity.R;
+import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.common.view.SlidingTabLayout;
 import com.sports.unity.messages.controller.activity.NativeCameraActivity;
 import com.sports.unity.messages.controller.model.Stickers;
@@ -390,6 +391,7 @@ public class ChatKeyboardHelper {
 
         EditText text = (EditText) activity.findViewById(R.id.msg);
         Button btn = (Button) activity.findViewById(R.id.msgbtn);
+        btn.setTypeface(FontTypeface.getInstance(activity).getRobotoRegular());
         if (blockStatus) {
             text.setVisibility(View.GONE);
             btn.setVisibility(View.VISIBLE);

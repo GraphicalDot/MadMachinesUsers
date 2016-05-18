@@ -39,7 +39,7 @@ public class FilterByTagFragment extends Fragment implements AdvancedFilterActiv
     private FavouriteContentHandler favouriteContentHandler;
     private FavouriteItemWrapper favouriteItemWrapper;
     private FilterRecycleAdapter itemAdapter;
-    ArrayList<FavouriteItem> searchList;
+    private ArrayList<FavouriteItem> searchList;
     private boolean isSearchRequested;
 
     private ViewGroup errorLayout;
@@ -142,15 +142,17 @@ public class FilterByTagFragment extends Fragment implements AdvancedFilterActiv
      * prepare the corresponding favourite list according to the filter type e.g. League, Team or Player.
      */
     private void prepareList() {
-
+        favouriteItemWrapper = FavouriteItemWrapper.getInstance(getActivity());
 
         if (SPORTS_FILTER_TYPE.equals(Constants.FILTER_TYPE_TEAM)) {
 
             if (SPORTS_TYPE.equals(Constants.SPORTS_TYPE_CRICKET)) {
                 itemDataSet = favouriteContentHandler.getFavCricketTeams();
                 if (UserUtil.isFilterCompleted()) {
+                    savedCricketTeams = favouriteItemWrapper.getCricketTeams();
                     for (FavouriteItem f : savedCricketTeams) {
                         if (!itemDataSet.contains(f)) {
+                            f.setChecked(true);
                             itemDataSet.add(f);
                         }
                     }
@@ -159,8 +161,10 @@ public class FilterByTagFragment extends Fragment implements AdvancedFilterActiv
             } else if (SPORTS_TYPE.equals(Constants.SPORTS_TYPE_FOOTBALL)) {
                 itemDataSet = favouriteContentHandler.getFavFootballTeams();
                 if (UserUtil.isFilterCompleted()) {
+                    savedFootballTeams = favouriteItemWrapper.getFootballTeams();
                     for (FavouriteItem f : savedFootballTeams) {
                         if (!itemDataSet.contains(f)) {
+                            f.setChecked(true);
                             itemDataSet.add(f);
                         }
                     }
@@ -173,8 +177,10 @@ public class FilterByTagFragment extends Fragment implements AdvancedFilterActiv
             if (SPORTS_TYPE.equals(Constants.SPORTS_TYPE_CRICKET)) {
                 itemDataSet = favouriteContentHandler.getFavCricketPlayers();
                 if (UserUtil.isFilterCompleted()) {
+                    savedCricketPlayers = favouriteItemWrapper.getCricketPlayers();
                     for (FavouriteItem f : savedCricketPlayers) {
                         if (!itemDataSet.contains(f)) {
+                            f.setChecked(true);
                             itemDataSet.add(f);
                         }
                     }
@@ -184,8 +190,10 @@ public class FilterByTagFragment extends Fragment implements AdvancedFilterActiv
             } else if (SPORTS_TYPE.equals(Constants.SPORTS_TYPE_FOOTBALL)) {
                 itemDataSet = favouriteContentHandler.getFavFootballPlayers();
                 if (UserUtil.isFilterCompleted()) {
+                    savedFootballPlayers = favouriteItemWrapper.getFootballPlayers();
                     for (FavouriteItem f : savedFootballPlayers) {
                         if (!itemDataSet.contains(f)) {
+                            f.setChecked(true);
                             itemDataSet.add(f);
                         }
                     }
@@ -197,8 +205,10 @@ public class FilterByTagFragment extends Fragment implements AdvancedFilterActiv
         } else if (SPORTS_FILTER_TYPE.equals(Constants.FILTER_TYPE_LEAGUE)) {
             itemDataSet = favouriteContentHandler.getFavFootballLeagues();
             if (UserUtil.isFilterCompleted()) {
+                savedFootballLeagues = favouriteItemWrapper.getFootballLeagues();
                 for (FavouriteItem f : savedFootballLeagues) {
                     if (!itemDataSet.contains(f)) {
+                        f.setChecked(true);
                         itemDataSet.add(f);
                     }
                 }
@@ -277,8 +287,8 @@ public class FilterByTagFragment extends Fragment implements AdvancedFilterActiv
             favouriteContentHandler.requestFavSearch(SPORTS_FILTER_TYPE, SPORTS_TYPE, SearchString);
 
         } else if (isSearchRequested) {
-            searchList = itemAdapter.getItemDataSet();
             try {
+                searchList = itemAdapter.getItemDataSet();
                 if (searchList.size() > 0) {
                     try {
                         for (FavouriteItem f : searchList) {
@@ -415,7 +425,6 @@ public class FilterByTagFragment extends Fragment implements AdvancedFilterActiv
 
     /**
      * callback implementation for refresh fired from MainActivity.
-     *
      */
     @Override
     public void onRefresh() {

@@ -2,6 +2,7 @@ package com.sports.unity.util;
 
 import android.app.Activity;
 import android.app.ActivityManager;
+import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
@@ -15,6 +16,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
+import android.support.v7.app.NotificationCompat;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 
@@ -364,4 +366,26 @@ public class CommonUtil {
         return sharedPreferences.getString(Constants.REQUEST_PARAMETER_KEY_TOKEN,"");
 
     }
+    public static int getDefaults(Context context, int defaults, NotificationCompat.Builder builder) {
+        if (UserUtil.isConversationVibrate()) {
+            defaults = defaults | Notification.DEFAULT_VIBRATE;
+        } else {
+            long vibratePattern[] = new long[]{0l};
+            builder.setVibrate(vibratePattern);
+        }
+
+//        if ( soundEnabled(context) ) {
+//            defaults = defaults | Notification.DEFAULT_SOUND;
+//        } else {
+//            builder.setSound(null);
+//        }
+
+        if (UserUtil.isNotificationLight()) {
+            builder.setLights(context.getResources().getColor(R.color.app_theme_blue), 100, 3000);
+        } else {
+
+        }
+        return defaults;
+    }
+
 }

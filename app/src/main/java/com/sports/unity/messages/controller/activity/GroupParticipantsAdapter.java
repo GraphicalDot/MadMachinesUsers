@@ -106,6 +106,17 @@ public class GroupParticipantsAdapter extends BaseAdapter {
         return convertView;
     }
 
+    public void memberRemoved(String memberRemoved){
+        for(Contacts contacts : allMembers){
+            if( memberRemoved.equals(contacts.jid) ){
+                allMembers.remove(contacts);
+                break;
+            }
+        }
+        adminJIDs.remove(memberRemoved);
+        notifyDataSetChanged();
+    }
+
     public ArrayList<Contacts> getAllMembers() {
         return allMembers;
     }

@@ -1,21 +1,27 @@
 package com.sports.unity.messages.controller.activity;
 
-import android.app.AlertDialog;
+import android.Manifest;
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
+import android.text.TextUtils;
+import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
@@ -25,30 +31,30 @@ import android.widget.Toast;
 
 import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.R;
-import com.sports.unity.XMPPManager.PubSubUtil;
-import com.sports.unity.common.controller.CustomAppCompatActivity;
 import com.sports.unity.common.controller.MainActivity;
 import com.sports.unity.common.model.FontTypeface;
+import com.sports.unity.common.model.PermissionUtil;
 import com.sports.unity.common.model.TinyDB;
-import com.sports.unity.common.model.UserUtil;
-import com.sports.unity.messages.controller.fragment.ChatFragmentDialogListAdapter;
-import com.sports.unity.messages.controller.fragment.ContactsFragment;
-import com.sports.unity.messages.controller.model.Chats;
+import com.sports.unity.common.model.UserProfileHandler;
+import com.sports.unity.messages.controller.fragment.GroupCreateFragment;
 import com.sports.unity.messages.controller.model.Contacts;
 import com.sports.unity.messages.controller.model.PubSubMessaging;
 import com.sports.unity.util.AlertDialogUtil;
+import com.sports.unity.util.Constants;
+import com.sports.unity.util.ImageUtil;
 import com.sports.unity.util.NotificationHandler;
 
-import org.jivesoftware.smack.chat.Chat;
-
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
  * Created by Mad on 2/22/2016.
  */
-public class GroupInfoFragment extends Fragment {
+public class GroupInfoFragment extends Fragment implements ActivityCompat.OnRequestPermissionsResultCallback {
+
+    private static final String LISTENER_KEY = "group_info_listener_key";
 
     private ListView participantsList;
 
@@ -62,6 +68,10 @@ public class GroupInfoFragment extends Fragment {
     private boolean isAdmin = false;
 
     private EventListener eventListener = new EventListener();
+    private GroupInfoContentListener groupInfoContentListener = new GroupInfoContentListener();
+
+    private Drawable oldBackgroundForNameEditView = null;
+    private ProgressDialog dialog = null;
 
     @Nullable
     @Override
@@ -89,6 +99,20 @@ public class GroupInfoFragment extends Fragment {
         return view;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        UserProfileHandler.getInstance().addContentListener(LISTENER_KEY, groupInfoContentListener);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        UserProfileHandler.getInstance().removeContentListener(LISTENER_KEY);
+    }
+
     private void getIntentExtras(Bundle bundle) {
         name = bundle.getString("name");
         byteArray = bundle.getByteArray("profilePicture");
@@ -97,9 +121,20 @@ public class GroupInfoFragment extends Fragment {
         blockStatus = bundle.getBoolean("blockStatus");
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == GroupCreateFragment.LOAD_IMAGE_GALLERY_CAMERA && resultCode == Activity.RESULT_OK) {
+            ImageView imageView = (ImageView)getView().findViewById(R.id.group_image);
+            byteArray = ImageUtil.handleImageAndSetToView(data, imageView, ImageUtil.SMALL_THUMB_IMAGE_SIZE, ImageUtil.SMALL_THUMB_IMAGE_SIZE);
+        } else {
+            //nothing
+        }
+    }
+
     private void initViews(View view) {
-        CircleImageView groupImage = (CircleImageView) view.findViewById(R.id.group_image);
-        TextView groupName = (TextView) view.findViewById(R.id.group_name);
+        EditText groupName = (EditText) view.findViewById(R.id.group_name);
         TextView groupInfo = (TextView) view.findViewById(R.id.group_info);
         TextView groupCount = (TextView) view.findViewById(R.id.part_count);
         TextView delete = (TextView) view.findViewById(R.id.delete_group);
@@ -110,11 +145,17 @@ public class GroupInfoFragment extends Fragment {
             delete.setText("EXIT AND DELETE GROUP");
         }
 
+        oldBackgroundForNameEditView = groupName.getBackground();
+        groupName.setBackground(getResources().getDrawable(R.drawable.round_edge_black_box));
+        groupName.setEnabled(false);
+
         groupName.setTypeface(FontTypeface.getInstance(getActivity()).getRobotoCondensedBold());
         groupInfo.setTypeface(FontTypeface.getInstance(getActivity()).getRobotoRegular());
         delete.setTypeface(FontTypeface.getInstance(getActivity()).getRobotoRegular());
 
         groupName.setText(name);
+
+        CircleImageView groupImage = (CircleImageView) view.findViewById(R.id.group_image);
         if (byteArray != null) {
             groupImage.setImageBitmap(BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length));
         } else {
@@ -130,6 +171,39 @@ public class GroupInfoFragment extends Fragment {
         participantsList.setOnItemClickListener(eventListener);
         setListViewHeightBasedOnItems(participantsList);
         delete.setOnClickListener(onExitAndDeleteListener);
+    }
+
+    public boolean onBackPressed(){
+        boolean success = false;
+        int visibility = getView().findViewById(R.id.delete_group).getVisibility();
+        if( visibility == View.GONE ) {
+            android.support.v7.app.AlertDialog.Builder build = new android.support.v7.app.AlertDialog.Builder(getActivity());
+            build.setTitle("Discard Edits ? ");
+            build.setMessage("If you cancel now, your edits will be discarded.");
+            build.setPositiveButton("DISCARD", new DialogInterface.OnClickListener() {
+
+                public void onClick(DialogInterface dialog, int id) {
+                    discardChanges();
+                }
+
+            });
+            build.setNegativeButton("KEEP", new DialogInterface.OnClickListener() {
+
+                public void onClick(DialogInterface dialog, int id) {
+                    //nothing
+
+                }
+
+            });
+
+            android.support.v7.app.AlertDialog dialog = build.create();
+            dialog.show();
+
+            success = true;
+        } else {
+            success = false;
+        }
+        return success;
     }
 
     private void initToolbar() {
@@ -155,10 +229,26 @@ public class GroupInfoFragment extends Fragment {
 
         TextView toolbarEdit = (TextView) toolbar.findViewById(R.id.actionButton);
         toolbarEdit.setText("Edit");
+        toolbarEdit.setTag(false);
         toolbarEdit.setTextColor(getResources().getColor(R.color.app_theme_blue));
-        toolbarEdit.setTypeface(FontTypeface.getInstance(getActivity()).getRobotoRegular());
-//        toolbarEdit.setVisibility(isAdmin ? View.VISIBLE : View.GONE);
-        toolbarEdit.setVisibility(View.GONE);
+        toolbarEdit.setTypeface(FontTypeface.getInstance(getActivity()).getRobotoCondensedBold());
+        toolbarEdit.setVisibility(isAdmin ? View.VISIBLE : View.GONE);
+        toolbarEdit.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+                Boolean tag = (Boolean) view.getTag();
+                if (tag == false) {
+                    view.setTag(true);
+                    enableViewForEditingGroupBasicInfo(view);
+                } else {
+                    view.setTag(false);
+                    doneEditing(view);
+                }
+            }
+
+        });
+
     }
 
     private void setListViewHeightBasedOnItems(ListView listView) {
@@ -181,6 +271,93 @@ public class GroupInfoFragment extends Fragment {
         params.height = totalHeight + (listView.getDividerHeight() * (listAdapter.getCount() - 1));
         listView.setLayoutParams(params);
         listView.requestLayout();
+    }
+
+    private void discardChanges() {
+        getIntentExtras(getArguments());
+
+        EditText groupName = (EditText) getView().findViewById(R.id.group_name);
+        groupName.setText(name);
+
+        CircleImageView groupImage = (CircleImageView) getView().findViewById(R.id.group_image);
+        if (byteArray != null) {
+            groupImage.setImageBitmap(BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length));
+        } else {
+            groupImage.setImageResource(R.drawable.ic_group);
+        }
+
+        disableViewForEditingGroupBasicInfo();
+    }
+
+    private void enableViewForEditingGroupBasicInfo(View view){
+        TextView textView = (TextView)view;
+        textView.setText("Done");
+
+        getView().findViewById(R.id.participants_list_layout).setVisibility(View.GONE);
+        getView().findViewById(R.id.delete_group).setVisibility(View.GONE);
+
+        EditText groupName = (EditText) getView().findViewById(R.id.group_name);
+        groupName.setEnabled(true);
+        groupName.setBackground(oldBackgroundForNameEditView);
+        groupName.getBackground().setColorFilter(getResources().getColor(R.color.app_theme_blue), PorterDuff.Mode.SRC_IN);
+
+        CircleImageView groupImage = (CircleImageView) getView().findViewById(R.id.group_image);
+        groupImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!PermissionUtil.getInstance().isRuntimePermissionRequired()) {
+                    GroupCreateFragment.openImagePicker(GroupInfoFragment.this);
+                } else {
+                    if (PermissionUtil.getInstance().requestPermission(getActivity(), new ArrayList<String>(Arrays.asList(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE)), getResources().getString(R.string.camera_and_external_storage_permission_message), Constants.REQUEST_CODE_CAMERA_EXTERNAL_STORAGE_PERMISSION)) {
+                        GroupCreateFragment.openImagePicker(GroupInfoFragment.this);
+                    }
+                }
+            }
+        });
+
+        groupImage.setBorderColor(getResources().getColor(R.color.app_theme_blue));
+        groupImage.setEnabled(true);
+        groupImage.setBorderWidth(2);
+    }
+
+    private void disableViewForEditingGroupBasicInfo(){
+        Toolbar toolbar = (Toolbar) getActivity().findViewById(R.id.tool_bar);
+        TextView toolbarEdit = (TextView) toolbar.findViewById(R.id.actionButton);
+
+        disableViewForEditingGroupBasicInfo(toolbarEdit);
+    }
+
+    private void disableViewForEditingGroupBasicInfo(View view){
+        TextView textView = (TextView)view;
+        textView.setText("Edit");
+
+        getView().findViewById(R.id.participants_list_layout).setVisibility(View.VISIBLE);
+        getView().findViewById(R.id.delete_group).setVisibility(View.VISIBLE);
+
+        EditText groupName = (EditText) getView().findViewById(R.id.group_name);
+        groupName.setEnabled(false);
+        groupName.setBackground(getResources().getDrawable(R.drawable.round_edge_black_box));
+        groupName.setTextColor(getResources().getColor(R.color.ColorPrimaryDark));
+
+        CircleImageView groupImage = (CircleImageView) getView().findViewById(R.id.group_image);
+        groupImage.setOnClickListener(null);
+        groupImage.setEnabled(false);
+        groupImage.setBorderWidth(0);
+    }
+
+    private void doneEditing(View view){
+        EditText groupName = (EditText) getView().findViewById(R.id.group_name);
+        if (TextUtils.isEmpty(groupName.getText().toString())) {
+            Toast.makeText(getActivity(), "Please enter group name.", Toast.LENGTH_SHORT).show();
+        } else {
+            showInDeterminateProgress("Updating group information.");
+
+            String imageAsBase64 = null;
+            if( byteArray != null ) {
+                imageAsBase64 = Base64.encodeToString(byteArray, Base64.DEFAULT);
+            }
+            UserProfileHandler.getInstance().submitGroupInfo( getContext(), groupJID, groupName.getText().toString(), imageAsBase64, LISTENER_KEY);
+        }
     }
 
     private void showDialogWindow(final Contacts contacts) {
@@ -214,6 +391,22 @@ public class GroupInfoFragment extends Fragment {
         });
 
         builder.create().show();
+    }
+
+    private void showInDeterminateProgress(String message) {
+        ProgressBar progressBar = new ProgressBar(getActivity());
+        progressBar.getIndeterminateDrawable().setColorFilter(getResources().getColor(R.color.app_theme_blue), android.graphics.PorterDuff.Mode.MULTIPLY);
+
+        dialog = ProgressDialog.show(getActivity(), "", message, true);
+        dialog.setIndeterminateDrawable(progressBar.getIndeterminateDrawable());
+    }
+
+    private void dismissInDeterminateProgress() {
+        if (dialog != null) {
+            if (dialog.isShowing()) {
+                dialog.dismiss();
+            }
+        }
     }
 
     private void showAddMemberFragment() {
@@ -280,7 +473,24 @@ public class GroupInfoFragment extends Fragment {
 
     private boolean exitGroup() {
         String currentUserJID = TinyDB.getInstance(getContext()).getString(TinyDB.KEY_USER_JID);
-        return PubSubMessaging.getInstance().exitGroup(currentUserJID + "@mm.io", groupJID);
+
+        boolean success = PubSubMessaging.getInstance().exitGroup(currentUserJID + "@mm.io", groupJID);
+        if( success ) {
+            PubSubMessaging.getInstance().sendIntimationAboutMemberRemoved(getContext(), currentUserJID, groupJID);
+        }
+        return success;
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == Constants.REQUEST_CODE_CAMERA_EXTERNAL_STORAGE_PERMISSION) {
+            if (PermissionUtil.getInstance().verifyPermissions(grantResults)) {
+                GroupCreateFragment.openImagePicker(GroupInfoFragment.this);
+            } else {
+                PermissionUtil.getInstance().showSnackBar(getActivity(), getString(R.string.permission_denied));
+            }
+        }
     }
 
     class EventListener implements AdapterView.OnItemClickListener {
@@ -336,6 +546,8 @@ public class GroupInfoFragment extends Fragment {
             progressDialog.dismiss();
             if (success == true) {
                 SportsUnityDBHelper.getInstance(GroupInfoFragment.this.getActivity()).deleteGroupMember(chatID, contactId);
+                GroupParticipantsAdapter groupParticipantsAdapter = (GroupParticipantsAdapter)participantsList.getAdapter();
+                groupParticipantsAdapter.memberRemoved(jid);
             } else {
                 Toast.makeText(GroupInfoFragment.this.getActivity(), R.string.oops_try_again, Toast.LENGTH_SHORT).show();
             }
@@ -347,6 +559,34 @@ public class GroupInfoFragment extends Fragment {
                 PubSubMessaging.getInstance().sendIntimationAboutMemberRemoved(getContext(), jid, groupJID);
             }
             return success;
+        }
+
+    }
+
+    class GroupInfoContentListener implements UserProfileHandler.ContentListener {
+
+        @Override
+        public void handleContent(String requestTag, Object content) {
+            if (requestTag.equals(UserProfileHandler.SUBMIT_GROUP_INFO_REQUEST_TAG)) {
+                final Boolean success = (Boolean)content;
+
+                getActivity().runOnUiThread(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        if( success ){
+                            disableViewForEditingGroupBasicInfo();
+                        } else {
+                            Toast.makeText(getActivity(), R.string.message_submit_failed, Toast.LENGTH_SHORT).show();
+                        }
+
+                        dismissInDeterminateProgress();
+                    }
+
+                });
+            } else {
+
+            }
         }
 
     }

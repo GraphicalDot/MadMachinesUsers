@@ -122,10 +122,8 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
 
         sportsUnityDBHelper = SportsUnityDBHelper.getInstance(this);
         locManager = LocManager.getInstance(getApplicationContext());
-        locManager.buildApiClient();
 
         {
-            //TODO temporary snippet, will remove it.
             if (!PermissionUtil.getInstance().isRuntimePermissionRequired()) {
                 ContactsHandler.getInstance().addCallToProcessPendingActions(this);
             } else {
@@ -134,6 +132,7 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
                 }
             }
         }
+
         preferences = PreferenceManager.getDefaultSharedPreferences(this);
         if (preferences != null) {
             boolean sentToken = preferences.getBoolean(Constants.SENT_TOKEN_TO_SERVER, false);
@@ -285,7 +284,6 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
     @Override
     protected void onStart() {
         super.onStart();
-        locManager.connect();
     }
 
     private void initViews() {
@@ -471,7 +469,7 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
         super.onResume();
         shouldCloseDrawer = false;
         setNavigationProfile();
-        updateLocation();
+//        updateLocation();
         if (messagesFragmentInFront) {
             fabMenu.showMenuButton(true);
         }
@@ -481,14 +479,13 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
     private void updateLocation() {
         Location location = null;
         if (locManager.ismGoogleApiClientConnected()) {
-            location = locManager.getLocation();
+            location = locManager.getLocation(MainActivity.this);
             if (location != null) {
                 locManager.sendLatituteAndLongitude(location, false);
             }
         } else {
             //TODO
         }
-//        GPSTracking.getInstance(getApplicationContext()).getLocation();
     }
 
     public void closeDrawer() {

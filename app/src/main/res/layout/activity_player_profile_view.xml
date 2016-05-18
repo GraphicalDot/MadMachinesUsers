@@ -44,14 +44,15 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/tool_bar"
             android:background="@color/gray3"
-            android:paddingBottom="@dimen/vertical_padding_small"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:paddingBottom="@dimen/vertical_padding_small">
 
             <LinearLayout
                 android:id="@+id/profile_info"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/tool_bar"
+                android:layout_gravity="center_horizontal"
                 android:background="@color/app_theme_blue"
                 android:orientation="vertical"
                 android:paddingBottom="@dimen/activity_horizontal_margin">
@@ -132,7 +133,7 @@
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
                         android:padding="@dimen/horizontal_padding_small"
-                        android:weightSum="4">
+                        android:stretchColumns="*">
 
                         <TableRow>
 
@@ -164,7 +165,8 @@
                                 android:gravity="center"
                                 android:text=""
                                 android:textColor="#1a1a1a"
-                                android:textSize="@dimen/font_size_small_large" />
+                                android:textSize="@dimen/font_size_small_large"
+                                android:visibility="gone" />
 
                             <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
                                 android:id="@+id/nationality_value"
@@ -208,7 +210,8 @@
                                 android:gravity="center"
                                 android:text="@string/scored"
                                 android:textColor="@color/dot_color_grey"
-                                android:textSize="@dimen/font_size_very_small" />
+                                android:textSize="@dimen/font_size_very_small"
+                                android:visibility="gone" />
 
                             <com.sports.unity.common.view.CustomRobotoRegularTextView
                                 android:id="@+id/nationality_label"
@@ -273,8 +276,9 @@
                             android:layout_height="24dp"
                             android:layout_centerVertical="true"
                             android:scaleType="fitCenter"
+                            android:layout_alignParentLeft="true"
                             android:src="@drawable/ic_teams"
-                            app:layout_widthPercent="26%" />
+                            app:layout_widthPercent="25%" />
 
                         <ImageView
                             android:id="@+id/iv_league"
@@ -284,15 +288,25 @@
                             android:layout_toRightOf="@id/iv_teams"
                             android:scaleType="fitCenter"
                             android:src="@drawable/ic_league"
-                            app:layout_widthPercent="26%" />
+                            app:layout_widthPercent="40%" />
 
+
+                        <ImageView
+                            android:id="@+id/iv_ic_assist"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:layout_centerVertical="true"
+                            android:layout_toRightOf="@id/iv_league"
+                            android:src="@drawable/ic_assist"
+                            app:layout_widthPercent="11%"
+                            android:visibility="gone"/>
 
                         <ImageView
                             android:id="@+id/iv_match_played"
                             android:layout_width="20dp"
                             android:layout_height="20dp"
                             android:layout_centerVertical="true"
-                            android:layout_toRightOf="@id/iv_league"
+                            android:layout_toRightOf="@id/iv_ic_assist"
                             android:src="@drawable/ic_match_played"
                             app:layout_widthPercent="10%" />
 
@@ -306,20 +320,11 @@
                             app:layout_widthPercent="11%" />
 
                         <ImageView
-                            android:id="@+id/iv_ic_assist"
-                            android:layout_width="20dp"
-                            android:layout_height="20dp"
-                            android:layout_centerVertical="true"
-                            android:layout_toRightOf="@id/iv_goals_scored"
-                            android:src="@drawable/ic_assist"
-                            app:layout_widthPercent="11%" />
-
-                        <ImageView
                             android:id="@+id/iv_yellow_card"
                             android:layout_width="@dimen/icon_football_info"
                             android:layout_height="@dimen/icon_football_info"
                             android:layout_centerVertical="true"
-                            android:layout_toRightOf="@id/iv_ic_assist"
+                            android:layout_toRightOf="@id/iv_goals_scored"
                             android:src="@drawable/ic_yellow_card"
                             app:layout_widthPercent="8%" />
 
@@ -346,7 +351,7 @@
                             android:text="@string/team"
                             android:textColor="@color/dot_color_grey"
                             android:textSize="@dimen/font_size_very_small"
-                            app:layout_widthPercent="26%" />
+                            app:layout_widthPercent="25%" />
 
                         <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
                             android:id="@+id/league_label_current_season"
@@ -357,8 +362,20 @@
                             android:text="@string/league"
                             android:textColor="@color/dot_color_grey"
                             android:textSize="@dimen/font_size_very_small"
-                            app:layout_widthPercent="26%" />
+                            app:layout_widthPercent="40%" />
 
+
+                        <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
+                            android:id="@+id/goals_label"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_toRightOf="@id/league_label_current_season"
+                            android:gravity="center"
+                            android:text="@string/assists"
+                            android:textColor="@color/dot_color_grey"
+                            android:textSize="@dimen/font_size_very_small"
+                            app:layout_widthPercent="11%"
+                            android:visibility="gone"/>
                         <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
                             android:id="@+id/geam_label"
                             android:layout_width="0dp"
@@ -382,21 +399,10 @@
                             app:layout_widthPercent="11%" />
 
                         <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
-                            android:id="@+id/goals_label"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_toRightOf="@id/league_label"
-                            android:gravity="center"
-                            android:text="@string/assists"
-                            android:textColor="@color/dot_color_grey"
-                            android:textSize="@dimen/font_size_very_small"
-                            app:layout_widthPercent="11%" />
-
-                        <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
                             android:id="@+id/yellow_label_season"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_toRightOf="@id/goals_label"
+                            android:layout_toRightOf="@id/league_label"
                             android:gravity="center"
                             android:text="@string/yc"
                             android:textColor="@color/dot_color_grey"

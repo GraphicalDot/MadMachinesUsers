@@ -204,7 +204,7 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity implements People
         setCustomButtonsForNavigationAndUsers();
         bindAutoComplete();
         userPrivacyUpdate();
-  }
+    }
 
     private void userPrivacyUpdate() {
         userLocation = UserUtil.isShowToAllLocation();
@@ -460,8 +460,8 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity implements People
         toolbar = (Toolbar) findViewById(R.id.tool_bar_map);
         titleAddress = (TextView) toolbar.findViewById(R.id.toolbar_title);
         titleAddress.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoRegular());
-        titleCity = (TextView) toolbar.findViewById(R.id.secondary_title);
-        titleCity.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoRegular());
+//        titleCity = (TextView) toolbar.findViewById(R.id.secondary_title);
+//        titleCity.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoRegular());
         setCurrentAddressOnToolbar(titleAddress, titleCity);
         //toolbar.setContentInsetsAbsolute(0, 0);
         toolbar.findViewById(R.id.close_icon).setOnClickListener(new View.OnClickListener() {
@@ -507,6 +507,7 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity implements People
             }
         }
     }
+
     private void setCurrentAddressOnToolbar(TextView titleAddress, TextView titleCity) {
         titleAddress.setText(getInstance(getApplicationContext()).getString(TinyDB.KEY_ADDRESS_LOCATION));
         titleCity.setText(getInstance(getApplicationContext()).getString(TinyDB.KEY_ADDRESS_STATE));
@@ -633,7 +634,7 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity implements People
 
 //        AlertDialog.Builder otherProfileBuilder = new AlertDialog.Builder(PeopleAroundMeMap.this);
 //        otherProfileBuilder.setView(popupProfile);
-          aDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+        aDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
 
             @Override
             public void onCancel(DialogInterface dialog) {
@@ -834,16 +835,16 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity implements People
 
     private void getLocation() {
         Log.i("gettingLocation", "true");
-        Location location = locManager.getLocation();
-        if (location != null) {
-            LocManager.getInstance(getApplicationContext()).sendLatituteAndLongitude(location, true);
-            getInstance(getApplicationContext()).putDouble(KEY_CURRENT_LATITUDE, location.getLatitude());
-            getInstance(getApplicationContext()).putDouble(KEY_CURRENT_LONGITUDE, location.getLongitude());
-            latLong = new LatLng(location.getLatitude(), location.getLongitude());
-            map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLong, getcurrentZoom()));
-            new FetchAndDisplayCurrentAddress(location).execute();
-            getPeopleAroundMe(latLong.latitude, latLong.longitude);
-        }
+//        Location location = locManager.getLocation();
+//        if (location != null) {
+//            LocManager.getInstance(getApplicationContext()).sendLatituteAndLongitude(location, true);
+//            getInstance(getApplicationContext()).putDouble(KEY_CURRENT_LATITUDE, location.getLatitude());
+//            getInstance(getApplicationContext()).putDouble(KEY_CURRENT_LONGITUDE, location.getLongitude());
+//            latLong = new LatLng(location.getLatitude(), location.getLongitude());
+//            map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLong, getcurrentZoom()));
+//            new FetchAndDisplayCurrentAddress(location).execute();
+//            getPeopleAroundMe(latLong.latitude, latLong.longitude);
+//        }
 
     }
 
@@ -859,10 +860,10 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity implements People
 
         if (checkIfGPSEnabled()) {
 
-            Location location = LocManager.getInstance(getApplicationContext()).getLocation();
-            if (location != null) {
-                LocManager.getInstance(getApplicationContext()).sendLatituteAndLongitude(location, true);
-            }
+//            Location location = LocManager.getInstance(getApplicationContext()).getLocation();
+//            if (location != null) {
+//                LocManager.getInstance(getApplicationContext()).sendLatituteAndLongitude(location, true);
+//            }
         } else {
             //nothing
         }
@@ -922,17 +923,17 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity implements People
     public void handleContent(String content) {
         try {
             JSONObject object = new JSONObject(content);
-            if(object!=null && !object.isNull("status") ){
+            if (object != null && !object.isNull("status")) {
 
-                if(200 == object.getInt("status") && !object.isNull("info") && object.getString("info").equalsIgnoreCase("Success")){
-                    Toast.makeText(this,R.string.privacy_policy_status_success,Toast.LENGTH_SHORT).show();
-                }else{
-                    Toast.makeText(this,R.string.privacy_policy_status,Toast.LENGTH_SHORT).show();
+                if (200 == object.getInt("status") && !object.isNull("info") && object.getString("info").equalsIgnoreCase("Success")) {
+                    Toast.makeText(this, R.string.privacy_policy_status_success, Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(this, R.string.privacy_policy_status, Toast.LENGTH_SHORT).show();
 
                 }
 
             }
-        }catch (Exception e){
+        } catch (Exception e) {
 
         }
 

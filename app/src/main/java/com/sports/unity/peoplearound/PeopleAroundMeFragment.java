@@ -1,57 +1,66 @@
 package com.sports.unity.peoplearound;
 
 
-import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
+import android.widget.ListView;
+import android.widget.RelativeLayout;
 
-import com.github.clans.fab.FloatingActionButton;
 import com.sports.unity.R;
-import com.sports.unity.common.viewhelper.CustomComponentListener;
-import com.sports.unity.messages.controller.model.Person;
+import com.sports.unity.messages.controller.model.User;
 import com.sports.unity.peoplearound.adapters.PeopleAroundMeAdapter;
-import com.sports.unity.util.Constants;
-
-import org.solovyev.android.views.llm.LinearLayoutManager;
 
 import java.util.ArrayList;
-
-import static android.support.v7.widget.LinearLayoutManager.VERTICAL;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class PeopleAroundMeFragment extends Fragment implements DataNotifier {
+public class PeopleAroundMeFragment extends Fragment {
 
-    private ArrayList<Person> peoples ;
-    private RecyclerView recyclerview;
-    private PeopleAroundMeAdapter mAdapter;
-    private Context context;
-    private ProgressBar progressBar;
-    private boolean customLocation;
-    private FloatingActionButton myLocation;
-    private View emptyView;
+    DataNotifier dataNotifier = new DataNotifier() {
+        @Override
+        public void newData(ArrayList<User> content, int responseCode) {
+            if (content == null) {
+                list.setVisibility(View.GONE);
+                emptyLayout.setVisibility(View.GONE);
+                errorLayout.setVisibility(View.VISIBLE);
+                LinearLayout dataError = (LinearLayout) errorLayout.findViewById(R.id.data_error);
+                LinearLayout connectionError = (LinearLayout) errorLayout.findViewById(R.id.connection_error);
+                if (responseCode == 0) {
+                    dataError.setVisibility(View.GONE);
+                    connectionError.setVisibility(View.VISIBLE);
+                } else {
+                    dataError.setVisibility(View.VISIBLE);
+                    connectionError.setVisibility(View.GONE);
+                }
+            } else {
+                list.setVisibility(View.VISIBLE);
+                errorLayout.setVisibility(View.GONE);
+                updateContent(content);
+            }
+        }
+    };
 
-    public PeopleAroundMeFragment() {
-        // Required empty public constructor
+    private void updateContent(ArrayList<User> content) {
+        this.data = content;
+        ((PeopleAroundMeAdapter) list.getAdapter()).updateData(data);
     }
+
+    private ArrayList<User> data = new ArrayList<>();
+    private ListView list;
+    private FrameLayout errorLayout;
+    private RelativeLayout emptyLayout;
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        this.context = context;
-        if(context instanceof  DataRequestService){
-            DataRequestService dataRequestService = (DataRequestService) context;
-            dataRequestService.dataRequest();
-        }
+
     }
 
     @Override
@@ -59,107 +68,23 @@ public class PeopleAroundMeFragment extends Fragment implements DataNotifier {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_people_around_me, container, false);
-        initViews(v);
-        initProgress(v);
-
+        ((PeopleAroundActivity) getActivity()).addListener(dataNotifier, getArguments().getString(PeopleAroundActivity.BUNDLE_TAG));
+        initView(v);
+        initErrorLayout(v);
         return v;
     }
 
-    private void initViews(View v) {
-        customLocation = false;
-        emptyView = v.findViewById(R.id.data_exist);
-        myLocation = (FloatingActionButton) v.findViewById(R.id.myLocation);
-        peoples = getArguments().getParcelableArrayList(Constants.PARAM_PEOPLES);
-        recyclerview=(RecyclerView) v.findViewById(R.id.recyclerview);
-        mAdapter = new PeopleAroundMeAdapter(peoples,context);
-        recyclerview.setLayoutManager(new LinearLayoutManager(getContext(), VERTICAL, true));
-        recyclerview.setAdapter(mAdapter);
-        mAdapter.notifyDataSetChanged();
-
-        hideProgress();
+    private void initErrorLayout(View v) {
+        errorLayout = (FrameLayout) v.findViewById(R.id.error);
     }
 
-    private void showErrorLayout(View view) {
-        ViewGroup errorLayout = (ViewGroup) view.findViewById(R.id.error);
-        errorLayout.setVisibility(View.VISIBLE);
-        CustomComponentListener.renderAppropriateErrorLayout(errorLayout);
+    private void initView(View v) {
+        String TAG = getArguments().getString(PeopleAroundActivity.BUNDLE_TAG);
+        list = (ListView) v.findViewById(R.id.people_around_list);
+        emptyLayout = (RelativeLayout) v.findViewById(R.id.data_exist);
+        PeopleAroundMeAdapter peopleAroundMeAdapter = new PeopleAroundMeAdapter(getActivity(), R.layout.fragment_people_aroundme_card, data, TAG);
+        list.setAdapter(peopleAroundMeAdapter);
+        list.setEmptyView(emptyLayout);
+        updateContent(data);
     }
-
-    private void hideErrorLayout(View view) {
-        ViewGroup errorLayout = (ViewGroup) view.findViewById(R.id.error);
-        errorLayout.setVisibility(View.GONE);
-    }
-
-    private void initProgress(View view) {
-        progressBar = (ProgressBar) view.findViewById(R.id.progress);
-        progressBar.getIndeterminateDrawable().setColorFilter(getResources().getColor(R.color.app_theme_blue), android.graphics.PorterDuff.Mode.MULTIPLY);
-    }
-
-    public void showProgress(View view) {
-        progressBar = (ProgressBar) view.findViewById(R.id.progress);
-        progressBar.setVisibility(View.VISIBLE);
-    }
-
-    private void hideProgress() {
-        if( progressBar != null ){
-            progressBar.setVisibility(View.GONE);
-        }
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        if(context instanceof  DataRequestService){
-            DataRequestService dataRequestService = (DataRequestService) context;
-            dataRequestService.dataRequest();
-        }
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-    }
-
-    @Override
-    public void notifyPeoples() {
-        Log.i("notifyPeoples", "notifyPeoples: " + peoples);
-        if(mAdapter!=null){
-            renderUsers();
-            recyclerview.postInvalidate();
-            mAdapter.notifyDataSetChanged();
-           final  PeopleAroundActivity activity  = (PeopleAroundActivity) getActivity();
-            activity.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-
-                    myLocation.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                             customLocation = activity.checkIfGPSEnabled();
-                            if(customLocation){
-                                activity.getLocation();
-                            }
-
-                        }
-                    });
-                }});
-        }
-    }
-
-    private void renderUsers() {
-        hideProgress();
-        if( peoples.size() == 0 ) {
-            recyclerview.setVisibility(View.GONE);
-            emptyView.setVisibility(View.VISIBLE);
-        }else{
-            recyclerview.setVisibility(View.VISIBLE);
-            emptyView.setVisibility(View.GONE);
-        }
-    }
-
-    public  interface DataRequestService{
-        void dataRequest();
-        void cancelRequest();
-    }
-
 }

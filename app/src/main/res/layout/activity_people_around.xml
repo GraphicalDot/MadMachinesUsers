@@ -1,8 +1,7 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/white"
-    android:orientation="vertical">
+    android:background="@android:color/white">
 
     <include
         android:id="@+id/tool_bar_map"
@@ -15,7 +14,7 @@
         android:id="@+id/seperator"
         android:layout_width="fill_parent"
         android:layout_height="1dp"
-        android:layout_below="@id/tool_bar"
+        android:layout_below="@id/tool_bar_map"
         android:background="@color/tab_seperator" />
 
 
@@ -25,63 +24,81 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/seperator"
         android:background="@color/app_theme_blue"
-        android:elevation="@dimen/toolbar_elevation"
-        />
-    <FrameLayout
-        android:id="@+id/fl_custom_location"
+        android:elevation="@dimen/toolbar_elevation" />
+
+    <android.support.design.widget.CoordinatorLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:fab="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/users_list"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/textColorPrimary"
-        android:visibility="gone">
-        <fragment
-            android:id="@+id/custom_location"
-            android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/seekbar_distance"
+        android:layout_below="@id/tabs">
+
+        <android.support.v4.view.ViewPager
+            android:id="@+id/viewpager"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/people_nearme_custom_location_height" />
-    </FrameLayout>
+            android:layout_height="match_parent" />
 
-    <View
-        android:id="@+id/view"
-        android:layout_width="fill_parent"
-        android:layout_height="1dp"
-        android:layout_below="@id/tabs"
-        android:background="@color/ColorPrimary" />
+        <include
+            android:id="@+id/error"
+            layout="@layout/error_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone" />
 
-    <com.sports.unity.common.model.ControlledSwipeViewPager
-        android:id="@+id/pager"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1">
-    </com.sports.unity.common.model.ControlledSwipeViewPager>
+        <ProgressBar
+            android:id="@+id/progress_bar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:visibility="gone" />
 
-    <ProgressBar
-        android:id="@+id/progress"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:visibility="gone"/>
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/update_location"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|right"
+            android:layout_marginBottom="@dimen/activity_vertical_margin"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:layout_marginRight="@dimen/activity_horizontal_margin"
+            android:elevation="1dp"
+            android:src="@drawable/ic_my_location1"
+            app:fab_colorNormal="@color/app_theme_blue"
+            app:fab_colorPressed="@color/app_theme_blue"
+            fab:fab_size="mini" />
 
+
+    </android.support.design.widget.CoordinatorLayout>
 
     <RelativeLayout
-        android:layout_width="wrap_content"
+        android:id="@+id/seekbar_distance"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
+        android:layout_alignParentBottom="true"
         android:visibility="visible">
+
+        <View
+            android:id="@+id/border"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/grayBorder"></View>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/mapButtons"
+            android:layout_below="@id/border"
             android:layout_gravity="bottom"
             android:background="@color/gray3"
             android:orientation="vertical"
-            android:paddingLeft="@dimen/horizontal_padding_small"
-            android:paddingRight="@dimen/horizontal_padding_small">
-            <TextView
+            android:paddingLeft="@dimen/horizontal_padding_very_small"
+            android:paddingRight="@dimen/horizontal_padding_very_small">
+
+            <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
                 android:id="@+id/distance_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal"
-                android:paddingTop="@dimen/vertical_padding_very_very_small"
+                android:paddingTop="@dimen/vertical_padding_very_small"
                 android:text="@string/people_around_you"
                 android:textColor="@color/news_static"
                 android:textSize="@dimen/font_size_very_small" />
@@ -91,21 +108,15 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom"
-                android:paddingBottom="@dimen/vertical_padding_small"
+                android:layout_marginBottom="10dp"
+                android:paddingBottom="@dimen/vertical_padding_very_very_small"
                 android:paddingLeft="@dimen/vertical_padding_medium"
                 android:paddingRight="@dimen/vertical_padding_medium"
-                android:paddingTop="@dimen/vertical_padding_small"
-                android:layout_marginBottom="10dp"
+                android:paddingTop="@dimen/vertical_padding_very_very_small"
                 android:progressDrawable="@drawable/seekbar_drawable"
                 android:thumb="@drawable/ic_distance_slider_01" />
         </LinearLayout>
     </RelativeLayout>
-    <include
-        android:id="@+id/error"
-        layout="@layout/error_layout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="gone"/>
 
 
-</LinearLayout>
+</RelativeLayout>

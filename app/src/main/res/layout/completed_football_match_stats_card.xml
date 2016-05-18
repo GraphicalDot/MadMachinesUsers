@@ -4,7 +4,8 @@
     android:id="@+id/card_view"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginTop="@dimen/vertical_padding_medium_small"
+    android:layout_marginTop="@dimen/vertical_padding_very_very_small"
+    android:layout_marginBottom="@dimen/vertical_padding_very_small"
     android:background="@color/ColorPrimary"
     android:orientation="vertical">
 
@@ -37,8 +38,8 @@
 
             <View
                 android:id="@+id/v_dummy"
-                android:layout_width=".1dp"
-                android:layout_height=".1dp"
+                android:layout_width="1dp"
+                android:layout_height="1dp"
                 android:layout_centerInParent="true" />
 
             <FrameLayout
@@ -46,11 +47,11 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_toLeftOf="@+id/v_dummy"
+                android:paddingLeft="0dp"
                 app:layout_widthPercent="40%">
 
                 <View
-                    android:id="@+id/vw_red"
-                    android:layout_width=".1dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_gravity="right"
                     android:background="@color/brick_red"
@@ -65,8 +66,7 @@
                 app:layout_widthPercent="40%">
 
                 <View
-                    android:id="@+id/vw_blue"
-                    android:layout_width=".1dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_gravity="left"
                     android:background="@color/app_theme_blue"

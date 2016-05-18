@@ -61,11 +61,11 @@ public class UpCommingFootballMatchTableFargment extends BasicVolleyRequestRespo
     private String team1 = "abc";
     private String team2 = "xyz";
 
-    private ViewGroup contentLayout = null;
+    private View contentLayout = null;
+    private SwipeRefreshLayout swipeRefreshLayout;
 
     private UpCommingFootballMatchTableAdapter adapter;
     private RecyclerView recyclerView;
-    private SwipeRefreshLayout swipeRefreshLayout;
 
     private HashMap<String, ArrayList<UpCommngFootbalMatchTableDTO>> groupStandingsMap = new HashMap<>();
     private ArrayList<String> groupsListInOrder = new ArrayList<>();
@@ -94,7 +94,7 @@ public class UpCommingFootballMatchTableFargment extends BasicVolleyRequestRespo
         ViewGroup errorLayout = (ViewGroup) view.findViewById(R.id.error);
         ProgressBar progressBar = (ProgressBar)view.findViewById(R.id.progress);
 
-        UpcomingFootballMatchTableComponentListener upcomingFootballMatchTableComponentListener = new UpcomingFootballMatchTableComponentListener( getRequestTag(), progressBar, errorLayout);
+        UpcomingFootballMatchTableComponentListener upcomingFootballMatchTableComponentListener = new UpcomingFootballMatchTableComponentListener( getRequestTag(), progressBar, errorLayout, contentLayout, swipeRefreshLayout);
         return upcomingFootballMatchTableComponentListener;
     }
 
@@ -125,10 +125,8 @@ public class UpCommingFootballMatchTableFargment extends BasicVolleyRequestRespo
     private void initView(View view) {
         context = view.getContext();
 
-        contentLayout = (ViewGroup)view.findViewById(R.id.content_layout);
-        contentLayout.setVisibility(View.GONE);
-
-        swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.sv_swipe_football_match_table);
+        contentLayout = view.findViewById(R.id.content_layout);
+        swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_refresh_layout);
 
         recyclerView = (RecyclerView) view.findViewById(R.id.rv_football_match_table);
         recyclerView.setLayoutManager(new android.support.v7.widget.LinearLayoutManager(context));
@@ -153,12 +151,7 @@ public class UpCommingFootballMatchTableFargment extends BasicVolleyRequestRespo
     }
 
     private boolean renderDisplay()  {
-        boolean success = false;
-        try{
-            success = getData(response);
-        }catch (Exception e){
-            e.printStackTrace();
-        }
+        boolean success = getData(response);
         return  success;
     }
 
@@ -208,8 +201,9 @@ public class UpCommingFootballMatchTableFargment extends BasicVolleyRequestRespo
         if (groupStandingsMap.size() > 0) {
             adapter.initContent();
         } else {
-            // need to do
+            //nothing
         }
+
         success = true;
         return  success;
 
@@ -278,8 +272,13 @@ public class UpCommingFootballMatchTableFargment extends BasicVolleyRequestRespo
 
     public class UpcomingFootballMatchTableComponentListener extends CustomComponentListener {
 
-        public UpcomingFootballMatchTableComponentListener(String requestTag, ProgressBar progressBar, ViewGroup errorLayout){
-            super(requestTag, progressBar, errorLayout);
+        public UpcomingFootballMatchTableComponentListener(String requestTag, ProgressBar progressBar, ViewGroup errorLayout, View contentLayout, SwipeRefreshLayout swipeRefreshLayout){
+            super(requestTag, progressBar, errorLayout, contentLayout, swipeRefreshLayout);
+        }
+
+        @Override
+        protected boolean isContentLayoutAvailable() {
+            return groupStandingsMap.size() > 0;
         }
 
         @Override
@@ -294,37 +293,10 @@ public class UpCommingFootballMatchTableFargment extends BasicVolleyRequestRespo
         }
 
         @Override
-        protected void showErrorLayout() {
-            if( contentLayout == null || contentLayout.getVisibility() == View.GONE ) {
-                super.showErrorLayout();
-            } else {
-                //nothing
-            }
-        }
-
-        @Override
-        protected void showProgress() {
-            if( contentLayout == null || contentLayout.getVisibility() == View.GONE ) {
-                super.showProgress();
-            } else {
-                //nothing
-            }
-        }
-
-        @Override
-        protected void hideProgress() {
-            super.hideProgress();
-
-            if( swipeRefreshLayout != null ){
-                swipeRefreshLayout.setRefreshing(false);
-            }
-        }
-
-        @Override
         public void changeUI(String tag) {
             boolean success = renderDisplay();
             if( success ){
-                contentLayout.setVisibility(View.VISIBLE);
+                //nothing
             } else {
                 showErrorLayout();
             }

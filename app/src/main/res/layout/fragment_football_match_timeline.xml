@@ -7,16 +7,18 @@
     tools:context="com.sports.unity.scoredetails.footballdetail.FootballMatchTimelineFragment">
 
     <android.support.v4.widget.SwipeRefreshLayout
-        android:id="@+id/sw_timeline_refresh"
+        android:id="@+id/swipe_refresh_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
+
         <android.support.v7.widget.RecyclerView
-            android:id="@+id/my_recycler_view"
+            android:id="@+id/content_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:scrollbars="vertical"
             />
-         </android.support.v4.widget.SwipeRefreshLayout>
+
+    </android.support.v4.widget.SwipeRefreshLayout>
 
     <include
         android:id="@+id/error"

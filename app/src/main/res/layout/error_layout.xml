@@ -1,73 +1,76 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_height="match_parent"
     android:layout_width="match_parent"
-    android:visibility="gone"
-    >
+    android:layout_height="match_parent"
+    android:visibility="gone">
 
     <LinearLayout
         android:id="@+id/data_error"
-        android:orientation="vertical"
-        android:gravity="center"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone"
-       >
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="visible">
+
         <com.sports.unity.common.view.CustomRobotoLightTextView
             android:id="@+id/oops"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:text="whoops!!!"
-            android:textSize="@dimen/font_size_xlarge"
-            android:textColor="#1a1a1a"/>
+            android:textColor="#1a1a1a"
+            android:textSize="@dimen/font_size_xlarge" />
+
         <com.sports.unity.common.view.CustomRobotoLightTextView
             android:id="@+id/something_wrong"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:layout_marginBottom="@dimen/vertical_padding_very_small"
             android:text="Something went wrong"
-            android:textSize="@dimen/font_size_small_large"
             android:textColor="@color/tour_details_color"
-            android:layout_marginBottom="@dimen/vertical_padding_very_small"/>
+            android:textSize="@dimen/font_size_small_large" />
+
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:src="@drawable/img_something_went_wrong"/>
+            android:src="@drawable/img_something_went_wrong" />
     </LinearLayout>
 
     <LinearLayout
         android:id="@+id/connection_error"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
         android:gravity="center"
-        android:visibility="gone"
-       >
+        android:orientation="vertical"
+        android:visibility="gone">
+
         <com.sports.unity.common.view.CustomRobotoLightTextView
-           android:id="@+id/connection_oops"
-           android:layout_width="wrap_content"
-           android:layout_height="wrap_content"
-           android:layout_gravity="center"
-           android:text="Check Connection"
-           android:textSize="@dimen/font_size_xlarge"
-           android:textColor="#1a1a1a"/>
+            android:id="@+id/connection_oops"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="Check Connection"
+            android:textColor="#1a1a1a"
+            android:textSize="@dimen/font_size_xlarge" />
+
         <com.sports.unity.common.view.CustomRobotoLightTextView
-           android:id="@+id/something_wrong1"
-           android:layout_width="wrap_content"
-           android:layout_height="wrap_content"
-           android:layout_gravity="center"
+            android:id="@+id/something_wrong1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginBottom="@dimen/vertical_padding_very_small"
             android:gravity="center"
-           android:text="Please check your internet connection\nand try again."
-           android:textSize="@dimen/font_size_small_large"
-           android:textColor="@color/tour_details_color"
-           android:layout_marginBottom="@dimen/vertical_padding_very_small"/>
+            android:text="Please check your internet connection\nand try again."
+            android:textColor="@color/tour_details_color"
+            android:textSize="@dimen/font_size_small_large" />
+
         <ImageView
-           android:layout_width="wrap_content"
-           android:layout_height="wrap_content"
-           android:layout_gravity="center"
-           android:src="@drawable/img_network_error"/>
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:src="@drawable/img_network_error" />
     </LinearLayout>
 
 </FrameLayout>

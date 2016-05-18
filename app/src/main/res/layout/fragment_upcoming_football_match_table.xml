@@ -5,28 +5,27 @@
     android:layout_height="wrap_content"
     >
 
-    <LinearLayout
-        android:id="@+id/content_layout"
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/swipe_refresh_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        >
-        <include layout="@layout/football_league_table_item"
-            android:id="@+id/header_row"
-        />
-        <android.support.v4.widget.SwipeRefreshLayout
-            android:id="@+id/sv_swipe_football_match_table"
+        android:layout_height="match_parent">
+        <LinearLayout
+            android:id="@+id/content_layout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            >
+            <include layout="@layout/football_league_table_item"
+                android:id="@+id/header_row"
+            />
             <android.support.v7.widget.RecyclerView
-                android:id="@+id/rv_football_match_table"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@color/gray3"
-                android:scrollbars="vertical" />
-        </android.support.v4.widget.SwipeRefreshLayout>
-    </LinearLayout>
+                    android:id="@+id/rv_football_match_table"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@android:color/white"
+                    android:scrollbars="vertical" />
+        </LinearLayout>
+    </android.support.v4.widget.SwipeRefreshLayout>
 
     <ProgressBar
         android:id="@+id/progress"
@@ -40,6 +39,6 @@
         layout="@layout/error_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone" />
+        />
 
 </FrameLayout>

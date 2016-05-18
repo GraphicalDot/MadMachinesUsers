@@ -3,8 +3,10 @@ package com.sports.unity.scoredetails.footballdetail;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -47,7 +49,7 @@ public class UpCommingFootballMatchSqadFragment extends BasicVolleyRequestRespon
     private Context context;
 
     private String title;
-    private HashMap<String,String> requestParameters;
+    private HashMap<String, String> requestParameters;
     private JSONObject response;
 
     private Bundle bundle = null;
@@ -61,11 +63,14 @@ public class UpCommingFootballMatchSqadFragment extends BasicVolleyRequestRespon
     private UpCommingFootballMatchSquadAdapter upCommingFootballMatchSquadAdapterSecond;
     private List<UpCommingFootballMatchSquadDTO> listTeamSecond = new ArrayList<UpCommingFootballMatchSquadDTO>();
 
+    private View contentLayout;
+    private SwipeRefreshLayout swipeRefreshLayout;
+
     private RecyclerView rcRecyclerViewTeamFirst;
     private RecyclerView rcRecyclerViewTeamSecond;
     private TextView tvTeamFirst;
     private TextView tvTeamSecond;
-    private LinearLayout squadParnetLinearLayout;
+
     private JSONArray teamFirstSquadArray;
     private JSONArray teamSecondSquadArray;
     private View layoutView;
@@ -112,9 +117,9 @@ public class UpCommingFootballMatchSqadFragment extends BasicVolleyRequestRespon
     @Override
     public CustomComponentListener getCustomComponentListener(View view) {
         ViewGroup errorLayout = (ViewGroup) view.findViewById(R.id.error);
-        ProgressBar progressBar = (ProgressBar)view.findViewById(R.id.progress);
+        ProgressBar progressBar = (ProgressBar) view.findViewById(R.id.progress);
 
-        UpcomingFootballMatchSquadComponentListener  componentListener = new UpcomingFootballMatchSquadComponentListener( getRequestTag(), progressBar, errorLayout);
+        UpcomingFootballMatchSquadComponentListener componentListener = new UpcomingFootballMatchSquadComponentListener(getRequestTag(), progressBar, errorLayout, contentLayout, swipeRefreshLayout);
         return componentListener;
     }
 
@@ -126,8 +131,8 @@ public class UpCommingFootballMatchSqadFragment extends BasicVolleyRequestRespon
     @Override
     public String getRequestCallName() {
         String callName = null;
-        if( favouriteItem != null ){
-            if( Constants.SPORTS_TYPE_FOOTBALL.equals(favouriteItem.getSportsType()) ) {
+        if (favouriteItem != null) {
+            if (Constants.SPORTS_TYPE_FOOTBALL.equals(favouriteItem.getSportsType())) {
                 callName = ScoresContentHandler.CALL_NAME_FOOTBALL_PLAYERS;
             } else {
                 callName = ScoresContentHandler.CALL_NAME_CRICKET_PLAYER;
@@ -148,7 +153,7 @@ public class UpCommingFootballMatchSqadFragment extends BasicVolleyRequestRespon
         initView(view);
     }
 
-    public void setRequestParameters(HashMap<String,String> params ) {
+    public void setRequestParameters(HashMap<String, String> params) {
         this.requestParameters = params;
     }
 
@@ -171,38 +176,62 @@ public class UpCommingFootballMatchSqadFragment extends BasicVolleyRequestRespon
         context = view.getContext();
         layoutView = view;
 
+        contentLayout = view.findViewById(R.id.content_layout);
+        contentLayout.setVisibility(View.GONE);
+
+        swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_refresh_layout);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+
+            @Override
+            public void onRefresh() {
+                requestContent();
+            }
+
+        });
+
         tvTeamFirst = (TextView) view.findViewById(R.id.tv_team_first_name);
         tvTeamSecond = (TextView) view.findViewById(R.id.tv_team_second_name);
 
         rcRecyclerViewTeamFirst = (RecyclerView) view.findViewById(R.id.rc_child1_rv);
         rcRecyclerViewTeamFirst.setLayoutManager(new LinearLayoutManager(context, VERTICAL, false));
         rcRecyclerViewTeamFirst.setNestedScrollingEnabled(false);
+
         rcRecyclerViewTeamSecond = (RecyclerView) view.findViewById(R.id.rc_child2_rv);
         rcRecyclerViewTeamSecond.setLayoutManager(new LinearLayoutManager(context, VERTICAL, false));
         rcRecyclerViewTeamSecond.setNestedScrollingEnabled(false);
+
         upCommingFootballMatchSquadAdapterFirst = new UpCommingFootballMatchSquadAdapter(listTeamFirst, context);
         rcRecyclerViewTeamFirst.setAdapter(upCommingFootballMatchSquadAdapterFirst);
+
         upCommingFootballMatchSquadAdapterSecond = new UpCommingFootballMatchSquadAdapter(listTeamSecond, context);
         rcRecyclerViewTeamSecond.setAdapter(upCommingFootballMatchSquadAdapterSecond);
-        squadParnetLinearLayout = (LinearLayout) view.findViewById(R.id.squad_parent_linearlayout);
-        squadParnetLinearLayout.setVisibility(View.GONE);
 
     }
 
-    private boolean renderDisplay()  {
+    private boolean renderDisplay() {
         boolean success = false;
-        try{
+        try {
             listTeamFirst.clear();
             listTeamSecond.clear();
 
             if (!response.isNull("data")) {
                 JSONObject dataObject;
+                Log.d("max", "rendering");
                 if (bundle == null) {
                     dataObject = response.getJSONObject("data");
                     teamFirstSquadArray = dataObject.getJSONArray("team_1_squad");
+                    JSONObject playerData = teamFirstSquadArray.getJSONObject(0);
+                    teamFirstSquadArray = playerData.getJSONArray("players");
                     teamSecondSquadArray = dataObject.getJSONArray("team_2_squad");
+                    playerData = teamSecondSquadArray.getJSONObject(0);
+                    teamSecondSquadArray = playerData.getJSONArray("players");
                 } else {
                     teamFirstSquadArray = response.getJSONArray("data");
+                    if (bundle == null || favouriteItem.getSportsType().equals(Constants.SPORTS_TYPE_FOOTBALL))
+                    {
+                        JSONObject playerData = teamFirstSquadArray.getJSONObject(0);
+                        teamFirstSquadArray = playerData.getJSONArray("players");
+                    }
                     tvTeamFirst.setText(favouriteItem.getName());
                     if (favouriteItem.getSportsType().equals(Constants.SPORTS_TYPE_FOOTBALL)) {
                         layoutView.findViewById(R.id.team2_layout).setVisibility(View.GONE);
@@ -214,12 +243,14 @@ public class UpCommingFootballMatchSqadFragment extends BasicVolleyRequestRespon
                         cricketTeamName.setText("NAME");
                     }
                 }
-                squadParnetLinearLayout.setVisibility(View.VISIBLE);
+
                 {
                     tvTeamFirst.setText(teamFirstName);
                     tvTeamSecond.setText(teamSecondName);
                     UpCommingFootballMatchSquadDTO dto;
                     if (teamFirstSquadArray.length() > 0) {
+
+                        Log.d("max", "gettting team squad");
                         for (int i = 0; i < teamFirstSquadArray.length(); i++) {
                             JSONObject playerObject = teamFirstSquadArray.getJSONObject(i);
                             dto = new UpCommingFootballMatchSquadDTO();
@@ -258,12 +289,12 @@ public class UpCommingFootballMatchSqadFragment extends BasicVolleyRequestRespon
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return  success;
+        return success;
     }
 
     private void getSquadDetails(UpCommingFootballMatchSquadDTO dto, JSONObject playerObject) throws JSONException {
-        if (!playerObject.isNull("short_name_id")) {
-            dto.setId(playerObject.getString("short_name_id"));
+        if (!playerObject.isNull("id")) {
+            dto.setId(playerObject.getString("id"));
         }
         if (!playerObject.isNull("name")) {
             dto.setTvPlayerName(playerObject.getString("name"));
@@ -274,19 +305,19 @@ public class UpCommingFootballMatchSqadFragment extends BasicVolleyRequestRespon
         if (!playerObject.isNull("position")) {
             dto.setTvP(playerObject.getString("position").substring(0, 1));
         }
-        if (!playerObject.isNull("games_played")) {
-            dto.setTvpl(playerObject.getString("games_played"));
+        if (!playerObject.isNull("appearences")) {
+            dto.setTvpl(playerObject.getString("appearences"));
         }
         if (!playerObject.isNull("goals")) {
             dto.setTvgol(playerObject.getString("goals"));
         }
-        if (!playerObject.isNull("red_cards")) {
-            dto.setTvredcard(playerObject.getString("red_cards"));
+        if (!playerObject.isNull("redcards")) {
+            dto.setTvredcard(playerObject.getString("redcards"));
         }
-        if (!playerObject.isNull("yellow_cards")) {
-            dto.setTvyellowcard(playerObject.getString("yellow_cards"));
+        if (!playerObject.isNull("yellowcards")) {
+            dto.setTvyellowcard(playerObject.getString("yellowcards"));
         }
-        if(!playerObject.isNull("assists")){
+        if (!playerObject.isNull("assists")) {
             dto.setAssist(playerObject.getString("assists"));
         }
     }
@@ -300,7 +331,7 @@ public class UpCommingFootballMatchSqadFragment extends BasicVolleyRequestRespon
         }
     }
 
-    private  boolean handleContent(String content){
+    private boolean handleContent(String content) {
         boolean success = false;
         try {
             JSONObject jsonObject = new JSONObject(content);
@@ -318,8 +349,8 @@ public class UpCommingFootballMatchSqadFragment extends BasicVolleyRequestRespon
 
     public class UpcomingFootballMatchSquadComponentListener extends CustomComponentListener {
 
-        public UpcomingFootballMatchSquadComponentListener(String requestTag, ProgressBar progressBar, ViewGroup errorLayout){
-            super(requestTag, progressBar, errorLayout);
+        public UpcomingFootballMatchSquadComponentListener(String requestTag, ProgressBar progressBar, ViewGroup errorLayout, View contentLayout, SwipeRefreshLayout swipeRefreshLayout) {
+            super(requestTag, progressBar, errorLayout, contentLayout, swipeRefreshLayout);
         }
 
         @Override
@@ -336,8 +367,8 @@ public class UpCommingFootballMatchSqadFragment extends BasicVolleyRequestRespon
         @Override
         public void changeUI(String tag) {
             boolean success = renderDisplay();
-            if( success ){
-                //nothing
+            if (success) {
+                contentLayout.setVisibility(View.VISIBLE);
             } else {
                 showErrorLayout();
             }

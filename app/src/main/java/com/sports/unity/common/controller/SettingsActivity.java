@@ -1,15 +1,20 @@
 package com.sports.unity.common.controller;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.media.RingtoneManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.DragEvent;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -20,11 +25,14 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.sports.unity.BuildConfig;
 import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.R;
 import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.common.model.SettingsHelper;
+import com.sports.unity.common.model.TinyDB;
 import com.sports.unity.common.model.UserUtil;
 import com.sports.unity.messages.controller.BlockUnblockUserHelper;
 import com.sports.unity.messages.controller.fragment.ContactListAdapter;
@@ -35,10 +43,32 @@ import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
 import com.sports.unity.util.NotificationHandler;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.ProtocolException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import static com.sports.unity.common.model.TinyDB.KEY_PASSWORD;
+import static com.sports.unity.common.model.TinyDB.KEY_USER_JID;
+import static com.sports.unity.util.CommonUtil.getBuildConfig;
+import static com.sports.unity.util.CommonUtil.getDeviceId;
+
 public class SettingsActivity extends CustomAppCompatActivity implements BlockUnblockUserHelper.BlockUnblockListener {
+
+    public static final String USERNAME_KEY = "username";
+    public static final String PASSWORD_KEY = "password";
+    public static final String LOCATION_STATUS = "show_location_status";
+    public static final String APK_VERSION = "apk_version";
+    public static final String UDID = "udid";
+    public static final String BASE_URL = "http://" + BuildConfig.XMPP_SERVER_API_BASE_URL + "/v1/set_location_privacy";
 
     private HashMap<Integer, int[]> drillDownItemsMap = new HashMap<>();
     private int currentItemId = SettingsHelper.SETTINGS_MAIN_ID;
@@ -50,10 +80,12 @@ public class SettingsActivity extends CustomAppCompatActivity implements BlockUn
     private TextView blockCount;
 
     private String myLocation;
+    private Bundle savedInstanceState;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        this.savedInstanceState = savedInstanceState;
 
         setContentView(R.layout.activity_settings);
 
@@ -216,6 +248,7 @@ public class SettingsActivity extends CustomAppCompatActivity implements BlockUn
             switcher.setTag(currentItemId);
             switcher.setChecked(SettingsHelper.getCheckedValue(currentItemId));
             switcher.setOnCheckedChangeListener(itemEventListener);
+            switcher.setOnClickListener(itemEventListener);
 
             title.setVisibility(View.GONE);
             subTitle.setVisibility(View.GONE);
@@ -327,6 +360,189 @@ public class SettingsActivity extends CustomAppCompatActivity implements BlockUn
         return toneItems;
     }
 
+    private String getPrivacySettingsAsJSON(int itemId, boolean isChecked) {
+        JSONObject data = new JSONObject();
+        try {
+            data.put(USERNAME_KEY, TinyDB.getInstance(getApplicationContext()).getString(KEY_USER_JID));
+            data.put(PASSWORD_KEY, TinyDB.getInstance(getApplicationContext()).getString(KEY_PASSWORD));
+
+            HashMap<String,Boolean> map = new HashMap<>();
+            map.put(String.valueOf(SettingsHelper.SHOW_MY_LOCATION_ITEM_ID), UserUtil.isShowMyLocation());
+            map.put(String.valueOf(SettingsHelper.FRIEND_ONLY_LOCATION_ITEM_ID), UserUtil.isShowToFriendsLocation());
+            map.put(String.valueOf(SettingsHelper.ALL_USER_LOCATION_ITEM_ID), UserUtil.isShowToAllLocation());
+
+            //add temp values
+            map.put(String.valueOf(itemId), isChecked);
+            if( itemId == SettingsHelper.SHOW_MY_LOCATION_ITEM_ID ){
+                map.put(String.valueOf(SettingsHelper.FRIEND_ONLY_LOCATION_ITEM_ID), isChecked);
+                map.put(String.valueOf(SettingsHelper.ALL_USER_LOCATION_ITEM_ID), isChecked);
+            } else {
+                if (map.get(String.valueOf(SettingsHelper.FRIEND_ONLY_LOCATION_ITEM_ID)) || map.get(String.valueOf(SettingsHelper.ALL_USER_LOCATION_ITEM_ID))) {
+                    map.put(String.valueOf(SettingsHelper.SHOW_MY_LOCATION_ITEM_ID), true);
+                } else {
+                    map.put(String.valueOf(SettingsHelper.SHOW_MY_LOCATION_ITEM_ID), false);
+                }
+            }
+
+            if ( map.get(String.valueOf(SettingsHelper.FRIEND_ONLY_LOCATION_ITEM_ID)) && map.get(String.valueOf(SettingsHelper.ALL_USER_LOCATION_ITEM_ID)) ) {
+                data.put(LOCATION_STATUS, "a");
+            } else if ( map.get(String.valueOf(SettingsHelper.ALL_USER_LOCATION_ITEM_ID)) ) {
+                data.put(LOCATION_STATUS, "a");
+            } else if ( map.get(String.valueOf(SettingsHelper.FRIEND_ONLY_LOCATION_ITEM_ID)) ) {
+                data.put(LOCATION_STATUS, "f");
+            } else {
+                data.put(LOCATION_STATUS, "n");
+            }
+
+            data.put(APK_VERSION, getBuildConfig());
+            data.put(UDID, getDeviceId(getApplicationContext()));
+            Log.i("user", data.toString());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return data.toString();
+    }
+
+    private void updatePrivacyPolicy(int itemId, boolean isChecked) {
+        String privacyDataAsJson = getPrivacySettingsAsJSON(itemId, isChecked);
+        UpdatePrivacySettings updatePrivacySettings = new UpdatePrivacySettings(itemId, isChecked);
+        updatePrivacySettings.execute(privacyDataAsJson);
+    }
+
+    class UpdatePrivacySettings extends AsyncTask<String, Void, Void> {
+
+        private ProgressDialog pDialog;
+        private boolean success = false;
+        private int itemId;
+        private boolean isChecked = false;
+
+        public UpdatePrivacySettings(int itemId, boolean isChecked) {
+            this.itemId = itemId;
+            this.isChecked = isChecked;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            pDialog = new ProgressDialog(SettingsActivity.this);
+            pDialog.setMessage("Updating privacy policy...");
+            pDialog.show();
+            pDialog.setCancelable(false);
+        }
+
+        @Override
+        protected Void doInBackground(String... privacyData) {
+            HttpURLConnection httpURLConnection;
+            ByteArrayInputStream byteArrayInputStream;
+            URL postPrivacyData;
+            try {
+                postPrivacyData = new URL(BASE_URL);
+                Log.i("url", BASE_URL);
+                httpURLConnection = (HttpURLConnection) postPrivacyData.openConnection();
+                httpURLConnection.setDoOutput(true);
+                httpURLConnection.setConnectTimeout(15000);
+                httpURLConnection.setRequestMethod("POST");
+
+                byteArrayInputStream = new ByteArrayInputStream(privacyData[0].getBytes());
+                OutputStream outputStream = httpURLConnection.getOutputStream();
+
+                byte chunk[] = new byte[4096];
+                int read = 0;
+                while ((read = byteArrayInputStream.read(chunk)) != -1) {
+                    outputStream.write(chunk, 0, read);
+                }
+
+                if (httpURLConnection.getResponseCode() == HttpURLConnection.HTTP_OK) {
+                    success = true;
+                } else {
+                    //nothing
+                }
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (ProtocolException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            pDialog.dismiss();
+
+            if (success) {
+                if (itemId == SettingsHelper.SHOW_MY_LOCATION_ITEM_ID) {
+                    UserUtil.setShowMyLocation(SettingsActivity.this, isChecked);
+                    UserUtil.setShowToFriendsLocation(SettingsActivity.this, isChecked);
+                    UserUtil.setShowToAllLocation(SettingsActivity.this, isChecked);
+
+                    changeAllRadioButtons(UserUtil.isShowMyLocation());
+                } else if (itemId == SettingsHelper.FRIEND_ONLY_LOCATION_ITEM_ID) {
+                    UserUtil.setShowToFriendsLocation(SettingsActivity.this, isChecked);
+
+                    if( UserUtil.isShowToFriendsLocation() || UserUtil.isShowToAllLocation() ){
+                        UserUtil.setShowMyLocation(SettingsActivity.this, true);
+
+                        Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
+                        Switch switcher = (Switch) toolbar.findViewById(R.id.toolbarSwitcher);
+                        switcher.setChecked(true);
+                    } else {
+                        UserUtil.setShowMyLocation(SettingsActivity.this, false);
+
+                        Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
+                        Switch switcher = (Switch) toolbar.findViewById(R.id.toolbarSwitcher);
+                        switcher.setChecked(false);
+                    }
+                } else if (itemId == SettingsHelper.ALL_USER_LOCATION_ITEM_ID) {
+                    UserUtil.setShowToAllLocation(SettingsActivity.this, isChecked);
+
+                    if( UserUtil.isShowToFriendsLocation() || UserUtil.isShowToAllLocation() ){
+                        UserUtil.setShowMyLocation(SettingsActivity.this, true);
+
+                        Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
+                        Switch switcher = (Switch) toolbar.findViewById(R.id.toolbarSwitcher);
+                        switcher.setChecked(true);
+                    } else {
+                        UserUtil.setShowMyLocation(SettingsActivity.this, false);
+
+                        Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
+                        Switch switcher = (Switch) toolbar.findViewById(R.id.toolbarSwitcher);
+                        switcher.setChecked(false);
+                    }
+                }
+            } else {
+                Toast.makeText(getApplicationContext(), "failure to update privacy settings", Toast.LENGTH_SHORT).show();
+
+                if (itemId == SettingsHelper.SHOW_MY_LOCATION_ITEM_ID) {
+                    Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
+                    Switch switcher = (Switch) toolbar.findViewById(R.id.toolbarSwitcher);
+                    switcher.setChecked(!isChecked);
+                } else if (itemId == SettingsHelper.FRIEND_ONLY_LOCATION_ITEM_ID || itemId == SettingsHelper.ALL_USER_LOCATION_ITEM_ID) {
+                    LinearLayout settingItemParentLayout = (LinearLayout) findViewById(R.id.items_container);
+                    int childCount = settingItemParentLayout.getChildCount();
+
+                    ViewGroup item = null;
+                    CheckBox checkBox = null;
+                    for (int index = 0; index < childCount; index++) {
+                        item = (ViewGroup) settingItemParentLayout.getChildAt(index);
+                        checkBox = (CheckBox) item.findViewById(R.id.radio);
+                        Integer tag = (Integer) checkBox.getTag();
+                        if (tag != null) {
+                            if (tag.intValue() == itemId && checkBox.getVisibility() == View.VISIBLE) {
+                                checkBox.setChecked(!isChecked);
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+
+        }
+    }
+
     private void clearAllChat() {
         ArrayList<Chats> chatList = SportsUnityDBHelper.getInstance(getApplicationContext()).getChatList(SportsUnityDBHelper.DEFAULT_GET_ALL_CHAT_LIST);
         for (Chats chatObject : chatList) {
@@ -400,13 +616,20 @@ public class SettingsActivity extends CustomAppCompatActivity implements BlockUn
         @Override
         public void onClick(View view) {
             int itemId = (Integer) view.getTag();
-            int itemType = (Integer) view.getTag(R.layout.settings_item);
+            Object tag = view.getTag(R.layout.settings_item);
+            int itemType = tag != null ? (Integer) tag : 0;
 
             if (itemType == SettingsHelper.ITEM_TYPE_DRILL_DOWN) {
                 renderDrillDownItems(itemId);
             } else if (itemType == SettingsHelper.ITEM_TYPE_RADIO) {
                 CheckBox checkBox = (CheckBox) view.findViewById(R.id.radio);
                 checkBox.setChecked(!checkBox.isChecked());
+
+//                if (itemId == SettingsHelper.FRIEND_ONLY_LOCATION_ITEM_ID) {
+//                    updatePrivacyPolicy(itemId, UserUtil.isShowToFriendsLocation());
+//                } else if (itemId == SettingsHelper.ALL_USER_LOCATION_ITEM_ID) {
+//                    updatePrivacyPolicy(itemId, UserUtil.isShowToAllLocation());
+//                }
             } else if (itemType == SettingsHelper.ITEM_TYPE_CLICK) {
                 if (itemId == SettingsHelper.CLEAR_ALL_CHATS_ITEM_ID) {
                     showdialogToClearOrDeleteAllChats(itemId);
@@ -444,6 +667,11 @@ public class SettingsActivity extends CustomAppCompatActivity implements BlockUn
                     ListingAlertDialog listingAlertDialog = new ListingAlertDialog(itemId, SettingsHelper.getTitle(itemId, SettingsActivity.this), drillDownItemsMap.get(itemId), checked);
                     listingAlertDialog.show(SettingsActivity.this);
                 }
+            } else {
+//                if (itemId == SettingsHelper.SHOW_MY_LOCATION_ITEM_ID) {
+//                    changeAllRadioButtons(UserUtil.isShowMyLocation());
+//                    updatePrivacyPolicy(itemId, UserUtil.isShowMyLocation());
+//                }
             }
         }
 
@@ -501,12 +729,17 @@ public class SettingsActivity extends CustomAppCompatActivity implements BlockUn
             } else if (itemId == SettingsHelper.NOTIFICATIONS_LIGHT_ITEM_ID) {
                 UserUtil.setNotificationLight(SettingsActivity.this, isChecked);
             } else if (itemId == SettingsHelper.SHOW_MY_LOCATION_ITEM_ID) {
-                UserUtil.setShowMyLocation(SettingsActivity.this, isChecked);
-                changeAllRadioButtons(isChecked);
+                if( UserUtil.isShowMyLocation() != isChecked ) {
+                    updatePrivacyPolicy(itemId, isChecked);
+                }
             } else if (itemId == SettingsHelper.FRIEND_ONLY_LOCATION_ITEM_ID) {
-                UserUtil.setShowToFriendsLocation(SettingsActivity.this, isChecked);
+                if( UserUtil.isShowToFriendsLocation() != isChecked ) {
+                    updatePrivacyPolicy(itemId, isChecked);
+                }
             } else if (itemId == SettingsHelper.ALL_USER_LOCATION_ITEM_ID) {
-                UserUtil.setShowToAllLocation(SettingsActivity.this, isChecked);
+                if( UserUtil.isShowToAllLocation() != isChecked ) {
+                    updatePrivacyPolicy(itemId, isChecked);
+                }
             } else if (itemId == SettingsHelper.SAVE_INCOMING_PHOTO_TO_GALLERY_ITEM_ID) {
                 UserUtil.setSaveIncomingMediaToGallery(SettingsActivity.this, isChecked);
             } else if (itemId == SettingsHelper.SAVE_CAPTURED_PHOTO_TO_GALLERY_ITEM_ID) {
@@ -566,10 +799,21 @@ public class SettingsActivity extends CustomAppCompatActivity implements BlockUn
         private ViewGroup getItemLayout() {
             ViewGroup viewGroup = (ViewGroup) LayoutInflater.from(SettingsActivity.this).inflate(R.layout.settings_item, null);
 
+            boolean isLayoutDisabled = false;
+            /*
+             * disable privacy layouts because we didn't implemented its functionality.
+             */
+            if( id == SettingsHelper.LAST_SEEN_ITEM_ID || id == SettingsHelper.PROFILE_PHOTO_ITEM_ID ||
+                    id == SettingsHelper.STATUS_ITEM_ID || id == SettingsHelper.READ_RECEIPTS_ITEM_ID ){
+                isLayoutDisabled = true;
+            }
+
             ViewGroup clickableLayout = (ViewGroup) viewGroup.findViewById(R.id.clickableLayout);
             clickableLayout.setTag(id);
             clickableLayout.setTag(R.layout.settings_item, itemType);
-            clickableLayout.setOnClickListener(itemEventListener);
+            if( isLayoutDisabled == false ) {
+                clickableLayout.setOnClickListener(itemEventListener);
+            }
             clickableLayout.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_WHITE, false));
 
             if (iconResId != SettingsHelper.ITEM__WITH_NO_ICON) {
@@ -585,12 +829,18 @@ public class SettingsActivity extends CustomAppCompatActivity implements BlockUn
                 titleTextView.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoSlabRegular());
             } else {
                 titleTextView.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoRegular());
+                if( isLayoutDisabled == true ) {
+                    titleTextView.setTextColor(getResources().getColor(R.color.gray4));
+                }
             }
 
             TextView subtitleTextView = (TextView) clickableLayout.findViewById(R.id.subTitle);
             if (subTitle != null && !subTitle.isEmpty()) {
                 subtitleTextView.setText(subTitle);
                 subtitleTextView.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoCondensedRegular());
+                if( isLayoutDisabled == true ) {
+                    subtitleTextView.setTextColor(getResources().getColor(R.color.gray4));
+                }
             } else {
                 subtitleTextView.setVisibility(View.GONE);
             }
@@ -604,7 +854,11 @@ public class SettingsActivity extends CustomAppCompatActivity implements BlockUn
                 checkBox.setChecked(SettingsHelper.getCheckedValue(id));
                 checkBox.setVisibility(View.VISIBLE);
                 checkBox.setTag(id);
-                checkBox.setOnCheckedChangeListener(itemEventListener);
+                if( isLayoutDisabled == false ) {
+                    checkBox.setOnCheckedChangeListener(itemEventListener);
+                } else {
+                    checkBox.setEnabled(false);
+                }
             }
 
             return viewGroup;

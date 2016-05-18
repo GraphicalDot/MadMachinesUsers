@@ -334,7 +334,7 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
 
         ContentValues values = new ContentValues();
         values.put(ContactChatEntry.COLUMN_NAME, name);
-        values.put(ContactChatEntry.COLUMN_AVAILABLE_STATUS, Contacts.AVAILABLE_BY_MY_CONTACTS);
+//        values.put(ContactChatEntry.COLUMN_AVAILABLE_STATUS, Contacts.AVAILABLE_BY_MY_CONTACTS);
 
         String selection = ContactChatEntry.COLUMN_PHONE_NUMBER + " LIKE ? ";
         String[] selectionArgs = {phoneNumber};
@@ -563,7 +563,7 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
         return list;
     }
 
-    public ArrayList<Contacts> getListOfJIDRequireUpdate() {
+    public ArrayList<Contacts> getListOfJIDRequireUpdate(boolean forcedSync) {
         ArrayList<Contacts> list = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
 
@@ -574,11 +574,10 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
                 ContactChatEntry.COLUMN_IMAGE,
                 ContactChatEntry.COLUMN_ID,
                 ContactChatEntry.COLUMN_STATUS,
-                ContactChatEntry.COLUMN_BLOCK_USER,
                 ContactChatEntry.COLUMN_AVAILABLE_STATUS
         };
 
-        String selection = ContactChatEntry.COLUMN_UPDATE_REQUIRED + " == 1 AND  " + ContactChatEntry.COLUMN_JID + " is not null ";
+        String selection =  (forcedSync ? " " : ContactChatEntry.COLUMN_UPDATE_REQUIRED + " == 1 AND ") + ContactChatEntry.COLUMN_JID + " is not null ";
         String[] selectionArgs = null;
 
         Cursor c = db.query(ContactChatEntry.TABLE_NAME, projection, selection, selectionArgs, null, null, null);
@@ -593,6 +592,10 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
     }
 
     public ArrayList<Contacts> getContactList(boolean registeredOnly) {
+        return getContactList(registeredOnly, true);
+    }
+
+    public ArrayList<Contacts> getContactList(boolean registeredOnly, boolean blockedIncluded) {
         ArrayList<Contacts> list = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
 
@@ -615,6 +618,12 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
 
         String selection = ContactChatEntry.COLUMN_JID + registerCondition + " AND " + ContactChatEntry.COLUMN_AVAILABLE_STATUS + " = " + Contacts.AVAILABLE_BY_MY_CONTACTS
                 + " AND " + ContactChatEntry.COLUMN_GROUP_CHAT + " == 0 ";
+        if( blockedIncluded ){
+
+        } else {
+            selection += " AND " + ContactChatEntry.COLUMN_BLOCK_USER + " == 0 ";
+        }
+
         String[] selectionArgs = null;
         String sortOrder = ContactChatEntry.COLUMN_NAME + " COLLATE NOCASE ASC ";
 
@@ -690,7 +699,35 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
         values.put(ContactChatEntry.COLUMN_IMAGE, userImage);
         values.put(ContactChatEntry.COLUMN_STATUS, status);
-        values.put(ContactChatEntry.COLUMN_UPDATE_REQUIRED, false);
+
+        String selection = ContactChatEntry.COLUMN_JID + " LIKE ? ";
+        String[] selectionArgs = {jid};
+
+        return db.update(ContactChatEntry.TABLE_NAME, values, selection, selectionArgs);
+    }
+
+    public int updateContacts(String jid, byte[] userImage, String status, boolean updateRequired) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(ContactChatEntry.COLUMN_IMAGE, userImage);
+        values.put(ContactChatEntry.COLUMN_STATUS, status);
+        values.put(ContactChatEntry.COLUMN_UPDATE_REQUIRED, updateRequired);
+
+        String selection = ContactChatEntry.COLUMN_JID + " LIKE ? ";
+        String[] selectionArgs = {jid};
+
+        return db.update(ContactChatEntry.TABLE_NAME, values, selection, selectionArgs);
+    }
+
+    public int updateContacts(String jid, String name, byte[] userImage, String status, boolean updateRequired) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(ContactChatEntry.COLUMN_NAME, name);
+        values.put(ContactChatEntry.COLUMN_IMAGE, userImage);
+        values.put(ContactChatEntry.COLUMN_STATUS, status);
+        values.put(ContactChatEntry.COLUMN_UPDATE_REQUIRED, updateRequired);
 
         String selection = ContactChatEntry.COLUMN_JID + " LIKE ? ";
         String[] selectionArgs = {jid};
@@ -705,6 +742,21 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
         values.put(ContactChatEntry.COLUMN_NAME, name);
         values.put(ContactChatEntry.COLUMN_IMAGE, userImage);
         values.put(ContactChatEntry.COLUMN_STATUS, status);
+
+        String selection = ContactChatEntry.COLUMN_JID + " LIKE ? ";
+        String[] selectionArgs = {jid};
+
+        return db.update(ContactChatEntry.TABLE_NAME, values, selection, selectionArgs);
+    }
+
+    public int updateGroupInfo(String jid, String groupName, byte[] groupImage) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(ContactChatEntry.COLUMN_NAME, groupName);
+        if( groupImage != null ) {
+            values.put(ContactChatEntry.COLUMN_IMAGE, groupImage);
+        }
         values.put(ContactChatEntry.COLUMN_UPDATE_REQUIRED, false);
 
         String selection = ContactChatEntry.COLUMN_JID + " LIKE ? ";
@@ -1158,6 +1210,23 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
         return name;
     }
 
+    public String getNameByJIDFromAvailableContacts(String jid) {
+        String name = null;
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String projection[] = {ContactChatEntry.COLUMN_NAME};
+        String selection = ContactChatEntry.COLUMN_JID + " LIKE ? AND " + ContactChatEntry.COLUMN_AVAILABLE_STATUS + " = " + Contacts.AVAILABLE_BY_MY_CONTACTS;
+        String[] selectionArgs = {String.valueOf(jid)};
+
+        Cursor c = db.query(ContactChatEntry.TABLE_NAME, projection, selection, selectionArgs, null, null, null);
+        if (c.moveToFirst()) {
+            name = c.getString(0);
+        }
+        c.close();
+
+        return name;
+    }
+
     public int createGroupChatEntry(String subject, byte[] image, String groupJID) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
@@ -1436,25 +1505,6 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
         String[] selectionArgs = {String.valueOf(contactId)};
 
         return db.update(ContactChatEntry.TABLE_NAME, values, selection, selectionArgs);
-    }
-
-    public void updateChatBlockStatus(int chatId, boolean blockStatus) {
-        //TODO
-
-//        SQLiteDatabase db = getWritableDatabase();
-//
-//        ContentValues values = new ContentValues();
-//        values.put(ChatEntry.COLUMN_BLOCK_USER, blockStatus);
-//
-//        String selection = ChatEntry.COLUMN_CHAT_ID + " = ?";
-//        String[] selectionArgs = {String.valueOf(chatId)};
-//
-//        int count = db.update(
-//                ContactsEntry.TABLE_NAME,
-//                values,
-//                selection,
-//                selectionArgs);
-
     }
 
     public boolean isChatBlocked(int chatId) {

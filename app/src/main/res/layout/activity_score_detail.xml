@@ -176,8 +176,8 @@
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="left"
-                android:gravity="center"
+                android:layout_gravity="center"
+                android:gravity="center_horizontal"
                 android:orientation="horizontal">
 
                 <com.sports.unity.common.view.CustomRobotoCondenseRegularTextView
@@ -195,7 +195,7 @@
                 android:id="@+id/tv_game_day"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
+                android:layout_gravity="center_horizontal"
                 android:paddingTop="@dimen/horizontal_padding_very_very_small"
                 android:text=""
                 android:textColor="@color/score_light_grey"
@@ -204,12 +204,13 @@
             <ProgressBar
                 android:id="@+id/progressbar"
                 style="?android:attr/progressBarStyleHorizontal"
-                android:layout_width="fill_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="@dimen/progress_bar_height"
                 android:layout_gravity="center_vertical"
-                android:progressDrawable="@drawable/progress_drawable"
                 android:max="90"
-                android:visibility="gone"></ProgressBar>
+                android:progress="0"
+                android:progressDrawable="@drawable/progress_drawable"
+              android:visibility="gone" />
 
         </LinearLayout>
 

@@ -1,73 +1,67 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:fab="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".peoplearound.PeopleAroundMeFragment">
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/recyclerview"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:visibility="gone"/>
-    <com.github.clans.fab.FloatingActionButton
-        android:id="@+id/myLocation"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|right"
-        android:layout_marginBottom="8dp"
-        android:layout_marginRight="8dp"
-        android:src="@drawable/ic_my_loc"
-        fab:fab_colorPressed="@color/app_theme_blue"
-        fab:fab_colorRipple="@color/ColorPrimary"
-        fab:fab_colorNormal="@color/ColorPrimary"/>
-    <include
-        android:id="@+id/error"
-        layout="@layout/error_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:visibility="gone"/>
 
-    <ProgressBar
-        android:id="@+id/progress"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:visibility="gone"/>
-
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:id="@+id/data_exist"
-        android:visibility="visible">
+        android:layout_gravity="center"
+        android:background="@android:color/white">
 
-        <LinearLayout
-            android:id="@+id/tv_empty_view"
+        <ListView
+            android:id="@+id/people_around_list"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:paddingLeft="@dimen/horizontal_padding_small"
-            android:paddingRight="@dimen/horizontal_padding_small"
+            android:layout_height="match_parent"
+            android:background="@android:color/transparent"
+            android:divider="@drawable/list_divider"
+            android:dividerHeight="1dp" />
+
+        <include
+            android:id="@+id/error"
+            layout="@layout/error_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone" />
+
+        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/data_exist"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:orientation="vertical"
-            android:gravity="center">
-            <com.sports.unity.common.view.CustomRobotoLightTextView
+            android:visibility="gone">
+
+            <LinearLayout
+                android:id="@+id/tv_empty_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
                 android:gravity="center"
-                android:textSize="@dimen/font_size_xlarge"
-                android:textColor="#1a1a1a"
-                android:text="@string/pam_search_title"
-                />
-            <com.sports.unity.common.view.CustomRobotoLightTextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="@string/pam_search_descraotion"
-                android:textSize="@dimen/font_size_small_large"
-                android:textColor="@color/tour_details_color"
-                />
-        </LinearLayout>
+                android:orientation="vertical"
+                android:paddingLeft="@dimen/horizontal_padding_small"
+                android:paddingRight="@dimen/horizontal_padding_small">
 
-    </RelativeLayout>
+                <com.sports.unity.common.view.CustomRobotoLightTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="@string/pam_search_title"
+                    android:textColor="#1a1a1a"
+                    android:textSize="@dimen/font_size_xlarge" />
 
-</FrameLayout>
+                <com.sports.unity.common.view.CustomRobotoLightTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="@string/pam_search_descraotion"
+                    android:textColor="@color/tour_details_color"
+                    android:textSize="@dimen/font_size_small_large" />
+            </LinearLayout>
+
+        </RelativeLayout>
+    </FrameLayout>
+
+</LinearLayout>

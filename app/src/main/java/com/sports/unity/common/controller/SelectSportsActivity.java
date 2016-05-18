@@ -160,6 +160,7 @@ public class SelectSportsActivity extends CustomAppCompatActivity {
 
 
         Button next = (Button) findViewById(R.id.toLeagueSelect);
+        next.setTypeface(FontTypeface.getInstance(this).getRobotoCondensedBold());
         next.setOnClickListener(new View.OnClickListener() {
 
             @Override

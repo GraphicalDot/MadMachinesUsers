@@ -10,6 +10,7 @@ import android.util.Log;
 import com.sports.unity.BuildConfig;
 import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.XMPPManager.PubSubUtil;
+import com.sports.unity.XMPPManager.RosterHandler;
 import com.sports.unity.XMPPManager.XMPPClient;
 import com.sports.unity.messages.controller.model.Contacts;
 import com.sports.unity.messages.controller.model.PubSubMessaging;
@@ -51,6 +52,9 @@ public class ContactsHandler {
 
     private static ContactsHandler CONTACT_HANDLER = null;
 
+    private static long ONE_DAY_DURATION = 24 * 60 * 60 * 1000;
+    private static String TIME_KEY = "LastContactSyncTime";
+
     synchronized public static ContactsHandler getInstance() {
         if (CONTACT_HANDLER == null) {
             CONTACT_HANDLER = new ContactsHandler();
@@ -60,6 +64,7 @@ public class ContactsHandler {
 
     private Roster roster = null;
     private boolean inProcess = false;
+    private boolean forcedSync = false;
     private ContactCopyCompletedListener copyCompletedListener;
 
     private ContactsHandler() {
@@ -72,6 +77,7 @@ public class ContactsHandler {
 
     synchronized public void addCallToSyncContacts(Context context) {
         if (!inProcess) {
+            forcedSync = true;
             addContactActionsToProcess(context, true);
             process(context);
         } else {
@@ -138,6 +144,7 @@ public class ContactsHandler {
 
     synchronized public void addCallToProcessPendingActions(Context context) {
         Log.d("ContactsHandler", "process pending actions");
+        checkCallForContactSyncPerDay(context);
 
         if (!inProcess) {
             process(context);
@@ -145,6 +152,28 @@ public class ContactsHandler {
             //nothing
         }
 
+    }
+
+    private void checkCallForContactSyncPerDay(Context context){
+        long lastTimeSynced = getLastTimeSync(context);
+        if( System.currentTimeMillis() - lastTimeSynced > ONE_DAY_DURATION ){
+            setLastTimeSync(context, System.currentTimeMillis());
+
+            addPendingActionAndUpdatePendingActions(context, CONTACT_PENDING_ACTION_FETCH_JID);
+        } else {
+            //nothing
+        }
+    }
+
+    private long getLastTimeSync(Context context){
+        TinyDB tinyDB = TinyDB.getInstance(context);
+        long time = tinyDB.getLong( TIME_KEY, System.currentTimeMillis() - 2*ONE_DAY_DURATION );
+        return time;
+    }
+
+    private void setLastTimeSync(Context context, long time){
+        TinyDB tinyDB = TinyDB.getInstance(context);
+        tinyDB.putLong( TIME_KEY, time);
     }
 
     private void addContactActionsToProcess(Context context, boolean allContacts) {
@@ -328,7 +357,7 @@ public class ContactsHandler {
         boolean success = false;
 
         {
-            ArrayList<Contacts> contacts = SportsUnityDBHelper.getInstance(context).getListOfJIDRequireUpdate();
+            ArrayList<Contacts> contacts = SportsUnityDBHelper.getInstance(context).getListOfJIDRequireUpdate(forcedSync);
             success = updateContactInfoFromServer(context, contacts);
         }
 
@@ -336,10 +365,11 @@ public class ContactsHandler {
          * Intentionally repeating same statements in below block, to handle newly added contacts in above block.
          */
         if( success ){
-            ArrayList<Contacts> contacts = SportsUnityDBHelper.getInstance(context).getListOfJIDRequireUpdate();
+            ArrayList<Contacts> contacts = SportsUnityDBHelper.getInstance(context).getListOfJIDRequireUpdate(forcedSync);
             success = updateContactInfoFromServer(context, contacts);
         }
 
+        forcedSync = false;
         return success;
     }
 
@@ -399,20 +429,20 @@ public class ContactsHandler {
         return success;
     }
 
-    private boolean updateMyContactInfoFromVCards(Context context, ArrayList<String> jids){
-        boolean success = false;
-        try {
-            String jid = null;
-            for (int index = 0; index < jids.size(); index++) {
-                jid = jids.get(index);
-                UserProfileHandler.getInstance().loadVCardAndUpdateDB(context, jid, true);
-            }
-            success = true;
-        }catch (Exception ex){
-            ex.printStackTrace();
-        }
-        return success;
-    }
+//    private boolean updateMyContactInfoFromVCards(Context context, ArrayList<String> jids){
+//        boolean success = false;
+//        try {
+//            String jid = null;
+//            for (int index = 0; index < jids.size(); index++) {
+//                jid = jids.get(index);
+//                UserProfileHandler.getInstance().loadVCardAndUpdateDB(context, jid, true);
+//            }
+//            success = true;
+//        }catch (Exception ex){
+//            ex.printStackTrace();
+//        }
+//        return success;
+//    }
 
     private boolean updateContactInfoFromServer(Context context, ArrayList<Contacts> contacts){
         boolean success = true;
@@ -423,12 +453,12 @@ public class ContactsHandler {
 
                 boolean isGroupEntry = SportsUnityDBHelper.getInstance(context).isGroupEntry(contact.id);
                 if( isGroupEntry ){
-                    success = PubSubMessaging.getInstance().loadAffiliations(context, contact.id, contact.jid);
+                    success = PubSubMessaging.getInstance().loadGroupInfo(context, contact.id, contact.jid);
                     if( ! success ){
                         break;
                     }
                 } else {
-                    VCard vCard = UserProfileHandler.getInstance().loadVCardAndUpdateDB(context, contact.jid, contact.availableStatus == Contacts.AVAILABLE_BY_MY_CONTACTS);
+                    VCard vCard = UserProfileHandler.getInstance().loadVCardAndUpdateDBWithNoUpdateRequired(context, contact.jid, contact.availableStatus == Contacts.AVAILABLE_BY_MY_CONTACTS);
                     if (vCard == null) {
                         success = false;
                         break;
@@ -592,7 +622,7 @@ public class ContactsHandler {
 
                     boolean success = getAndUpdateContactJIDs(context);
                     if (success) {
-                        //nothing
+                        RosterHandler.getInstance(context).checkForPendingEntriesToBeAddedInRoster();
                     } else {
                         failedActions = addPendingAction(failedActions, CONTACT_PENDING_ACTION_FETCH_JID);
                     }

@@ -14,6 +14,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.R;
@@ -104,24 +105,28 @@ public class ChatFragment extends Fragment implements OnSearchViewQueryListener 
             ArrayList<Chats> chatList = ((ChatListAdapter) chatListView.getAdapter()).getChatArrayList();
             Chats chatObject = chatList.get(position);
 
-            AlertDialog.Builder build = new AlertDialog.Builder(
-                    getActivity());
-            build.setMessage(
-                    "Send to " + chatObject.name + " ?");
-            build.setPositiveButton("ok",
-                    new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            ShareContent(position);
-                        }
-                    });
-            build.setNegativeButton("Cancel",
-                    new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            // Do nothing
-                        }
-                    });
-            AlertDialog dialog = build.create();
-            dialog.show();
+            if( chatObject.block == false ) {
+                AlertDialog.Builder build = new AlertDialog.Builder(
+                        getActivity());
+                build.setMessage(
+                        "Send to " + chatObject.name + " ?");
+                build.setPositiveButton("ok",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                ShareContent(position);
+                            }
+                        });
+                build.setNegativeButton("Cancel",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                // Do nothing
+                            }
+                        });
+                AlertDialog dialog = build.create();
+                dialog.show();
+            } else {
+                Toast.makeText(getContext(), "Chat Blocked", Toast.LENGTH_SHORT).show();
+            }
         }
 
     };
@@ -259,6 +264,7 @@ public class ChatFragment extends Fragment implements OnSearchViewQueryListener 
         boolean success = PubSubMessaging.getInstance().exitGroup(currentUserJID + "@mm.io", chat.jid);
         if (success) {
             updateGroupStatusInDB(chat);
+            PubSubMessaging.getInstance().sendIntimationAboutMemberRemoved(getContext(), currentUserJID, chat.jid);
         }
     }
 
