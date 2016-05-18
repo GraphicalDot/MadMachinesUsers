@@ -247,7 +247,7 @@ public class ContactsFragment extends Fragment implements OnSearchViewQueryListe
 
 //            editText.getBackground().setColorFilter(getResources().getColor(R.color.app_theme_blue), PorterDuff.Mode.SRC_IN);
 
-            contactList = SportsUnityDBHelper.getInstance(getActivity()).getContactList(true);
+            contactList = SportsUnityDBHelper.getInstance(getActivity()).getContactList(true, false);
 //            searchView.getBackground().setColorFilter(getResources().getColor(R.color.app_theme_blue), PorterDuff.Mode.SRC_IN);
             searchView.onActionViewExpanded();
 
@@ -329,7 +329,7 @@ public class ContactsFragment extends Fragment implements OnSearchViewQueryListe
             resource = R.layout.list_item_members;
             itemListener = forwardToContactMemberListener;
 
-            contactList = SportsUnityDBHelper.getInstance(getActivity()).getContactList(true);
+            contactList = SportsUnityDBHelper.getInstance(getActivity()).getContactList(true, false);
 
             multipleSelection = false;
             searchView.setVisibility(View.VISIBLE);

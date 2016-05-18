@@ -592,6 +592,10 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
     }
 
     public ArrayList<Contacts> getContactList(boolean registeredOnly) {
+        return getContactList(registeredOnly, true);
+    }
+
+    public ArrayList<Contacts> getContactList(boolean registeredOnly, boolean blockedIncluded) {
         ArrayList<Contacts> list = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
 
@@ -614,6 +618,12 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
 
         String selection = ContactChatEntry.COLUMN_JID + registerCondition + " AND " + ContactChatEntry.COLUMN_AVAILABLE_STATUS + " = " + Contacts.AVAILABLE_BY_MY_CONTACTS
                 + " AND " + ContactChatEntry.COLUMN_GROUP_CHAT + " == 0 ";
+        if( blockedIncluded ){
+
+        } else {
+            selection += " AND " + ContactChatEntry.COLUMN_BLOCK_USER + " == 0 ";
+        }
+
         String[] selectionArgs = null;
         String sortOrder = ContactChatEntry.COLUMN_NAME + " COLLATE NOCASE ASC ";
 
@@ -1468,25 +1478,6 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
         String[] selectionArgs = {String.valueOf(contactId)};
 
         return db.update(ContactChatEntry.TABLE_NAME, values, selection, selectionArgs);
-    }
-
-    public void updateChatBlockStatus(int chatId, boolean blockStatus) {
-        //TODO
-
-//        SQLiteDatabase db = getWritableDatabase();
-//
-//        ContentValues values = new ContentValues();
-//        values.put(ChatEntry.COLUMN_BLOCK_USER, blockStatus);
-//
-//        String selection = ChatEntry.COLUMN_CHAT_ID + " = ?";
-//        String[] selectionArgs = {String.valueOf(chatId)};
-//
-//        int count = db.update(
-//                ContactsEntry.TABLE_NAME,
-//                values,
-//                selection,
-//                selectionArgs);
-
     }
 
     public boolean isChatBlocked(int chatId) {

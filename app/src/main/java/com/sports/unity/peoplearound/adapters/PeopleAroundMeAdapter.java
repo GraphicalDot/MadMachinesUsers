@@ -85,6 +85,10 @@ public class PeopleAroundMeAdapter extends ArrayAdapter<User> {
                 contact = SportsUnityDBHelper.getInstance(getContext()).getContactByJid(user.getJid());
                 moveToChatActivity(contact);
             } else {
+                if( contact.availableStatus != Contacts.AVAILABLE_BY_MY_CONTACTS ){
+                    SportsUnityDBHelper.getInstance(context).updateContactName(contact.id, user.getName());
+                    contact = SportsUnityDBHelper.getInstance(getContext()).getContactByJid(user.getJid());
+                }
                 moveToChatActivity(contact);
             }
         }

@@ -590,6 +590,10 @@ public class PubSubMessaging {
             sportsUnityDBHelper.updateChatEntry(SportsUnityDBHelper.getDummyMessageRowId(), nodeId);
 
             ActivityActionHandler.getInstance().dispatchCommonEvent(ActivityActionHandler.CHAT_LIST_KEY);
+        } else {
+            sportsUnityDBHelper.updateUserBlockStatus(chatId, false);
+
+            ActivityActionHandler.getInstance().dispatchCommonEvent(ActivityActionHandler.CHAT_LIST_KEY);
         }
     }
 
@@ -600,7 +604,7 @@ public class PubSubMessaging {
             String currentUserJID = TinyDB.getInstance(context).getString(TinyDB.KEY_USER_JID);
             int contactId = sportsUnityDBHelper.getContactIdFromJID(currentUserJID);
 
-            sportsUnityDBHelper.updateChatBlockStatus(chatId, true);
+            sportsUnityDBHelper.updateUserBlockStatus(chatId, true);
             sportsUnityDBHelper.deleteGroupMember(chatId, contactId);
 
             ActivityActionHandler.getInstance().dispatchCommonEvent(ActivityActionHandler.CHAT_LIST_KEY);
