@@ -96,7 +96,7 @@
     <string name="otp_message_sending">Sending...</string>
     <string name="otp_message_otp_sent">Otp sent.</string>
     <string name="otp_message_resending_failed">Failed in sending otp, please try again.</string>
-    <string name="otp_message_wrong_expired_token">Wrong or Expired token</string>
+    <string name="otp_message_wrong_expired_token">Wrong or Expired otp</string>
     <string name="otp_message_invalid_number">Invalid number or Try again.</string>
     <string name="oops_try_again">oops, please try again.</string>
 
@@ -115,16 +115,12 @@
     <string name="title_activity_camera">CameraActivity</string>
 
     <string name="send_to">Send to</string>
-
-    <string name="hello_world">Hello world!</string>
     <string name="title_activity_on_return">OnReturnActivity</string>
     <string name="singlechat_popup_block_contact">Block Contact</string>
     <string name="singlechat_popup_delete_chat">Delete Chat</string>
     <string name="singlechat_popup_view_contact">View Contact</string>
 
     <string name="group_message_provide_group_name">Please enter group name</string>
-    <string name="group_message_try_again">Oops!!, muc please try again</string>
-    <string name="pubsub_message_try_again">Oops!!,pubsub please try again</string>
     <string name="group_create_group_title">Name your group</string>
     <string name="group_hint_group_name">What is this group about?</string>
     <string name="group_title_create">Create Group</string>
@@ -166,7 +162,7 @@ message to verify your mobile number.</string>
     <!--Marshmallow runtime permission handling related-->
     <string name="camera_and_external_storage_permission_message">We need to access your camera and external storage to complete this action.</string>
     <string name="read_contact_permission_message">We need to access your contacts to allow you to chat with your friends.</string>
-    <string name="read_sms_permission_message">We need access to your messages to auto fetch OTP.</string>
+    <string name="read_sms_permission_message">We need to access your messages to auto fetch OTP.</string>
     <string name="camera_permission_message">We need to access your camera to click images</string>
     <string name="gallery_permission_message">We need to access your photo gallery to complete this action.</string>
     <string name="external_storage_permission_message">We need to access your external storage to complete this action.</string>
@@ -205,7 +201,7 @@ message to verify your mobile number.</string>
     <string name="notification_sound">Notification Sound</string>
     <string name="show_my_location">Show My Location</string>
     <string name="friends_only">Friends Only</string>
-    <string name="show_location_to_friends">Show your location to your friends only</string>
+    <string name="show_location_to_friends">Show your location to your friends</string>
     <string name="show_to_all">Show to all</string>
     <string name="show_location_to_spu_users">show your location to all Sports Unity users</string>
     <string name="photos_and_media">Photos &amp; Media</string>
@@ -293,8 +289,8 @@ message to verify your mobile number.</string>
     <string name="match">Match</string>
     <string name="date">Date</string>
     <string name="toss">Toss</string>
-    <string name="batting_performance_analisis">BATTING PERFORMANCE ANALIYSIS</string>
-    <string name="blowing_performance_analisis">BOWLING PERFORMANCE ANALISIS</string>
+    <string name="batting_performance_analisis">BATTING PERFORMANCE ANALYSIS</string>
+    <string name="blowing_performance_analisis">BOWLING PERFORMANCE ANALYSIS</string>
     <string name="p">P</string>
     <string name="w">W</string>
     <string name="d">D</string>
@@ -364,7 +360,7 @@ message to verify your mobile number.</string>
     <string name="on_going">On Going</string>
     <string name="half_time">Half Time</string>
     <string name="yesterday">Yesterday</string>
-    <string name="post_pond">Match Post Pond</string>
+    <string name="post_pond">Match Postponed</string>
 
     <string name="no_block_user_message">There is no one in your block list.</string>
 
