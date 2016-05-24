@@ -39,15 +39,6 @@
             android:scaleType="center"
             android:src="@drawable/ic_close_blk" />
     </LinearLayout>
-    <TextView
-        android:paddingBottom="@dimen/vertical_padding_very_very_small"
-        android:id="@+id/value"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="center|center_horizontal"
-        android:text="PRE GAME ODDS"
-        android:textColor="@color/gray1"
-        android:textSize="@dimen/font_size_small_medium" />
 
     <View
         android:layout_width="wrap_content"
