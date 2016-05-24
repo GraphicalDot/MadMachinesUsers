@@ -36,6 +36,7 @@ import com.sports.unity.common.model.UserUtil;
 import com.sports.unity.gcm.TokenRegistrationHandler;
 import com.sports.unity.scores.ScoreDetailActivity;
 import com.sports.unity.scores.model.ScoresJsonParser;
+import com.sports.unity.scores.model.ScoresUtil;
 import com.sports.unity.scores.model.football.CricketMatchJsonCaller;
 import com.sports.unity.scores.model.football.FootballMatchJsonCaller;
 import com.sports.unity.scores.model.football.MatchJsonCaller;
@@ -437,14 +438,11 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
                                 ((ViewGroup) holder.odds.getParent()).setClickable(false);
                             }
 
-                            if (footballMatchJsonCaller.getMatchStatus().equals("FT")) {
-                                Log.i("FOOTBALMATCHSTATUS: ", footballMatchJsonCaller.getMatchStatus());
+                            if ( ScoresUtil.isFootballMatchCompleted(footballMatchJsonCaller.getMatchStatus(), footballMatchJsonCaller.getMatchTime(), footballMatchJsonCaller.isLive()) ) {
                                 holder.notification.setVisibility(View.GONE);
                                 holder.odds.setVisibility(View.GONE);
                             } else {
-
                                 setNotificationBell(holder);
-
                             }
 
                         }
