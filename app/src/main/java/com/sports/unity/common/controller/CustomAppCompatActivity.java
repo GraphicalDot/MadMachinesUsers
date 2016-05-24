@@ -1,7 +1,9 @@
 package com.sports.unity.common.controller;
 
+import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
+import com.sports.unity.common.model.UserUtil;
 import com.sports.unity.messages.controller.model.PersonalMessaging;
 import com.sports.unity.util.GlobalEventHandler;
 import com.sports.unity.util.GlobalEventListener;
@@ -18,6 +20,14 @@ public class CustomAppCompatActivity extends AppCompatActivity implements Global
 
 //    private PingManager pingManager;
 //    private boolean isPingRequired;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        UserUtil.init(this);
+    }
+
 
     @Override
     protected void onStart() {
