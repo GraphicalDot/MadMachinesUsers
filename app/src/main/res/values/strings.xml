@@ -394,4 +394,11 @@ message to verify your mobile number.</string>
     <string name="conn_not_authenticated">"Connection not authenticated "</string>
     <string name="request_pending">Request pending for acceptance</string>
     <string name="request_sent">Request sent for acceptance</string>
+    <string name="title_activity_promo">PromoActivity</string>
+    <string name="promo_code">ADD PROMO CODE</string>
+    <string name="invite_friends">INVITE YOUR FRIENDS!</string>
+    <string name="share_code">SHARE YOUR INVITE CODE</string>
+    <string name="promo_no">YOURPROMOCODENO</string>
+    <string name="promo_text1">Proin gravida nibh vel velit auctor aliq-.</string>
+    <string name="promo_text2">uet. Aenean sollicitudin.</string>
 </resources>    

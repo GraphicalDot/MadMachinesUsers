@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+< RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_gravity="center"
+    android:background="@color/gray3"
+    tools:context="com.sports.unity.common.controller.PromoActivity">
+
+    <include
+        android:id="@+id/tool_bar"
+        layout="@layout/tool_bar_news_details"
+        android:layout_width="match_parent"
+        android:layout_height="?android:attr/actionBarSize"
+        android:minHeight="?android:attr/actionBarSize" />
+
+    <LinearLayout
+        android:id="@+id/promo_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tool_bar"
+        android:layout_margin="@dimen/activity_vertical_margin"
+        android:background="@drawable/round_edge_black_box"
+        android:padding="@dimen/horizontal_padding_small"
+        android:orientation="vertical">
+
+        <EditText
+            android:id="@+id/promo_text"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="Enter promo code"
+            android:textColor="@color/black_overlay"
+            android:textColorHint="@color/gray4"
+            android:textSize="@dimen/font_size_small_xlarge" />
+
+        <Button
+            android:id="@+id/promo_code"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/activity_vertical_margin_small"
+            android:text="@string/promo_code"
+            android:padding="@dimen/activity_horizontal_margin"
+            android:background="@drawable/round_edge_box_blue"
+            android:textColor="@color/ColorPrimary"
+            android:textSize="@dimen/font_size_small_large"
+           />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="@dimen/activity_vertical_margin_small"
+            android:padding="@dimen/activity_horizontal_margin"
+          android:visibility="gone" >
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_valid"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:textColor="@color/green"
+                android:textSize="@dimen/font_size_medium"
+                android:paddingLeft="@dimen/horizontal_padding_small"/>
+        </LinearLayout>
+    </LinearLayout>
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/promo_image"
+       android:layout_below="@+id/promo_layout"
+        android:layout_width="@dimen/profile_image_circle_radius"
+        android:layout_height="@dimen/profile_image_circle_radius"
+        android:layout_marginTop="@dimen/horizontal_padding_small"
+        android:layout_gravity="center"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/promo" />
+
+    <View
+        android:id="@+id/promo_view"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_marginRight="@dimen/activity_horizontal_margin"
+        android:layout_marginTop="@dimen/vertical_padding_very_very_small"
+        android:layout_marginBottom="@dimen/vertical_padding_very_very_small"
+        android:layout_below="@+id/promo_image"
+        android:background="@color/gray4"/>
+
+
+<LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_below="@+id/promo_view"
+      android:gravity="center"
+      android:orientation="vertical"
+     >
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/share_code"
+        android:textColor="@color/gray1"
+        android:textSize="@dimen/font_size_small_medium"
+        />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/promo_no"
+            android:layout_below="@+id/share_text"
+            android:layout_marginTop="@dimen/activity_vertical_margin_small"
+            android:textSize="@dimen/font_size_large"
+            android:textColor="@color/app_theme_blue"/>
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/background_dark"
+            android:text="@string/promo_text1"
+            android:layout_marginTop="@dimen/activity_vertical_margin_small"
+            android:textSize="@dimen/font_size_small_large"/>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/promo_text2"/>
+
+      <TextView
+          android:id="@+id/detail"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:text="Detail"
+          android:textColor="@color/app_theme_blue"
+          />
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/invite_frnds"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/horizontal_padding_very_small"
+            android:text="@string/invite_friends"
+            android:layout_marginLeft="@dimen/activity_vertical_margin_large"
+            android:layout_marginRight="@dimen/activity_vertical_margin_large"
+            android:background="@drawable/round_edge_box_blue"
+            android:textColor="@color/ColorPrimary"
+            android:textSize="@dimen/font_size_small_large" />
+
+  </LinearLayout>
+
+</RelativeLayout>
