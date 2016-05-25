@@ -73,15 +73,15 @@ public class MatchListWrapperItem implements Comparable<MatchListWrapperItem> {
     @Override
     public int compareTo(MatchListWrapperItem another) {
         int compare = 0;
-        if( day.equalsIgnoreCase(another.getDay()) && day.equalsIgnoreCase("today") ){
-            if( "f".equalsIgnoreCase(status) || "ft".equalsIgnoreCase(status) ){
-                if( "f".equalsIgnoreCase(another.getStatus()) || "ft".equalsIgnoreCase(another.getStatus()) ){
+        if (day.equalsIgnoreCase(another.getDay()) && day.equalsIgnoreCase("today")) {
+            if ("f".equalsIgnoreCase(status) || "ft".equalsIgnoreCase(status)) {
+                if ("f".equalsIgnoreCase(another.getStatus()) || "ft".equalsIgnoreCase(another.getStatus())) {
                     compare = this.epochTime.compareTo(another.getEpochTime());
                 } else {
                     compare = 1;
                 }
             } else {
-                if( "f".equalsIgnoreCase(another.getStatus()) || "ft".equalsIgnoreCase(another.getStatus()) ) {
+                if ("f".equalsIgnoreCase(another.getStatus()) || "ft".equalsIgnoreCase(another.getStatus())) {
                     compare = -1;
                 } else {
                     compare = this.epochTime.compareTo(another.getEpochTime());

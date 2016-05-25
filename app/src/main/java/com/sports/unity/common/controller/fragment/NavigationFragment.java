@@ -25,6 +25,7 @@ import com.sports.unity.common.controller.About;
 import com.sports.unity.common.controller.FriendRequestsActivity;
 import com.sports.unity.common.controller.MainActivity;
 import com.sports.unity.common.controller.NavListAdapter;
+import com.sports.unity.common.controller.PromoActivity;
 import com.sports.unity.common.controller.SelectSportsActivity;
 import com.sports.unity.common.controller.SettingsActivity;
 import com.sports.unity.common.controller.TeamLeagueDetails;
@@ -140,6 +141,10 @@ public class NavigationFragment extends Fragment implements ExpandableListView.O
                 Intent intent = new Intent(getActivity(), FriendRequestsActivity.class);
                 startActivity(intent);
                 ((MainActivity) getActivity()).closeDrawer();
+            } else if (v.getId() == R.id.promotions) {
+                Intent intent = new Intent(getActivity(), PromoActivity.class);
+                startActivity(intent);
+                ((MainActivity) getActivity()).closeDrawer();
             }
         }
     };
@@ -176,21 +181,25 @@ public class NavigationFragment extends Fragment implements ExpandableListView.O
     }
 
     private void initTextViews(View view) {
+        TextView promotions = (TextView) view.findViewById(R.id.promotions);
         TextView settings = (TextView) view.findViewById(R.id.settings);
         TextView shareFeedback = (TextView) view.findViewById(R.id.feedback);
         TextView rateUs = (TextView) view.findViewById(R.id.rate);
         TextView about = (TextView) view.findViewById(R.id.about);
 
+        promotions.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_WHITE, false));
         settings.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_WHITE, false));
         shareFeedback.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_WHITE, false));
         rateUs.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_WHITE, false));
         about.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_WHITE, false));
 
+        promotions.setTypeface(FontTypeface.getInstance(getActivity().getApplicationContext()).getRobotoRegular());
         settings.setTypeface(FontTypeface.getInstance(getActivity().getApplicationContext()).getRobotoRegular());
         shareFeedback.setTypeface(FontTypeface.getInstance(getActivity().getApplicationContext()).getRobotoRegular());
         rateUs.setTypeface(FontTypeface.getInstance(getActivity().getApplicationContext()).getRobotoRegular());
         about.setTypeface(FontTypeface.getInstance(getActivity().getApplicationContext()).getRobotoRegular());
 
+        promotions.setOnClickListener(viewClickListener);
         settings.setOnClickListener(viewClickListener);
         shareFeedback.setOnClickListener(viewClickListener);
         rateUs.setOnClickListener(viewClickListener);

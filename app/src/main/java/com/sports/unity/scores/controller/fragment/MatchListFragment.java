@@ -1,6 +1,5 @@
 package com.sports.unity.scores.controller.fragment;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -17,9 +16,10 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
+import android.widget.CompoundButton;
 import android.widget.ProgressBar;
-import android.widget.TextView;
+import android.widget.RelativeLayout;
+import android.widget.Switch;
 import android.widget.Toast;
 
 import com.sports.unity.R;
@@ -27,10 +27,10 @@ import com.sports.unity.common.controller.FilterActivity;
 import com.sports.unity.common.controller.MainActivity;
 import com.sports.unity.common.model.FavouriteItem;
 import com.sports.unity.common.model.FavouriteItemWrapper;
-import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.common.model.TinyDB;
 import com.sports.unity.common.model.UserUtil;
 import com.sports.unity.common.viewhelper.CustomComponentListener;
+import com.sports.unity.scoredetails.MatchListScrollListener;
 import com.sports.unity.scores.model.ScoresContentHandler;
 import com.sports.unity.scores.model.ScoresJsonParser;
 import com.sports.unity.util.Constants;
@@ -70,8 +70,20 @@ public class MatchListFragment extends Fragment implements MatchListWrapperNotif
     private FavouriteItem favouriteItem;
     private boolean isStaffPicked;
 
+    private boolean matchListSwitch = false;
+
     private ArrayList<FavouriteItem> flagFavItem;
     private ArrayList<MatchListWrapperItem> dataItem = new ArrayList<MatchListWrapperItem>();
+
+    MatchListScrollListener matchListScrollListener = new MatchListScrollListener() {
+        @Override
+        public void scroll(int position) {
+            if (!mSwipeRefreshLayout.isRefreshing()) {
+                LinearLayoutManager manager = (LinearLayoutManager) mWraperRecyclerView.getLayoutManager();
+                manager.scrollToPosition(position);
+            }
+        }
+    };
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -103,6 +115,36 @@ public class MatchListFragment extends Fragment implements MatchListWrapperNotif
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.fragment_scores_menu, menu);
         menu.findItem(R.id.action_search).setVisible(false);
+
+        MenuItem item = menu.findItem(R.id.myswitch);
+        item.setActionView(R.layout.switch_matchlist);
+
+        RelativeLayout relativeLayout = (RelativeLayout) item.getActionView();
+        final Switch sw = (Switch) relativeLayout.findViewById(R.id.switchForActionBar);
+        sw.setChecked(matchListSwitch);
+        if (matchListSwitch) {
+            sw.setThumbDrawable(getResources().getDrawable(R.drawable.ic_fav_matches));
+        } else {
+            sw.setThumbDrawable(getResources().getDrawable(R.drawable.ic_all_matches));
+        }
+        sw.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    matchListSwitch = isChecked;
+                    sw.setThumbDrawable(getResources().getDrawable(R.drawable.ic_fav_matches));
+                    updateMatchList(isChecked);
+                } else {
+                    matchListSwitch = isChecked;
+                    sw.setThumbDrawable(getResources().getDrawable(R.drawable.ic_all_matches));
+                    updateMatchList(isChecked);
+                }
+            }
+        });
+    }
+
+    private void updateMatchList(boolean isChecked) {
+        matchListWrapperAdapter.updateMatches(isChecked);
     }
 
     @Override
@@ -146,7 +188,7 @@ public class MatchListFragment extends Fragment implements MatchListWrapperNotif
             requestContent();
         }
         handleIfSportsChanged();
-        if(FavouriteItemWrapper.getInstance(getActivity()).isFavouriteChanged()){
+        if (FavouriteItemWrapper.getInstance(getActivity()).isFavouriteChanged()) {
             ((MatchListWrapperAdapter) mWraperRecyclerView.getAdapter()).notifyFavIconChanged();
             FavouriteItemWrapper.getInstance(getActivity()).setFavouriteChanged(false);
         }
@@ -201,7 +243,7 @@ public class MatchListFragment extends Fragment implements MatchListWrapperNotif
         if (getActivity() instanceof MainActivity) {
             shouldShowBanner = handleStaffFavContent();
         }
-        matchListWrapperAdapter = new MatchListWrapperAdapter(dataItem, getActivity(), this, shouldShowBanner);
+        matchListWrapperAdapter = new MatchListWrapperAdapter(dataItem, getActivity(), this, shouldShowBanner, matchListSwitch, matchListScrollListener);
         mWraperRecyclerView.setAdapter(matchListWrapperAdapter);
 
         hideErrorLayout(view);
@@ -246,12 +288,9 @@ public class MatchListFragment extends Fragment implements MatchListWrapperNotif
         }
     }
 
+
     private void renderContent() {
-        int pos = matchListWrapperAdapter.notifyAdapter();
-        if (!mSwipeRefreshLayout.isRefreshing()) {
-            LinearLayoutManager manager = (LinearLayoutManager) mWraperRecyclerView.getLayoutManager();
-            manager.scrollToPosition(pos);
-        }
+        matchListWrapperAdapter.notifyAdapter();
     }
 
     private boolean handleContentForIndividuals(String content) {

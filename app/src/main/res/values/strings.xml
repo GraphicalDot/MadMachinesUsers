@@ -181,6 +181,7 @@ message to verify your mobile number.</string>
     <string name="edit_fav_sports">Edit Favourite</string>
     <string name="about">About</string>
     <string name="settings">Settings</string>
+    <string name="promotions">Promotions</string>
 
     <string name="available">Available</string>
     <string name="busy">Busy</string>
