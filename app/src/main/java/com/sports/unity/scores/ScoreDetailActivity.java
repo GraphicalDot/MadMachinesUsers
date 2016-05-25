@@ -1,9 +1,16 @@
 package com.sports.unity.scores;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.NotificationCompat;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
@@ -19,6 +26,8 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.sports.unity.R;
+import com.sports.unity.XMPPManager.XMPPService;
+import com.sports.unity.common.controller.MainActivity;
 import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.common.view.CustomVolleyCallerActivity;
 import com.sports.unity.common.view.SlidingTabLayout;
@@ -26,6 +35,8 @@ import com.sports.unity.common.viewhelper.BasicVolleyRequestResponseViewHelper;
 import com.sports.unity.common.viewhelper.CustomComponentListener;
 import com.sports.unity.common.viewhelper.GenericFragmentViewPagerAdapter;
 import com.sports.unity.common.viewhelper.VolleyCallComponentHelper;
+import com.sports.unity.gcm.GCMConstants;
+import com.sports.unity.gcm.UnRegisterMatch;
 import com.sports.unity.scoredetails.cricketdetail.CricketScoreCardHelper;
 import com.sports.unity.scoredetails.cricketdetail.CricketSummaryHelper;
 import com.sports.unity.scoredetails.cricketdetail.CricketLiveSummaryHelper;
@@ -47,8 +58,11 @@ import com.sports.unity.util.Constants;
 import com.sports.unity.util.commons.DateUtil;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -57,6 +71,9 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import static com.sports.unity.util.Constants.INTENT_KEY_DATE;
+import static com.sports.unity.util.Constants.INTENT_KEY_MATCH_NAME;
+import static com.sports.unity.util.Constants.INTENT_KEY_TOSS;
 import static com.sports.unity.util.Constants.INTENT_KEY_TYPE;
 
 public class ScoreDetailActivity extends CustomVolleyCallerActivity {
@@ -89,6 +106,7 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity {
     private TextView teamSecondOvers;
     private TextView tvMatchTime;
     private TextView getTvMatchDay;
+    Intent callerIntent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,7 +115,9 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity {
         setContentView(R.layout.activity_score_detail);
 
         getExtras();
-        initView();
+        if (!checkIfDeepLinked(getIntent()) || !getIntent().getExtras().getBoolean(Constants.INTENT_KEY_PUSH, false)) {
+            initView();
+        }
         setToolbar();
         setTitle();
 
@@ -107,6 +127,15 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity {
             onComponentCreate();
             requestMatchScoreDetails();
         }
+    }
+
+    private boolean checkIfDeepLinked(Intent intent) {
+        boolean isDeepLinked = false;
+        try {
+            isDeepLinked = intent.getAction().equalsIgnoreCase(Intent.ACTION_VIEW);
+        } catch (Exception e) {
+        }
+        return isDeepLinked;
     }
 
     @Override
@@ -135,16 +164,71 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity {
 
     private void getExtras() {
         Intent i = getIntent();
-        sportsType = i.getStringExtra(INTENT_KEY_TYPE);
-        matchId = i.getStringExtra(Constants.INTENT_KEY_ID);
-        matchStatus = i.getStringExtra(Constants.INTENT_KEY_MATCH_STATUS);
-        matchTime = i.getStringExtra(Constants.INTENT_KEY_MATCH_TIME);
-        isLive = i.getBooleanExtra(Constants.INTENT_KEY_MATCH_LIVE, false);
-        LeagueName = i.getStringExtra(Constants.LEAGUE_NAME);
-        if (Constants.SPORTS_TYPE_FOOTBALL.equals(sportsType)) {
-            seriesId = i.getStringExtra(Constants.INTENT_KEY_LEAGUE_ID);
+        if (!checkIfDeepLinked(i)) {
+            callerIntent = getIntent();
+            sportsType = i.getStringExtra(INTENT_KEY_TYPE);
+            matchId = i.getStringExtra(Constants.INTENT_KEY_ID);
+            matchStatus = i.getStringExtra(Constants.INTENT_KEY_MATCH_STATUS);
+            matchTime = i.getStringExtra(Constants.INTENT_KEY_MATCH_TIME);
+            isLive = i.getBooleanExtra(Constants.INTENT_KEY_MATCH_LIVE, false);
+            LeagueName = i.getStringExtra(Constants.LEAGUE_NAME);
+            if (Constants.SPORTS_TYPE_FOOTBALL.equals(sportsType)) {
+                seriesId = i.getStringExtra(Constants.INTENT_KEY_LEAGUE_ID);
+            } else {
+                seriesId = i.getStringExtra(Constants.INTENT_KEY_SERIES);
+            }
         } else {
-            seriesId = i.getStringExtra(Constants.INTENT_KEY_SERIES);
+            String uri = i.getDataString();
+            decodeDataFromURL(uri);
+        }
+    }
+
+    private void decodeDataFromURL(String uri) {
+        String jsonString = uri.substring(uri.lastIndexOf("/") + 1);
+        String data = null;
+        try {
+            data = URLDecoder.decode(jsonString, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        try {
+
+            if (data != null) {
+                JSONObject notification = new JSONObject(data);
+                if (!notification.isNull(GCMConstants.SPORTS_ID)) {
+                    int sportsId = notification.getInt(GCMConstants.SPORTS_ID);
+                    if (sportsId == 1 || sportsId == 2) {
+                        sportsType = sportsId == 1 ? Constants.SPORTS_TYPE_CRICKET : Constants.SPORTS_TYPE_FOOTBALL;
+                    } else {
+                        sportsType = Constants.APP_NOTIFICATION;
+                    }
+                }
+                if (!notification.isNull(GCMConstants.MATCH_ID)) {
+                    matchId = notification.getString(GCMConstants.MATCH_ID);
+                }
+                if (!notification.isNull(GCMConstants.LEAGUE_SERIES_ID)) {
+                    seriesId = notification.getString(GCMConstants.LEAGUE_SERIES_ID);
+                }
+                if (!notification.isNull(GCMConstants.MATCH_STATUS)) {
+
+                    matchStatus = notification.getString(GCMConstants.MATCH_STATUS);
+                }
+                if (Constants.SPORTS_TYPE_FOOTBALL.equalsIgnoreCase(sportsType)) {
+                    isLive = matchStatus.equalsIgnoreCase("L") ? true : false;
+                }
+            }
+            callerIntent = new Intent(this, ScoreDetailActivity.class);
+            callerIntent.putExtra(INTENT_KEY_TYPE, sportsType);
+            callerIntent.putExtra(Constants.INTENT_KEY_ID, matchId);
+            callerIntent.putExtra(Constants.INTENT_KEY_MATCH_STATUS, matchStatus);
+            if (Constants.SPORTS_TYPE_CRICKET.equalsIgnoreCase(sportsType)) {
+                callerIntent.putExtra(Constants.INTENT_KEY_SERIES, seriesId);
+            } else if (Constants.SPORTS_TYPE_FOOTBALL.equalsIgnoreCase(sportsType)) {
+                callerIntent.putExtra(Constants.LEAGUE_NAME, seriesId);
+                callerIntent.putExtra(Constants.INTENT_KEY_MATCH_LIVE, matchStatus.equalsIgnoreCase("L") ? true : false);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
     }
 
@@ -205,7 +289,10 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity {
 
     private void initView() {
         try {
-            int tab_index = getIntent().getIntExtra("tab_index", 1);
+            int tab_index = 0;
+            if (!checkIfDeepLinked(getIntent())) {
+                tab_index = getIntent().getIntExtra("tab_index", 1);
+            }
 
             if (sportsType.equalsIgnoreCase(ScoresJsonParser.CRICKET)) {
                 fragmentVolleyHelperList = getListOfViewHelpersForCricket(sportsType, matchStatus);
@@ -214,7 +301,7 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity {
             }
 
             mViewPager = (ViewPager) findViewById(R.id.pager);
-            mViewPager.setAdapter( new GenericFragmentViewPagerAdapter(getSupportFragmentManager(), fragmentVolleyHelperList));
+            mViewPager.setAdapter(new GenericFragmentViewPagerAdapter(getSupportFragmentManager(), fragmentVolleyHelperList));
             mViewPager.setOffscreenPageLimit(3);
 
             SlidingTabLayout tabs = (SlidingTabLayout) findViewById(com.sports.unity.R.id.tabs);
@@ -292,7 +379,7 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity {
                 if (LeagueName != null) {
                     title_text.setText(LeagueName);
                 } else {
-                    title_text.setText(cricketMatchJsonCaller.getSeriesName());
+                    title_text.setText(footballMatchJsonCaller.getLeagueName());
                 }
             }
         } catch (Exception ex) {
@@ -313,7 +400,7 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity {
             helper.setRequestParameters(parameters);
             fragmentHelperList.add(helper);
         } else {
-            CricketSummaryHelper helper = new CricketSummaryHelper(getString(R.string.summary), getIntent());
+            CricketSummaryHelper helper = new CricketSummaryHelper(getString(R.string.summary), callerIntent);
             helper.setParameters(parameters);
             fragmentHelperList.add(helper);
         }
@@ -342,7 +429,7 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity {
         parameters.put(ScoresContentHandler.PARAM_ID, matchId);
 
         {
-            Intent intent = getIntent();
+            Intent intent = callerIntent;
             String teamId1 = intent.getStringExtra(Constants.INTENT_KEY_TEAM1_ID);
             String teamId2 = intent.getStringExtra(Constants.INTENT_KEY_TEAM2_ID);
 
@@ -387,7 +474,7 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity {
             helper.setRequestParameters(parameters);
             fragmentHelperList.add(helper);
         } else {
-            UpCommingFootballMatchFromFragment helper = new UpCommingFootballMatchFromFragment(getString(R.string.form), getIntent());
+            UpCommingFootballMatchFromFragment helper = new UpCommingFootballMatchFromFragment(getString(R.string.form), callerIntent);
             helper.setRequestParameters(parameters);
             fragmentHelperList.add(helper);
         }
@@ -401,7 +488,7 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity {
             helper.setRequestParameters(parameters);
             fragmentHelperList.add(helper);
         } else {
-            UpCommingFootballMatchSqadFragment helper = new UpCommingFootballMatchSqadFragment(getString(R.string.squad), getIntent(), null);
+            UpCommingFootballMatchSqadFragment helper = new UpCommingFootballMatchSqadFragment(getString(R.string.squad), callerIntent, null);
             helper.setRequestParameters(parameters);
             fragmentHelperList.add(helper);
         }
@@ -418,8 +505,7 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity {
             cricketMatchJsonCaller.setJsonObject(matchScoreDetails);
 
             try {
-
-
+                matchStatus = cricketMatchJsonCaller.getStatus();
                 ImageView flag1 = (ImageView) findViewById(R.id.team1_image);
                 ImageView flag2 = (ImageView) findViewById(R.id.team2_image);
 
@@ -492,13 +578,16 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity {
 
 
                 ((TextView) findViewById(R.id.venue)).setText(cricketMatchJsonCaller.getVenue());
-                ((TextView) findViewById(R.id.date)).setText(DateUtil.getDateFromEpochTime(Long.valueOf(cricketMatchJsonCaller.getMatchDateTimeEpoch()) * 1000));
+                String matchDate = DateUtil.getDateFromEpochTime(Long.valueOf(cricketMatchJsonCaller.getMatchDateTimeEpoch()) * 1000);
+                ((TextView) findViewById(R.id.date)).setText(matchDate);
                 String matchName = cricketMatchJsonCaller.getTeam1() + " vs " + cricketMatchJsonCaller.getTeam2();
                 if (!TextUtils.isEmpty(cricketMatchJsonCaller.getMatchNumber())) {
                     matchName = matchName + ", " + cricketMatchJsonCaller.getMatchNumber();
                 }
                 tvNeededRun.setText(matchName);
-
+                callerIntent.putExtra(INTENT_KEY_DATE, matchDate);
+                callerIntent.putExtra(INTENT_KEY_MATCH_NAME, matchName);
+                callerIntent.putExtra(Constants.INTENT_KEY_MATCH_STATUS, matchStatus);
                 if (cricketMatchJsonCaller.getStatus().equalsIgnoreCase("N")) {
 
                     tvCurrentScore.setText(cricketMatchJsonCaller.getMatchResult());
@@ -508,6 +597,7 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity {
                     TextView team2Score = (TextView) findViewById(R.id.team2_score);
                     text1Score.setText(cricketMatchJsonCaller.getTeam1());
                     team2Score.setText(cricketMatchJsonCaller.getTeam2());
+
                 } else {
 
                     TextView textView = (TextView) findViewById(R.id.team1_name);
@@ -590,13 +680,15 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity {
 
 
             try {
+                matchStatus = footballMatchJsonCaller.getMatchStatus();
+                isLive = footballMatchJsonCaller.isLive();
                 if (footballMatchJsonCaller.getMatchTime().equals(footballMatchJsonCaller.getMatchStatus()) && !footballMatchJsonCaller.isLive()) {
                     //  displayMatchTimer(12);
                     tvMatchTime.setText(DateUtil.getMatchTime(Long.valueOf(footballMatchJsonCaller.getMatchDateEpoch()) * 1000));
                     getTvMatchDay.setText(DateUtil.getMatchDays(Long.valueOf(footballMatchJsonCaller.getMatchDateEpoch()) * 1000, this));
                     llMatchDetailLinear.setVisibility(View.GONE);
                 }
-                if (!footballMatchJsonCaller.isLive() && footballMatchJsonCaller.getMatchStatus().equalsIgnoreCase("FT")) {
+                if (!footballMatchJsonCaller.isLive() && (footballMatchJsonCaller.getMatchStatus().equalsIgnoreCase("FT") || footballMatchJsonCaller.getMatchStatus().equalsIgnoreCase("AET"))) {
                     getTvMatchDay.setText(R.string.full_time);
 
 
@@ -743,6 +835,7 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity {
         public void changeUI(String tag) {
             ScoreDetailActivity.this.setTitle();
             ScoreDetailActivity.this.renderScores();
+            initView();
             if (!isMatchLive()) {
                 refreshImage.setVisibility(View.GONE);
             }
