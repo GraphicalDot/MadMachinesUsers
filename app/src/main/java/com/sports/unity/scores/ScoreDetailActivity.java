@@ -111,11 +111,20 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        initOnCreate(getIntent());
+    }
 
+    public void initOnCreate(Intent intent) {
         setContentView(R.layout.activity_score_detail);
 
-        getExtras();
-        if (!checkIfDeepLinked(getIntent()) || !getIntent().getExtras().getBoolean(Constants.INTENT_KEY_PUSH, false)) {
+        getExtras(intent);
+        boolean isPushNotification = false;
+        try {
+            isPushNotification = intent.getExtras().getBoolean(Constants.INTENT_KEY_PUSH, false);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if (!checkIfDeepLinked(intent) || !isPushNotification) {
             initView();
         }
         setToolbar();
@@ -129,11 +138,18 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity {
         }
     }
 
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        initOnCreate(intent);
+    }
+
     private boolean checkIfDeepLinked(Intent intent) {
         boolean isDeepLinked = false;
         try {
             isDeepLinked = intent.getAction().equalsIgnoreCase(Intent.ACTION_VIEW);
         } catch (Exception e) {
+            e.printStackTrace();
         }
         return isDeepLinked;
     }
@@ -162,10 +178,10 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity {
         return volleyCallComponentHelper;
     }
 
-    private void getExtras() {
-        Intent i = getIntent();
+    private void getExtras(Intent intent) {
+        Intent i = intent;
         if (!checkIfDeepLinked(i)) {
-            callerIntent = getIntent();
+            callerIntent = intent;
             sportsType = i.getStringExtra(INTENT_KEY_TYPE);
             matchId = i.getStringExtra(Constants.INTENT_KEY_ID);
             matchStatus = i.getStringExtra(Constants.INTENT_KEY_MATCH_STATUS);
@@ -789,6 +805,9 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity {
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
+        }
+        if (!isMatchLive()) {
+            disableAutoRefreshContent();
         }
         return requestCommentaries;
     }
