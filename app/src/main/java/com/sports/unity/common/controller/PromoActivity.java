@@ -19,6 +19,7 @@ import org.json.JSONObject;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -27,7 +28,6 @@ import java.net.URL;
 
 import static com.sports.unity.common.model.TinyDB.KEY_PASSWORD;
 import static com.sports.unity.common.model.TinyDB.KEY_USER_JID;
-import static com.sports.unity.util.CommonUtil.getBuildConfig;
 import static com.sports.unity.util.CommonUtil.getDeviceId;
 
 public class PromoActivity extends CustomAppCompatActivity {
@@ -41,6 +41,7 @@ public class PromoActivity extends CustomAppCompatActivity {
 
         initToolbar();
         initView();
+        setPromoCode();
     }
 
     View.OnClickListener onClickListener = new View.OnClickListener() {
@@ -89,15 +90,17 @@ public class PromoActivity extends CustomAppCompatActivity {
     private void initView() {
         TextView detail = (TextView) findViewById(R.id.detail);
         TextView addPromo = (TextView) findViewById(R.id.promo_code);
-        TextView ownPromoCode = (TextView) findViewById(R.id.own_promocode);
         Button inviteFriends = (Button) findViewById(R.id.invite_frnds);
 
         detail.setOnClickListener(onClickListener);
         addPromo.setOnClickListener(onClickListener);
         inviteFriends.setOnClickListener(onClickListener);
+    }
 
+    private void setPromoCode() {
+        TextView ownPromoCode = (TextView) findViewById(R.id.own_promocode);
         String promoCode = TinyDB.getInstance(getApplicationContext()).getString(TinyDB.PROMO_CODE);
-        if (promoCode.equals("")) {
+        if (promoCode.equals("") || promoCode == null) {
             getOwnPromoCode();
         } else {
             ownPromoCode.setText(promoCode);
@@ -106,7 +109,6 @@ public class PromoActivity extends CustomAppCompatActivity {
 
     private void getOwnPromoCode() {
         String dataAsJson = getAppDataAsJSON();
-        Log.i("user", dataAsJson);
         new GetPromoCode().execute(dataAsJson);
     }
 
@@ -141,6 +143,7 @@ public class PromoActivity extends CustomAppCompatActivity {
             HttpURLConnection httpURLConnection;
             ByteArrayInputStream byteArrayInputStream;
             ByteArrayOutputStream byteArrayOutputStream;
+            String ownPromoCode = null;
             URL postPrivacyData;
             try {
                 postPrivacyData = new URL(BASE_URL);
@@ -161,7 +164,25 @@ public class PromoActivity extends CustomAppCompatActivity {
                 }
 
                 if (httpURLConnection.getResponseCode() == HttpURLConnection.HTTP_OK) {
-                    Log.i("http", "success");
+
+                    byteArrayOutputStream = new ByteArrayOutputStream();
+                    InputStream inputStream = httpURLConnection.getInputStream();
+
+                    byte chunk2[] = new byte[4096];
+                    int read2 = 0;
+                    while ((read2 = inputStream.read(chunk2)) != -1) {
+                        byteArrayOutputStream.write(chunk2, 0, read2);
+                    }
+
+                    String content = String.valueOf(byteArrayOutputStream.toString());
+                    JSONObject responseJsonContent = new JSONObject(content);
+                    if (responseJsonContent.getInt("status") == 200) {
+                        if (responseJsonContent.has("referral_code")) {
+                            ownPromoCode = responseJsonContent.getString("referral_code");
+                        } else {
+                            ownPromoCode = null;
+                        }
+                    }
                 } else {
                     //nothing
                 }
@@ -172,14 +193,18 @@ public class PromoActivity extends CustomAppCompatActivity {
                 e.printStackTrace();
             } catch (IOException e) {
                 e.printStackTrace();
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
-            return null;
+            return ownPromoCode;
 
         }
 
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
+            TinyDB.getInstance(getApplicationContext()).putString(TinyDB.PROMO_CODE, s);
+            setPromoCode();
         }
     }
 

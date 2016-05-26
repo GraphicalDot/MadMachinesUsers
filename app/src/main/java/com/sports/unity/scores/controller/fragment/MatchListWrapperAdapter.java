@@ -1078,10 +1078,16 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
                         bannerDummyItem.setEpochTime(Long.valueOf(dummyBannerEpochTime));
                         bannerDummyItem.setLeagueName("dummy");
                         matchDay.add(i, bannerDummyItem);
-                        break;
+                        return position;
                     }
                 }
+
             }
+            MatchListWrapperItem bannerDummyItem = new MatchListWrapperItem();
+            bannerDummyItem.setDay(matchDay.get(0).getDay());
+            bannerDummyItem.setEpochTime(Long.valueOf(dummyBannerEpochTime));
+            bannerDummyItem.setLeagueName("dummy");
+            matchDay.add(position, bannerDummyItem);
         }
         return position;
     }
