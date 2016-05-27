@@ -428,8 +428,8 @@ public class XMPPService extends Service {
         @Override
         public void connectionClosedOnError(Exception e) {
             Log.i("connection", "closed on error");
-            Log.d("max", "Type connection closed on error> " + e.getMessage());
-            if (e.getMessage().contains("Replaced by new connection")) {
+
+            if ( e.getMessage() != null && e.getMessage().contains("Replaced by new connection")) {
                 try {
                     ReconnectionManager reconnectionManager = ReconnectionManager.getInstanceFor(XMPPClient.getConnection());
                     reconnectionManager.disableAutomaticReconnection();

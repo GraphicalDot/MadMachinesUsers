@@ -377,6 +377,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
         super.onResume();
         populateMessagesOnScreen();
         clearUnreadCount();
+
         blockUnblockUserHelper.addBlockUnblockListener(ChatScreenActivity.this);
         ActivityActionHandler.getInstance().addActionListener(ActivityActionHandler.CHAT_SCREEN_KEY, jabberId, activityActionListener);
 //        GlobalEventHandler.getInstance().addGlobalEventListener(ActivityActionHandler.CHAT_SCREEN_KEY, this);
@@ -388,8 +389,6 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
         NotificationHandler.getInstance(getApplicationContext()).clearNotificationMessages(String.valueOf(chatID));
 
         initAddBlockView();
-        //TODO update message list
-//        activityActionListener.handleAction(0);
     }
 
     @Override
@@ -1157,8 +1156,6 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
     }
 
     private void sendMediaFile(final Uri URI, final String file) {
-        final int screenHeight = getResources().getDisplayMetrics().heightPixels;
-        final int screenWidth = getResources().getDisplayMetrics().widthPixels;
         try {
             new ThreadTask(null) {
 
@@ -1173,7 +1170,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
                     try {
                         if (!hasVideoContent) {
                             fileName = DBUtil.getUniqueFileName(SportsUnityDBHelper.MIME_TYPE_IMAGE, false);
-                            this.object = ImageUtil.getCompressedBytes(file, screenHeight, screenWidth);
+                            this.object = ImageUtil.getScaledDownBytes(file, getResources().getDisplayMetrics());
 
                             DBUtil.writeContentToExternalFileStorage(ChatScreenActivity.this, fileName, (byte[]) this.object, SportsUnityDBHelper.MIME_TYPE_IMAGE);
                             thumbnailImage = PersonalMessaging.createThumbnailImageAsBase64(ChatScreenActivity.this, SportsUnityDBHelper.MIME_TYPE_IMAGE, fileName);

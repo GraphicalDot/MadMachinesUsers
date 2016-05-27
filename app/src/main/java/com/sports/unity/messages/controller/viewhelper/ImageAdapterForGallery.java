@@ -224,9 +224,6 @@ public class ImageAdapterForGallery extends RecyclerView.Adapter<ImageAdapterFor
         final int position = (Integer) imageView.getTag(R.layout.layout_gallery);
         final String file = filePath.get(position);
 
-        final int screenHeight = activity.getResources().getDisplayMetrics().heightPixels;
-        final int screenWidth = activity.getResources().getDisplayMetrics().widthPixels;
-
         try {
             new ThreadTask(null) {
 
@@ -241,7 +238,7 @@ public class ImageAdapterForGallery extends RecyclerView.Adapter<ImageAdapterFor
                     try {
                         if (!hasVideoContent) {
                             fileName = DBUtil.getUniqueFileName(SportsUnityDBHelper.MIME_TYPE_IMAGE, false);
-                            this.object = ImageUtil.getCompressedBytes(file, screenHeight, screenWidth);
+                            this.object = ImageUtil.getScaledDownBytes(file, activity.getResources().getDisplayMetrics());
 
                             DBUtil.writeContentToExternalFileStorage(activity.getBaseContext(), fileName, (byte[]) this.object, SportsUnityDBHelper.MIME_TYPE_IMAGE);
                             thumbnailImage = PersonalMessaging.createThumbnailImageAsBase64(activity, SportsUnityDBHelper.MIME_TYPE_IMAGE, fileName);
