@@ -27,6 +27,7 @@ import android.widget.Toast;
 
 import com.sports.unity.BuildConfig;
 import com.sports.unity.R;
+import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.common.model.TinyDB;
 
 import org.json.JSONException;
@@ -104,12 +105,17 @@ public class PromoActivity extends CustomAppCompatActivity {
         addPromo.setOnClickListener(onClickListener);
         inviteFriends.setOnClickListener(onClickListener);
 
-        promoCodeText.clearFocus();
-        promoCodeText.setCursorVisible(false);
+        promoCodeText.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoRegular());
+        setEditTextListeners();
 
+        promoCodeText.clearFocus();
+    }
+
+    private void setEditTextListeners() {
         promoCodeText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
             }
 
             @Override
@@ -121,6 +127,17 @@ public class PromoActivity extends CustomAppCompatActivity {
             public void afterTextChanged(Editable s) {
                 addPromo.setVisibility(View.VISIBLE);
                 promotionResultLayout.setVisibility(View.GONE);
+            }
+        });
+
+        promoCodeText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus) {
+                    promoCodeText.setCursorVisible(true);
+                } else {
+                    promoCodeText.setCursorVisible(false);
+                }
             }
         });
     }
@@ -306,6 +323,7 @@ public class PromoActivity extends CustomAppCompatActivity {
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
             pDialog.dismiss();
+            promoCodeText.clearFocus();
             if (success == 1) {
                 onSuccesfulAvail();
             } else if (success == -1) {

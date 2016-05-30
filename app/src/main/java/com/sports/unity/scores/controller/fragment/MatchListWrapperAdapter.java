@@ -213,7 +213,6 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
                                 }
                             }
                             if (isFav) {
-                                favoriateMatchList.add(dto);
                                 holder.favIcon.setVisibility(View.VISIBLE);
                             } else {
                                 holder.favIcon.setVisibility(View.GONE);
@@ -336,7 +335,6 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
                                 }
                             }
                             if (isFav) {
-                                favoriateMatchList.add(dto);
                                 holder.favIcon.setVisibility(View.VISIBLE);
                             } else {
                                 holder.favIcon.setVisibility(View.GONE);
@@ -520,7 +518,7 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
     }
 
     private void setFriendsWatching(ViewHolder holder, String matchId, String seriesId) {
-        String id=matchId + "|" + seriesId;
+        String id = matchId + "|" + seriesId;
         int friendsWatching = FriendsWatchingHandler.getInstance(activity).getNoOfFriends(id);
         if (friendsWatching > 0) {
             holder.matchVenueDetails.setVisibility(View.GONE);
@@ -1104,7 +1102,6 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
         } else {
             matchDay.addAll(globalMatchList);
         }
-        favoriateMatchList.clear();
         int position = addBannerInMatchList();
         this.notifyDataSetChanged();
         listScrollListener.scroll(position);
