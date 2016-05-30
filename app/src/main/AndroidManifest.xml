@@ -246,6 +246,9 @@
             android:name=".common.controller.SettingsActivity"
             android:screenOrientation="portrait" />
         <activity
+            android:name=".common.controller.PromoActivity"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".common.controller.About"
             android:screenOrientation="portrait" />
         <!-- <activity -->

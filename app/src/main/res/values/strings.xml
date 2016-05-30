@@ -407,4 +407,5 @@ message to verify your mobile number.</string>
         <item quantity="one">%d FRIEND WATCHING</item>
         <item quantity="other">%d FRIENDS WATCHING</item>
     </plurals>
+    <string name="couldnt_fetch_promo_code">Looks like there was a problem fetching your promo code please check your connection and try again later</string>
 </resources>    
