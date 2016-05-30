@@ -185,6 +185,7 @@
         android:orientation="horizontal">
 
         <LinearLayout
+            android:id="@+id/match_venue_details"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
@@ -210,6 +211,35 @@
                 android:singleLine="true"
                 android:text="San Siro"
                 android:textColor="@color/score_dark_grey"
+                android:textSize="@dimen/font_size_very_small" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/friends_watching"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1"
+            android:orientation="horizontal"
+            android:paddingLeft="@dimen/horizontal_padding_very_small"
+            android:visibility="gone">
+
+            <ImageView
+                android:id="@+id/friends_view"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:src="@drawable/ic_friends_watching" />
+
+            <TextView
+                android:id="@+id/friends_text"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:paddingLeft="@dimen/horizontal_padding_very_small"
+                android:singleLine="true"
+                android:text=""
+                android:textColor="@color/app_theme_blue"
                 android:textSize="@dimen/font_size_very_small" />
         </LinearLayout>
 

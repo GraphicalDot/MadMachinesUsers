@@ -28,12 +28,15 @@ import com.sports.unity.common.controller.FilterActivity;
 import com.sports.unity.common.controller.MainActivity;
 import com.sports.unity.common.model.FavouriteItem;
 import com.sports.unity.common.model.FavouriteItemWrapper;
+import com.sports.unity.common.model.FriendsWatchingHandler;
+import com.sports.unity.common.model.FriendsWatchingHandler.FriendsContentListener;
 import com.sports.unity.common.model.TinyDB;
 import com.sports.unity.common.model.UserUtil;
 import com.sports.unity.common.viewhelper.CustomComponentListener;
 import com.sports.unity.scoredetails.MatchListScrollListener;
 import com.sports.unity.scores.model.ScoresContentHandler;
 import com.sports.unity.scores.model.ScoresJsonParser;
+import com.sports.unity.scores.model.ScoresUtil;
 import com.sports.unity.util.Constants;
 import com.sports.unity.util.commons.DateUtil;
 
@@ -54,6 +57,10 @@ public class MatchListFragment extends Fragment implements MatchListWrapperNotif
 
     private static final String LIST_LISTENER_KEY = "list_listener";
     private static final String LIST_OF_MATCHES_REQUEST_TAG = "list_request_tag";
+
+    private static final String FRIENDS_WATCHING_LISTENER_KEY = "friends_watching_listener_key";
+    private static final String FRIENDS_WATCHING_REQUEST_TAG = "friends_watching_request_tag";
+
 
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private MatchListWrapperAdapter matchListWrapperAdapter;
@@ -182,7 +189,7 @@ public class MatchListFragment extends Fragment implements MatchListWrapperNotif
     @Override
     public void onResume() {
         super.onResume();
-
+        FriendsWatchingHandler.getInstance(getContext()).addFriendsContentListener(friendsContentListener, FRIENDS_WATCHING_LISTENER_KEY);
         addResponseListener();
         if (matches.size() == 0) {
             showProgress(getView());
@@ -218,6 +225,7 @@ public class MatchListFragment extends Fragment implements MatchListWrapperNotif
     @Override
     public void onPause() {
         super.onPause();
+        FriendsWatchingHandler.getInstance(getContext()).removeFriendsContentListener(FRIENDS_WATCHING_LISTENER_KEY);
         sportsSelectedNum = UserUtil.getScoreFilterSportsSelected().size();
         sportSelected = UserUtil.getScoreFilterSportsSelected();
         removeResponseListener();
@@ -510,21 +518,56 @@ public class MatchListFragment extends Fragment implements MatchListWrapperNotif
                 }
             }
             dataItem.clear();
+            ArrayList<String> ids = new ArrayList<String>();
             for (MatchListWrapperDTO f : matchList) {
 
                 ArrayList<JSONObject> object = f.getList();
                 for (JSONObject jsonObject : object) {
                     MatchListWrapperItem wrapperItem = new MatchListWrapperItem(f);
                     wrapperItem.setJsonObject(jsonObject);
+                    try {
+                        String id = wrapperItem.getJsonObject().getString("match_id");
+                        String seriesId = null;
+                        boolean isLive = false;
+                        if (!wrapperItem.getJsonObject().isNull("series_id")) {
+                            seriesId = wrapperItem.getJsonObject().getString("series_id");
+                            String matchStatus = wrapperItem.getJsonObject().getString("status");
+                            isLive = ScoresUtil.isCricketMatchLive(matchStatus);
+                        } else {
+                            seriesId = wrapperItem.getJsonObject().getString("league_id");
+                            isLive = wrapperItem.getJsonObject().getBoolean("live");
+                        }
+                        if (isLive) {
+                            id = id + "|" + seriesId;
+                            ids.add(id);
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
                     dataItem.add(wrapperItem);
                 }
             }
-
+            if (ids.size() > 0) {
+                FriendsWatchingHandler.getInstance(getContext()).setMatchId(ids);
+                FriendsWatchingHandler.getInstance(getContext()).requestContent(FRIENDS_WATCHING_LISTENER_KEY, FRIENDS_WATCHING_REQUEST_TAG);
+            }
             Collections.sort(dataItem);
         }
         return success;
     }
 
+    private FriendsContentListener friendsContentListener = new FriendsContentListener() {
+        @Override
+        public void handleFriendsContent() {
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+
+                    matchListWrapperAdapter.notifyDataSetChanged();
+                }
+            });
+        }
+    };
 //    private void enterDummyContent(Map<String, Map<String, MatchListWrapperDTO>> daysMap){
 //        Map<String, MatchListWrapperDTO> dto = daysMap.get("Today");
 //

@@ -5,19 +5,24 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.preference.Preference;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.NotificationCompat;
 import android.support.v7.widget.Toolbar;
+import android.text.Html;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.LinearInterpolator;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -29,6 +34,7 @@ import com.sports.unity.R;
 import com.sports.unity.XMPPManager.XMPPService;
 import com.sports.unity.common.controller.MainActivity;
 import com.sports.unity.common.model.FontTypeface;
+import com.sports.unity.common.model.FriendsWatchingHandler;
 import com.sports.unity.common.view.CustomVolleyCallerActivity;
 import com.sports.unity.common.view.SlidingTabLayout;
 import com.sports.unity.common.viewhelper.BasicVolleyRequestResponseViewHelper;
@@ -107,6 +113,20 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity {
     private TextView tvMatchTime;
     private TextView getTvMatchDay;
     Intent callerIntent;
+    private LinearLayout friendsLayout;
+    private TextView friendsCount;
+
+    private FriendsWatchingHandler.FriendsContentListener friendsContentListener = new FriendsWatchingHandler.FriendsContentListener() {
+        @Override
+        public void handleFriendsContent() {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    displayFriendsWatching();
+                }
+            });
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -163,12 +183,13 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity {
         } else {
             //nothing
         }
+        FriendsWatchingHandler.getInstance(this).addFriendsContentListener(friendsContentListener, REQUEST_LISTENER_KEY);
     }
 
     @Override
     public void onPause() {
         super.onPause();
-
+        FriendsWatchingHandler.getInstance(this).removeFriendsContentListener(REQUEST_LISTENER_KEY);
         disableAutoRefreshContent();
     }
 
@@ -196,6 +217,40 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity {
         } else {
             String uri = i.getDataString();
             decodeDataFromURL(uri);
+        }
+    }
+
+    private void initFriendsWatching() {
+        String id = matchId + "|" + seriesId;
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        String subsMatch = preferences.getString(id, "");
+        if (isMatchLive() && id.equalsIgnoreCase(subsMatch)) {
+            if (FriendsWatchingHandler.getInstance(this).isMatchExist(id)) {
+                displayFriendsWatching();
+            } else {
+                FriendsWatchingHandler.getInstance(this).addMatch(id);
+                FriendsWatchingHandler.getInstance(this).requestContent(REQUEST_LISTENER_KEY, SCORE_DETAIL_REQUEST_TAG);
+            }
+        }
+    }
+
+    private void displayFriendsWatching() {
+        String id = matchId + "|" + seriesId;
+        int friendsWatching = FriendsWatchingHandler.getInstance(this).getNoOfFriends(id);
+        if (friendsWatching > 0) {
+            friendsLayout = (LinearLayout) findViewById(R.id.friends_watching);
+            friendsCount = (TextView) findViewById(R.id.friends_text);
+            friendsLayout.setVisibility(View.VISIBLE);
+            String count = "";
+            if (friendsWatching < 99) {
+                count = this.getResources().getQuantityString(R.plurals.friends_watching, friendsWatching, friendsWatching);
+                friendsCount.setText(count);
+            } else {
+                count = "99<sup>+</sup> FRIENDS WATCHING";
+                friendsCount.setText(Html.fromHtml(count));
+            }
+        } else {
+            //nothing
         }
     }
 
@@ -237,6 +292,7 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity {
             callerIntent.putExtra(INTENT_KEY_TYPE, sportsType);
             callerIntent.putExtra(Constants.INTENT_KEY_ID, matchId);
             callerIntent.putExtra(Constants.INTENT_KEY_MATCH_STATUS, matchStatus);
+            callerIntent.putExtra("tab_index", 1);
             if (Constants.SPORTS_TYPE_CRICKET.equalsIgnoreCase(sportsType)) {
                 callerIntent.putExtra(Constants.INTENT_KEY_SERIES, seriesId);
             } else if (Constants.SPORTS_TYPE_FOOTBALL.equalsIgnoreCase(sportsType)) {
@@ -799,7 +855,6 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity {
 
                     textView = (TextView) findViewById(R.id.tv_match_time);
                     textView.setText(score.toString());
-
                     requestCommentaries = true;
                 }
             } catch (Exception ex) {
@@ -809,6 +864,8 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity {
         if (!isMatchLive()) {
             disableAutoRefreshContent();
         }
+
+        initFriendsWatching();
         return requestCommentaries;
     }
 
