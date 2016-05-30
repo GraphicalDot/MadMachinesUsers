@@ -9,6 +9,7 @@ import android.media.RingtoneManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.DragEvent;
@@ -132,7 +133,7 @@ public class SettingsActivity extends CustomAppCompatActivity implements BlockUn
         TextView subtitle = (TextView) toolbar.findViewById(R.id.toolbarSubTitle);
         subtitle.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoSlabBold());
 
-        Switch switcher = (Switch) toolbar.findViewById(R.id.toolbarSwitcher);
+        SwitchCompat switcher = (SwitchCompat) toolbar.findViewById(R.id.toolbarSwitcher);
         switcher.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoSlabBold());
 
     }
@@ -225,7 +226,7 @@ public class SettingsActivity extends CustomAppCompatActivity implements BlockUn
         ImageView back = (ImageView) toolbar.findViewById(R.id.backButton);
         TextView title = (TextView) toolbar.findViewById(R.id.toolbarTitle);
         TextView subTitle = (TextView) toolbar.findViewById(R.id.toolbarSubTitle);
-        Switch switcher = (Switch) toolbar.findViewById(R.id.toolbarSwitcher);
+        SwitchCompat switcher = (SwitchCompat) toolbar.findViewById(R.id.toolbarSwitcher);
 
         if (currentItemId == SettingsHelper.SETTINGS_MAIN_ID) {
             toolbar.setBackgroundColor(getResources().getColor(R.color.app_theme_blue));

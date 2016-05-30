@@ -8,6 +8,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SwitchCompat;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -120,7 +121,7 @@ public class MatchListFragment extends Fragment implements MatchListWrapperNotif
         item.setActionView(R.layout.switch_matchlist);
 
         RelativeLayout relativeLayout = (RelativeLayout) item.getActionView();
-        final Switch sw = (Switch) relativeLayout.findViewById(R.id.switchForActionBar);
+        final SwitchCompat sw = (SwitchCompat) relativeLayout.findViewById(R.id.switchForActionBar);
         sw.setChecked(matchListSwitch);
         if (matchListSwitch) {
             sw.setThumbDrawable(getResources().getDrawable(R.drawable.ic_fav_matches));

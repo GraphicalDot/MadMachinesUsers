@@ -2,6 +2,7 @@ package com.sports.unity.messages.controller.fragment;
 
 import android.app.Activity;
 import android.content.Context;
+import android.support.v7.widget.SwitchCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -71,7 +72,7 @@ public class ChatFragmentDialogListAdapter extends BaseAdapter {
     public static class ViewHolder {
 
         public TextView textOption;
-        public Switch muteSwitch;
+        public SwitchCompat muteSwitch;
 
     }
 
@@ -92,7 +93,7 @@ public class ChatFragmentDialogListAdapter extends BaseAdapter {
                     break;
                 case 1:
                     vi = inflater.inflate(R.layout.fragment_chat_mute_switcher, parent, false);
-                    holder.muteSwitch = (Switch) vi.findViewById(R.id.mute_switcher);
+                    holder.muteSwitch = (SwitchCompat) vi.findViewById(R.id.mute_switcher);
                     holder.muteSwitch.setTypeface(FontTypeface.getInstance(activity).getRobotoRegular());
                     holder.muteSwitch.setText(chatMenuOptions.get(position));
                     holder.textOption = null;

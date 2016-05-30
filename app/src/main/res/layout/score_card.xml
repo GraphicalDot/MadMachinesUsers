@@ -64,7 +64,7 @@
                 android:layout_centerHorizontal="true"
                 android:max="90"
                 android:progress="0"
-                android:progressDrawable="@drawable/progress_drawable" />
+                android:progressDrawable="@drawable/progress_matchlist_drawable" />
 
             <TextView
                 android:id="@+id/minutes"

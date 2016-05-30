@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.SwitchCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -207,7 +208,7 @@ public class ChatFragment extends Fragment implements OnSearchViewQueryListener 
                         showAlertDialogToDeleteChatOrExitGroup(chatObject);
                         break;
                     case 2:
-                        Switch switchView = (Switch) view.findViewById(R.id.mute_switcher);
+                        SwitchCompat switchView = (SwitchCompat) view.findViewById(R.id.mute_switcher);
                         if (chatObject.mute) {
                             chatObject.mute = false;
                         } else {

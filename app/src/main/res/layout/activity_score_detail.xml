@@ -209,7 +209,7 @@
                 android:layout_gravity="center_vertical"
                 android:max="90"
                 android:progress="0"
-                android:progressDrawable="@drawable/progress_drawable"
+                android:progressDrawable="@drawable/progress_matchlist_drawable"
               android:visibility="gone" />
 
         </LinearLayout>
