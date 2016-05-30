@@ -398,7 +398,7 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
                                     holder.liveText.setVisibility(View.GONE);
                                     holder.date.setVisibility(View.GONE);
                                     holder.team_score.setVisibility(View.VISIBLE);
-                                    holder.team_score.setBackgroundResource(R.drawable.score_background_blue);
+                                    holder.team_score.setBackgroundResource(R.drawable.score_background_green);
                                     holder.team_score.setTextColor(holder.team_score.getResources().getColor(R.color.ColorPrimary));
                                     StringBuilder stringBuilder = new StringBuilder("");
                                     stringBuilder.append(footballMatchJsonCaller.getHomeTeamScore());
@@ -414,7 +414,7 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
                                     holder.matchMinutes.setVisibility(View.GONE);
                                     holder.matchProgressBar.setVisibility(View.GONE);
                                     holder.team_score.setVisibility(View.VISIBLE);
-                                    holder.team_score.setBackgroundResource(R.drawable.score_background_green);
+                                    holder.team_score.setBackgroundResource(R.drawable.score_background_blue);
                                     holder.team_score.setTextColor(holder.team_score.getResources().getColor(R.color.ColorPrimary));
                                     StringBuilder stringBuilder = new StringBuilder("");
                                     stringBuilder.append(footballMatchJsonCaller.getHomeTeamScore());
