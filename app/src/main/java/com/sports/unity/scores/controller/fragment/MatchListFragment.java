@@ -510,11 +510,12 @@ public class MatchListFragment extends Fragment implements MatchListWrapperNotif
                 for (String key : keySet) {
                     MatchListWrapperDTO tempDTO = leagueMaps.get(key);
                     int s = tempDTO.getList().size();
-                    dayCount = DateUtil.getDayFromEpochTimeDayCount(tempDTO.getEpochTime() * 1000, getContext());
-                    if (((dayCount < 3 && dayCount > -3)) && s > 0) {
+                    if (s > 0) {
                         leagueMaps.get(key).reorderList();
                         matchList.add(leagueMaps.get(key));
                     }
+
+
                 }
             }
             dataItem.clear();
