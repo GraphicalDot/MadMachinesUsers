@@ -6,7 +6,7 @@
     android:background="@color/app_theme_blue"
     android:elevation="@dimen/toolbar_elevation"
     android:minHeight="?android:attr/actionBarSize"
-    android:theme="@style/Base.ThemeOverlay.AppCompat.Dark">
+    android:theme="@style/AppHomeTheme">
 
     <FrameLayout
         android:id="@+id/hamburger_menu"

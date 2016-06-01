@@ -1,5 +1,6 @@
 package com.sports.unity.common.controller;
 
+import android.media.Image;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -14,9 +15,12 @@ import android.widget.TextView;
 
 import com.sports.unity.R;
 import com.sports.unity.common.model.FavouriteItem;
+import com.sports.unity.common.model.FavouriteItemWrapper;
 import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.common.view.SlidingTabLayout;
 import com.sports.unity.util.Constants;
+
+import java.util.ArrayList;
 
 public class TeamLeagueDetails extends CustomAppCompatActivity {
 
@@ -25,43 +29,110 @@ public class TeamLeagueDetails extends CustomAppCompatActivity {
     private String type;
     private FavouriteItem favouriteItem;
     private boolean isStaffPicked;
+    private ArrayList<FavouriteItem> favList;
+    private boolean isTeamLeagueFav = false;
+    private boolean isResultRequired = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_team_league_details);
+        favList = FavouriteItemWrapper.getInstance(getApplicationContext()).getFavList();
         String jsonObject = getIntent().getStringExtra(Constants.INTENT_TEAM_LEAGUE_DETAIL_EXTRA);
-        isStaffPicked=getIntent().getExtras().getBoolean(Constants.SPORTS_TYPE_STAFF,false);
+        isStaffPicked = getIntent().getExtras().getBoolean(Constants.SPORTS_TYPE_STAFF, false);
         favouriteItem = new FavouriteItem(jsonObject);
         name = favouriteItem.getName();
         id = favouriteItem.getId();
         type = favouriteItem.getSportsType();
+        isResultRequired = getIntent().getBooleanExtra(Constants.RESULT_REQUIRED, false);
         initToolbar();
         initView();
 
     }
 
+    @Override
+    public void onBackPressed() {
+        if (isResultRequired) {
+            setResult(RESULT_OK, getIntent());
+        }
+        finish();
+    }
+
     private void initToolbar() {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
-        toolbar.setBackgroundColor(getResources().getColor(R.color.gray3));
+//        toolbar.setBackgroundColor(getResources().getColor(R.color.gray3));
 
         TextView title = (TextView) toolbar.findViewById(R.id.toolbar_filter);
         title.setTypeface(FontTypeface.getInstance(this).getRobotoRegular());
-        title.setTextColor(getResources().getColor(R.color.ColorPrimaryDark));
+//        title.setTextColor(getResources().getColor(R.color.ColorPrimaryDark));
         title.setText(name);
+
 
         TextView next = (TextView) toolbar.findViewById(R.id.toolbar_title);
         next.setVisibility(View.GONE);
 
         ImageView back = (ImageView) toolbar.findViewById(R.id.cancel);
-        back.setImageResource(R.drawable.ic_menu_back_blk);
+//        back.setImageResource(R.drawable.ic_menu_back_blk);
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (isResultRequired) {
+                    setResult(RESULT_OK, getIntent());
+                }
                 finish();
             }
         });
 
+        setUpFavoriateOnToolbar(toolbar);
+
+    }
+
+    private void setUpFavoriateOnToolbar(Toolbar toolbar) {
+        final ImageView isFav = (ImageView) toolbar.findViewById(R.id.favoriate);
+        isFav.setVisibility(View.VISIBLE);
+        for (FavouriteItem item : favList) {
+            if (favouriteItem.getId().equals(item.getId())) {
+                isTeamLeagueFav = true;
+                isFav.setImageResource(R.drawable.ic_fav);
+                break;
+            }
+        }
+        isFav.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (isTeamLeagueFav) {
+                    isFav.setImageResource(R.drawable.ic_non_fav);
+                    isTeamLeagueFav = false;
+                    removeFromFavList();
+                } else {
+                    isFav.setImageResource(R.drawable.ic_fav);
+                    isTeamLeagueFav = true;
+                    addToFavList();
+                }
+                FavouriteItemWrapper.getInstance(getApplicationContext()).saveList(getApplicationContext(), favList);
+            }
+        });
+    }
+
+    private void removeFromFavList() {
+        int position = 0;
+        for (int i = 0; i < favList.size(); i++) {
+            if (favList.get(i).getId().equals(favouriteItem.getId())) {
+                position = i;
+                break;
+            }
+        }
+        favList.remove(position);
+    }
+
+    private void addToFavList() {
+        FavouriteItem item = new FavouriteItem();
+        item.setId(favouriteItem.getId());
+        item.setName(favouriteItem.getName());
+        item.setSportsType(favouriteItem.getSportsType());
+        item.setFilterType(favouriteItem.getFilterType());
+        favList.add(item);
     }
 
     private void initView() {
@@ -70,7 +141,7 @@ public class TeamLeagueDetails extends CustomAppCompatActivity {
         // int numberOfTabs = titles.length;
 
         // Creating The ViewPagerAdapterInMainActivity and Passing Fragment Manager, Titles fot the Tabs and Number Of Tabs.
-        ViewPagerAdapterForTeamAndLeagueDetails adapter = new ViewPagerAdapterForTeamAndLeagueDetails(getSupportFragmentManager(), favouriteItem,isStaffPicked);
+        ViewPagerAdapterForTeamAndLeagueDetails adapter = new ViewPagerAdapterForTeamAndLeagueDetails(getSupportFragmentManager(), favouriteItem, isStaffPicked);
 
         // Assigning ViewPager View and setting the adapter
         ViewPager pager = (ViewPager) findViewById(com.sports.unity.R.id.pager);

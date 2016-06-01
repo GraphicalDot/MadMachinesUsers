@@ -3,7 +3,6 @@ package com.sports.unity.playerprofile.cricket;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.view.PagerAdapter;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
@@ -14,16 +13,16 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.sports.unity.R;
+import com.sports.unity.common.model.FavouriteItem;
+import com.sports.unity.common.model.FavouriteItemWrapper;
 import com.sports.unity.common.view.CustomViewPager;
 import com.sports.unity.common.view.CustomVolleyCallerActivity;
 import com.sports.unity.common.view.SlidingTabLayout;
 import com.sports.unity.common.viewhelper.CustomComponentListener;
 import com.sports.unity.common.viewhelper.VolleyCallComponentHelper;
-import com.sports.unity.peoplearound.DataNotifier;
 import com.sports.unity.scores.model.ScoresContentHandler;
 import com.sports.unity.util.Constants;
 import com.sports.unity.util.commons.DateUtil;
@@ -32,6 +31,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -61,12 +61,17 @@ public class PlayerCricketBioDataActivity extends CustomVolleyCallerActivity {
 
     private ProgressBar progressBar;
     private ViewGroup errorLayout = null;
+    private boolean isPlayerFav = false;
+    private ArrayList<FavouriteItem> favList;
+    private ImageView isFav;
+    private boolean isResultRequired = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_player_cricket_bio_data);
+        favList = FavouriteItemWrapper.getInstance(getApplicationContext()).getFavList();
         getIntentExtras();
 
         setToolbar();
@@ -80,8 +85,16 @@ public class PlayerCricketBioDataActivity extends CustomVolleyCallerActivity {
 
     @Override
     public VolleyCallComponentHelper getVolleyCallComponentHelper() {
-        VolleyCallComponentHelper volleyCallComponentHelper = new VolleyCallComponentHelper( REQUEST_LISTENER_KEY, new PlayerCricketBioComponentListener(progressBar, errorLayout));
+        VolleyCallComponentHelper volleyCallComponentHelper = new VolleyCallComponentHelper(REQUEST_LISTENER_KEY, new PlayerCricketBioComponentListener(progressBar, errorLayout));
         return volleyCallComponentHelper;
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (isResultRequired) {
+            setResult(RESULT_OK, getIntent());
+        }
+        finish();
     }
 
     @Override
@@ -96,6 +109,7 @@ public class PlayerCricketBioDataActivity extends CustomVolleyCallerActivity {
 
     private void getIntentExtras() {
         playerNameKey = getIntent().getStringExtra(Constants.INTENT_KEY_ID);
+        isResultRequired = getIntent().getBooleanExtra(Constants.RESULT_REQUIRED, false);
     }
 
     private void initUI() {
@@ -108,11 +122,14 @@ public class PlayerCricketBioDataActivity extends CustomVolleyCallerActivity {
         scrollView.setVisibility(View.GONE);
 
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
-        errorLayout = (ViewGroup)findViewById(R.id.error);
+        errorLayout = (ViewGroup) findViewById(R.id.error);
 
         ImageView img = (ImageView) findViewById(R.id.back_img);
         img.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+                if (isResultRequired) {
+                    setResult(RESULT_OK, getIntent());
+                }
                 finish();
             }
         });
@@ -133,6 +150,57 @@ public class PlayerCricketBioDataActivity extends CustomVolleyCallerActivity {
                 finish();
             }
         });
+
+        setUpFavoriateIcon(toolbar);
+    }
+
+    private void setUpFavoriateIcon(Toolbar toolbar) {
+
+        isFav = (ImageView) toolbar.findViewById(R.id.favoriate);
+        ArrayList<FavouriteItem> players = FavouriteItemWrapper.getInstance(getApplicationContext()).getCricketPlayers();
+        isFav.setImageResource(R.drawable.ic_non_fav);
+        for (FavouriteItem item : players) {
+            if (item.getId().equals(playerNameKey)) {
+                isPlayerFav = true;
+                isFav.setImageResource(R.drawable.ic_fav);
+                break;
+            }
+        }
+        isFav.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (isPlayerFav) {
+                    isFav.setImageResource(R.drawable.ic_non_fav);
+                    removeFromFavList();
+                    isPlayerFav = false;
+                } else {
+                    isFav.setImageResource(R.drawable.ic_fav);
+                    addToFavList();
+                    isPlayerFav = true;
+                }
+                FavouriteItemWrapper.getInstance(getApplicationContext()).saveList(getApplicationContext(), favList);
+            }
+        });
+    }
+
+    private void removeFromFavList() {
+        int position = 0;
+        for (int i = 0; i < favList.size(); i++) {
+            if (favList.get(i).getId().equals(playerNameKey)) {
+                position = i;
+                break;
+            }
+        }
+        favList.remove(position);
+    }
+
+    private void addToFavList() {
+        FavouriteItem item = new FavouriteItem();
+        item.setId(playerNameKey);
+        item.setName(playerName.getText().toString());
+        item.setSportsType(Constants.SPORTS_TYPE_CRICKET);
+        item.setFilterType(Constants.FILTER_TYPE_PLAYER);
+        favList.add(item);
     }
 
     private boolean renderResponse(JSONObject jsonObject) {
@@ -159,11 +227,11 @@ public class PlayerCricketBioDataActivity extends CustomVolleyCallerActivity {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        } else{
+        } else {
             //nothing
         }
 
-        if( success ){
+        if (success) {
             scrollView.setVisibility(View.VISIBLE);
         }
         return success;
@@ -176,17 +244,17 @@ public class PlayerCricketBioDataActivity extends CustomVolleyCallerActivity {
         requestContent(ScoresContentHandler.CALL_NAME_PLAYER_PROFILE, parameters, PLAYER_PROFILE_REQUEST_TAG);
     }
 
-    private boolean handleResponse(String response){
+    private boolean handleResponse(String response) {
         boolean success = false;
-        try{
+        try {
             JSONObject responseJson = new JSONObject(response);
-            if( responseJson.getBoolean("success") ){
+            if (responseJson.getBoolean("success")) {
                 playerProfileBio = responseJson;
                 success = true;
             } else {
                 success = false;
             }
-        }catch (Exception ex){
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
         return success;
@@ -205,7 +273,7 @@ public class PlayerCricketBioDataActivity extends CustomVolleyCallerActivity {
         playerNationName.setText(dataObject.getString("team"));
     }
 
-    private void renderPlayerBio(ViewGroup viewGroup){
+    private void renderPlayerBio(ViewGroup viewGroup) {
         LinearLayout linearLayoutBio = (LinearLayout) viewGroup.findViewById(R.id.ll_bio_layout);
         linearLayoutBio.setVisibility(View.VISIBLE);
 
@@ -235,7 +303,7 @@ public class PlayerCricketBioDataActivity extends CustomVolleyCallerActivity {
             e.printStackTrace();
         }
 
-        if( success ){
+        if (success) {
             //nothing
         } else {
             linearLayoutBio.setVisibility(View.GONE);
@@ -245,14 +313,14 @@ public class PlayerCricketBioDataActivity extends CustomVolleyCallerActivity {
         }
     }
 
-    private void renderPlayerStats(ViewGroup viewGroup){
+    private void renderPlayerStats(ViewGroup viewGroup) {
         CricketPlayerMatchStat cricketPlayerMatchStat = new CricketPlayerMatchStat();
         cricketPlayerMatchStat.populateData(viewGroup, playerProfileBio);
     }
 
     private class ViewPagerAdapter extends PagerAdapter {
 
-        private String titles[] = { getString(R.string.PLAYER_BIO), getString(R.string.PLAYER_STATS) };
+        private String titles[] = {getString(R.string.PLAYER_BIO), getString(R.string.PLAYER_STATS)};
 
         @Override
         public CharSequence getPageTitle(int position) {
@@ -298,8 +366,8 @@ public class PlayerCricketBioDataActivity extends CustomVolleyCallerActivity {
 
     private class PlayerCricketBioComponentListener extends CustomComponentListener {
 
-        public PlayerCricketBioComponentListener(ProgressBar progressBar, ViewGroup errorLayout){
-            super( PLAYER_PROFILE_REQUEST_TAG, progressBar, errorLayout);
+        public PlayerCricketBioComponentListener(ProgressBar progressBar, ViewGroup errorLayout) {
+            super(PLAYER_PROFILE_REQUEST_TAG, progressBar, errorLayout);
         }
 
         @Override
@@ -315,10 +383,10 @@ public class PlayerCricketBioDataActivity extends CustomVolleyCallerActivity {
         @Override
         public void changeUI(String tag) {
             boolean success = renderResponse(playerProfileBio);
-            if( ! success ){
+            if (!success) {
                 showErrorLayout();
             } else {
-                //nothing
+                isFav.setVisibility(View.VISIBLE);
             }
         }
 

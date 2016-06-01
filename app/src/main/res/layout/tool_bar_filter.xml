@@ -27,16 +27,32 @@
         android:textColor="@color/ColorPrimary"
         android:textSize="@dimen/font_size_medium" />
 
-    <TextView
-        android:id="@+id/toolbar_title"
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="end"
         android:gravity="center"
-        android:paddingLeft="@dimen/horizontal_padding_very_small"
-        android:paddingRight="@dimen/horizontal_padding_very_small"
-        android:text="@string/apply_filters"
-        android:textColor="@color/ColorPrimary"
-        android:textSize="@dimen/font_size_medium" />
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/toolbar_title"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:paddingLeft="@dimen/horizontal_padding_very_small"
+            android:paddingRight="@dimen/horizontal_padding_very_small"
+            android:text="@string/apply_filters"
+            android:textColor="@color/ColorPrimary"
+            android:textSize="@dimen/font_size_medium" />
+
+        <ImageView
+            android:id="@+id/favoriate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingRight="@dimen/horizontal_padding_very_small"
+            android:src="@drawable/ic_non_fav"
+            android:visibility="gone" />
+    </LinearLayout>
+
 
 </android.support.v7.widget.Toolbar>

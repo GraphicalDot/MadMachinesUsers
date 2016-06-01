@@ -108,7 +108,8 @@ public class FilterFragment extends Fragment implements FilterActivity.OnResultR
                 FavouriteItem f = favList.get(position);
                 Intent intent = new Intent(getContext(), TeamLeagueDetails.class);
                 intent.putExtra(Constants.INTENT_TEAM_LEAGUE_DETAIL_EXTRA, f.getJsonObject().toString());
-                startActivity(intent);
+                intent.putExtra(Constants.RESULT_REQUIRED, true);
+                getActivity().startActivityForResult(intent, Constants.REQUEST_CODE_ADD_SPORT);
             }
         });
         editCricket.setOnClickListener(new View.OnClickListener() {
