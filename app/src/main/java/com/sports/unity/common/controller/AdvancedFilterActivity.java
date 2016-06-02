@@ -53,6 +53,7 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
     public ViewPager pager;
     private boolean isSingleUse;
     private String sportsType;
+    public boolean isFirstInstall = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -60,6 +61,7 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
         setContentView(R.layout.advanced_filter_activity);
         searchRefreshListener = new ArrayList<onSearchListener>();
         favList = FavouriteItemWrapper.getInstance(this).getFavList();
+        isFirstInstall = !UserUtil.isFilterCompleted() && favList.size() == 0;
         sportsSelected = UserUtil.getSportsSelected();
         bundle = getIntent().getExtras();
         try {

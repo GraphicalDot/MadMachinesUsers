@@ -3,6 +3,7 @@ package com.sports.unity.common.model;
 
 import android.app.Activity;
 import android.content.Context;
+import android.util.Log;
 
 import com.sports.unity.common.controller.AdvancedFilterActivity;
 import com.sports.unity.scores.model.ScoresContentHandler;
@@ -561,7 +562,6 @@ public class FavouriteContentHandler {
             if (responseCode == 200) {
                 success = FavouriteContentHandler.this.handleContent(content, searchTag);
 
-
                 if (!searchTag.contains(SEARCH_REQUEST_TAG)) {
                     responseBool.add(success);
                 } else {
@@ -584,7 +584,7 @@ public class FavouriteContentHandler {
                                 }
                                 item.setSportsType(Constants.SPORTS_TYPE_FOOTBALL);
                                 item.setFilterType(Constants.FILTER_TYPE_LEAGUE);
-                                if (!UserUtil.isFilterCompleted()) {
+                                if (((AdvancedFilterActivity) context).isFirstInstall && UserUtil.getSportsSelected().contains(Constants.GAME_KEY_FOOTBALL)) {
                                     item.setChecked(true);
                                     if (!((AdvancedFilterActivity) context).favList.contains(item)) {
                                         ((AdvancedFilterActivity) context).favList.add(item);
@@ -613,7 +613,7 @@ public class FavouriteContentHandler {
                                 }
                                 item.setSportsType(Constants.SPORTS_TYPE_FOOTBALL);
                                 item.setFilterType(Constants.FILTER_TYPE_TEAM);
-                                if (!UserUtil.isFilterCompleted()) {
+                                if (((AdvancedFilterActivity) context).isFirstInstall && UserUtil.getSportsSelected().contains(Constants.GAME_KEY_FOOTBALL)) {
                                     item.setChecked(true);
                                     if (!((AdvancedFilterActivity) context).favList.contains(item)) {
                                         ((AdvancedFilterActivity) context).favList.add(item);
@@ -637,7 +637,7 @@ public class FavouriteContentHandler {
                                 item.setId(s);
                                 item.setSportsType(Constants.SPORTS_TYPE_FOOTBALL);
                                 item.setFilterType(Constants.FILTER_TYPE_PLAYER);
-                                if (!UserUtil.isFilterCompleted()) {
+                                if (((AdvancedFilterActivity) context).isFirstInstall && UserUtil.getSportsSelected().contains(Constants.GAME_KEY_FOOTBALL)) {
                                     item.setChecked(true);
                                     if (!((AdvancedFilterActivity) context).favList.contains(item)) {
                                         ((AdvancedFilterActivity) context).favList.add(item);
@@ -666,7 +666,7 @@ public class FavouriteContentHandler {
                                 }
                                 item.setSportsType(Constants.SPORTS_TYPE_CRICKET);
                                 item.setFilterType(Constants.FILTER_TYPE_TEAM);
-                                if (!UserUtil.isFilterCompleted()) {
+                                if (((AdvancedFilterActivity) context).isFirstInstall && UserUtil.getSportsSelected().contains(Constants.GAME_KEY_CRICKET)) {
                                     item.setChecked(true);
                                     if (!((AdvancedFilterActivity) context).favList.contains(item)) {
                                         ((AdvancedFilterActivity) context).favList.add(item);
@@ -691,7 +691,7 @@ public class FavouriteContentHandler {
                                 item.setId(s);
                                 item.setSportsType(Constants.SPORTS_TYPE_CRICKET);
                                 item.setFilterType(Constants.FILTER_TYPE_PLAYER);
-                                if (!UserUtil.isFilterCompleted()) {
+                                if (((AdvancedFilterActivity) context).isFirstInstall && UserUtil.getSportsSelected().contains(Constants.GAME_KEY_CRICKET)) {
                                     item.setChecked(true);
                                     if (!((AdvancedFilterActivity) context).favList.contains(item)) {
                                         ((AdvancedFilterActivity) context).favList.add(item);

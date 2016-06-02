@@ -67,7 +67,7 @@ public class UserProfileHandler {
     public static int REQUEST_STATUS_FAILED = 3;
 
     private static final String SET_USER_INFO_URL = "http://" + BuildConfig.XMPP_SERVER_API_BASE_URL + "/set_user_info?";
-    private static final String SET_USER_INTEREST = "http://" + BuildConfig.XMPP_SERVER_API_BASE_URL + "/set_user_interests?";
+    private static final String SET_USER_INTEREST = "http://" + BuildConfig.XMPP_SERVER_API_BASE_URL + "/v1/set_user_interests?";
 
     private static final String SET_DISPLAY_PIC = "http://" + BuildConfig.XMPP_SERVER_API_BASE_URL + "/set_dp?";
     private static final String GET_DISPLAY_PIC = "http://" + BuildConfig.XMPP_SERVER_API_BASE_URL + "/get_dp?";

@@ -371,7 +371,10 @@ public class FavouriteItemWrapper {
     public JSONArray getAllInterestsAsJsonArray() throws Exception {
         JSONArray interests = new JSONArray();
         for (FavouriteItem item : savedAllFavorites) {
-            interests.put(item.getId());
+            JSONObject object = new JSONObject();
+            object.put("id", item.getId());
+            object.put("properties", item.getJsonObject());
+            interests.put(object);
         }
         return interests;
     }
