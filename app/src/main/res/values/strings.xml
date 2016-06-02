@@ -188,7 +188,7 @@ message to verify your mobile number.</string>
     <string name="movie">At Movie</string>
     <string name="work">At Work</string>
 
-    <string name="player_message">Showing top players, to add more click on search and add your favourite players</string>
+    <string name="player_message">To add more click on search</string>
 
 
     <!--Setting Screen related strings-->

@@ -11,14 +11,14 @@
         android:background="@color/gray3"
         android:paddingLeft="@dimen/horizontal_padding_small"
         android:paddingRight="@dimen/horizontal_padding_small"
-        android:paddingTop="@dimen/vertical_padding_medium_small"
-        android:paddingBottom="@dimen/vertical_padding_medium_small">
+        android:paddingTop="@dimen/vertical_padding_very_small"
+        android:paddingBottom="@dimen/vertical_padding_very_small">
 
         <com.sports.unity.common.view.CustomRobotoRegularTextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/player_message"
-            android:textSize="@dimen/font_size_very_small" />
+            android:textSize="@dimen/font_size_small_large" />
     </LinearLayout>
 
     <android.support.v7.widget.RecyclerView
