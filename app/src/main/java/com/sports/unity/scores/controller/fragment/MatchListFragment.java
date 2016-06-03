@@ -54,7 +54,7 @@ import java.util.Set;
 /**
  * Created by Edwin on 15/02/2015.
  */
-public class MatchListFragment extends Fragment implements MatchListWrapperNotify {
+public class MatchListFragment extends Fragment{
 
     private static final String LIST_LISTENER_KEY = "list_listener";
     private static final String LIST_OF_MATCHES_REQUEST_TAG = "list_request_tag";
@@ -261,7 +261,7 @@ public class MatchListFragment extends Fragment implements MatchListWrapperNotif
         if (getActivity() instanceof MainActivity) {
             shouldShowBanner = handleStaffFavContent();
         }
-        matchListWrapperAdapter = new MatchListWrapperAdapter(dataItem, getActivity(), this, shouldShowBanner, matchListSwitch, matchListScrollListener);
+        matchListWrapperAdapter = new MatchListWrapperAdapter(dataItem, getActivity(), shouldShowBanner, matchListSwitch, matchListScrollListener);
         mWraperRecyclerView.setAdapter(matchListWrapperAdapter);
 
         hideErrorLayout(view);
@@ -645,18 +645,6 @@ public class MatchListFragment extends Fragment implements MatchListWrapperNotif
             parameters.put(Constants.SPORTS_TYPE_STAFF, String.valueOf(isStaffPicked));
             ScoresContentHandler.getInstance().requestCall(ScoresContentHandler.CALL_NAME_MATCHES_LIST, parameters, LIST_LISTENER_KEY, LIST_OF_MATCHES_REQUEST_TAG);
         }
-    }
-
-
-    @Override
-    public void notifyParent() {
-        matchListWrapperAdapter.notifyAdapter();
-        //mSwipeRefreshLayout.setRefreshing(false);
-    }
-
-    @Override
-    public void refreshData() {
-        mSwipeRefreshLayout.setRefreshing(true);
     }
 
     private class ScoresContentListener implements ScoresContentHandler.ContentListener {

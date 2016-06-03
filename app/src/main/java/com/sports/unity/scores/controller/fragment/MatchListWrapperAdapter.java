@@ -64,7 +64,6 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
     private List<MatchListWrapperItem> favoriateMatchList = new ArrayList<>();
     private List<MatchListWrapperItem> globalMatchList = new ArrayList<>();
     private Activity activity;
-    private MatchListWrapperNotify matchListWrapperNotify;
     private ArrayList<FavouriteItem> flagFavItem;
 
     private boolean isIndividualFixture = false;
@@ -100,10 +99,9 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
     private String tempKey;
     private boolean shouldShowHeader = false;
 
-    public MatchListWrapperAdapter(List<MatchListWrapperItem> matchDay, Activity activity, MatchListWrapperNotify matchListWrapperNotify, boolean shouldShowHeader, boolean isFavChecked, MatchListScrollListener matchListScrollListener) {
+    public MatchListWrapperAdapter(List<MatchListWrapperItem> matchDay, Activity activity, boolean shouldShowHeader, boolean isFavChecked, MatchListScrollListener matchListScrollListener) {
         this.matchDay = matchDay;
         this.activity = activity;
-        this.matchListWrapperNotify = matchListWrapperNotify;
         this.shouldShowHeader = shouldShowHeader;
         favList = FavouriteItemWrapper.getInstance(activity).getAllTeams();
         this.isFavChecked = isFavChecked;
@@ -593,7 +591,7 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
                         editor.putString(tempKey, tempKey);
                     }
                     editor.apply();
-                    matchListWrapperNotify.notifyParent();
+                    notifyDataSetChanged();
 
                 }
             } else {
