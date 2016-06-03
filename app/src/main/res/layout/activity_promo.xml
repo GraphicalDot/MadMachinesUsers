@@ -164,30 +164,16 @@
 
 
                 <com.sports.unity.common.view.CustomRobotoRegularTextView
+                    android:id="@+id/details"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/activity_vertical_margin_small"
+                    android:paddingBottom="@dimen/horizontal_padding_very_very_small"
+                    android:paddingLeft="@dimen/horizontal_padding_medium"
+                    android:paddingRight="@dimen/horizontal_padding_medium"
+                    android:paddingTop="@dimen/horizontal_padding_very_very_small"
                     android:text="@string/promo_text1"
                     android:textColor="@android:color/background_dark"
                     android:textSize="@dimen/font_size_small_large" />
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <com.sports.unity.common.view.CustomRobotoRegularTextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/promo_text2" />
-
-                    <com.sports.unity.common.view.CustomRobotoRegularTextView
-                        android:id="@+id/detail"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text=" Detail"
-                        android:textColor="@color/app_theme_blue" />
-                </LinearLayout>
 
                 <Button
                     android:id="@+id/invite_frnds"

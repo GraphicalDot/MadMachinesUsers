@@ -12,8 +12,18 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
+import android.text.Html;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.text.method.LinkMovementMethod;
+import android.text.method.MovementMethod;
+import android.text.style.BackgroundColorSpan;
+import android.text.style.ClickableSpan;
+import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -29,6 +39,7 @@ import com.sports.unity.BuildConfig;
 import com.sports.unity.R;
 import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.common.model.TinyDB;
+import com.sports.unity.util.CommonUtil;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -89,7 +100,7 @@ public class PromoActivity extends CustomAppCompatActivity {
     }
 
     private void initView() {
-        TextView detail = (TextView) findViewById(R.id.detail);
+        TextView detail = (TextView) findViewById(R.id.details);
         Button inviteFriends = (Button) findViewById(R.id.invite_frnds);
 
         promoCodeText = (EditText) findViewById(R.id.promo_text);
@@ -101,14 +112,58 @@ public class PromoActivity extends CustomAppCompatActivity {
         sharePromoCodeLayout = (LinearLayout) findViewById(R.id.share_your_promo_code);
         coordinatorLayout = (CoordinatorLayout) findViewById(R.id.root_coordinator_layout);
 
-        detail.setOnClickListener(onClickListener);
         addPromo.setOnClickListener(onClickListener);
         inviteFriends.setOnClickListener(onClickListener);
 
         promoCodeText.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoRegular());
         setEditTextListeners();
 
+        SpannableString link = makeLinkSpan("Details", new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showDetail();
+            }
+        });
+
+        String detailText = "Share your code with your friends and family to avail new offers T&C Apply. ";
+        SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder();
+        spannableStringBuilder.append(detailText);
+        spannableStringBuilder.append(link);
+        spannableStringBuilder.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.app_theme_blue)), detailText.length(),
+                spannableStringBuilder.length(),
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        detail.setText(spannableStringBuilder);
+        makeLinksFocusable(detail);
         promoCodeText.clearFocus();
+    }
+
+    private SpannableString makeLinkSpan(CharSequence text, View.OnClickListener listener) {
+        SpannableString link = new SpannableString(text);
+        link.setSpan(new ClickableString(listener), 0, text.length(),
+                SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE);
+        return link;
+    }
+
+    private void makeLinksFocusable(TextView tv) {
+        MovementMethod m = tv.getMovementMethod();
+        if ((m == null) || !(m instanceof LinkMovementMethod)) {
+            if (tv.getLinksClickable()) {
+                tv.setMovementMethod(LinkMovementMethod.getInstance());
+            }
+        }
+    }
+
+    private static class ClickableString extends ClickableSpan {
+        private View.OnClickListener mListener;
+
+        public ClickableString(View.OnClickListener listener) {
+            mListener = listener;
+        }
+
+        @Override
+        public void onClick(View v) {
+            mListener.onClick(v);
+        }
     }
 
     private void setEditTextListeners() {
@@ -158,9 +213,6 @@ public class PromoActivity extends CustomAppCompatActivity {
         public void onClick(View v) {
             int id = v.getId();
             switch (id) {
-                case R.id.detail:
-                    showDetail();
-                    break;
                 case R.id.promo_code:
                     availPromoCode();
                     break;
@@ -182,9 +234,36 @@ public class PromoActivity extends CustomAppCompatActivity {
     }
 
     private void showDetail() {
+        String preText = "Please read the ";
+        String terms = "Terms and Conditions";
+        String postText = " that apply while sharing the code.";
+        SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder();
+        spannableStringBuilder.append(preText);
+
+        spannableStringBuilder.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.gray2)), 0,
+                spannableStringBuilder.length(),
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+        SpannableString link = makeLinkSpan(terms, new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                CommonUtil.openLinkOnBrowser(PromoActivity.this, getResources().getString(R.string.link_of_terms_of_use));
+            }
+        });
+
+        spannableStringBuilder.append(link);
+        spannableStringBuilder.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.app_theme_blue)), preText.length(),
+                spannableStringBuilder.length(),
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+        spannableStringBuilder.append(postText);
+
+        spannableStringBuilder.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.gray2)), (preText.length() + terms.length()),
+                spannableStringBuilder.length(),
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Heading");
-        builder.setMessage("This is PhotoShop's version of Lorem Ipsum");
+        builder.setMessage(spannableStringBuilder);
         builder.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 // do nothing
@@ -192,6 +271,11 @@ public class PromoActivity extends CustomAppCompatActivity {
         });
         AlertDialog dialog = builder.create();
         dialog.show();
+        TextView msgTxt = (TextView) dialog.findViewById(android.R.id.message);
+        makeLinksFocusable(msgTxt);
+        Button negativeButton = dialog.getButton(DialogInterface.BUTTON_NEGATIVE);
+        negativeButton.setTextColor(getResources().getColor(R.color.app_theme_blue));
+
     }
 
     private void getOwnPromoCode() {

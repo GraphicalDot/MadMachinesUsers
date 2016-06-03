@@ -1050,6 +1050,7 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
             globalMatchList.clear();
             favoriateMatchList.clear();
 
+            removeBannerMatchObject();
             globalMatchList.addAll(matchDay);
 
             updateFavListFromMatchDay();

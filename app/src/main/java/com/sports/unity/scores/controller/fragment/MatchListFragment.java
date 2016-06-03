@@ -26,6 +26,7 @@ import android.widget.Toast;
 import com.sports.unity.R;
 import com.sports.unity.common.controller.FilterActivity;
 import com.sports.unity.common.controller.MainActivity;
+import com.sports.unity.common.model.DataChangeCounterHandler;
 import com.sports.unity.common.model.FavouriteItem;
 import com.sports.unity.common.model.FavouriteItemWrapper;
 import com.sports.unity.common.model.FriendsWatchingHandler;
@@ -200,6 +201,14 @@ public class MatchListFragment extends Fragment implements MatchListWrapperNotif
             ((MatchListWrapperAdapter) mWraperRecyclerView.getAdapter()).notifyFavIconChanged();
             FavouriteItemWrapper.getInstance(getActivity()).setFavouriteChanged(false);
         }
+
+        DataChangeCounterHandler dataChangeCounterHandler = FavouriteItemWrapper.getInstance(getContext()).getDataChangeCounterHandler();
+        if (dataChangeCounterHandler.isContentChanged(LIST_LISTENER_KEY)) {
+            matchListWrapperAdapter.notifyAdapter();
+        } else {
+            // do nothing
+        }
+        dataChangeCounterHandler.setContentCounter(LIST_LISTENER_KEY);
     }
 
     private boolean handleStaffFavContent() {

@@ -52,6 +52,9 @@ public class FavouriteItemWrapper {
     private List<FavouriteItem> savedCricketPlayers;
     private List<FavouriteItem> savedAllFavorites;
 
+
+    private DataChangeCounterHandler dataChangeCounterHandler = new DataChangeCounterHandler();
+
     /**
      * Private constructor so that no one can instantiate this class.
      */
@@ -111,6 +114,10 @@ public class FavouriteItemWrapper {
         savedAllFavorites.addAll(favouriteItems);
     }
 
+    public DataChangeCounterHandler getDataChangeCounterHandler() {
+        return dataChangeCounterHandler;
+    }
+
     /**
      * This method converts the {@link ArrayList} of
      * {@link FavouriteItem} to {@link JSONArray} and
@@ -164,6 +171,7 @@ public class FavouriteItemWrapper {
                 }
             }
         }
+        dataChangeCounterHandler.contentChanged();
     }
 
     /**

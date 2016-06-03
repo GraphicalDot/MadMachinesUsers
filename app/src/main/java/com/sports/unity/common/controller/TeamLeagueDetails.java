@@ -89,30 +89,34 @@ public class TeamLeagueDetails extends CustomAppCompatActivity {
     }
 
     private void setUpFavoriateOnToolbar(Toolbar toolbar) {
-        final ImageView isFav = (ImageView) toolbar.findViewById(R.id.favoriate);
-        isFav.setVisibility(View.VISIBLE);
-        for (FavouriteItem item : favList) {
-            if (favouriteItem.getId().equals(item.getId())) {
-                isTeamLeagueFav = true;
-                isFav.setImageResource(R.drawable.ic_fav);
-                break;
-            }
-        }
-        isFav.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (isTeamLeagueFav) {
-                    isFav.setImageResource(R.drawable.ic_non_fav);
-                    isTeamLeagueFav = false;
-                    removeFromFavList();
-                } else {
-                    isFav.setImageResource(R.drawable.ic_fav);
+        if (isStaffPicked) {
+            //nothing
+        } else {
+            final ImageView isFav = (ImageView) toolbar.findViewById(R.id.favoriate);
+            isFav.setVisibility(View.VISIBLE);
+            for (FavouriteItem item : favList) {
+                if (favouriteItem.getId().equals(item.getId())) {
                     isTeamLeagueFav = true;
-                    addToFavList();
+                    isFav.setImageResource(R.drawable.ic_fav);
+                    break;
                 }
-                FavouriteItemWrapper.getInstance(getApplicationContext()).saveList(getApplicationContext(), favList);
             }
-        });
+            isFav.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (isTeamLeagueFav) {
+                        isFav.setImageResource(R.drawable.ic_non_fav);
+                        isTeamLeagueFav = false;
+                        removeFromFavList();
+                    } else {
+                        isFav.setImageResource(R.drawable.ic_fav);
+                        isTeamLeagueFav = true;
+                        addToFavList();
+                    }
+                    FavouriteItemWrapper.getInstance(getApplicationContext()).saveList(getApplicationContext(), favList);
+                }
+            });
+        }
     }
 
     private void removeFromFavList() {
