@@ -488,13 +488,13 @@ public class SettingsActivity extends CustomAppCompatActivity implements BlockUn
                         UserUtil.setShowMyLocation(SettingsActivity.this, true);
 
                         Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
-                        Switch switcher = (Switch) toolbar.findViewById(R.id.toolbarSwitcher);
+                        SwitchCompat switcher = (SwitchCompat) toolbar.findViewById(R.id.toolbarSwitcher);
                         switcher.setChecked(true);
                     } else {
                         UserUtil.setShowMyLocation(SettingsActivity.this, false);
 
                         Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
-                        Switch switcher = (Switch) toolbar.findViewById(R.id.toolbarSwitcher);
+                        SwitchCompat switcher = (SwitchCompat) toolbar.findViewById(R.id.toolbarSwitcher);
                         switcher.setChecked(false);
                     }
                 } else if (itemId == SettingsHelper.ALL_USER_LOCATION_ITEM_ID) {
@@ -504,13 +504,13 @@ public class SettingsActivity extends CustomAppCompatActivity implements BlockUn
                         UserUtil.setShowMyLocation(SettingsActivity.this, true);
 
                         Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
-                        Switch switcher = (Switch) toolbar.findViewById(R.id.toolbarSwitcher);
+                        SwitchCompat switcher = (SwitchCompat) toolbar.findViewById(R.id.toolbarSwitcher);
                         switcher.setChecked(true);
                     } else {
                         UserUtil.setShowMyLocation(SettingsActivity.this, false);
 
                         Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
-                        Switch switcher = (Switch) toolbar.findViewById(R.id.toolbarSwitcher);
+                        SwitchCompat switcher = (SwitchCompat) toolbar.findViewById(R.id.toolbarSwitcher);
                         switcher.setChecked(false);
                     }
                 }
@@ -519,7 +519,7 @@ public class SettingsActivity extends CustomAppCompatActivity implements BlockUn
 
                 if (itemId == SettingsHelper.SHOW_MY_LOCATION_ITEM_ID) {
                     Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
-                    Switch switcher = (Switch) toolbar.findViewById(R.id.toolbarSwitcher);
+                    SwitchCompat switcher = (SwitchCompat) toolbar.findViewById(R.id.toolbarSwitcher);
                     switcher.setChecked(!isChecked);
                 } else if (itemId == SettingsHelper.FRIEND_ONLY_LOCATION_ITEM_ID || itemId == SettingsHelper.ALL_USER_LOCATION_ITEM_ID) {
                     LinearLayout settingItemParentLayout = (LinearLayout) findViewById(R.id.items_container);

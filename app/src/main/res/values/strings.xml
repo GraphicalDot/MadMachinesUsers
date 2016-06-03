@@ -402,6 +402,7 @@ message to verify your mobile number.</string>
     <string name="promo_no">YOURPROMOCODENO</string>
     <string name="promo_text1">Proin gravida nibh vel velit auctor aliq-.</string>
     <string name="promo_text2">uet. Aenean sollicitudin.</string>
+    <string name="promo_dailog_text">You have successfully installed the sports unity app.\n   You have a surprise gift waiting for you, grab it\n before it flies away. T&amp;C apply.</string>
 
     <plurals name="friends_watching">
         <item quantity="one">%d FRIEND WATCHING</item>
