@@ -59,8 +59,8 @@ public class PromoActivity extends CustomAppCompatActivity {
 
     public static final String BASE_URL_GET_PROMO_CODE = "http://" + BuildConfig.XMPP_SERVER_BASE_URL + "/get_referral_code";
     public static final String BASE_URL_AVAIL_PROMO_CODE = "http://" + BuildConfig.XMPP_SERVER_BASE_URL + "/redeem_code";
-    public static final String BASE_INVITE_USERS_URL = "https://play.google.com/store/apps/details?id=co.sports.unity&referrer=utm_source%3D";
-    public static final String END_INVITE_USERS_URL = "%26utm_medium%3Dsp-andr";
+//    public static final String BASE_INVITE_USERS_URL = "https://play.google.com/store/apps/details?id=co.sports.unity&referrer=utm_source%3D";
+//    public static final String END_INVITE_USERS_URL = "%26utm_medium%3Dsp-andr";
 
 
     public static final String REFERRAL_CODE = "referral_code";
@@ -337,7 +337,7 @@ public class PromoActivity extends CustomAppCompatActivity {
             progressBar.getIndeterminateDrawable().setColorFilter(PromoActivity.this.getResources().getColor(R.color.app_theme_blue), android.graphics.PorterDuff.Mode.MULTIPLY);
 
             pDialog = new ProgressDialog(PromoActivity.this);
-            pDialog.setMessage("Availing...");
+            pDialog.setMessage("Redeeming...");
             pDialog.show();
             pDialog.setIndeterminateDrawable(progressBar.getIndeterminateDrawable());
         }
