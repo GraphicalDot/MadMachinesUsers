@@ -835,6 +835,11 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
         return null;
     }
 
+    public void updateGlobalList(ArrayList<MatchListWrapperItem> dataItem) {
+        globalMatchList.clear();
+        globalMatchList.addAll(dataItem);
+    }
+
 
     class OddsClickListener implements View.OnClickListener {
 
@@ -1055,15 +1060,21 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
     public void notifyAdapter() {
         if (matchDay.size() > 0) {
 
-            globalMatchList.clear();
             favoriateMatchList.clear();
-
             removeBannerMatchObject();
-            globalMatchList.addAll(matchDay);
-
             updateFavListFromMatchDay();
-
             updateMatches(isFavChecked);
+
+        } else if (globalMatchList.size() > 0) {
+
+            matchDay.addAll(globalMatchList);
+            favoriateMatchList.clear();
+            removeBannerMatchObject();
+            updateFavListFromMatchDay();
+            updateMatches(isFavChecked);
+
+        } else {
+            //do nothing
         }
     }
 

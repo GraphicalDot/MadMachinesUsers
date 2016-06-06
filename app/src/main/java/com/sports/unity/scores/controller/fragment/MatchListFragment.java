@@ -407,6 +407,7 @@ public class MatchListFragment extends Fragment{
 
 
             Collections.sort(dataItem);
+            matchListWrapperAdapter.updateGlobalList(dataItem);
             if (favouriteItem.getFilterType().equalsIgnoreCase(Constants.FILTER_TYPE_LEAGUE) || (isStaffPicked && favouriteItem.getSportsType().equalsIgnoreCase(Constants.SPORTS_TYPE_CRICKET))) {
                 matchListWrapperAdapter.setIsIndividualFixture();
             }
@@ -562,6 +563,7 @@ public class MatchListFragment extends Fragment{
                 FriendsWatchingHandler.getInstance(getContext()).requestContent(FRIENDS_WATCHING_LISTENER_KEY, FRIENDS_WATCHING_REQUEST_TAG);
             }
             Collections.sort(dataItem);
+            matchListWrapperAdapter.updateGlobalList(dataItem);
         }
         return success;
     }
