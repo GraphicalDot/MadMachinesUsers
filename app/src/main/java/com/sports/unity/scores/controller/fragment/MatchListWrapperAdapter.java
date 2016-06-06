@@ -356,6 +356,8 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
                             holder.team2.setTextColor(activity.getResources().getColor(R.color.ColorPrimaryDark));
 
                             if ("?".equals(footballMatchJsonCaller.getAwayTeamScore())) {
+                                holder.matchVenueDetails.setVisibility(View.VISIBLE);
+                                holder.friendsDetails.setVisibility(View.GONE);
                                 if ("Postp.".equalsIgnoreCase(footballMatchJsonCaller.getMatchStatus())) {
                                     holder.matchDay.setText("Postponed");
                                     holder.liveText.setVisibility(View.GONE);
@@ -422,6 +424,8 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
 
                                 } else {
                                     // holder.matchDay.setText("Completed");
+                                    holder.matchVenueDetails.setVisibility(View.VISIBLE);
+                                    holder.friendsDetails.setVisibility(View.GONE);
                                     holder.date.setVisibility(View.GONE);
                                     holder.matchDay.setVisibility(View.GONE);
                                     holder.liveText.setVisibility(View.GONE);
@@ -673,6 +677,9 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
 
         holder.team1.setText(cricketMatchJsonCaller.getTeam1Short());
         holder.team2.setText(cricketMatchJsonCaller.getTeam2Short());
+
+        holder.matchVenueDetails.setVisibility(View.VISIBLE);
+        holder.friendsDetails.setVisibility(View.GONE);
     }
 
     private void SetCompletedMatchScoreCard(ViewHolder holder) throws JSONException {
@@ -683,6 +690,9 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
         holder.team1Overs.setVisibility(View.VISIBLE);
         holder.team2Overs.setVisibility(View.VISIBLE);
         String score = cricketMatchJsonCaller.getTeam1Score();
+
+        holder.matchVenueDetails.setVisibility(View.VISIBLE);
+        holder.friendsDetails.setVisibility(View.GONE);
 
         String team1Name = "";
         String team2Name = "";
