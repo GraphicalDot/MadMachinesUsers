@@ -91,8 +91,12 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
             @Override
             public void onClick(View view) {
 //                enableNotificationsWhenSettingUpFirstTime();
-                UserUtil.setFilterCompleted(AdvancedFilterActivity.this, true);
-                FavouriteContentHandler.getInstance(AdvancedFilterActivity.this).invalidate(AdvancedFilterActivity.this);
+                if (!UserUtil.isFilterCompleted()) {
+                    FavouriteItemWrapper.getInstance(AdvancedFilterActivity.this).saveList(AdvancedFilterActivity.this, favList);
+                    UserUtil.setFilterCompleted(AdvancedFilterActivity.this, true);
+                } else {
+                    FavouriteContentHandler.getInstance(AdvancedFilterActivity.this).invalidate(AdvancedFilterActivity.this);
+                }
                 if (isResultRequired) {
                     setResult(RESULT_OK);
                     finish();
