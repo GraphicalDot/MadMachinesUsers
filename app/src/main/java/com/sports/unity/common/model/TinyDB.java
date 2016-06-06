@@ -17,6 +17,7 @@ import android.util.Log;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map;
@@ -98,6 +99,7 @@ public class TinyDB {
      */
 
     public static final String PROMO_CODE = "promo_code";
+    public static final String INVITE_URL = "invite_url";
 
     private SharedPreferences preferences;
     private String DEFAULT_APP_IMAGEDATA_DIRECTORY;

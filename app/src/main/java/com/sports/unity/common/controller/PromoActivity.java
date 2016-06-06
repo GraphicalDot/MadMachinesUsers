@@ -12,16 +12,13 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
-import android.text.Html;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
-import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.text.method.LinkMovementMethod;
 import android.text.method.MovementMethod;
-import android.text.style.BackgroundColorSpan;
 import android.text.style.ClickableSpan;
 import android.text.style.ForegroundColorSpan;
 import android.util.Log;
@@ -226,9 +223,10 @@ public class PromoActivity extends CustomAppCompatActivity {
     };
 
     private void inviteFriends() {
+        String invitationURL = TinyDB.getInstance(getApplicationContext()).getString(TinyDB.INVITE_URL);
         Intent sendIntent = new Intent();
         sendIntent.setAction(Intent.ACTION_SEND);
-        sendIntent.putExtra(Intent.EXTRA_TEXT, BASE_INVITE_USERS_URL + ownPromoCode.getText().toString() + END_INVITE_USERS_URL);
+        sendIntent.putExtra(Intent.EXTRA_TEXT, invitationURL);
         sendIntent.setType("text/plain");
         startActivity(sendIntent);
     }
@@ -492,6 +490,8 @@ public class PromoActivity extends CustomAppCompatActivity {
                         success = true;
                         if (responseJsonContent.has("referral_code")) {
                             ownPromoCode = responseJsonContent.getString("referral_code");
+                            String shortenerPromoUrl = responseJsonContent.getString("referral_url");
+                            TinyDB.getInstance(getApplicationContext()).putString(TinyDB.INVITE_URL, shortenerPromoUrl);
                         } else {
                             ownPromoCode = null;
                         }
