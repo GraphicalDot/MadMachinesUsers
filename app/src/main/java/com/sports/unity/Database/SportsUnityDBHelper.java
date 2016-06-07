@@ -9,6 +9,8 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 import com.sports.unity.R;
+import com.sports.unity.common.model.FavouriteItem;
+import com.sports.unity.common.model.FavouriteItemWrapper;
 import com.sports.unity.messages.controller.model.Chats;
 import com.sports.unity.messages.controller.model.Contacts;
 import com.sports.unity.messages.controller.model.Message;
@@ -28,7 +30,7 @@ import static com.sports.unity.Database.SportsUnityContract.FriendRequestEntry;
  */
 public class SportsUnityDBHelper extends SQLiteOpenHelper {
 
-    public static final int DATABASE_VERSION = 3;
+    public static final int DATABASE_VERSION = 4;
     public static final String DATABASE_NAME = "spu.db";
 
     public static final int DEFAULT_ENTRY_ID = -1;
@@ -141,9 +143,11 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
     }
 
     private ArrayList<Contacts> allContacts = null;
+    private Context context = null;
 
     private SportsUnityDBHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        this.context = context;
     }
 
     @Override
@@ -165,6 +169,14 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
                 db.execSQL(CREATE_FRIEND_REQUESTS_TABLE);
             }
             case 3: {
+                ArrayList<FavouriteItem> favList = new ArrayList<>();
+                FavouriteItemWrapper wrapper = FavouriteItemWrapper.getInstance(context);
+                favList.addAll(wrapper.getAllLeagues());
+                favList.addAll(wrapper.getAllTeams());
+                favList.addAll(wrapper.getCricketPlayers());
+                wrapper.saveList(context, favList);
+            }
+            case 4: {
 
             }
         }
@@ -577,7 +589,7 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
                 ContactChatEntry.COLUMN_AVAILABLE_STATUS
         };
 
-        String selection =  (forcedSync ? " " : ContactChatEntry.COLUMN_UPDATE_REQUIRED + " == 1 AND ") + ContactChatEntry.COLUMN_JID + " is not null ";
+        String selection = (forcedSync ? " " : ContactChatEntry.COLUMN_UPDATE_REQUIRED + " == 1 AND ") + ContactChatEntry.COLUMN_JID + " is not null ";
         String[] selectionArgs = null;
 
         Cursor c = db.query(ContactChatEntry.TABLE_NAME, projection, selection, selectionArgs, null, null, null);
@@ -618,7 +630,7 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
 
         String selection = ContactChatEntry.COLUMN_JID + registerCondition + " AND " + ContactChatEntry.COLUMN_AVAILABLE_STATUS + " = " + Contacts.AVAILABLE_BY_MY_CONTACTS
                 + " AND " + ContactChatEntry.COLUMN_GROUP_CHAT + " == 0 ";
-        if( blockedIncluded ){
+        if (blockedIncluded) {
 
         } else {
             selection += " AND " + ContactChatEntry.COLUMN_BLOCK_USER + " == 0 ";
@@ -754,7 +766,7 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
 
         ContentValues values = new ContentValues();
         values.put(ContactChatEntry.COLUMN_NAME, groupName);
-        if( groupImage != null ) {
+        if (groupImage != null) {
             values.put(ContactChatEntry.COLUMN_IMAGE, groupImage);
         }
         values.put(ContactChatEntry.COLUMN_UPDATE_REQUIRED, false);

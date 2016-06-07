@@ -474,7 +474,10 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity {
                     TinyDB.getInstance(getApplicationContext()).putString(TinyDB.KEY_PASSWORD, password);
                     UserUtil.setOtpSent(EnterOtpActivity.this, false);
                     UserUtil.setUserRegistered(EnterOtpActivity.this, true);
-                    if (!response.isNull("interests")) {
+
+                    //To Update the user interest from server if exist.
+
+                    /*if (!response.isNull("interests")) {
                         String favString = response.getString("interests");
                         if (!TextUtils.isEmpty(favString)) {
 
@@ -500,7 +503,7 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity {
                             }
 
                         }
-                    }
+                    }*/
                     this.success = true;
                 } else {
                     this.success = false;
