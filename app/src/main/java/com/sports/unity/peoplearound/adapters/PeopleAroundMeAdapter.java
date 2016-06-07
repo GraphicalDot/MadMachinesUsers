@@ -77,7 +77,8 @@ public class PeopleAroundMeAdapter extends ArrayAdapter<User> {
             onlineStatus.setText("Online");
             statusIndicator.setImageResource(R.drawable.online_indicator_dot);
         } else {
-            long lastSeenEpoch = Long.parseLong(user.getLastSeen());
+            String lastSeen = checkForDelta(user.getLastSeen());
+            long lastSeenEpoch = Long.parseLong(lastSeen);
             int days = CommonUtil.getTimeDifference(lastSeenEpoch);
             if (days == 0) {
                 onlineStatus.setText("last seen today at  " + CommonUtil.getDefaultTimezoneTimeInAMANDPM(lastSeenEpoch));
@@ -92,6 +93,13 @@ public class PeopleAroundMeAdapter extends ArrayAdapter<User> {
         rowView.setTag(position);
         rowView.setOnClickListener(onClickListener);
         return rowView;
+    }
+
+    private String checkForDelta(String lastSeen) {
+        if (lastSeen.contains(".")) {
+            lastSeen = lastSeen.substring(0, lastSeen.indexOf("."));
+        }
+        return lastSeen;
     }
 
 
