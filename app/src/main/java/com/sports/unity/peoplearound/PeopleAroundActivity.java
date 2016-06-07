@@ -53,6 +53,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 
 public class PeopleAroundActivity extends AppCompatActivity implements PlaceSelectionListener {
@@ -116,7 +118,7 @@ public class PeopleAroundActivity extends AppCompatActivity implements PlaceSele
                 for (int i = 0; i < usersArray.length(); i++) {
                     JSONObject user = (JSONObject) usersArray.get(i);
                     if (user.getString("friendship_status").equals("friends")) {
-                        friends.add(new User(user.getString("name"), user.getString("username"), (int) Math.round(user.getDouble("distance"))));
+                        friends.add(new User(user.getString("name"), user.getString("username"), (int) Math.round(user.getDouble("distance")), user.getString("last_seen"), user.getBoolean("is_available")));
                     } else {
                         boolean success = false;
                         JSONArray interests = user.getJSONArray("interests");
@@ -130,7 +132,7 @@ public class PeopleAroundActivity extends AppCompatActivity implements PlaceSele
                                     String st = interests.getString(j);
                                     for (FavouriteItem item : selfInterests) {
                                         if (item.getName().equals(st)) {
-                                            similarUsers.add(new User(user.getString("name"), user.getString("username"), (int) Math.round(user.getDouble("distance"))));
+                                            similarUsers.add(new User(user.getString("name"), user.getString("username"), (int) Math.round(user.getDouble("distance")), user.getString("last_seen"), user.getBoolean("is_available")));
                                             success = true;
                                             break;
                                         }
@@ -147,7 +149,7 @@ public class PeopleAroundActivity extends AppCompatActivity implements PlaceSele
                         if (success) {
                             //do nothing
                         } else {
-                            sportsUnityUsers.add(new User(user.getString("name"), user.getString("username"), (int) Math.round(user.getDouble("distance"))));
+                            sportsUnityUsers.add(new User(user.getString("name"), user.getString("username"), (int) Math.round(user.getDouble("distance")), user.getString("last_seen"), user.getBoolean("is_available")));
                         }
                     }
                 }
@@ -160,6 +162,10 @@ public class PeopleAroundActivity extends AppCompatActivity implements PlaceSele
             e.printStackTrace();
         }
 
+        Collections.sort(friends);
+        Collections.sort(similarUsers);
+        Collections.sort(sportsUnityUsers);
+        
         listenersMap.get(FRIENDS_KEY).newData(friends, responseCode);
         listenersMap.get(SPU_KEY).newData(sportsUnityUsers, responseCode);
         listenersMap.get(SIMILAR_USERS_KEY).newData(similarUsers, responseCode);

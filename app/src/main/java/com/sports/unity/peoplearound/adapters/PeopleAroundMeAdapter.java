@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.sports.unity.Database.SportsUnityDBHelper;
@@ -16,6 +17,7 @@ import com.sports.unity.messages.controller.activity.ChatScreenActivity;
 import com.sports.unity.messages.controller.model.Contacts;
 import com.sports.unity.messages.controller.model.User;
 import com.sports.unity.peoplearound.PeopleAroundActivity;
+import com.sports.unity.util.CommonUtil;
 
 import java.util.ArrayList;
 
@@ -50,6 +52,8 @@ public class PeopleAroundMeAdapter extends ArrayAdapter<User> {
 
         TextView name = (TextView) rowView.findViewById(R.id.tv_friend_name);
         TextView distance = (TextView) rowView.findViewById(R.id.tv_friend_distance);
+        TextView onlineStatus = (TextView) rowView.findViewById(R.id.online_status);
+        ImageView statusIndicator = (ImageView) rowView.findViewById(R.id.status_indicator);
 
         if (TAG == PeopleAroundActivity.FRIENDS_KEY) {
             String username = SportsUnityDBHelper.getInstance(context).getNameByJIDFromAvailableContacts(user.getJid());
@@ -69,6 +73,22 @@ public class PeopleAroundMeAdapter extends ArrayAdapter<User> {
             distance.setText("Approx " + String.valueOf(user.getDistance()) + " mts away");
         }
 
+        if (user.isUserOnline()) {
+            onlineStatus.setText("Online");
+            statusIndicator.setImageResource(R.drawable.online_indicator_dot);
+        } else {
+            long lastSeenEpoch = Long.parseLong(user.getLastSeen());
+            int days = CommonUtil.getTimeDifference(lastSeenEpoch);
+            if (days == 0) {
+                onlineStatus.setText("last seen today at  " + CommonUtil.getDefaultTimezoneTimeInAMANDPM(lastSeenEpoch));
+            } else if (days == 1) {
+                onlineStatus.setText("last seen yesterday at  " + CommonUtil.getDefaultTimezoneTimeInAMANDPM(lastSeenEpoch));
+            } else {
+                onlineStatus.setText("last seen " + days + " days ago");
+            }
+            statusIndicator.setImageResource(R.drawable.offline_indicator_dot);
+        }
+
         rowView.setTag(position);
         rowView.setOnClickListener(onClickListener);
         return rowView;
@@ -85,7 +105,7 @@ public class PeopleAroundMeAdapter extends ArrayAdapter<User> {
                 contact = SportsUnityDBHelper.getInstance(getContext()).getContactByJid(user.getJid());
                 moveToChatActivity(contact);
             } else {
-                if( contact.availableStatus != Contacts.AVAILABLE_BY_MY_CONTACTS ){
+                if (contact.availableStatus != Contacts.AVAILABLE_BY_MY_CONTACTS) {
                     SportsUnityDBHelper.getInstance(context).updateContactName(contact.id, user.getName());
                     contact = SportsUnityDBHelper.getInstance(getContext()).getContactByJid(user.getJid());
                 }

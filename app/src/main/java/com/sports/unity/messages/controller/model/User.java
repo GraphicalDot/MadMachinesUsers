@@ -3,16 +3,20 @@ package com.sports.unity.messages.controller.model;
 /**
  * Created by madmachines on 12/5/16.
  */
-public class User {
+public class User implements Comparable<User> {
 
     private String name;
     private String jid;
     private int distance;
+    private String lastSeen;
+    private boolean isOnline = false;
 
-    public User(String name, String jid, int distance) {
+    public User(String name, String jid, int distance, String lastSeen, boolean isOnline) {
         this.name = name;
         this.jid = jid;
         this.distance = distance;
+        this.lastSeen = lastSeen;
+        this.isOnline = isOnline;
     }
 
     public String getName() {
@@ -28,6 +32,20 @@ public class User {
 
     public int getDistance() {
         return distance;
+    }
+
+    public boolean isUserOnline() {
+        return isOnline;
+    }
+
+    public String getLastSeen() {
+        return lastSeen;
+    }
+
+
+    @Override
+    public int compareTo(User another) {
+        return Boolean.compare(another.isUserOnline(), this.isUserOnline());
     }
 }
 
