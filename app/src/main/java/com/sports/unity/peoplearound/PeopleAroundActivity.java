@@ -5,7 +5,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Location;
 import android.location.LocationManager;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v4.view.ViewPager;
@@ -15,9 +14,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -30,10 +27,8 @@ import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.places.AutocompleteFilter;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceAutocomplete;
-import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
 import com.google.android.gms.location.places.ui.PlaceSelectionListener;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.LatLngBounds;
 import com.sports.unity.R;
 import com.sports.unity.common.controller.SettingsActivity;
 import com.sports.unity.common.model.FavouriteItem;
@@ -54,7 +49,6 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 
 public class PeopleAroundActivity extends AppCompatActivity implements PlaceSelectionListener {
@@ -67,6 +61,7 @@ public class PeopleAroundActivity extends AppCompatActivity implements PlaceSele
     public static final String SPU_KEY = "spu";
     public static final String SIMILAR_USERS_KEY = "similar";
 
+    public static final int fetchDataCode = 001;
 
     private int radius = 1000;
     private int stepRange = 25;
@@ -81,7 +76,6 @@ public class PeopleAroundActivity extends AppCompatActivity implements PlaceSele
     private Location mLastKnownLocation;
     private TinyDB tinyDB;
     private ViewPager viewPager;
-    private ProgressBar progressBar;
 
     private static HashMap<String, DataNotifier> listenersMap = new HashMap<>();
 
@@ -93,8 +87,6 @@ public class PeopleAroundActivity extends AppCompatActivity implements PlaceSele
 
         @Override
         public void handleContent(String tag, String content, int responseCode) {
-            progressBar.setVisibility(View.GONE);
-            viewPager.setVisibility(View.VISIBLE);
             if (responseCode == 200) {
                 handleData(content, responseCode);
             } else {
@@ -165,7 +157,7 @@ public class PeopleAroundActivity extends AppCompatActivity implements PlaceSele
         Collections.sort(friends);
         Collections.sort(similarUsers);
         Collections.sort(sportsUnityUsers);
-        
+
         listenersMap.get(FRIENDS_KEY).newData(friends, responseCode);
         listenersMap.get(SPU_KEY).newData(sportsUnityUsers, responseCode);
         listenersMap.get(SIMILAR_USERS_KEY).newData(similarUsers, responseCode);
@@ -239,8 +231,6 @@ public class PeopleAroundActivity extends AppCompatActivity implements PlaceSele
         tinyDB = TinyDB.getInstance(getApplicationContext());
         initToolbar();
 
-        progressBar = (ProgressBar) findViewById(R.id.progress_bar);
-
         viewPager = (ViewPager) findViewById(R.id.viewpager);
         viewPager.setAdapter(new PeopleAroundMeViewPagerAdapter(getSupportFragmentManager(), titles, titles.length));
 
@@ -292,8 +282,6 @@ public class PeopleAroundActivity extends AppCompatActivity implements PlaceSele
     }
 
     private void getPeopleAroundMe(double latitude, double longitude) {
-        viewPager.setVisibility(View.INVISIBLE);
-        progressBar.setVisibility(View.VISIBLE);
         ScoresContentHandler.getInstance().addResponseListener(contentListener, REQUEST_LISTENER_KEY);
         HashMap<String, String> parameters = new HashMap<>();
         parameters.put(ScoresContentHandler.PARAM_USERNAME, tinyDB.getString(TinyDB.KEY_USER_JID));
@@ -304,6 +292,11 @@ public class PeopleAroundActivity extends AppCompatActivity implements PlaceSele
         parameters.put(Constants.REQUEST_PARAMETER_KEY_APK_VERSION, CommonUtil.getBuildConfig());
         parameters.put(Constants.REQUEST_PARAMETER_KEY_UDID, CommonUtil.getDeviceId(this));
         ScoresContentHandler.getInstance().requestCall(ScoresContentHandler.CALL_NAME_NEAR_BY_USERS, parameters, REQUEST_LISTENER_KEY, REQUEST_TAG);
+        if (listenersMap.size() > 0) {
+            listenersMap.get(FRIENDS_KEY).newData(friends, fetchDataCode);
+            listenersMap.get(SPU_KEY).newData(sportsUnityUsers, fetchDataCode);
+            listenersMap.get(SIMILAR_USERS_KEY).newData(similarUsers, fetchDataCode);
+        }
     }
 
     public boolean checkIfGPSEnabled() {
