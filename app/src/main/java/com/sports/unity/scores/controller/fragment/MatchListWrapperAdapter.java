@@ -215,8 +215,8 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
                             } else {
                                 holder.favIcon.setVisibility(View.GONE);
                             }
-                            Glide.with(activity).load(cricketMatchJsonCaller.getTeam1Flag()).placeholder(R.drawable.ic_no_img).into(holder.t1flag);
-                            Glide.with(activity).load(cricketMatchJsonCaller.getTeam2Flag()).placeholder(R.drawable.ic_no_img).into(holder.t2flag);
+                            Glide.with(activity).load(cricketMatchJsonCaller.getTeam1Flag()).placeholder(R.drawable.ic_no_img).dontAnimate().into(holder.t1flag);
+                            Glide.with(activity).load(cricketMatchJsonCaller.getTeam2Flag()).placeholder(R.drawable.ic_no_img).dontAnimate().into(holder.t2flag);
                             if (widgetTeamsFirst != null) {
                                 for (int i = 0; i < widgetTeamsFirst.length(); i++) {
                                     JSONObject teamData = widgetTeamsFirst.getJSONObject(i);
