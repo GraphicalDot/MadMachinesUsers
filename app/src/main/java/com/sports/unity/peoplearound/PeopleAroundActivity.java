@@ -30,6 +30,7 @@ import com.google.android.gms.location.places.ui.PlaceAutocomplete;
 import com.google.android.gms.location.places.ui.PlaceSelectionListener;
 import com.google.android.gms.maps.model.LatLng;
 import com.sports.unity.R;
+import com.sports.unity.common.controller.CustomAppCompatActivity;
 import com.sports.unity.common.controller.SettingsActivity;
 import com.sports.unity.common.model.FavouriteItem;
 import com.sports.unity.common.model.FavouriteItemWrapper;
@@ -51,7 +52,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 
-public class PeopleAroundActivity extends AppCompatActivity implements PlaceSelectionListener {
+public class PeopleAroundActivity extends CustomAppCompatActivity implements PlaceSelectionListener {
 
     private static final String REQUEST_LISTENER_KEY = "nearby_key";
     private static final String REQUEST_TAG = "nearby_tag";
