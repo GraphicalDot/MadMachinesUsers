@@ -614,8 +614,8 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity {
 
                 String homeTeam = cricketMatchJsonCaller.getTeam1();
                 String awayTeam = cricketMatchJsonCaller.getTeam2();
-                Glide.with(this).load(cricketMatchJsonCaller.getTeam1Flag()).placeholder(R.drawable.ic_no_img).into(flag1);
-                Glide.with(this).load(cricketMatchJsonCaller.getTeam2Flag()).placeholder(R.drawable.ic_no_img).into(flag2);
+                Glide.with(this).load(cricketMatchJsonCaller.getTeam1Flag()).placeholder(R.drawable.ic_no_img).dontAnimate().into(flag1);
+                Glide.with(this).load(cricketMatchJsonCaller.getTeam2Flag()).placeholder(R.drawable.ic_no_img).dontAnimate().into(flag2);
                 if (widgetTeamsFirst != null) {
                     for (int i = 0; i < widgetTeamsFirst.length(); i++) {
                         JSONObject teamData = widgetTeamsFirst.getJSONObject(i);
@@ -788,8 +788,8 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity {
                 ImageView flag1 = (ImageView) findViewById(R.id.team1_image);
                 ImageView flag2 = (ImageView) findViewById(R.id.team2_image);
 
-                Glide.with(this).load(footballMatchJsonCaller.getHomeTeamFlag()).placeholder(R.drawable.ic_no_img).into(flag1);
-                Glide.with(this).load(footballMatchJsonCaller.getAwayTeamFlag()).placeholder(R.drawable.ic_no_img).into(flag2);
+                Glide.with(this).load(footballMatchJsonCaller.getHomeTeamFlag()).placeholder(R.drawable.ic_no_img).dontAnimate().into(flag1);
+                Glide.with(this).load(footballMatchJsonCaller.getAwayTeamFlag()).placeholder(R.drawable.ic_no_img).dontAnimate().into(flag2);
 
                 findViewById(R.id.team1_score).setVisibility(View.GONE);
                 findViewById(R.id.team2_score).setVisibility(View.GONE);
