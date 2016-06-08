@@ -53,12 +53,13 @@ import java.net.URL;
 
 import static com.sports.unity.common.model.TinyDB.KEY_PASSWORD;
 import static com.sports.unity.common.model.TinyDB.KEY_USER_JID;
+import static com.sports.unity.util.CommonUtil.getBuildConfig;
 import static com.sports.unity.util.CommonUtil.getDeviceId;
 
 public class PromoActivity extends CustomAppCompatActivity {
 
-    public static final String BASE_URL_GET_PROMO_CODE = "http://" + BuildConfig.XMPP_SERVER_BASE_URL + "/get_referral_code";
-    public static final String BASE_URL_AVAIL_PROMO_CODE = "http://" + BuildConfig.XMPP_SERVER_BASE_URL + "/redeem_code";
+    public static final String BASE_URL_GET_PROMO_CODE = "http://" + BuildConfig.XMPP_SERVER_API_BASE_URL + "/get_referral_code";
+    public static final String BASE_URL_AVAIL_PROMO_CODE = "http://" + BuildConfig.XMPP_SERVER_API_BASE_URL + "/redeem_code";
 //    public static final String BASE_INVITE_USERS_URL = "https://play.google.com/store/apps/details?id=co.sports.unity&referrer=utm_source%3D";
 //    public static final String END_INVITE_USERS_URL = "%26utm_medium%3Dsp-andr";
 
@@ -286,8 +287,13 @@ public class PromoActivity extends CustomAppCompatActivity {
         try {
             data.put(SettingsActivity.USERNAME_KEY, TinyDB.getInstance(getApplicationContext()).getString(KEY_USER_JID));
             data.put(SettingsActivity.PASSWORD_KEY, TinyDB.getInstance(getApplicationContext()).getString(KEY_PASSWORD));
-            data.put(SettingsActivity.APK_VERSION, "1.0");
+            if (getBuildConfig() == null) {
+                data.put(SettingsActivity.APK_VERSION, "1.0");
+            } else {
+                data.put(SettingsActivity.APK_VERSION, getBuildConfig());
+            }
             data.put(SettingsActivity.UDID, getDeviceId(getApplicationContext()));
+            Log.i("data", data.toString());
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -314,7 +320,11 @@ public class PromoActivity extends CustomAppCompatActivity {
         try {
             data.put(SettingsActivity.USERNAME_KEY, TinyDB.getInstance(getApplicationContext()).getString(KEY_USER_JID));
             data.put(SettingsActivity.PASSWORD_KEY, TinyDB.getInstance(getApplicationContext()).getString(KEY_PASSWORD));
-            data.put(SettingsActivity.APK_VERSION, "1.0");
+            if (getBuildConfig() == null) {
+                data.put(SettingsActivity.APK_VERSION, "1.0");
+            } else {
+                data.put(SettingsActivity.APK_VERSION, getBuildConfig());
+            }
             data.put(SettingsActivity.UDID, getDeviceId(getApplicationContext()));
             data.put(REFERRAL_CODE, promoCodeText.getText().toString());
             Log.i("data", data.toString());
