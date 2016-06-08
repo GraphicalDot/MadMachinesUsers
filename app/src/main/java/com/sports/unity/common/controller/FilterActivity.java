@@ -94,6 +94,7 @@ public class FilterActivity extends CustomAppCompatActivity implements PlayerPro
         TextView title = (TextView) toolbar.findViewById(R.id.toolbar_title);
         title.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_BLUE, true));
         title.setTypeface(FontTypeface.getInstance(this).getRobotoSlabRegular());
+        title.setText("Save");
 
         title.setOnClickListener(new View.OnClickListener() {
 
