@@ -1460,8 +1460,15 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
                         status.setText("Connected");
                     }
                 });
+                getLastSeen();
+            } else {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        status.setVisibility(View.GONE);
+                    }
+                });
             }
-            getLastSeen();
         } catch (Exception e) {
             e.printStackTrace();
         }
