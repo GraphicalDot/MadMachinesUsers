@@ -45,7 +45,13 @@ public class User implements Comparable<User> {
 
     @Override
     public int compareTo(User another) {
-        return Boolean.compare(another.isUserOnline(), this.isUserOnline());
+        int value = 0;
+        if (isUserOnline() == another.isUserOnline()) {
+            value = Integer.compare(getDistance(), another.getDistance());
+        } else {
+            value = Boolean.compare(another.isUserOnline(), this.isUserOnline());
+        }
+        return value;
     }
 }
 
