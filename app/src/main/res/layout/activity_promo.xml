@@ -168,6 +168,7 @@
                     android:paddingLeft="@dimen/horizontal_padding_medium"
                     android:paddingRight="@dimen/horizontal_padding_medium"
                     android:paddingTop="@dimen/horizontal_padding_very_very_small"
+                    android:gravity="center"
                     android:text="@string/promo_text1"
                     android:textColor="@android:color/background_dark"
                     android:textSize="@dimen/font_size_small_large" />
