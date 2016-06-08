@@ -116,14 +116,15 @@ public class PromoActivity extends CustomAppCompatActivity {
         promoCodeText.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoRegular());
         setEditTextListeners();
 
-        SpannableString link = makeLinkSpan("Details", new View.OnClickListener() {
+        SpannableString link = makeLinkSpan("T&C apply", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showDetail();
+                CommonUtil.openLinkOnBrowser(PromoActivity.this, getResources().getString(R.string.link_of_terms_of_use));
+               // showDetail();
             }
         });
 
-        String detailText = "Share your code with your friends and family to avail new offers T&C Apply. ";
+        String detailText = "Share your code with your friends and family to avail new offers ";
         SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder();
         spannableStringBuilder.append(detailText);
         spannableStringBuilder.append(link);
@@ -232,7 +233,7 @@ public class PromoActivity extends CustomAppCompatActivity {
         startActivity(sendIntent);
     }
 
-    private void showDetail() {
+  /*  private void showDetail() {
         String preText = "Please read the ";
         String terms = "Terms and Conditions";
         String postText = " that apply while sharing the code.";
@@ -275,7 +276,7 @@ public class PromoActivity extends CustomAppCompatActivity {
         Button negativeButton = dialog.getButton(DialogInterface.BUTTON_NEGATIVE);
         negativeButton.setTextColor(getResources().getColor(R.color.app_theme_blue));
 
-    }
+    }*/
 
     private void getOwnPromoCode() {
         String dataAsJson = getAppDataAsJSON();
