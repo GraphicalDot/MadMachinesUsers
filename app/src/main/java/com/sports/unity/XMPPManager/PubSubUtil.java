@@ -195,9 +195,22 @@ public class PubSubUtil {
         return publish(items, nodeId);
     }
 
-    public static String publish(Collection<Item> items, String nodeId) throws SmackException.NotConnectedException {
+    public static String publish(Item item, String nodeId, String stanzaId) throws SmackException.NotConnectedException {
+        Collection<Item> items = new ArrayList<Item>(1);
+        items.add((item == null ? new Item() : item));
+        return publish(items, nodeId, stanzaId);
+    }
+
+    private static String publish(Collection<Item> items, String nodeId) throws SmackException.NotConnectedException {
         PubSub packet = PubSub.createPubsubPacket( "pubsub.mm.io", IQ.Type.set, new PublishItem<Item>(nodeId, items), null);
         String stanzaId = packet.getStanzaId();
+        XMPPClient.getConnection().sendStanza(packet);
+        return stanzaId;
+    }
+
+    private static String publish(Collection<Item> items, String nodeId, String stanzaId) throws SmackException.NotConnectedException {
+        PubSub packet = PubSub.createPubsubPacket("pubsub.mm.io", IQ.Type.set, new PublishItem<Item>(nodeId, items), null);
+        packet.setStanzaId(stanzaId);
         XMPPClient.getConnection().sendStanza(packet);
         return stanzaId;
     }

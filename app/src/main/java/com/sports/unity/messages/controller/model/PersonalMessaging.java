@@ -30,10 +30,13 @@ import com.sports.unity.util.Constants;
 import com.sports.unity.util.ImageUtil;
 
 import org.jivesoftware.smack.SmackException;
+import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.chat.Chat;
+import org.jivesoftware.smack.chat.ChatManager;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Presence;
+import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import org.jivesoftware.smackx.chatstates.ChatState;
 import org.jivesoftware.smackx.chatstates.packet.ChatStateExtension;
 import org.jivesoftware.smackx.jiveproperties.JivePropertiesManager;
@@ -78,12 +81,53 @@ public class PersonalMessaging {
         this.context = context;
     }
 
+    public boolean resendMessage(XMPPConnection connection, com.sports.unity.messages.controller.model.Message messageObject){
+        boolean success = false;
+        try {
+            Message message = new Message();
+            message.setBody(messageObject.textData);
+
+            String time = String.valueOf(CommonUtil.getCurrentGMTTimeInEpoch());
+
+            Contacts contacts = SportsUnityDBHelper.getInstance(context).getContact(messageObject.contactID);
+
+            if( XMPPClient.getInstance().isConnectionAuthenticated() ) {
+                String stanzaId = messageObject.messageStanzaId;
+
+                ChatManager chatManager = ChatManager.getInstanceFor(connection);
+                Chat chat = chatManager.getThreadChat(contacts.jid + "@mm.io");
+                if (chat == null) {
+                    chat = ChatManager.getInstanceFor(connection).createChat(contacts.jid + "@mm.io");
+                }
+
+                if( stanzaId != null ){
+                    message.setStanzaId(stanzaId);
+                    sendMessage(message, chat, time, messageObject.mimeType, contacts.isOthers());
+                } else {
+                    stanzaId = sendMessage(message, chat, time, messageObject.mimeType, contacts.isOthers());
+                    SportsUnityDBHelper.getInstance(context).updateMessageStanzaId(messageObject.id, stanzaId);
+                }
+
+                XMPPMessageQueueHelper.getInstance().enqueue(stanzaId);
+                success = true;
+            }
+        }catch (Exception ex){
+            ex.printStackTrace();
+        }
+        return success;
+    }
+
     public void sendTextMessage(String msg, Chat chat, String fromJID, int chatId, boolean otherChat) {
         Message message = new Message();
         message.setBody(msg);
 
         String time = String.valueOf(CommonUtil.getCurrentGMTTimeInEpoch());
-        String stanzaId = sendMessage(message, chat, time, SportsUnityDBHelper.MIME_TYPE_TEXT, otherChat);
+
+        String stanzaId = null;
+        if( XMPPClient.getInstance().isConnectionAuthenticated() ) {
+            stanzaId = sendMessage(message, chat, time, SportsUnityDBHelper.MIME_TYPE_TEXT, otherChat);
+            XMPPMessageQueueHelper.getInstance().enqueue(stanzaId);
+        }
 
         int messageId = sportsUnityDBHelper.addMessage(message.getBody(), SportsUnityDBHelper.MIME_TYPE_TEXT, fromJID, true, time,
                 stanzaId, null, null, chatId, SportsUnityDBHelper.DEFAULT_READ_STATUS);
@@ -95,7 +139,12 @@ public class PersonalMessaging {
         message.setBody(msg);
 
         String time = String.valueOf(CommonUtil.getCurrentGMTTimeInEpoch());
-        String stanzaId = sendMessage(message, chat, time, SportsUnityDBHelper.MIME_TYPE_STICKER, otherChat);
+
+        String stanzaId = null;
+        if( XMPPClient.getInstance().isConnectionAuthenticated() ) {
+            stanzaId = sendMessage(message, chat, time, SportsUnityDBHelper.MIME_TYPE_STICKER, otherChat);
+            XMPPMessageQueueHelper.getInstance().enqueue(stanzaId);
+        }
 
         int messageId = sportsUnityDBHelper.addMessage(message.getBody(), SportsUnityDBHelper.MIME_TYPE_STICKER, fromJID, true, time,
                 stanzaId, null, null, chatId, SportsUnityDBHelper.DEFAULT_READ_STATUS);
@@ -114,7 +163,12 @@ public class PersonalMessaging {
         message.setBody(messageBody);
 
         long time = CommonUtil.getCurrentGMTTimeInEpoch();
-        String stanzaId = sendMessage(message, chat, String.valueOf(time), mimeType, nearByChat);
+
+        String stanzaId = null;
+        if( XMPPClient.getInstance().isConnectionAuthenticated() ) {
+            stanzaId = sendMessage(message, chat, String.valueOf(time), mimeType, nearByChat);
+            XMPPMessageQueueHelper.getInstance().enqueue(stanzaId);
+        }
 
         sportsUnityDBHelper.updateMediaMessage_ContentUploaded(messageId, stanzaId, contentChecksum);
     }
@@ -377,6 +431,7 @@ public class PersonalMessaging {
             } else {
                 sportsUnityDBHelper.updateServerReceived(receiptId);
                 updateReceipts(RECEIPT_KIND_SERVER);
+                XMPPMessageQueueHelper.getInstance().dequeue(receiptId);
             }
         } else {
             sportsUnityDBHelper.updateClientReceived(receiptId);

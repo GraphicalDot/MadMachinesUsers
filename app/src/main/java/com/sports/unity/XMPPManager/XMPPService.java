@@ -23,6 +23,7 @@ import com.sports.unity.messages.controller.activity.ChatScreenActivity;
 import com.sports.unity.messages.controller.model.Contacts;
 import com.sports.unity.messages.controller.model.PersonalMessaging;
 import com.sports.unity.messages.controller.model.PubSubMessaging;
+import com.sports.unity.messages.controller.model.XMPPMessageQueueHelper;
 import com.sports.unity.util.ActivityActionHandler;
 import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.GlobalEventHandler;
@@ -412,6 +413,7 @@ public class XMPPService extends Service {
                 PersonalMessaging.getInstance(XMPPService.this).updateBlockList(XMPPService.this);
                 GlobalEventHandler.getInstance().xmppServerConnected(true, connection);
 
+                XMPPMessageQueueHelper.getInstance().sendPendingMessages(XMPPService.this, connection);
                 ContactsHandler.getInstance().addCallToProcessPendingActions(XMPPService.this);
             } catch (Exception ex) {
                 ex.printStackTrace();
@@ -423,6 +425,7 @@ public class XMPPService extends Service {
             Log.i("connection", "closed");
 
             GlobalEventHandler.getInstance().xmppServerConnected(false, null);
+//            XMPPMessageQueueHelper.getInstance().clearMessageQueue();
         }
 
         @Override
@@ -440,7 +443,9 @@ public class XMPPService extends Service {
                 GlobalEventHandler.getInstance().onConnectionReplaced(e);
             }
             e.printStackTrace();
+
             GlobalEventHandler.getInstance().xmppServerConnected(false, null);
+            XMPPMessageQueueHelper.getInstance().clearMessageQueue();
         }
 
         @Override
