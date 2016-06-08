@@ -17,6 +17,7 @@ import android.renderscript.Element;
 import android.renderscript.RenderScript;
 import android.renderscript.ScriptIntrinsicBlur;
 import android.util.Base64;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -29,6 +30,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URLConnection;
+import java.nio.ByteBuffer;
 
 /**
  * Created by amandeep on 13/1/16.
@@ -64,7 +66,7 @@ public class ImageUtil {
                 }
 
                 if (selectedImageFilePath != null) {
-                    compressedContent = getAndSetCompressedImageToView(selectedImageFilePath, imageView, requiredWidth, requiredHeight);
+                    compressedContent = getAndSetScaledDownAndCompressedImageToView(selectedImageFilePath, imageView, requiredWidth, requiredHeight);
 
                     success = true;
                 } else {
@@ -135,21 +137,40 @@ public class ImageUtil {
 //        parcelFileDescriptor.close();
 //        return image;
 //    }
+//
+//    public static Bitmap getCompressedBitmap(String filePath, int requiredWidth, int requiredHeight) throws Exception {
+//        Bitmap bitmap = getDecodedSampleBitmap(filePath, requiredWidth, requiredHeight);
+//        byte[] content = ImageUtil.getCompressedBytes(bitmap);
+//        bitmap = BitmapFactory.decodeByteArray(content, 0, content.length);
+//        return bitmap;
+//    }
 
-    public static Bitmap getCompressedBitmap(String filePath, int requiredWidth, int requiredHeight) throws Exception {
-        Bitmap bitmap = getDecodedSampleBitmap(filePath, requiredWidth, requiredHeight);
-        byte[] content = ImageUtil.getCompressedBytes(bitmap);
-        bitmap = BitmapFactory.decodeByteArray(content, 0, content.length);
-        return bitmap;
+    public static byte[] getScaledDownBytes(String filePath, DisplayMetrics displayMetrics) throws Exception {
+        float screenRatio = displayMetrics.widthPixels/(float)displayMetrics.heightPixels;
+
+        int requiredWidth = 0;
+        int requiredHeight = 0;
+
+        if( screenRatio >= 1 ){
+            requiredWidth = 1500;
+            requiredHeight = (int)(requiredWidth / screenRatio);
+        } else {
+            requiredHeight = 1500;
+            requiredWidth = (int)(requiredHeight * screenRatio);
+        }
+
+        return getScaledDownBytes(filePath, requiredWidth, requiredHeight);
     }
 
-    public static byte[] getCompressedBytes(String filePath, int requiredWidth, int requiredHeight) throws Exception {
+    private static byte[] getScaledDownAndCompressedBytes(String filePath, int requiredWidth, int requiredHeight) throws Exception {
         Bitmap bitmap = getDecodedSampleBitmap(filePath, requiredWidth, requiredHeight);
-        byte[] content = ImageUtil.getCompressedBytes(bitmap);
+        byte[] content = getCompressedBytes(bitmap);
+        return content;
+    }
 
-//        Log.i("File on ", "Allocation Byte Count " + bitmap.getAllocationByteCount());
-        Log.i("Image Util", "Bytes length " + content.length);
-
+    private static byte[] getScaledDownBytes(String filePath, int requiredWidth, int requiredHeight) throws Exception {
+        Bitmap bitmap = getDecodedSampleBitmap(filePath, requiredWidth, requiredHeight);
+        byte[] content = getBytes(bitmap);
         return content;
     }
 
@@ -230,8 +251,8 @@ public class ImageUtil {
         return outputBitmap;
     }
 
-    private static byte[] getAndSetCompressedImageToView(String filePath, ImageView imageView, int requiredWidth, int requiredHeight) throws Exception {
-        byte[] content = ImageUtil.getCompressedBytes(filePath, requiredWidth, requiredHeight);
+    private static byte[] getAndSetScaledDownAndCompressedImageToView(String filePath, ImageView imageView, int requiredWidth, int requiredHeight) throws Exception {
+        byte[] content = ImageUtil.getScaledDownAndCompressedBytes(filePath, requiredWidth, requiredHeight);
 
         Bitmap bitmap = BitmapFactory.decodeByteArray(content, 0, content.length);
         imageView.setImageBitmap(bitmap);
@@ -288,37 +309,19 @@ public class ImageUtil {
     private static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
         int sampleScaleSize = 1;
 
-        int maxLimit = 800;
-        if (reqWidth > maxLimit || reqHeight > maxLimit) {
-            if (reqWidth > reqHeight) {
-                float ratio = reqWidth / reqHeight;
-                reqWidth = maxLimit;
-                reqHeight = (int) (maxLimit / ratio);
-            } else {
-                float ratio = reqHeight / reqWidth;
-                reqHeight = maxLimit;
-                reqWidth = (int) (maxLimit / ratio);
+        while ( (options.outWidth * options.outHeight) / (sampleScaleSize * sampleScaleSize) >= reqWidth * reqHeight ) {
+            sampleScaleSize *= 2;
+        }
+
+        {
+            //To prevent image from scaling down too much
+            int requiredResolution = reqWidth * reqHeight;
+            if( requiredResolution > 500*500 ) {
+                if ( sampleScaleSize > 1 && (options.outWidth * options.outHeight) / (sampleScaleSize * sampleScaleSize) < 500*500 ) {
+                    sampleScaleSize /= 2;
+                }
             }
         }
-
-//        float scaleDownFactor = reqWidth > reqHeight ? (float)reqWidth/480 : (float)reqHeight/600;
-//        if( scaleDownFactor > 1 ) {
-//            reqWidth = (int) (reqWidth / scaleDownFactor);
-//            reqHeight = (int) (reqHeight / scaleDownFactor);
-//        }
-
-        while (options.outWidth / sampleScaleSize >= reqWidth || options.outHeight / sampleScaleSize >= reqHeight) {
-            sampleScaleSize++;
-        }
-
-//        int sampleScaleSize_WithWidth = reqWidth > 0 ? options.outWidth / reqWidth : 1;
-//        int sampleScaleSize_WithHeight = reqHeight > 0 ? options.outHeight / reqHeight : 1;
-//
-//        if( sampleScaleSize_WithHeight > sampleScaleSize_WithWidth ){
-//            sampleScaleSize = sampleScaleSize_WithHeight;
-//        } else {
-//            sampleScaleSize = sampleScaleSize_WithWidth;
-//        }
 
         return sampleScaleSize;
     }
@@ -354,6 +357,26 @@ public class ImageUtil {
         return Uri.parse(path);
     }
 
+    public static byte[] getBytes(Bitmap bitmap) {
+        byte[] bytes = null;
+        ByteArrayOutputStream byteArrayOutputStream = null;
+        try {
+            byteArrayOutputStream = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
+
+            bytes = byteArrayOutputStream.toByteArray();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        } finally {
+            try {
+                byteArrayOutputStream.close();
+            } catch (Exception ex) {
+            }
+        }
+
+        return bytes;
+    }
+
     public static byte[] getCompressedBytes(Bitmap bitmap) {
         return getCompressedBytes(bitmap, 100);
     }
@@ -378,18 +401,18 @@ public class ImageUtil {
         return bytes;
     }
 
-    public static Bitmap getCompressedBitmap(Bitmap bitmap) {
-        return getCompressedBitmap(bitmap, 100);
-    }
-
-    public static Bitmap getCompressedBitmap(Bitmap bitmap, int quality) {
-        Bitmap compressedBitmap = null;
-        byte[] content = getCompressedBytes(bitmap, quality);
-        if (content != null) {
-            compressedBitmap = BitmapFactory.decodeByteArray(content, 0, content.length);
-        }
-        return compressedBitmap;
-    }
+//    public static Bitmap getCompressedBitmap(Bitmap bitmap) {
+//        return getCompressedBitmap(bitmap, 85);
+//    }
+//
+//    public static Bitmap getCompressedBitmap(Bitmap bitmap, int quality) {
+//        Bitmap compressedBitmap = null;
+//        byte[] content = getCompressedBytes(bitmap, quality);
+//        if (content != null) {
+//            compressedBitmap = BitmapFactory.decodeByteArray(content, 0, content.length);
+//        }
+//        return compressedBitmap;
+//    }
 
     public static final String getPathforURI(Context context, Uri URI, String metaData) {
         String path = "";

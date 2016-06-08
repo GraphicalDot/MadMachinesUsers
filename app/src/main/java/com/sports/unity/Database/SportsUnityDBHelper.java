@@ -9,6 +9,8 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 import com.sports.unity.R;
+import com.sports.unity.common.model.FavouriteItem;
+import com.sports.unity.common.model.FavouriteItemWrapper;
 import com.sports.unity.messages.controller.model.Chats;
 import com.sports.unity.messages.controller.model.Contacts;
 import com.sports.unity.messages.controller.model.Message;
@@ -28,7 +30,7 @@ import static com.sports.unity.Database.SportsUnityContract.FriendRequestEntry;
  */
 public class SportsUnityDBHelper extends SQLiteOpenHelper {
 
-    public static final int DATABASE_VERSION = 3;
+    public static final int DATABASE_VERSION = 4;
     public static final String DATABASE_NAME = "spu.db";
 
     public static final int DEFAULT_ENTRY_ID = -1;
@@ -141,9 +143,11 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
     }
 
     private ArrayList<Contacts> allContacts = null;
+    private Context context = null;
 
     private SportsUnityDBHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        this.context = context;
     }
 
     @Override
@@ -165,6 +169,14 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
                 db.execSQL(CREATE_FRIEND_REQUESTS_TABLE);
             }
             case 3: {
+                ArrayList<FavouriteItem> favList = new ArrayList<>();
+                FavouriteItemWrapper wrapper = FavouriteItemWrapper.getInstance(context);
+                favList.addAll(wrapper.getAllLeagues());
+                favList.addAll(wrapper.getAllTeams());
+                favList.addAll(wrapper.getCricketPlayers());
+                wrapper.saveList(context, favList);
+            }
+            case 4: {
 
             }
         }
@@ -577,7 +589,7 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
                 ContactChatEntry.COLUMN_AVAILABLE_STATUS
         };
 
-        String selection =  (forcedSync ? " " : ContactChatEntry.COLUMN_UPDATE_REQUIRED + " == 1 AND ") + ContactChatEntry.COLUMN_JID + " is not null ";
+        String selection = (forcedSync ? " " : ContactChatEntry.COLUMN_UPDATE_REQUIRED + " == 1 AND ") + ContactChatEntry.COLUMN_JID + " is not null ";
         String[] selectionArgs = null;
 
         Cursor c = db.query(ContactChatEntry.TABLE_NAME, projection, selection, selectionArgs, null, null, null);
@@ -618,7 +630,7 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
 
         String selection = ContactChatEntry.COLUMN_JID + registerCondition + " AND " + ContactChatEntry.COLUMN_AVAILABLE_STATUS + " = " + Contacts.AVAILABLE_BY_MY_CONTACTS
                 + " AND " + ContactChatEntry.COLUMN_GROUP_CHAT + " == 0 ";
-        if( blockedIncluded ){
+        if (blockedIncluded) {
 
         } else {
             selection += " AND " + ContactChatEntry.COLUMN_BLOCK_USER + " == 0 ";
@@ -754,7 +766,7 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
 
         ContentValues values = new ContentValues();
         values.put(ContactChatEntry.COLUMN_NAME, groupName);
-        if( groupImage != null ) {
+        if (groupImage != null) {
             values.put(ContactChatEntry.COLUMN_IMAGE, groupImage);
         }
         values.put(ContactChatEntry.COLUMN_UPDATE_REQUIRED, false);
@@ -840,7 +852,8 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
                 MessagesEntry.COLUMN_ID,                                        //9th column
                 MessagesEntry.COLUMN_READ_STATUS,                               //10th column
                 MessagesEntry.COLUMN_MEDIA_FILE_NAME,
-                MessagesEntry.COLUMN_MESSAGE_ID
+                MessagesEntry.COLUMN_MESSAGE_ID,
+                MessagesEntry.COLUMN_CHAT_ID
         };
 
         String selection = MessagesEntry.COLUMN_CHAT_ID + " = ?";
@@ -853,7 +866,7 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
                 int id = c.getInt(9);
                 if (id != DUMMY_MESSAGE_ROW_ID) {
                     boolean read = c.getInt(10) > 0;
-                    list.add(new Message(c.getInt(9), c.getString(0), c.getString(1), c.getBlob(2), c.getString(3), c.getString(4), c.getString(5), value, c.getString(7), c.getString(8), read, id, c.getString(11), c.getString(12)));
+                    list.add(new Message(id, c.getString(0), c.getString(1), c.getBlob(2), c.getString(3), c.getString(4), c.getString(5), value, c.getString(7), c.getString(8), read, c.getInt(13), c.getString(11), c.getString(12)));
                 } else {
                     //nothing
                 }
@@ -1633,7 +1646,7 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
         return db.delete(MessagesEntry.TABLE_NAME, selection, selectionArgs);
     }
 
-    public Message getMessage(int messageId) {
+    public Message getMessageByStanzaId(String stanzaId) {
         Message message = null;
         SQLiteDatabase db = getReadableDatabase();
 
@@ -1650,23 +1663,74 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
                 MessagesEntry.COLUMN_ID,                                        //9th column
                 MessagesEntry.COLUMN_READ_STATUS,                               //10th column
                 MessagesEntry.COLUMN_MEDIA_FILE_NAME,
-                MessagesEntry.COLUMN_MESSAGE_ID
+                MessagesEntry.COLUMN_MESSAGE_ID,
+                MessagesEntry.COLUMN_CHAT_ID
         };
 
-        String selection = MessagesEntry.COLUMN_ID + " = ? ";
-        String[] selectionArgs = {String.valueOf(messageId)};
+        String selection = MessagesEntry.COLUMN_MESSAGE_ID + " = ? ";
+        String[] selectionArgs = {stanzaId};
 
         Cursor c = db.query(MessagesEntry.TABLE_NAME, projection, selection, selectionArgs, null, null, null);
         if (c.moveToFirst()) {
             boolean value = c.getInt(6) > 0;
-            int id = c.getInt(9);
             boolean read = c.getInt(10) > 0;
 
-            message = new Message(c.getInt(9), c.getString(0), c.getString(1), c.getBlob(2), c.getString(3), c.getString(4), c.getString(5), value, c.getString(7), c.getString(8), read, id, c.getString(11), c.getString(12));
+            message = new Message(c.getInt(9), c.getString(0), c.getString(1), c.getBlob(2), c.getString(3), c.getString(4), c.getString(5), value, c.getString(7), c.getString(8), read, c.getInt(13), c.getString(11), c.getString(12));
         }
         c.close();
 
         return message;
+    }
+
+    public ArrayList<Message> getPendingMessages() {
+        Message message = null;
+        SQLiteDatabase db = getReadableDatabase();
+
+        String[] projection = {
+                MessagesEntry.COLUMN_PHONENUMBER,                               //0th column
+                MessagesEntry.COLUMN_DATA_TEXT,                                 //1th column
+                MessagesEntry.COLUMN_DATA_MEDIA,                                //2th column
+                MessagesEntry.COLUMN_MIME_TYPE,                                 //3th column
+                MessagesEntry.COLUMN_SERVER_RECEIPT,                            //4th column
+                MessagesEntry.COLUMN_RECIPIENT_RECEIPT,                         //5th column
+                MessagesEntry.COLUMN_NAME_I_AM_SENDER,                          //6th column
+                MessagesEntry.COLUMN_RECEIVE_TIMESTAMP,                         //7th column
+                MessagesEntry.COLUMN_SEND_TIMESTAMP,                            //8th column
+                MessagesEntry.COLUMN_ID,                                        //9th column
+                MessagesEntry.COLUMN_READ_STATUS,                               //10th column
+                MessagesEntry.COLUMN_MEDIA_FILE_NAME,
+                MessagesEntry.COLUMN_MESSAGE_ID,
+                MessagesEntry.COLUMN_CHAT_ID
+        };
+
+        String selection = MessagesEntry.COLUMN_NAME_I_AM_SENDER + " = 1 AND " + MessagesEntry.COLUMN_SERVER_RECEIPT + " is NULL ";
+
+        ArrayList<Message> list = new ArrayList<>();
+        Cursor cursor = db.query(MessagesEntry.TABLE_NAME, projection, selection, null, null, null, null);
+        if (cursor.moveToFirst()) {
+            do {
+                boolean value = cursor.getInt(6) > 0;
+                boolean read = cursor.getInt(10) > 0;
+
+                message = new Message(cursor.getInt(9), cursor.getString(0), cursor.getString(1), cursor.getBlob(2), cursor.getString(3), cursor.getString(4), cursor.getString(5), value, cursor.getString(7), cursor.getString(8), read, cursor.getInt(13), cursor.getString(11), cursor.getString(12));
+                list.add(message);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+
+        return list;
+    }
+
+    public int updateMessageStanzaId(int messageId, String stanzaId){
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(MessagesEntry.COLUMN_MESSAGE_ID, stanzaId);
+
+        String selection = MessagesEntry.COLUMN_ID + " LIKE ? ";
+        String[] selectionArgs = {String.valueOf(messageId)};
+
+        return db.update(MessagesEntry.TABLE_NAME, values, selection, selectionArgs);
     }
 
     public void deleteContactIfNotVisible(int contactId) {

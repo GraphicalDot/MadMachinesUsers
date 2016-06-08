@@ -44,8 +44,6 @@ import java.util.Arrays;
 
 public class ForwardSelectedItems extends CustomAppCompatActivity implements ActivityCompat.OnRequestPermissionsResultCallback {
 
-    private int screenHeight;
-    private int screenWidth;
     private ArrayList<ShareableData> dataList = new ArrayList<>();
 
     public static final String KEY_FILES_NOT_SENT = "files_too_large";
@@ -79,9 +77,6 @@ public class ForwardSelectedItems extends CustomAppCompatActivity implements Act
         });
 
         tabs.setViewPager(mViewPager);
-
-        screenHeight = this.getResources().getDisplayMetrics().heightPixels;
-        screenWidth = this.getResources().getDisplayMetrics().widthPixels;
 
         if (!PermissionUtil.getInstance().isRuntimePermissionRequired()) {
             grantLayout.setVisibility(View.GONE);
@@ -175,7 +170,7 @@ public class ForwardSelectedItems extends CustomAppCompatActivity implements Act
                 try {
 
                     String path = ImageUtil.getPathforURI(getApplicationContext(), URI, MediaStore.Images.Media.DATA);
-                    byte[] content = ImageUtil.getCompressedBytes(path, screenHeight, screenWidth);
+                    byte[] content = ImageUtil.getScaledDownBytes(path, getResources().getDisplayMetrics());
                     DBUtil.writeContentToExternalFileStorage(getApplicationContext(), filename, content, SportsUnityDBHelper.MIME_TYPE_IMAGE);
                     dataList.add(new ShareableData(SportsUnityDBHelper.MIME_TYPE_IMAGE, "", filename));
 

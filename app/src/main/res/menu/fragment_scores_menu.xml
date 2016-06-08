@@ -3,6 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
+        android:id="@+id/myswitch"
+        android:actionLayout="@layout/switch_matchlist"
+        android:orderInCategory="100"
+        android:title=""
+        app:showAsAction="always" />
+
+    <item
         android:id="@+id/action_filter"
         android:icon="@drawable/ic_menu_filter"
         android:orderInCategory="100"

@@ -17,6 +17,7 @@ import android.util.Log;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map;
@@ -42,7 +43,7 @@ public class TinyDB {
     public static final String KEY_ADDRESS_LOCATION = "location";
     public static final String KEY_ADDRESS_STATE = "state";
 
-    public static final String KEY_USER_MOBILE_NUMBER="usermobilenumber";
+    public static final String KEY_USER_MOBILE_NUMBER = "usermobilenumber";
     public static final String KEY_USERNAME = "username";
     public static final String KEY_USER_JID = "userjid";
     public static final String KEY_PASSWORD = "password";
@@ -91,6 +92,14 @@ public class TinyDB {
      */
 
     public static final String UNREAD_NOTIFICATION_COUNT_KEY = "unread_notification_count";
+
+
+    /**
+     * Promo code key
+     */
+
+    public static final String PROMO_CODE = "promo_code";
+    public static final String INVITE_URL = "invite_url";
 
     private SharedPreferences preferences;
     private String DEFAULT_APP_IMAGEDATA_DIRECTORY;

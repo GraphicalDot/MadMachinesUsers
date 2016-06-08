@@ -23,7 +23,7 @@ public class Message {
     public String sendTime;
     public String recieveTime;
     public boolean messagesRead;
-    int contactID;
+    public int contactID;
     public String mediaFileName;
     public String messageStanzaId;
 

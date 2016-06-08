@@ -181,13 +181,14 @@ message to verify your mobile number.</string>
     <string name="edit_fav_sports">Edit Favourite</string>
     <string name="about">About</string>
     <string name="settings">Settings</string>
+    <string name="promotions">Promotions</string>
 
     <string name="available">Available</string>
     <string name="busy">Busy</string>
     <string name="movie">At Movie</string>
     <string name="work">At Work</string>
 
-    <string name="player_message">Showing top players, to add more click on search and add your favourite players</string>
+    <string name="player_message">To add more click on search</string>
 
 
     <!--Setting Screen related strings-->
@@ -394,4 +395,19 @@ message to verify your mobile number.</string>
     <string name="conn_not_authenticated">"Connection not authenticated "</string>
     <string name="request_pending">Request pending for acceptance</string>
     <string name="request_sent">Request sent for acceptance</string>
+    <string name="title_activity_promo">PromoActivity</string>
+    <string name="promo_code">REDEEM PROMO CODE</string>
+    <string name="invite_friends">INVITE YOUR FRIENDS!</string>
+    <string name="share_code">SHARE YOUR INVITE CODE</string>
+    <string name="promo_no">YOURPROMOCODENO</string>
+    <string name="promo_text1">Proin gravida nibh vel velit auctor aliq-.</string>
+    <string name="promo_text2">uet. Aenean sollicitudin.</string>
+    <string name="promo_dailog_text">You have successfully installed the sports unity app.\n   You have a surprise gift waiting for you, grab it\n before it flies away. T&amp;C apply.</string>
+
+    <plurals name="friends_watching">
+        <item quantity="one">%d FRIEND WATCHING</item>
+        <item quantity="other">%d FRIENDS WATCHING</item>
+    </plurals>
+    <string name="couldnt_fetch_promo_code">Looks like there was a problem fetching your promo code please check your connection and try again later</string>
+    <string name="title_activity_search_favoriates">SearchFavoriatesActivity</string>
 </resources>    

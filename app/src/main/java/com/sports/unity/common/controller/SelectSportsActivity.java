@@ -5,7 +5,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -123,11 +125,14 @@ public class SelectSportsActivity extends CustomAppCompatActivity {
          */
         {
             Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
+            ImageView hamburgericon = (ImageView)toolbar.findViewById(R.id.hamburger_icon);
+            hamburgericon.setVisibility(View.INVISIBLE);
             setSupportActionBar(toolbar);
             getSupportActionBar().setDisplayShowTitleEnabled(false);
             TextView mTitle = (TextView) toolbar.findViewById(R.id.toolbar_title);
             mTitle.setText(R.string.select_your_favourite_sports);
             mTitle.setTypeface(FontTypeface.getInstance(this).getRobotoCondensedRegular());
+            mTitle.setGravity(Gravity.CENTER);
         }
 
 //        GridView gridview = (GridView) findViewById(R.id.gridview);

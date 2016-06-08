@@ -10,6 +10,7 @@ import android.os.CountDownTimer;
 import android.support.v7.app.AlertDialog;
 import android.telephony.gsm.SmsMessage;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -27,6 +28,8 @@ import com.sports.unity.ProfileCreationActivity;
 import com.sports.unity.R;
 import com.sports.unity.XMPPManager.XMPPService;
 import com.sports.unity.common.model.ContactsHandler;
+import com.sports.unity.common.model.FavouriteItem;
+import com.sports.unity.common.model.FavouriteItemWrapper;
 import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.common.model.PermissionUtil;
 import com.sports.unity.common.model.TinyDB;
@@ -39,6 +42,7 @@ import com.sports.unity.scores.model.ScoresContentHandler;
 import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -89,7 +93,7 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity {
         {
             onComponentCreate();
 
-            if ( ! UserUtil.isOtpSent() ) {
+            if (!UserUtil.isOtpSent()) {
                 UserUtil.setOtpSent(EnterOtpActivity.this, true);
                 resendOtp();
             } else {
@@ -101,9 +105,9 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity {
     @Override
     public VolleyCallComponentHelper getVolleyCallComponentHelper() {
         ProgressBar progressBar = (ProgressBar) findViewById(R.id.progressBar);
-        enterOtpCustomComponentListener = new EnterOtpCustomComponentListener( progressBar);
+        enterOtpCustomComponentListener = new EnterOtpCustomComponentListener(progressBar);
 
-        VolleyCallComponentHelper volleyCallComponentHelper = new VolleyCallComponentHelper( REQUEST_LISTENER, enterOtpCustomComponentListener);
+        VolleyCallComponentHelper volleyCallComponentHelper = new VolleyCallComponentHelper(REQUEST_LISTENER, enterOtpCustomComponentListener);
         return volleyCallComponentHelper;
     }
 
@@ -121,7 +125,7 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity {
 
     @Override
     public void onBackPressed() {
-        if( UserUtil.isFilterCompleted() ) {
+        if (UserUtil.isFilterCompleted()) {
             //nothing
         } else {
             moveBack();
@@ -136,7 +140,7 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity {
 
         LinearLayout editNumberLayout = (LinearLayout) findViewById(R.id.editNumberLayout);
         editNumberLayout.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_WHITE, false));
-        if( UserUtil.isFilterCompleted() ){
+        if (UserUtil.isFilterCompleted()) {
             // when user re-verify its account. Don't allow to change phone number.
             editNumberLayout.setVisibility(View.GONE);
         } else {
@@ -366,7 +370,7 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity {
         protected void showErrorLayout() {
             super.showErrorLayout();
 
-            if( CommonUtil.isInternetConnectionAvailable(EnterOtpActivity.this) ) {
+            if (CommonUtil.isInternetConnectionAvailable(EnterOtpActivity.this)) {
                 Toast.makeText(getApplicationContext(), R.string.oops_try_again, Toast.LENGTH_SHORT).show();
             } else {
                 Toast.makeText(getApplicationContext(), R.string.common_message_internet_not_available, Toast.LENGTH_SHORT).show();
@@ -375,9 +379,9 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity {
 
         @Override
         public void handleErrorContent(String tag) {
-            if( tag.equals(RESEND_OTP_REQUEST_TAG) ) {
+            if (tag.equals(RESEND_OTP_REQUEST_TAG)) {
                 UserUtil.setOtpSent(EnterOtpActivity.this, false);
-            } else if( tag.equals(CREATE_USER_REQUEST_TAG) ){
+            } else if (tag.equals(CREATE_USER_REQUEST_TAG)) {
                 //nothing
             }
         }
@@ -385,9 +389,9 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity {
         @Override
         public boolean handleContent(String tag, String content) {
             boolean success = false;
-            if( tag.equals(RESEND_OTP_REQUEST_TAG) ) {
+            if (tag.equals(RESEND_OTP_REQUEST_TAG)) {
                 success = handleContentForOtpRequest(content);
-            } else if( tag.equals(CREATE_USER_REQUEST_TAG) ){
+            } else if (tag.equals(CREATE_USER_REQUEST_TAG)) {
                 success = handleContentForCreateUserRequest(content);
             }
             return success;
@@ -395,7 +399,7 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity {
 
         @Override
         public void changeUI(String tag) {
-            if( tag.equals(RESEND_OTP_REQUEST_TAG) ) {
+            if (tag.equals(RESEND_OTP_REQUEST_TAG)) {
                 Toast.makeText(EnterOtpActivity.this, toastMessage, Toast.LENGTH_SHORT).show();
                 if (success) {
                     if (!PermissionUtil.getInstance().isRuntimePermissionRequired()) {
@@ -408,7 +412,7 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity {
                 } else {
                     //nothing
                 }
-            } else if( tag.equals(CREATE_USER_REQUEST_TAG) ){
+            } else if (tag.equals(CREATE_USER_REQUEST_TAG)) {
                 if (success) {
                     if (!UserUtil.isFilterCompleted()) {
                         moveToNextActivity(ProfileCreationActivity.class);
@@ -429,7 +433,7 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity {
             this.toastMessage = "";
         }
 
-        private boolean handleContentForOtpRequest(String content){
+        private boolean handleContentForOtpRequest(String content) {
             boolean success = false;
             try {
                 JSONObject response = new JSONObject(content);
@@ -458,7 +462,7 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity {
             return success;
         }
 
-        private boolean handleContentForCreateUserRequest(String content){
+        private boolean handleContentForCreateUserRequest(String content) {
             boolean success = false;
             try {
                 JSONObject response = new JSONObject(content);
@@ -471,6 +475,35 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity {
                     UserUtil.setOtpSent(EnterOtpActivity.this, false);
                     UserUtil.setUserRegistered(EnterOtpActivity.this, true);
 
+                    //To Update the user interest from server if exist.
+
+                    /*if (!response.isNull("interests")) {
+                        String favString = response.getString("interests");
+                        if (!TextUtils.isEmpty(favString)) {
+
+                            JSONArray array = new JSONArray(favString);
+
+                            JSONArray favArray = new JSONArray();
+
+                            if (array.length() > 0) {
+
+                                for (int index = 0; index < array.length(); index++) {
+
+                                    JSONObject object = array.getJSONObject(index);
+                                    if (!object.isNull("properties")) {
+                                        JSONObject favObject = object.getJSONObject("properties");
+                                        favArray.put(favObject);
+                                    }
+                                }
+
+                                if (favArray.length() > 0) {
+                                    UserUtil.setFavouriteFilters(getApplicationContext(), favArray.toString());
+                                    FavouriteItemWrapper.getInstance(getApplicationContext());
+                                }
+                            }
+
+                        }
+                    }*/
                     this.success = true;
                 } else {
                     this.success = false;

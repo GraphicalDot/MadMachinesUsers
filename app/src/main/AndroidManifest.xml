@@ -109,7 +109,23 @@
         </activity>
         <activity
             android:name=".common.controller.MainActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait">
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="@string/sportsunity.co"
+                    android:pathPrefix="/sports"
+                    android:scheme="http" />
+                <data
+                    android:host="@string/sportsunity.co"
+                    android:pathPrefix="/9joo"
+                    android:scheme="http" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".common.controller.EnterOtpActivity"
             android:screenOrientation="portrait" />
@@ -208,13 +224,29 @@
         </activity>
         <activity
             android:name=".scores.ScoreDetailActivity"
-            android:screenOrientation="portrait" />
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="@string/sportsunity.co"
+                    android:pathPrefix="/scores"
+                    android:scheme="http" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".messages.controller.activity.PeopleAroundMeMap"
             android:launchMode="singleTop"
             android:screenOrientation="portrait" />
         <activity
             android:name=".common.controller.SettingsActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".common.controller.PromoActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".common.controller.About"
@@ -260,12 +292,15 @@
         <activity
             android:name=".peoplearound.PeopleAroundActivity"
             android:launchMode="singleTop"
-            android:screenOrientation="portrait"></activity>
-
+            android:screenOrientation="portrait" />
         <activity
             android:name=".common.controller.FriendRequestsActivity"
             android:label="@string/title_activity_friend_requests"
             android:screenOrientation="portrait"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".common.controller.SearchFavoriatesActivity"
+            android:label="@string/title_activity_search_favoriates"
             android:theme="@style/AppTheme"></activity>
     </application>
 

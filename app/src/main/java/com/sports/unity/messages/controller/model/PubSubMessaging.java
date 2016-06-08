@@ -193,6 +193,7 @@ public class PubSubMessaging {
         sportsUnityDBHelper.updateServerReceived(packetId);
 
         updateReceipts(RECEIPT_KIND_SERVER);
+        XMPPMessageQueueHelper.getInstance().dequeue(packetId);
     }
 
     public void updateReceipts(int receiptKind) {
@@ -202,6 +203,38 @@ public class PubSubMessaging {
          */
 
         ActivityActionHandler.getInstance().dispatchReceiptEvent(ActivityActionHandler.CHAT_SCREEN_KEY, receiptKind);
+    }
+
+    public boolean resendMessage(Context context, com.sports.unity.messages.controller.model.Message messageObject){
+        boolean success = false;
+        try {
+            TinyDB tinyDB = TinyDB.getInstance(context);
+
+            String from = tinyDB.getString(TinyDB.KEY_USER_JID);
+            String time = String.valueOf(CommonUtil.getCurrentGMTTimeInEpoch());
+
+            Contacts contacts = SportsUnityDBHelper.getInstance(context).getContact(messageObject.contactID);
+            String payLoad = encodeSimpleMessagePayload(messageObject.textData, from, contacts.jid, time, messageObject.mimeType);
+            SimplePayload simplePayload = new SimplePayload("message", "pubsub:text:message", "<message xmlns='pubsub:text:message'>" + payLoad + "</message>");
+            PayloadItem item = new PayloadItem(simplePayload);
+
+            if( XMPPClient.getInstance().isConnectionAuthenticated() ) {
+                String stanzaId = null;
+                if( messageObject.messageStanzaId != null ) {
+                    stanzaId = messageObject.messageStanzaId;
+                    PubSubUtil.publish(item, contacts.jid, stanzaId);
+                } else {
+                    stanzaId = PubSubUtil.publish(item, contacts.jid);
+                    SportsUnityDBHelper.getInstance(context).updateMessageStanzaId(messageObject.id, stanzaId);
+                }
+
+                XMPPMessageQueueHelper.getInstance().enqueue(stanzaId);
+                success = true;
+            }
+        }catch (Exception ex){
+            ex.printStackTrace();
+        }
+        return success;
     }
 
     public void sendTextMessage(Context context, String message, int chatID, String groupJid) {
@@ -216,11 +249,14 @@ public class PubSubMessaging {
             SimplePayload simplePayload = new SimplePayload("message", "pubsub:text:message", "<message xmlns='pubsub:text:message'>" + payLoad + "</message>");
             PayloadItem item = new PayloadItem(simplePayload);
 
-            String stanzaId = publishItem(item, groupJid);
+            String stanzaId = null;
+            if( XMPPClient.getInstance().isConnectionAuthenticated() ) {
+                stanzaId = publishItem(item, groupJid);
+                XMPPMessageQueueHelper.getInstance().enqueue(stanzaId);
+            }
 
             int messageId = sportsUnityDBHelper.addMessage(message, SportsUnityDBHelper.MIME_TYPE_TEXT, from, true, time, stanzaId, null, null, chatID, SportsUnityDBHelper.DEFAULT_READ_STATUS);
             sportsUnityDBHelper.updateChatEntry(messageId, groupJid);
-
         } catch (Exception ex) {
             ex.printStackTrace();
             handleConnectionException(ex);
@@ -231,8 +267,6 @@ public class PubSubMessaging {
         try {
             SportsUnityDBHelper sportsUnityDBHelper = SportsUnityDBHelper.getInstance(context);
             TinyDB tinyDB = TinyDB.getInstance(context);
-
-//            LeafNode node = getLeafNode(groupJid);
 
             String from = tinyDB.getString(TinyDB.KEY_USER_JID);
             String time = String.valueOf(CommonUtil.getCurrentGMTTimeInEpoch());
@@ -248,7 +282,11 @@ public class PubSubMessaging {
             SimplePayload simplePayload = new SimplePayload("message", "pubsub:text:message", "<message xmlns='pubsub:text:message'>" + payLoad + "</message>");
             PayloadItem item = new PayloadItem(simplePayload);
 
-            String stanzaId = publishItem(item, groupJid);
+            String stanzaId = null;
+            if( XMPPClient.getInstance().isConnectionAuthenticated() ) {
+                stanzaId = publishItem(item, groupJid);
+                XMPPMessageQueueHelper.getInstance().enqueue(stanzaId);
+            }
 
             sportsUnityDBHelper.updateMediaMessage_ContentUploaded(messageId, stanzaId, contentChecksum);
         } catch (Exception ex) {
@@ -262,8 +300,6 @@ public class PubSubMessaging {
         SportsUnityDBHelper sportsUnityDBHelper = SportsUnityDBHelper.getInstance(context);
 
         try {
-//            LeafNode node = getLeafNode(groupJid);
-
             String from = tinyDB.getString(TinyDB.KEY_USER_JID);
             String time = String.valueOf(CommonUtil.getCurrentGMTTimeInEpoch());
 
@@ -271,7 +307,11 @@ public class PubSubMessaging {
             SimplePayload simplePayload = new SimplePayload("message", "pubsub:text:message", "<message xmlns='pubsub:text:message'>" + payLoad + "</message>");
             PayloadItem item = new PayloadItem(simplePayload);
 
-            String stanzaId = publishItem(item, groupJid);
+            String stanzaId = null;
+            if( XMPPClient.getInstance().isConnectionAuthenticated() ) {
+                stanzaId = publishItem(item, groupJid);
+                XMPPMessageQueueHelper.getInstance().enqueue(stanzaId);
+            }
 
             int messageId = sportsUnityDBHelper.addMessage(stickerAssetPath, SportsUnityDBHelper.MIME_TYPE_STICKER, from, true, time,
                     stanzaId, null, null, chatId, SportsUnityDBHelper.DEFAULT_READ_STATUS);

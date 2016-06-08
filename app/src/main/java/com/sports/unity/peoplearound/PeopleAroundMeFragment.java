@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
 import com.sports.unity.R;
@@ -26,10 +27,20 @@ public class PeopleAroundMeFragment extends Fragment {
     DataNotifier dataNotifier = new DataNotifier() {
         @Override
         public void newData(ArrayList<User> content, int responseCode) {
-            if (content == null) {
+            if (responseCode == PeopleAroundActivity.fetchDataCode) {
+                progressBar.setVisibility(View.VISIBLE);
+
+                errorLayout.setVisibility(View.GONE);
                 list.setVisibility(View.GONE);
                 emptyLayout.setVisibility(View.GONE);
+
+            } else if (content == null) {
+                progressBar.setVisibility(View.GONE);
+                list.setVisibility(View.GONE);
+                emptyLayout.setVisibility(View.GONE);
+
                 errorLayout.setVisibility(View.VISIBLE);
+
                 LinearLayout dataError = (LinearLayout) errorLayout.findViewById(R.id.data_error);
                 LinearLayout connectionError = (LinearLayout) errorLayout.findViewById(R.id.connection_error);
                 if (responseCode == 0) {
@@ -41,6 +52,8 @@ public class PeopleAroundMeFragment extends Fragment {
                 }
             } else {
                 list.setVisibility(View.VISIBLE);
+
+                progressBar.setVisibility(View.GONE);
                 errorLayout.setVisibility(View.GONE);
                 updateContent(content);
             }
@@ -56,6 +69,7 @@ public class PeopleAroundMeFragment extends Fragment {
     private ListView list;
     private FrameLayout errorLayout;
     private RelativeLayout emptyLayout;
+    private ProgressBar progressBar;
 
     @Override
     public void onAttach(Context context) {
@@ -70,21 +84,24 @@ public class PeopleAroundMeFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_people_around_me, container, false);
         ((PeopleAroundActivity) getActivity()).addListener(dataNotifier, getArguments().getString(PeopleAroundActivity.BUNDLE_TAG));
         initView(v);
-        initErrorLayout(v);
         return v;
-    }
-
-    private void initErrorLayout(View v) {
-        errorLayout = (FrameLayout) v.findViewById(R.id.error);
     }
 
     private void initView(View v) {
         String TAG = getArguments().getString(PeopleAroundActivity.BUNDLE_TAG);
+
+        progressBar = (ProgressBar) v.findViewById(R.id.progressBar);
         list = (ListView) v.findViewById(R.id.people_around_list);
         emptyLayout = (RelativeLayout) v.findViewById(R.id.data_exist);
+        errorLayout = (FrameLayout) v.findViewById(R.id.error);
+
         PeopleAroundMeAdapter peopleAroundMeAdapter = new PeopleAroundMeAdapter(getActivity(), R.layout.fragment_people_aroundme_card, data, TAG);
         list.setAdapter(peopleAroundMeAdapter);
         list.setEmptyView(emptyLayout);
         updateContent(data);
+
+        progressBar.setVisibility(View.VISIBLE);
+        list.setVisibility(View.GONE);
+        emptyLayout.setVisibility(View.GONE);
     }
 }

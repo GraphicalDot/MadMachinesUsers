@@ -21,6 +21,8 @@ public class UserUtil {
     public static final int ONLY_FRIENDS = 11;
     public static final int NOBODY = 12;
 
+    private static boolean VALUES_LOADED_ONCE = false;
+
     private static boolean USER_REGISTERED = false;
     private static boolean OTP_SENT = false;
     private static boolean PROFILE_CREATED = false;
@@ -64,11 +66,14 @@ public class UserUtil {
     private static boolean READ_RECEIPTS = true;
 
     public static void init(Context context) {
-        TinyDB tinyDB = TinyDB.getInstance(context);
+        if( VALUES_LOADED_ONCE == false ) {
+            VALUES_LOADED_ONCE = true;
+            TinyDB tinyDB = TinyDB.getInstance(context);
 
-        loadBasicPreferences(tinyDB, context);
-        loadFavoritePreferences(tinyDB);
-        loadSettingPreferences(tinyDB);
+            loadBasicPreferences(tinyDB, context);
+            loadFavoritePreferences(tinyDB);
+            loadSettingPreferences(tinyDB);
+        }
     }
 
     public static void setUserRegistered(Context context, boolean userRegistered) {

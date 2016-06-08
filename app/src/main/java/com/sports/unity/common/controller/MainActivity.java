@@ -55,9 +55,6 @@ import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
 import com.sports.unity.util.network.LocManager;
 
-import org.jivesoftware.smack.ReconnectionManager;
-import org.jivesoftware.smack.XMPPConnection;
-import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -152,6 +149,16 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
         lt.setStartDelay(LayoutTransition.APPEARING, 0);
         FrameLayout frameLayout = (FrameLayout) findViewById(R.id.childFragmentContainer);
         frameLayout.setLayoutTransition(lt);
+    }
+
+
+    private boolean checkIfDeepLinked(Intent intent) {
+        boolean isDeepLinked = false;
+        try {
+            isDeepLinked = intent.getAction().equalsIgnoreCase(Intent.ACTION_VIEW);
+        } catch (Exception e) {
+        }
+        return isDeepLinked;
     }
 
     private void sendMixpaneldata() {
@@ -318,8 +325,10 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
         unreadCount = (TextView) v.findViewById(R.id.unread_messages);
 
         //set news pager as default
-        int tab_index = getIntent().getIntExtra("tab_index", 1);
-        pager.setCurrentItem(tab_index);
+        if (!checkIfDeepLinked(this.getIntent())) {
+            int tab_index = getIntent().getIntExtra("tab_index", 1);
+            pager.setCurrentItem(tab_index);
+        }
         pager.setOffscreenPageLimit(2);
     }
 

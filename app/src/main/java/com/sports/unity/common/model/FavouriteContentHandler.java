@@ -1,8 +1,11 @@
 package com.sports.unity.common.model;
 
 
+import android.app.Activity;
 import android.content.Context;
+import android.util.Log;
 
+import com.sports.unity.common.controller.AdvancedFilterActivity;
 import com.sports.unity.scores.model.ScoresContentHandler;
 import com.sports.unity.util.Constants;
 
@@ -53,7 +56,7 @@ public class FavouriteContentHandler {
     private static final String URL_CRICKET_PLAYER_SEARCH = Constants.SEARCH_BASE_URL + "fav_player?sport_type=cricket&player=";
     private static final String URL_FOOTBALL_TEAM_SEARCH = Constants.SEARCH_BASE_URL + "fav_team?sport_type=football&team=";
     private static final String URL_FOOTBALL_PLAYER_SEARCH = Constants.SEARCH_BASE_URL + "fav_player?sport_type=football&player=";
-    private static Context context;
+    private static Activity context;
 
 
     /**
@@ -61,11 +64,11 @@ public class FavouriteContentHandler {
      *
      * @return single instance of {@link FavouriteContentHandler}
      */
-    public static FavouriteContentHandler getInstance(Context context) {
+    public static FavouriteContentHandler getInstance(Activity activity) {
         if (favouriteContentHandler == null) {
             favouriteContentHandler = new FavouriteContentHandler();
         }
-        FavouriteContentHandler.context = context;
+        FavouriteContentHandler.context = activity;
         return favouriteContentHandler;
     }
 
@@ -441,7 +444,7 @@ public class FavouriteContentHandler {
                 }
             }
         } else {
-            for (FavouriteItem f : favCricketTeams) {
+            /*for (FavouriteItem f : favCricketTeams) {
                 f.setChecked(false);
             }
             for (FavouriteItem f : favCricketPlayers) {
@@ -455,7 +458,7 @@ public class FavouriteContentHandler {
             }
             for (FavouriteItem f : favFootballLeagues) {
                 f.setChecked(false);
-            }
+            }*/
         }
     }
 
@@ -559,7 +562,6 @@ public class FavouriteContentHandler {
             if (responseCode == 200) {
                 success = FavouriteContentHandler.this.handleContent(content, searchTag);
 
-
                 if (!searchTag.contains(SEARCH_REQUEST_TAG)) {
                     responseBool.add(success);
                 } else {
@@ -582,8 +584,15 @@ public class FavouriteContentHandler {
                                 }
                                 item.setSportsType(Constants.SPORTS_TYPE_FOOTBALL);
                                 item.setFilterType(Constants.FILTER_TYPE_LEAGUE);
+                                if (((AdvancedFilterActivity) context).isFirstInstall && UserUtil.getSportsSelected().contains(Constants.GAME_KEY_FOOTBALL)) {
+                                    item.setChecked(true);
+                                    if (!((AdvancedFilterActivity) context).favList.contains(item)) {
+                                        ((AdvancedFilterActivity) context).favList.add(item);
+                                    }
+                                }
                                 if (savedFavList.contains(item)) {
                                     item.setChecked(true);
+
                                 }
                                 prepareFootballLeagues(item);
                             } catch (JSONException e) {
@@ -604,6 +613,12 @@ public class FavouriteContentHandler {
                                 }
                                 item.setSportsType(Constants.SPORTS_TYPE_FOOTBALL);
                                 item.setFilterType(Constants.FILTER_TYPE_TEAM);
+                                if (((AdvancedFilterActivity) context).isFirstInstall && UserUtil.getSportsSelected().contains(Constants.GAME_KEY_FOOTBALL)) {
+                                    item.setChecked(true);
+                                    if (!((AdvancedFilterActivity) context).favList.contains(item)) {
+                                        ((AdvancedFilterActivity) context).favList.add(item);
+                                    }
+                                }
                                 if (savedFavList.contains(item)) {
                                     item.setChecked(true);
                                 }
@@ -622,6 +637,12 @@ public class FavouriteContentHandler {
                                 item.setId(s);
                                 item.setSportsType(Constants.SPORTS_TYPE_FOOTBALL);
                                 item.setFilterType(Constants.FILTER_TYPE_PLAYER);
+                                if (((AdvancedFilterActivity) context).isFirstInstall && UserUtil.getSportsSelected().contains(Constants.GAME_KEY_FOOTBALL)) {
+                                    item.setChecked(true);
+                                    if (!((AdvancedFilterActivity) context).favList.contains(item)) {
+                                        ((AdvancedFilterActivity) context).favList.add(item);
+                                    }
+                                }
                                 if (savedFavList.contains(item)) {
                                     item.setChecked(true);
                                 }
@@ -645,6 +666,12 @@ public class FavouriteContentHandler {
                                 }
                                 item.setSportsType(Constants.SPORTS_TYPE_CRICKET);
                                 item.setFilterType(Constants.FILTER_TYPE_TEAM);
+                                if (((AdvancedFilterActivity) context).isFirstInstall && UserUtil.getSportsSelected().contains(Constants.GAME_KEY_CRICKET)) {
+                                    item.setChecked(true);
+                                    if (!((AdvancedFilterActivity) context).favList.contains(item)) {
+                                        ((AdvancedFilterActivity) context).favList.add(item);
+                                    }
+                                }
                                 if (savedFavList.contains(item)) {
                                     item.setChecked(true);
                                 }
@@ -664,6 +691,12 @@ public class FavouriteContentHandler {
                                 item.setId(s);
                                 item.setSportsType(Constants.SPORTS_TYPE_CRICKET);
                                 item.setFilterType(Constants.FILTER_TYPE_PLAYER);
+                                if (((AdvancedFilterActivity) context).isFirstInstall && UserUtil.getSportsSelected().contains(Constants.GAME_KEY_CRICKET)) {
+                                    item.setChecked(true);
+                                    if (!((AdvancedFilterActivity) context).favList.contains(item)) {
+                                        ((AdvancedFilterActivity) context).favList.add(item);
+                                    }
+                                }
                                 if (savedFavList.contains(item)) {
                                     item.setChecked(true);
                                 }

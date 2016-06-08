@@ -5,17 +5,17 @@ import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.sports.unity.R;
+import com.sports.unity.common.model.FavouriteItem;
+import com.sports.unity.common.model.FavouriteItemWrapper;
 import com.sports.unity.common.view.CustomVolleyCallerActivity;
 import com.sports.unity.common.viewhelper.CustomComponentListener;
 import com.sports.unity.common.viewhelper.VolleyCallComponentHelper;
@@ -23,7 +23,6 @@ import com.sports.unity.scores.model.ScoresContentHandler;
 import com.sports.unity.util.Constants;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.solovyev.android.views.llm.LinearLayoutManager;
 
@@ -61,14 +60,20 @@ public class PlayerProfileView extends CustomVolleyCallerActivity {
     private ProgressBar progressBar;
     private ViewGroup errorLayout;
 
+    private boolean isPlayerFav = false;
+    private ImageView isFav;
+    private ArrayList<FavouriteItem> favList;
+    private boolean isResultRequired = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_player_profile_view);
+        favList = FavouriteItemWrapper.getInstance(getApplicationContext()).getFavList();
         getIntentExtras();
         initView();
-
+        initToolbar();
         {
             onComponentCreate();
             requestPlayerProfile();
@@ -76,13 +81,72 @@ public class PlayerProfileView extends CustomVolleyCallerActivity {
     }
 
     @Override
+    public void onBackPressed() {
+        if (isResultRequired) {
+            setResult(RESULT_OK, getIntent());
+        }
+        finish();
+    }
+
+    private void initToolbar() {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
+        isFav = (ImageView) toolbar.findViewById(R.id.favoriate);
+        ArrayList<FavouriteItem> players = FavouriteItemWrapper.getInstance(getApplicationContext()).getFootballPlayers();
+        isFav.setImageResource(R.drawable.ic_non_fav);
+        for (FavouriteItem item : players) {
+            if (item.getId().equals(playerNameKey)) {
+                isPlayerFav = true;
+                isFav.setImageResource(R.drawable.ic_fav);
+                break;
+            }
+        }
+        isFav.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (isPlayerFav) {
+                    isFav.setImageResource(R.drawable.ic_non_fav);
+                    isPlayerFav = false;
+                    removeFromFavList();
+                } else {
+                    isFav.setImageResource(R.drawable.ic_fav);
+                    isPlayerFav = true;
+                    addToFavList();
+                }
+                FavouriteItemWrapper.getInstance(getApplicationContext()).saveList(getApplicationContext(), favList);
+            }
+        });
+
+    }
+
+    private void removeFromFavList() {
+        int position = 0;
+        for (int i = 0; i < favList.size(); i++) {
+            if (favList.get(i).getId().equals(playerNameKey)) {
+                position = i;
+                break;
+            }
+        }
+        favList.remove(position);
+    }
+
+    private void addToFavList() {
+        FavouriteItem item = new FavouriteItem();
+        item.setId(playerNameKey);
+        item.setName(playerName.getText().toString());
+        item.setSportsType(Constants.SPORTS_TYPE_FOOTBALL);
+        item.setFilterType(Constants.FILTER_TYPE_PLAYER);
+        favList.add(item);
+    }
+
+    @Override
     public VolleyCallComponentHelper getVolleyCallComponentHelper() {
-        VolleyCallComponentHelper volleyCallComponentHelper = new VolleyCallComponentHelper( REQUEST_LISTENER_KEY, new PlayerProfileComponentListener(progressBar, errorLayout));
+        VolleyCallComponentHelper volleyCallComponentHelper = new VolleyCallComponentHelper(REQUEST_LISTENER_KEY, new PlayerProfileComponentListener(progressBar, errorLayout));
         return volleyCallComponentHelper;
     }
 
     private void getIntentExtras() {
         playerNameKey = getIntent().getStringExtra(Constants.INTENT_KEY_ID);
+        isResultRequired = getIntent().getBooleanExtra(Constants.RESULT_REQUIRED, false);
     }
 
     private void initView() {
@@ -106,8 +170,10 @@ public class PlayerProfileView extends CustomVolleyCallerActivity {
             backImage.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    if (isResultRequired) {
+                        setResult(RESULT_OK, getIntent());
+                    }
                     finish();
-
                 }
             });
 
@@ -133,12 +199,12 @@ public class PlayerProfileView extends CustomVolleyCallerActivity {
         requestContent(ScoresContentHandler.CALL_NAME_PLAYER_PROFILE, parameters, PLAYER_PROFILE_REQUEST_TAG);
     }
 
-    private boolean handleResponse(String response){
+    private boolean handleResponse(String response) {
         boolean success = false;
-        try{
+        try {
             playerJSONObject = new JSONObject(response);
             success = true;
-        }catch (Exception ex){
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
         return success;
@@ -177,12 +243,13 @@ public class PlayerProfileView extends CustomVolleyCallerActivity {
             mplayerScorecardAdapter.notifyDataSetChanged();
 
             success = true;
+            isFav.setVisibility(View.VISIBLE);
         } catch (Exception ex) {
             ex.printStackTrace();
             Toast.makeText(getApplicationContext(), "player has missing data", Toast.LENGTH_SHORT).show();
         }
 
-        if( success ){
+        if (success) {
             rootScrollBar.setVisibility(View.VISIBLE);
         }
         return success;
@@ -207,10 +274,10 @@ public class PlayerProfileView extends CustomVolleyCallerActivity {
         @Override
         public void changeUI(String tag) {
             boolean success = PlayerProfileView.this.renderContent();
-            if( ! success ){
+            if (!success) {
                 showErrorLayout();
             } else {
-                //nothing
+                isFav.setVisibility(View.VISIBLE);
             }
         }
 

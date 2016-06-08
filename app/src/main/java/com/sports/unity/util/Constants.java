@@ -109,6 +109,8 @@ public class Constants {
 
     public static final String PLAYER_NAME = "player_name";
     public static final String INTENT_KEY_TOSS = "toss";
+
+    public static final String INTENT_KEY_PUSH = "push_service";
     public static final String INTENT_KEY_MATCH_NAME = "match_name";
     public static final String INTENT_KEY_DATE = "date";
     public static final String INTENT_KEY_MATCH_TIME = "match_time";

@@ -1,6 +1,5 @@
 package com.sports.unity.scores.controller.fragment;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -9,6 +8,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SwitchCompat;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,22 +17,27 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
+import android.widget.CompoundButton;
 import android.widget.ProgressBar;
-import android.widget.TextView;
+import android.widget.RelativeLayout;
+import android.widget.Switch;
 import android.widget.Toast;
 
 import com.sports.unity.R;
 import com.sports.unity.common.controller.FilterActivity;
 import com.sports.unity.common.controller.MainActivity;
+import com.sports.unity.common.model.DataChangeCounterHandler;
 import com.sports.unity.common.model.FavouriteItem;
 import com.sports.unity.common.model.FavouriteItemWrapper;
-import com.sports.unity.common.model.FontTypeface;
+import com.sports.unity.common.model.FriendsWatchingHandler;
+import com.sports.unity.common.model.FriendsWatchingHandler.FriendsContentListener;
 import com.sports.unity.common.model.TinyDB;
 import com.sports.unity.common.model.UserUtil;
 import com.sports.unity.common.viewhelper.CustomComponentListener;
+import com.sports.unity.scoredetails.MatchListScrollListener;
 import com.sports.unity.scores.model.ScoresContentHandler;
 import com.sports.unity.scores.model.ScoresJsonParser;
+import com.sports.unity.scores.model.ScoresUtil;
 import com.sports.unity.util.Constants;
 import com.sports.unity.util.commons.DateUtil;
 
@@ -49,10 +54,14 @@ import java.util.Set;
 /**
  * Created by Edwin on 15/02/2015.
  */
-public class MatchListFragment extends Fragment implements MatchListWrapperNotify {
+public class MatchListFragment extends Fragment{
 
     private static final String LIST_LISTENER_KEY = "list_listener";
     private static final String LIST_OF_MATCHES_REQUEST_TAG = "list_request_tag";
+
+    private static final String FRIENDS_WATCHING_LISTENER_KEY = "friends_watching_listener_key";
+    private static final String FRIENDS_WATCHING_REQUEST_TAG = "friends_watching_request_tag";
+
 
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private MatchListWrapperAdapter matchListWrapperAdapter;
@@ -70,8 +79,20 @@ public class MatchListFragment extends Fragment implements MatchListWrapperNotif
     private FavouriteItem favouriteItem;
     private boolean isStaffPicked;
 
+    private boolean matchListSwitch = false;
+
     private ArrayList<FavouriteItem> flagFavItem;
     private ArrayList<MatchListWrapperItem> dataItem = new ArrayList<MatchListWrapperItem>();
+
+    MatchListScrollListener matchListScrollListener = new MatchListScrollListener() {
+        @Override
+        public void scroll(int position) {
+            if (!mSwipeRefreshLayout.isRefreshing()) {
+                LinearLayoutManager manager = (LinearLayoutManager) mWraperRecyclerView.getLayoutManager();
+                manager.scrollToPosition(position);
+            }
+        }
+    };
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -103,6 +124,36 @@ public class MatchListFragment extends Fragment implements MatchListWrapperNotif
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.fragment_scores_menu, menu);
         menu.findItem(R.id.action_search).setVisible(false);
+
+        MenuItem item = menu.findItem(R.id.myswitch);
+        item.setActionView(R.layout.switch_matchlist);
+
+        RelativeLayout relativeLayout = (RelativeLayout) item.getActionView();
+        final SwitchCompat sw = (SwitchCompat) relativeLayout.findViewById(R.id.switchForActionBar);
+        sw.setChecked(matchListSwitch);
+        if (matchListSwitch) {
+            sw.setThumbDrawable(getResources().getDrawable(R.drawable.ic_fav_matches));
+        } else {
+            sw.setThumbDrawable(getResources().getDrawable(R.drawable.ic_all_matches));
+        }
+        sw.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    matchListSwitch = isChecked;
+                    sw.setThumbDrawable(getResources().getDrawable(R.drawable.ic_fav_matches));
+                    updateMatchList(isChecked);
+                } else {
+                    matchListSwitch = isChecked;
+                    sw.setThumbDrawable(getResources().getDrawable(R.drawable.ic_all_matches));
+                    updateMatchList(isChecked);
+                }
+            }
+        });
+    }
+
+    private void updateMatchList(boolean isChecked) {
+        matchListWrapperAdapter.updateMatches(isChecked);
     }
 
     @Override
@@ -139,17 +190,25 @@ public class MatchListFragment extends Fragment implements MatchListWrapperNotif
     @Override
     public void onResume() {
         super.onResume();
-
+        FriendsWatchingHandler.getInstance(getContext()).addFriendsContentListener(friendsContentListener, FRIENDS_WATCHING_LISTENER_KEY);
         addResponseListener();
         if (matches.size() == 0) {
             showProgress(getView());
             requestContent();
         }
         handleIfSportsChanged();
-        if(FavouriteItemWrapper.getInstance(getActivity()).isFavouriteChanged()){
+        if (FavouriteItemWrapper.getInstance(getActivity()).isFavouriteChanged()) {
             ((MatchListWrapperAdapter) mWraperRecyclerView.getAdapter()).notifyFavIconChanged();
             FavouriteItemWrapper.getInstance(getActivity()).setFavouriteChanged(false);
         }
+
+        DataChangeCounterHandler dataChangeCounterHandler = FavouriteItemWrapper.getInstance(getContext()).getDataChangeCounterHandler();
+        if (dataChangeCounterHandler.isContentChanged(LIST_LISTENER_KEY)) {
+            matchListWrapperAdapter.notifyAdapter();
+        } else {
+            // do nothing
+        }
+        dataChangeCounterHandler.setContentCounter(LIST_LISTENER_KEY);
     }
 
     private boolean handleStaffFavContent() {
@@ -175,6 +234,7 @@ public class MatchListFragment extends Fragment implements MatchListWrapperNotif
     @Override
     public void onPause() {
         super.onPause();
+        FriendsWatchingHandler.getInstance(getContext()).removeFriendsContentListener(FRIENDS_WATCHING_LISTENER_KEY);
         sportsSelectedNum = UserUtil.getScoreFilterSportsSelected().size();
         sportSelected = UserUtil.getScoreFilterSportsSelected();
         removeResponseListener();
@@ -201,7 +261,7 @@ public class MatchListFragment extends Fragment implements MatchListWrapperNotif
         if (getActivity() instanceof MainActivity) {
             shouldShowBanner = handleStaffFavContent();
         }
-        matchListWrapperAdapter = new MatchListWrapperAdapter(dataItem, getActivity(), this, shouldShowBanner);
+        matchListWrapperAdapter = new MatchListWrapperAdapter(dataItem, getActivity(), shouldShowBanner, matchListSwitch, matchListScrollListener);
         mWraperRecyclerView.setAdapter(matchListWrapperAdapter);
 
         hideErrorLayout(view);
@@ -246,12 +306,9 @@ public class MatchListFragment extends Fragment implements MatchListWrapperNotif
         }
     }
 
+
     private void renderContent() {
-        int pos = matchListWrapperAdapter.notifyAdapter();
-        if (!mSwipeRefreshLayout.isRefreshing()) {
-            LinearLayoutManager manager = (LinearLayoutManager) mWraperRecyclerView.getLayoutManager();
-            manager.scrollToPosition(pos);
-        }
+        matchListWrapperAdapter.notifyAdapter();
     }
 
     private boolean handleContentForIndividuals(String content) {
@@ -350,6 +407,7 @@ public class MatchListFragment extends Fragment implements MatchListWrapperNotif
 
 
             Collections.sort(dataItem);
+            matchListWrapperAdapter.updateGlobalList(dataItem);
             if (favouriteItem.getFilterType().equalsIgnoreCase(Constants.FILTER_TYPE_LEAGUE) || (isStaffPicked && favouriteItem.getSportsType().equalsIgnoreCase(Constants.SPORTS_TYPE_CRICKET))) {
                 matchListWrapperAdapter.setIsIndividualFixture();
             }
@@ -462,29 +520,66 @@ public class MatchListFragment extends Fragment implements MatchListWrapperNotif
                 for (String key : keySet) {
                     MatchListWrapperDTO tempDTO = leagueMaps.get(key);
                     int s = tempDTO.getList().size();
-                    dayCount = DateUtil.getDayFromEpochTimeDayCount(tempDTO.getEpochTime() * 1000, getContext());
-                    if (((dayCount < 3 && dayCount > -3)) && s > 0) {
+                    if (s > 0) {
                         leagueMaps.get(key).reorderList();
                         matchList.add(leagueMaps.get(key));
                     }
+
+
                 }
             }
             dataItem.clear();
+            ArrayList<String> ids = new ArrayList<String>();
             for (MatchListWrapperDTO f : matchList) {
 
                 ArrayList<JSONObject> object = f.getList();
                 for (JSONObject jsonObject : object) {
                     MatchListWrapperItem wrapperItem = new MatchListWrapperItem(f);
                     wrapperItem.setJsonObject(jsonObject);
+                    try {
+                        String id = wrapperItem.getJsonObject().getString("match_id");
+                        String seriesId = null;
+                        boolean isLive = false;
+                        if (!wrapperItem.getJsonObject().isNull("series_id")) {
+                            seriesId = wrapperItem.getJsonObject().getString("series_id");
+                            String matchStatus = wrapperItem.getJsonObject().getString("status");
+                            isLive = ScoresUtil.isCricketMatchLive(matchStatus);
+                        } else {
+                            seriesId = wrapperItem.getJsonObject().getString("league_id");
+                            isLive = wrapperItem.getJsonObject().getBoolean("live");
+                        }
+                        if (isLive) {
+                            id = id + "|" + seriesId;
+                            ids.add(id);
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
                     dataItem.add(wrapperItem);
                 }
             }
-
+            if (ids.size() > 0) {
+                FriendsWatchingHandler.getInstance(getContext()).setMatchId(ids);
+                FriendsWatchingHandler.getInstance(getContext()).requestContent(FRIENDS_WATCHING_LISTENER_KEY, FRIENDS_WATCHING_REQUEST_TAG);
+            }
             Collections.sort(dataItem);
+            matchListWrapperAdapter.updateGlobalList(dataItem);
         }
         return success;
     }
 
+    private FriendsContentListener friendsContentListener = new FriendsContentListener() {
+        @Override
+        public void handleFriendsContent() {
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+
+                    matchListWrapperAdapter.notifyDataSetChanged();
+                }
+            });
+        }
+    };
 //    private void enterDummyContent(Map<String, Map<String, MatchListWrapperDTO>> daysMap){
 //        Map<String, MatchListWrapperDTO> dto = daysMap.get("Today");
 //
@@ -552,18 +647,6 @@ public class MatchListFragment extends Fragment implements MatchListWrapperNotif
             parameters.put(Constants.SPORTS_TYPE_STAFF, String.valueOf(isStaffPicked));
             ScoresContentHandler.getInstance().requestCall(ScoresContentHandler.CALL_NAME_MATCHES_LIST, parameters, LIST_LISTENER_KEY, LIST_OF_MATCHES_REQUEST_TAG);
         }
-    }
-
-
-    @Override
-    public void notifyParent() {
-        matchListWrapperAdapter.notifyAdapter();
-        //mSwipeRefreshLayout.setRefreshing(false);
-    }
-
-    @Override
-    public void refreshData() {
-        mSwipeRefreshLayout.setRefreshing(true);
     }
 
     private class ScoresContentListener implements ScoresContentHandler.ContentListener {

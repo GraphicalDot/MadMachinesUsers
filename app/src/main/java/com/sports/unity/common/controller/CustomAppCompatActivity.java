@@ -1,7 +1,10 @@
 package com.sports.unity.common.controller;
 
+import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
+import com.facebook.appevents.AppEventsLogger;
+import com.sports.unity.common.model.UserUtil;
 import com.sports.unity.messages.controller.model.PersonalMessaging;
 import com.sports.unity.util.GlobalEventHandler;
 import com.sports.unity.util.GlobalEventListener;
@@ -20,6 +23,14 @@ public class CustomAppCompatActivity extends AppCompatActivity implements Global
 //    private boolean isPingRequired;
 
     @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        UserUtil.init(this);
+    }
+
+
+    @Override
     protected void onStart() {
         super.onStart();
 
@@ -36,6 +47,7 @@ public class CustomAppCompatActivity extends AppCompatActivity implements Global
                 isPingRequired = false;
             }*/
             PersonalMessaging.getInstance(this).sendOnlinePresence();
+            AppEventsLogger.activateApp(this);
         }
     }
 
@@ -46,6 +58,7 @@ public class CustomAppCompatActivity extends AppCompatActivity implements Global
         if (activityCounter == 0) {
             PersonalMessaging.getInstance(this).sendOfflinePresence();
             GlobalEventHandler.getInstance().removeGlobalEventListener(NETWORK_STATE_ACTIVITY_TAG);
+            AppEventsLogger.deactivateApp(this);
             /*if (XMPPClient.getInstance().isConnectionAuthenticated()) {
                 if (isPingRequired) {
                     pingManager = PingManager.getInstanceFor(XMPPClient.getConnection());

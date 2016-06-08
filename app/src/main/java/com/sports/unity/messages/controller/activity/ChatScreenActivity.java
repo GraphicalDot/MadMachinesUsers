@@ -137,8 +137,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
     private int availableStatus = Contacts.AVAILABLE_BY_MY_CONTACTS;
     private StickyListHeadersListView mChatView;
     private boolean otherChat = false;
-    private boolean isLastTimeRequired;
-    private boolean isRoasterEntryRequired;
+    private boolean isLastTimeRequired = false;
     private ToolbarActionsForChatScreen toolbarActionsForChatScreen = null;
 
     private EditText messageText;
@@ -184,13 +183,10 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
                             } else if (object.toString().equals("available")) {
                                 status.setText("Online");
                             } else if (object.toString().equals("unavailable")) {
-                                if (XMPPClient.getInstance().isConnectionAuthenticated()) {
-                                    personalMessaging.getLastTime(jabberId);
-                                } else {
-                                    isLastTimeRequired = true;
-                                }
+                                personalMessaging.getLastTime(jabberId);
                             } else {
                                 status.setText("last seen " + object.toString());
+                                isLastTimeRequired = false;
                             }
                         }
                     });
@@ -314,7 +310,6 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
     protected void onDestroy() {
         ChatScreenApplication.activityDestroyed();
         AudioRecordingHelper.cleanUp();
-//        XMPPConnectionUtil.getInstance().removeConnectionListener(XMPP_CONNECTION_KEY);
         super.onDestroy();
     }
 
@@ -333,43 +328,6 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
         ChatScreenApplication.activityStopped();
         ActivityActionHandler.getInstance().removeActionListener(ActivityActionHandler.CHAT_SCREEN_KEY, jabberId);
         GlobalEventHandler.getInstance().removeGlobalEventListener(ActivityActionHandler.CHAT_SCREEN_KEY);
-
-        /*if (XMPPClient.getInstance().isConnectionAuthenticated()) {
-            try {
-
-                RosterEntry rosterSelf = Roster.getInstanceFor(XMPPClient.getConnection()).getEntry(selfJid + "@" + XMPPClient.SERVICE_NAME);
-                RosterEntry rosterFriend = Roster.getInstanceFor(XMPPClient.getConnection()).getEntry(jabberId + "@" + XMPPClient.SERVICE_NAME);
-                Log.d("max", "selfjid is--" + selfJid + "@" + XMPPClient.SERVICE_NAME + "<<roseterself" + rosterSelf);
-                if (rosterFriend != null) {
-                    if (!rosterFriend.getType().equals(RosterPacket.ItemType.both)) {
-                        Roster.getInstanceFor(XMPPClient.getConnection()).removeEntry(rosterFriend);
-                        if (rosterSelf != null) {
-                            Log.d("max", "SelfType__" + rosterSelf.getType());
-                            Roster.getInstanceFor(XMPPClient.getConnection()).removeEntry(rosterSelf);
-
-                        }
-                    } else {
-                        Presence presence1 = new Presence(Presence.Type.unsubscribe);
-                        presence1.setTo(jabberId + "@" + XMPPClient.SERVICE_NAME);
-                        XMPPClient.getConnection().sendStanza(presence1);
-                    }
-                } else {
-                    Presence presence1 = new Presence(Presence.Type.unsubscribe);
-                    presence1.setTo(jabberId + "@" + XMPPClient.SERVICE_NAME);
-                    XMPPClient.getConnection().sendStanza(presence1);
-                }
-            } catch (SmackException.NotConnectedException e) {
-                e.printStackTrace();
-            } catch (SmackException.NotLoggedInException e) {
-                e.printStackTrace();
-            } catch (XMPPException.XMPPErrorException e) {
-                e.printStackTrace();
-            } catch (SmackException.NoResponseException e) {
-                e.printStackTrace();
-            }
-        } else {
-            //nothing
-        }*/
     }
 
     @Override
@@ -377,6 +335,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
         super.onResume();
         populateMessagesOnScreen();
         clearUnreadCount();
+
         blockUnblockUserHelper.addBlockUnblockListener(ChatScreenActivity.this);
         ActivityActionHandler.getInstance().addActionListener(ActivityActionHandler.CHAT_SCREEN_KEY, jabberId, activityActionListener);
 //        GlobalEventHandler.getInstance().addGlobalEventListener(ActivityActionHandler.CHAT_SCREEN_KEY, this);
@@ -388,8 +347,6 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
         NotificationHandler.getInstance(getApplicationContext()).clearNotificationMessages(String.valueOf(chatID));
 
         initAddBlockView();
-        //TODO update message list
-//        activityActionListener.handleAction(0);
     }
 
     @Override
@@ -451,14 +408,6 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
         initToolbar();
         hideStatusIfUserBlocked();
         final Handler mHandler = new Handler();
-
-//        if (XMPPClient.getInstance().isConnectionAuthenticated()) {
-//            isChatInitialized = true;
-//            getChatThread();
-//        } else {
-//            isChatInitialized = false;
-//            XMPPConnectionUtil.getInstance().requestConnection();
-//        }
 
         populateMessagesOnScreen();
 
@@ -860,47 +809,20 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
 
         if (!isGroupChat) {
             if (XMPPClient.getInstance().isConnectionAuthenticated()) {
-                createRosterEntry();
+//                createRosterEntry();
             } else {
-                isRoasterEntryRequired = true;
+                //nothing
             }
         } else {
             //nothing
         }
     }
 
-    private void createRosterEntry() {
-       /* try {
-            Presence presence1 = new Presence(Presence.Type.subscribe);
-            presence1.setTo(jabberId + "@" + XMPPClient.SERVICE_NAME);
-            XMPPClient.getConnection().sendStanza(presence1);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }*/
-    }
-
-//    private void createChatEntryifNotExists() {
-//        if (!isGroupChat) {
-//            if (chatID == SportsUnityDBHelper.DEFAULT_ENTRY_ID) {
-//                chatID = sportsUnityDBHelper.getChatEntryID(contactID, groupServerId);
-//                if (chatID != SportsUnityDBHelper.DEFAULT_ENTRY_ID) {
-//                    //nothing
-//                } else {
-//                    chatID = sportsUnityDBHelper.createChatEntry(jabberName, contactID, false);
-//                    Log.i("ChatEntry : ", "chat entry made " + chatID + " : " + contactID);
-//                }
-//            } else {
-//                //nothing
-//            }
-//        }
-//    }
-
     private void getLastSeen() throws SmackException.NotConnectedException {
 
         if (XMPPClient.getConnection() != null) {
             Roster roster = Roster.getInstanceFor(XMPPClient.getConnection());
             Presence availability = roster.getPresence(jabberId + "@mm.io");
-            Log.i("userPresence :", String.valueOf(availability.toXML()));
             int state = retrieveState_mode(availability.getStatus());
             if (state == 1) {
                 status.post(new Runnable() {
@@ -923,12 +845,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
             userState = 1;
             return userState;
         } else {
-            userState = 0;
-            if (XMPPClient.getInstance().isConnectionAuthenticated()) {
-                personalMessaging.getLastTime(jabberId);
-            } else {
-                isLastTimeRequired = true;
-            }
+            isLastTimeRequired = true;
             return userState;
         }
     }
@@ -1157,8 +1074,6 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
     }
 
     private void sendMediaFile(final Uri URI, final String file) {
-        final int screenHeight = getResources().getDisplayMetrics().heightPixels;
-        final int screenWidth = getResources().getDisplayMetrics().widthPixels;
         try {
             new ThreadTask(null) {
 
@@ -1173,7 +1088,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
                     try {
                         if (!hasVideoContent) {
                             fileName = DBUtil.getUniqueFileName(SportsUnityDBHelper.MIME_TYPE_IMAGE, false);
-                            this.object = ImageUtil.getCompressedBytes(file, screenHeight, screenWidth);
+                            this.object = ImageUtil.getScaledDownBytes(file, getResources().getDisplayMetrics());
 
                             DBUtil.writeContentToExternalFileStorage(ChatScreenActivity.this, fileName, (byte[]) this.object, SportsUnityDBHelper.MIME_TYPE_IMAGE);
                             thumbnailImage = PersonalMessaging.createThumbnailImageAsBase64(ChatScreenActivity.this, SportsUnityDBHelper.MIME_TYPE_IMAGE, fileName);
@@ -1347,58 +1262,6 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
         chatScreenAdapter.notifydataset(messageList);
     }
 
-//    public HashMap<String, byte[]> getMediaMap() {
-//        return mediaMap;
-//    }
-
-//    private void loadAllMediaContent(ArrayList<Message> list, final CustomTask laterTask) {
-//        new ThreadTask(list) {
-//
-//            @Override
-//            public Object process() {
-//                ArrayList<Message> messageList = (ArrayList<Message>) object;
-//
-//                for (Message message : messageList) {
-//                    if (
-//                            message.mimeType.equals(SportsUnityDBHelper.MIME_TYPE_IMAGE) ||
-//                                    message.mimeType.equals(SportsUnityDBHelper.MIME_TYPE_AUDIO)
-//                            ) {
-//                        if (message.mediaFileName != null) {
-//                            if (!mediaMap.containsKey(message.mediaFileName)) {
-//                                byte[] content = DBUtil.loadContentFromExternalFileStorage(ChatScreenActivity.this.getBaseContext(), message.mediaFileName);
-//                                mediaMap.put(message.mediaFileName, content);
-//
-//                                if ((message.textData.length() == 0 && message.iAmSender == true)) {
-//                                    FileOnCloudHandler.getInstance(getBaseContext()).requestForUpload(message.mediaFileName, null, message.mimeType, chat, message.id, otherChat);
-//                                } else {
-//                                    //nothing
-//                                }
-//                            } else {
-//                                //nothing
-//                            }
-//                        } else {
-////                            FileOnCloudHandler.getInstance(getBaseContext()).requestForDownload(message.textData, message.mimeType, message.id);
-//                        }
-//                    } else {
-//                        //TODO
-//                    }
-//                }
-//
-//                if (laterTask != null) {
-//                    ChatScreenActivity.this.runOnUiThread(laterTask);
-//                }
-//
-//                return null;
-//            }
-//
-//            @Override
-//            public void postAction(Object object) {
-//                ActivityActionHandler.getInstance().dispatchCommonEvent(ActivityActionHandler.CHAT_SCREEN_KEY);
-//            }
-//
-//        }.start();
-//    }
-
     private void sendReadStatus() {
         if (!isGroupChat) {
             for (Message message : messageList) {
@@ -1463,8 +1326,15 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
                         status.setText("Connected");
                     }
                 });
+                getLastSeen();
+            } else {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        status.setVisibility(View.GONE);
+                    }
+                });
             }
-            getLastSeen();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -1485,23 +1355,14 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
                 setGroupMembers();
             }
             if (!isGroupChat) {
-                if (isLastTimeRequired) {
+                if (isLastTimeRequired)
                     personalMessaging.getLastTime(jabberId);
-                    isLastTimeRequired = false;
-                } else {
-                    //nothing
-                }
-                if (isRoasterEntryRequired) {
-                    createRosterEntry();
-                    isRoasterEntryRequired = false;
-                } else {
-                    //nothing;
-                }
             } else {
                 //TODO
             }
         }
     }
+
 
     @Override
     public void onBlock(boolean success, String phoneNumber) {

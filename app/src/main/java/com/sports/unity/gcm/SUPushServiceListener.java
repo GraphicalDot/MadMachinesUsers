@@ -23,6 +23,8 @@ import com.sports.unity.util.Constants;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import static com.sports.unity.util.Constants.INTENT_KEY_MATCH_NAME;
+import static com.sports.unity.util.Constants.INTENT_KEY_PUSH;
 import static com.sports.unity.util.Constants.INTENT_KEY_TYPE;
 
 /**
@@ -100,6 +102,7 @@ public class SUPushServiceListener extends GcmListenerService {
                         drawableId = getDrawableIconCricket(event);
                         if (matchiId != null && seriesid != null && matchStatus != null && title != null && content != null && event != 0) {
                             i = new Intent(this, ScoreDetailActivity.class);
+                            i.putExtra(INTENT_KEY_PUSH,true);
                             i.putExtra(INTENT_KEY_TYPE, sportsType);
                             i.putExtra(Constants.INTENT_KEY_ID, matchiId);
                             i.putExtra(Constants.INTENT_KEY_SERIES, seriesid);
@@ -113,6 +116,7 @@ public class SUPushServiceListener extends GcmListenerService {
                         drawableId = getDrawableIconFootball(event);
                         if (matchiId != null && seriesid != null && matchStatus != null && title != null && content != null && event != 0) {
                             i = new Intent(this, ScoreDetailActivity.class);
+                            i.putExtra(INTENT_KEY_PUSH,true);
                             i.putExtra(INTENT_KEY_TYPE, sportsType);
                             i.putExtra(Constants.INTENT_KEY_ID, matchiId);
                             i.putExtra(Constants.LEAGUE_NAME, seriesid);
