@@ -57,6 +57,18 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/GOOGLE_API_KEY" />
 
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="co.sports.unity.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/fileprovider" />
+
+        </provider>
+
         <receiver android:name=".NetworkStateReceiver">
             <intent-filter>
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
