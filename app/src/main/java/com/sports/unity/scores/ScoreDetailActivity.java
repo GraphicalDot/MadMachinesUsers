@@ -8,10 +8,13 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.ShareCompat;
+import android.support.v4.content.FileProvider;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.NotificationCompat;
 import android.support.v7.widget.Toolbar;
@@ -67,6 +70,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.text.ParseException;
@@ -105,6 +110,7 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity {
 
     private ViewPager mViewPager;
     private ImageView refreshImage;
+    private ImageView shareImage;
     private ProgressBar mProgressBar = null;
 
     private View llMatchDetailLinear;
@@ -411,7 +417,13 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity {
                 refreshImage.setVisibility(View.VISIBLE);
             }
 
-
+            shareImage = (ImageView) findViewById(R.id.share);
+            shareImage.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    shareScreenShot();
+                }
+            });
             llMatchDetailLinear = findViewById(R.id.ll_match_detail_linear);
             tvMatchTime = (TextView) findViewById(R.id.tv_match_time);
 
@@ -421,6 +433,49 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity {
         } catch (Exception e) {
             Toast.makeText(this, "Error Occured", Toast.LENGTH_LONG);
             e.printStackTrace();
+        }
+    }
+
+    private void shareScreenShot() {
+        LinearLayout shotLayout = (LinearLayout) findViewById(R.id.screenshot);
+        shotLayout.setDrawingCacheEnabled(true);
+        shotLayout.buildDrawingCache(true);
+        boolean success = false;
+        //File imageFile = null;
+
+        File outputDir = this.getCacheDir();
+        File imagePath = new File(outputDir, "shot");
+        if (!imagePath.exists()) {
+            imagePath.mkdir();
+        }
+        File tempFile = new File(imagePath, "image.jpg");
+        Uri uri = null;
+        try {
+            if (!tempFile.exists()) {
+                tempFile.createNewFile();
+            }
+            FileOutputStream fileOutputStream = new FileOutputStream(tempFile);
+            shotLayout.getDrawingCache().compress(Bitmap.CompressFormat.JPEG, 100,
+                    fileOutputStream);
+            fileOutputStream.close();
+            uri = FileProvider.getUriForFile(this, getPackageName() + ".fileprovider", tempFile);
+            success = true;
+        } catch (Exception e) {
+            success = false;
+            e.printStackTrace();
+        } finally {
+            shotLayout.setDrawingCacheEnabled(false);
+        }
+        if (success) {
+            Intent shareIntent = ShareCompat.IntentBuilder.from(this)
+                    .setType("image/*")
+                    .setText("https://play.google.com/store/apps/details?id=co.sports.unity")
+                    .setStream(uri)
+                    .setChooserTitle(R.string.share_image)
+                    .createChooserIntent()
+                    .addFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT)
+                    .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            startActivity(shareIntent);
         }
     }
 
@@ -905,12 +960,14 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity {
         @Override
         public void handleErrorContent(String tag) {
             refreshImage.setVisibility(View.VISIBLE);
+            shareImage.setVisibility(View.GONE);
         }
 
         @Override
         public void changeUI(String tag) {
             ScoreDetailActivity.this.setTitle();
             ScoreDetailActivity.this.renderScores();
+            shareImage.setVisibility(View.VISIBLE);
             initView();
             if (!isMatchLive()) {
                 refreshImage.setVisibility(View.GONE);

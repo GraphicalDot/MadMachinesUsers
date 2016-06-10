@@ -222,7 +222,7 @@ public class NavigationFragment extends Fragment implements ExpandableListView.O
                 staffView.addView(staffPickView);
                 staffPickView.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_WHITE, false));
                 TextView staffName = (TextView) staffPickView.findViewById(R.id.ipl);
-                ImageView staffFlag = (ImageView) getView().findViewById(R.id.flag);
+                ImageView staffFlag = (ImageView) staffPickView.findViewById(R.id.flag);
                 String uri = staffFavouriteItem.getFlagImageUrl();
                 staffName.setText(staffFavouriteItem.getName());
                 if (uri != null) {

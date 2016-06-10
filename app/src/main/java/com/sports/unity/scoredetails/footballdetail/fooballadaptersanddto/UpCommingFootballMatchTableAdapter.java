@@ -125,7 +125,7 @@ public class UpCommingFootballMatchTableAdapter extends RecyclerView.Adapter<Rec
             holder.tvL.setTextColor(context.getResources().getColor(R.color.app_theme_blue));
             holder.tvPts.setTextColor(context.getResources().getColor(R.color.app_theme_blue));
             holder.llLiveTeam.setVisibility(View.VISIBLE);
-            Glide.with(context).load(dto.getIvTeamProfileImage()).placeholder(R.drawable.ic_no_img).into(holder.ivTeamProfileImage);
+            Glide.with(context).load(dto.getIvTeamProfileImage()).placeholder(R.drawable.ic_no_img).dontAnimate().into(holder.ivTeamProfileImage);
 
         } else {
             holder.tvSerialNumber.setText(dto.getRank());
@@ -143,7 +143,7 @@ public class UpCommingFootballMatchTableAdapter extends RecyclerView.Adapter<Rec
             holder.tvL.setTextColor(context.getResources().getColor(R.color.news_static));
             holder.tvPts.setTextColor(context.getResources().getColor(R.color.news_static));
             holder.llLiveTeam.setVisibility(View.INVISIBLE);
-            Glide.with(context).load(dto.getIvTeamProfileImage()).placeholder(R.drawable.ic_no_img).into(holder.ivTeamProfileImage);
+            Glide.with(context).load(dto.getIvTeamProfileImage()).placeholder(R.drawable.ic_no_img).dontAnimate().into(holder.ivTeamProfileImage);
 
         }
 

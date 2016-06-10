@@ -72,7 +72,10 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
     private MatchJsonCaller matchJsonCaller = new MatchJsonCaller();
     private FootballMatchJsonCaller footballMatchJsonCaller = new FootballMatchJsonCaller();
     private CricketMatchJsonCaller cricketMatchJsonCaller = new CricketMatchJsonCaller();
-    private ArrayList<FavouriteItem> favList;
+
+    private ArrayList<FavouriteItem> favListCricket;
+    private ArrayList<FavouriteItem> favListFootball;
+
     private boolean isFavChecked = false;
 
     private MatchListScrollListener listScrollListener;
@@ -103,7 +106,9 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
         this.matchDay = matchDay;
         this.activity = activity;
         this.shouldShowHeader = shouldShowHeader;
-        favList = FavouriteItemWrapper.getInstance(activity).getAllTeams();
+
+        favListCricket = FavouriteItemWrapper.getInstance(activity).getCricketTeams();
+        favListFootball = FavouriteItemWrapper.getInstance(activity).getFootballTeams();
         this.isFavChecked = isFavChecked;
         this.listScrollListener = matchListScrollListener;
     }
@@ -204,7 +209,7 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
                             String homeTeamId = cricketMatchJsonCaller.getTeam1Id();
                             String awayTeamId = cricketMatchJsonCaller.getTeam2Id();
                             boolean isFav = false;
-                            for (FavouriteItem f : favList) {
+                            for (FavouriteItem f : favListCricket) {
                                 if (f.getId().equalsIgnoreCase(homeTeamId) || f.getId().equalsIgnoreCase(awayTeamId)) {
                                     isFav = true;
                                     break;
@@ -327,7 +332,7 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
                             String homeTeamId = footballMatchJsonCaller.getTeam1Id();
                             String awayTeamId = footballMatchJsonCaller.getTeam2Id();
                             boolean isFav = false;
-                            for (FavouriteItem f : favList) {
+                            for (FavouriteItem f : favListFootball) {
                                 if (f.getId().equalsIgnoreCase(homeTeamId) || f.getId().equalsIgnoreCase(awayTeamId)) {
                                     isFav = true;
                                 }
@@ -887,8 +892,8 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
                     cricketMatchJsonCaller.setJsonObject(jsonObject);
 
 
-                    Glide.with(activity).load(cricketMatchJsonCaller.getTeam1Flag()).placeholder(R.drawable.ic_no_img).into(flag1);
-                    Glide.with(activity).load(cricketMatchJsonCaller.getTeam2Flag()).placeholder(R.drawable.ic_no_img).into(flag2);
+                    Glide.with(activity).load(cricketMatchJsonCaller.getTeam1Flag()).placeholder(R.drawable.ic_no_img).dontAnimate().into(flag1);
+                    Glide.with(activity).load(cricketMatchJsonCaller.getTeam2Flag()).placeholder(R.drawable.ic_no_img).dontAnimate().into(flag2);
 
                     team1.setText(cricketMatchJsonCaller.getTeam1());
                     team2.setText(cricketMatchJsonCaller.getTeam2());
@@ -1053,7 +1058,7 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
 
     public void notifyFavIconChanged() {
 
-        favList = FavouriteItemWrapper.getInstance(activity).getAllTeams();
+        favListCricket = FavouriteItemWrapper.getInstance(activity).getAllTeams();
         this.notifyDataSetChanged();
     }
 
@@ -1102,7 +1107,7 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            for (FavouriteItem f : favList) {
+            for (FavouriteItem f : favListCricket) {
                 if (f.getId().equalsIgnoreCase(homeTeamId) || f.getId().equalsIgnoreCase(awayTeamId)) {
                     isFav = true;
                     break;

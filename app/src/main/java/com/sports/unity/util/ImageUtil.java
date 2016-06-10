@@ -146,17 +146,17 @@ public class ImageUtil {
 //    }
 
     public static byte[] getScaledDownBytes(String filePath, DisplayMetrics displayMetrics) throws Exception {
-        float screenRatio = displayMetrics.widthPixels/(float)displayMetrics.heightPixels;
+        float screenRatio = displayMetrics.widthPixels / (float) displayMetrics.heightPixels;
 
         int requiredWidth = 0;
         int requiredHeight = 0;
 
-        if( screenRatio >= 1 ){
+        if (screenRatio >= 1) {
             requiredWidth = 1500;
-            requiredHeight = (int)(requiredWidth / screenRatio);
+            requiredHeight = (int) (requiredWidth / screenRatio);
         } else {
             requiredHeight = 1500;
-            requiredWidth = (int)(requiredHeight * screenRatio);
+            requiredWidth = (int) (requiredHeight * screenRatio);
         }
 
         return getScaledDownBytes(filePath, requiredWidth, requiredHeight);
@@ -309,15 +309,15 @@ public class ImageUtil {
     private static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
         int sampleScaleSize = 1;
 
-        while ( (options.outWidth * options.outHeight) / (sampleScaleSize * sampleScaleSize) >= reqWidth * reqHeight ) {
+        while ((options.outWidth * options.outHeight) / (sampleScaleSize * sampleScaleSize) >= reqWidth * reqHeight) {
             sampleScaleSize *= 2;
         }
 
         {
             //To prevent image from scaling down too much
             int requiredResolution = reqWidth * reqHeight;
-            if( requiredResolution > 500*500 ) {
-                if ( sampleScaleSize > 1 && (options.outWidth * options.outHeight) / (sampleScaleSize * sampleScaleSize) < 500*500 ) {
+            if (requiredResolution > 500 * 500) {
+                if (sampleScaleSize > 1 && (options.outWidth * options.outHeight) / (sampleScaleSize * sampleScaleSize) < 500 * 500) {
                     sampleScaleSize /= 2;
                 }
             }
@@ -416,6 +416,13 @@ public class ImageUtil {
 
     public static final String getPathforURI(Context context, Uri URI, String metaData) {
         String path = "";
+        if (URI.toString().equals("content://co.sports.unity.fileprovider/image/image.jpg")) {
+            File outputDir = context.getCacheDir();
+            File imagePath = new File(outputDir, "shot");
+            File tempFile = new File(imagePath, "image.jpg");
+            path = ImageUtil.getFilePathFromURI(context, Uri.fromFile(tempFile), metaData);
+            return path;
+        }
         if (URI.getScheme().equals("content")) {
             path = ImageUtil.getFilePathFromURI(context, URI, metaData);
         } else if (URI.getScheme().equals("file")) {
@@ -443,21 +450,25 @@ public class ImageUtil {
             File f = new File(path);
             fileSizeInBytes = f.length();
         }
-        Log.d("max","FILE SIZE>> "+fileSizeInBytes);
         return fileSizeInBytes;
     }
 
     public static final String getFilePathFromURI(Context context, Uri contentUri, String meta) {
-        String[] proj = {meta};
-        Cursor cursor = context.getContentResolver().query(contentUri, proj, null, null, null);
-        int column_index = cursor.getColumnIndexOrThrow(meta);
-        cursor.moveToFirst();
-        Log.i("filepath", cursor.getString(column_index));
-        return cursor.getString(column_index);
+        try {
+            String[] proj = {meta};
+            Cursor cursor = context.getContentResolver().query(contentUri, proj, null, null, null);
+            int column_index = cursor.getColumnIndex(meta);
+            cursor.moveToFirst();
+            Log.i("filepath", cursor.getString(column_index));
+            return cursor.getString(column_index);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return contentUri.getPath();
+        }
     }
 
     public static final String getMimeType(Context ctx, Uri URI) {
-        String mimeType=null;
+        String mimeType = null;
         if (URI != null) {
             String scheme = URI.getScheme();
             if (scheme.equals("content")) {
