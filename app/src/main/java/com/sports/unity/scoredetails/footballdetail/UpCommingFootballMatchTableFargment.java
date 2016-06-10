@@ -55,7 +55,7 @@ public class UpCommingFootballMatchTableFargment extends BasicVolleyRequestRespo
     private Context context;
 
     private String title;
-    private HashMap<String,String> requestParameters;
+    private HashMap<String, String> requestParameters;
     private JSONObject response;
 
     private String team1 = "abc";
@@ -70,7 +70,7 @@ public class UpCommingFootballMatchTableFargment extends BasicVolleyRequestRespo
     private HashMap<String, ArrayList<UpCommngFootbalMatchTableDTO>> groupStandingsMap = new HashMap<>();
     private ArrayList<String> groupsListInOrder = new ArrayList<>();
 
-    public  UpCommingFootballMatchTableFargment(String title){
+    public UpCommingFootballMatchTableFargment(String title) {
         this.title = title;
     }
 
@@ -92,9 +92,9 @@ public class UpCommingFootballMatchTableFargment extends BasicVolleyRequestRespo
     @Override
     public CustomComponentListener getCustomComponentListener(View view) {
         ViewGroup errorLayout = (ViewGroup) view.findViewById(R.id.error);
-        ProgressBar progressBar = (ProgressBar)view.findViewById(R.id.progress);
+        ProgressBar progressBar = (ProgressBar) view.findViewById(R.id.progress);
 
-        UpcomingFootballMatchTableComponentListener upcomingFootballMatchTableComponentListener = new UpcomingFootballMatchTableComponentListener( getRequestTag(), progressBar, errorLayout, contentLayout, swipeRefreshLayout);
+        UpcomingFootballMatchTableComponentListener upcomingFootballMatchTableComponentListener = new UpcomingFootballMatchTableComponentListener(getRequestTag(), progressBar, errorLayout, contentLayout, swipeRefreshLayout);
         return upcomingFootballMatchTableComponentListener;
     }
 
@@ -118,7 +118,7 @@ public class UpCommingFootballMatchTableFargment extends BasicVolleyRequestRespo
         initView(view);
     }
 
-    public void setRequestParameters(HashMap<String,String> requestParameters ) {
+    public void setRequestParameters(HashMap<String, String> requestParameters) {
         this.requestParameters = requestParameters;
     }
 
@@ -135,7 +135,7 @@ public class UpCommingFootballMatchTableFargment extends BasicVolleyRequestRespo
         recyclerView.setAdapter(adapter);
 
         {
-            ViewGroup viewGroup = (ViewGroup)view.findViewById(R.id.header_row);
+            ViewGroup viewGroup = (ViewGroup) view.findViewById(R.id.header_row);
             viewGroup.setBackgroundColor(context.getResources().getColor(R.color.gray3));
             viewGroup.setPadding(0, 0, 0, 0);
         }
@@ -150,9 +150,9 @@ public class UpCommingFootballMatchTableFargment extends BasicVolleyRequestRespo
         });
     }
 
-    private boolean renderDisplay()  {
+    private boolean renderDisplay() {
         boolean success = getData(response);
-        return  success;
+        return success;
     }
 
     private boolean getData(JSONObject jsonObject) {
@@ -186,10 +186,10 @@ public class UpCommingFootballMatchTableFargment extends BasicVolleyRequestRespo
                 }
             }
 
-            if( groupStandingsMap.size() == 1 ){
+            if (groupStandingsMap.size() == 1) {
                 String key = groupsListInOrder.iterator().next();
                 ArrayList<UpCommngFootbalMatchTableDTO> list = groupStandingsMap.get(key);
-                if( list != null && list.size() > 0 ) {
+                if (list != null && list.size() > 0) {
                     list.remove(0);
                 }
             }
@@ -205,17 +205,18 @@ public class UpCommingFootballMatchTableFargment extends BasicVolleyRequestRespo
         }
 
         success = true;
-        return  success;
+        return success;
 
     }
 
     private UpCommngFootbalMatchTableDTO getDtoObject(JSONObject teamObject) {
         UpCommngFootbalMatchTableDTO upCommngFootbalMatchTableDTO = new UpCommngFootbalMatchTableDTO();
         try {
-            if (!teamObject.isNull("stand_season"))
+            if (!teamObject.isNull("stand_season")) {
 //                tvMatchDate.setText(teamObject.getString("stand_season"));
-                if (!teamObject.isNull("flag_image"))
-                    upCommngFootbalMatchTableDTO.setIvTeamProfileImage(teamObject.getString("flag_image"));
+            }
+            if (!teamObject.isNull("flag_image"))
+                upCommngFootbalMatchTableDTO.setIvTeamProfileImage(teamObject.getString("flag_image"));
             if (!teamObject.isNull("team_id"))
                 upCommngFootbalMatchTableDTO.setTeamId(teamObject.getString("team_id"));
             if (!teamObject.isNull("team_name"))
@@ -252,7 +253,7 @@ public class UpCommingFootballMatchTableFargment extends BasicVolleyRequestRespo
         return upCommngFootbalMatchTableDTO;
     }
 
-    private  boolean handleContent(String content){
+    private boolean handleContent(String content) {
         boolean success = false;
         try {
             JSONObject jsonObject = new JSONObject(content);
@@ -272,7 +273,7 @@ public class UpCommingFootballMatchTableFargment extends BasicVolleyRequestRespo
 
     public class UpcomingFootballMatchTableComponentListener extends CustomComponentListener {
 
-        public UpcomingFootballMatchTableComponentListener(String requestTag, ProgressBar progressBar, ViewGroup errorLayout, View contentLayout, SwipeRefreshLayout swipeRefreshLayout){
+        public UpcomingFootballMatchTableComponentListener(String requestTag, ProgressBar progressBar, ViewGroup errorLayout, View contentLayout, SwipeRefreshLayout swipeRefreshLayout) {
             super(requestTag, progressBar, errorLayout, contentLayout, swipeRefreshLayout);
         }
 
@@ -295,7 +296,7 @@ public class UpCommingFootballMatchTableFargment extends BasicVolleyRequestRespo
         @Override
         public void changeUI(String tag) {
             boolean success = renderDisplay();
-            if( success ){
+            if (success) {
                 //nothing
             } else {
                 showErrorLayout();

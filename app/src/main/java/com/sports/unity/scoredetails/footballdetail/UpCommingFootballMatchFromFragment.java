@@ -66,6 +66,9 @@ public class UpCommingFootballMatchFromFragment extends BasicVolleyRequestRespon
     private TextView team1Name;
     private TextView team2Name;
 
+    private View view1;
+    private View view2;
+
     public UpCommingFootballMatchFromFragment(String title, Intent intent) {
         this.title = title;
 
@@ -164,6 +167,10 @@ public class UpCommingFootballMatchFromFragment extends BasicVolleyRequestRespon
         team1PointHistoryLayout = (RelativeLayout) view.findViewById(R.id.layout_team_history_value);
         team2PointHistoryLayout = (RelativeLayout) view.findViewById(R.id.layout_team_history_value_second_team);
 
+
+        view1 = view.findViewById(R.id.first_view);
+        view2 = view.findViewById(R.id.second_view);
+
         team1Name = (TextView) view.findViewById(R.id.tv_first_premiera_division);
         team2Name = (TextView) view.findViewById(R.id.tv_second_premiera_division);
         team1Name.setVisibility(View.GONE);
@@ -209,6 +216,7 @@ public class UpCommingFootballMatchFromFragment extends BasicVolleyRequestRespon
                             if (team1PointHistory == 0) {
                                 team1Name.setVisibility(View.GONE);
                                 team1PointHistoryLayout.setVisibility(View.GONE);
+                                view1.setVisibility(View.GONE);
                             }
                         } else if (team2.equals(teamFromObject.getString("team_name"))) {
                             tvnamesecondteam.setText(teamFromObject.getString("team_name"));
@@ -240,6 +248,7 @@ public class UpCommingFootballMatchFromFragment extends BasicVolleyRequestRespon
                             if (team2PointHistory == 0) {
                                 team2Name.setVisibility(View.GONE);
                                 team2PointHistoryLayout.setVisibility(View.GONE);
+                                view2.setVisibility(View.GONE);
                             }
 
                         } else {

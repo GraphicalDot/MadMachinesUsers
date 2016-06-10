@@ -11,219 +11,220 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <LinearLayout
-            android:id="@+id/content_layout"
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:visibility="visible">
+            android:layout_height="match_parent">
 
-            <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
-                android:id="@+id/cricket_team_name"
+            <LinearLayout
+                android:id="@+id/content_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:background="@color/gray3"
-                android:gravity="left"
-                android:singleLine="true"
-                android:ellipsize="end"
-                android:padding="@dimen/horizontal_padding_very_small"
-                android:text="Name"
-                android:textColor="@color/news_static"
-                android:textSize="@dimen/font_size_small_large"
-                android:visibility="gone"/>
-
-            <android.support.percent.PercentRelativeLayout
-                android:id="@+id/team1_layout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/gray3"
-                android:orientation="horizontal"
-                android:padding="@dimen/horizontal_padding_very_small">
+                android:orientation="vertical"
+                android:visibility="visible">
 
                 <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
-                    android:id="@+id/tv_team_first_name"
-                    android:layout_width="wrap_content"
+                    android:id="@+id/cricket_team_name"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
+                    android:layout_gravity="center_vertical"
+                    android:background="@color/gray3"
+                    android:ellipsize="end"
                     android:gravity="left"
-                    android:text=""
+                    android:padding="@dimen/horizontal_padding_very_small"
+                    android:singleLine="true"
+                    android:text="Name"
                     android:textColor="@color/news_static"
                     android:textSize="@dimen/font_size_small_large"
-                    card:layout_widthPercent="34%" />
+                    android:visibility="gone" />
 
-                <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
-                    android:id="@+id/tv_p1"
-                    android:layout_width="wrap_content"
+                <android.support.percent.PercentRelativeLayout
+                    android:id="@+id/team1_layout"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_toRightOf="@id/tv_team_first_name"
-                    android:gravity="center"
-                    android:text="@string/p"
-                    android:textColor="@color/news_static"
-                    android:textSize="@dimen/font_size_small_large"
-                    card:layout_widthPercent="10%" />
+                    android:background="@color/gray3"
+                    android:orientation="horizontal"
+                    android:padding="@dimen/horizontal_padding_very_small">
 
-                <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
-                    android:id="@+id/tv_pl1"
+                    <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
+                        android:id="@+id/tv_team_first_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:gravity="left"
+                        android:text=""
+                        android:textColor="@color/news_static"
+                        android:textSize="@dimen/font_size_small_large"
+                        card:layout_widthPercent="44%" />
+
+                    <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
+                        android:id="@+id/tv_p1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_toRightOf="@id/tv_team_first_name"
+                        android:gravity="center"
+                        android:text="@string/p"
+                        android:textColor="@color/news_static"
+                        android:textSize="@dimen/font_size_small_large"
+                        card:layout_widthPercent="10%" />
+
+                    <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
+                        android:id="@+id/tv_pl1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_toRightOf="@id/tv_p1"
+                        android:gravity="center"
+                        android:text="@string/pl"
+                        android:textColor="@color/news_static"
+                        android:textSize="@dimen/font_size_small_large"
+                        card:layout_widthPercent="10%" />
+
+                    <ImageView
+                        android:id="@+id/tv_gol1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_toRightOf="@id/tv_pl1"
+                        android:gravity="center"
+                        android:src="@drawable/ic_football"
+                        card:layout_widthPercent="10%" />
+
+                    <ImageView
+                        android:id="@+id/tv_assist1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_toRightOf="@id/tv_gol1"
+                        android:gravity="center"
+                        android:src="@drawable/ic_assist"
+                        android:visibility="gone"
+                        card:layout_widthPercent="10%" />
+
+
+                    <ImageView
+                        android:id="@+id/tv_yellow_card1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_toRightOf="@id/tv_gol1"
+                        android:gravity="center"
+                        android:src="@drawable/ic_yellow_card"
+                        card:layout_widthPercent="10%" />
+
+                    <ImageView
+                        android:id="@+id/tv_red_card1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_toRightOf="@id/tv_yellow_card1"
+                        android:gravity="center"
+                        android:src="@drawable/ic_red_card"
+                        card:layout_widthPercent="10%" />
+
+
+                </android.support.percent.PercentRelativeLayout>
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/rc_child1_rv"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_toRightOf="@id/tv_p1"
-                    android:gravity="center"
-                    android:text="@string/pl"
-                    android:textColor="@color/news_static"
-                    android:textSize="@dimen/font_size_small_large"
-                    card:layout_widthPercent="10%" />
+                    android:layout_height="wrap_content" />
 
-                <ImageView
-                    android:id="@+id/tv_gol1"
+                <android.support.percent.PercentRelativeLayout
+                    android:id="@+id/team2_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/gray3"
+                    android:orientation="horizontal"
+                    android:padding="@dimen/horizontal_padding_very_small">
+
+                    <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
+                        android:id="@+id/tv_team_second_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:gravity="left"
+                        android:text=""
+                        android:textColor="@color/news_static"
+                        android:textSize="@dimen/font_size_small_large"
+                        card:layout_widthPercent="44%" />
+
+                    <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
+                        android:id="@+id/tv_p2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_toRightOf="@id/tv_team_second_name"
+                        android:gravity="center"
+                        android:text="@string/p"
+                        android:textColor="@color/news_static"
+                        android:textSize="@dimen/font_size_small_large"
+                        card:layout_widthPercent="10%" />
+
+                    <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
+                        android:id="@+id/tv_pl2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_toRightOf="@id/tv_p2"
+                        android:gravity="center"
+                        android:text="@string/pl"
+                        android:textColor="@color/news_static"
+                        android:textSize="@dimen/font_size_small_large"
+                        card:layout_widthPercent="10%" />
+
+                    <ImageView
+                        android:id="@+id/tv_gol2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_toRightOf="@id/tv_pl2"
+                        android:gravity="center"
+                        android:src="@drawable/ic_football"
+                        card:layout_widthPercent="10%" />
+
+                    <ImageView
+                        android:id="@+id/tv_assist2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_toRightOf="@id/tv_gol2"
+                        android:gravity="center"
+                        android:src="@drawable/ic_assist"
+                        android:visibility="gone"
+                        card:layout_widthPercent="10%" />
+
+                    <ImageView
+                        android:id="@+id/tv_yellow_card2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_toRightOf="@id/tv_gol2"
+                        android:gravity="center"
+                        android:src="@drawable/ic_yellow_card"
+                        card:layout_widthPercent="10%" />
+
+                    <ImageView
+                        android:id="@+id/tv_red_card2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_toRightOf="@id/tv_yellow_card2"
+                        android:gravity="center"
+                        android:src="@drawable/ic_red_card"
+                        card:layout_widthPercent="10%" />
+
+
+                </android.support.percent.PercentRelativeLayout>
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/rc_child2_rv"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_toRightOf="@id/tv_pl1"
-                    android:gravity="center"
-                    android:layout_centerVertical="true"
-                    android:src="@drawable/ic_football"
-                    card:layout_widthPercent="10%" />
-
-                <ImageView
-                    android:id="@+id/tv_assist1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_toRightOf="@id/tv_gol1"
-                    android:gravity="center"
-                    android:layout_centerVertical="true"
-                    android:src="@drawable/ic_assist"
-                    card:layout_widthPercent="10%" />
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
 
 
-                <ImageView
-                    android:id="@+id/tv_yellow_card1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_toRightOf="@id/tv_assist1"
-                    android:gravity="center"
-                    android:layout_centerVertical="true"
-                    android:src="@drawable/ic_yellow_card"
-                    card:layout_widthPercent="10%" />
-
-                <ImageView
-                    android:id="@+id/tv_red_card1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_toRightOf="@id/tv_yellow_card1"
-                    android:gravity="center"
-                    android:layout_centerVertical="true"
-                    android:src="@drawable/ic_red_card"
-                    card:layout_widthPercent="10%" />
-
-
-            </android.support.percent.PercentRelativeLayout>
-
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/rc_child1_rv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-
-            <android.support.percent.PercentRelativeLayout
-                android:id="@+id/team2_layout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/gray3"
-                android:orientation="horizontal"
-                android:padding="@dimen/horizontal_padding_very_small">
-
-                <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
-                    android:id="@+id/tv_team_second_name"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:gravity="left"
-                    android:text=""
-                    android:textColor="@color/news_static"
-                    android:textSize="@dimen/font_size_small_large"
-                    card:layout_widthPercent="34%" />
-
-                <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
-                    android:id="@+id/tv_p2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_toRightOf="@id/tv_team_second_name"
-                    android:gravity="center"
-                    android:text="@string/p"
-                    android:textColor="@color/news_static"
-                    android:textSize="@dimen/font_size_small_large"
-                    card:layout_widthPercent="10%" />
-
-                <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
-                    android:id="@+id/tv_pl2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_toRightOf="@id/tv_p2"
-                    android:gravity="center"
-                    android:text="@string/pl"
-                    android:textColor="@color/news_static"
-                    android:textSize="@dimen/font_size_small_large"
-                    card:layout_widthPercent="10%" />
-
-                <ImageView
-                    android:id="@+id/tv_gol2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_toRightOf="@id/tv_pl2"
-                    android:gravity="center"
-                    android:layout_centerVertical="true"
-                    android:src="@drawable/ic_football"
-                    card:layout_widthPercent="10%" />
-
-                <ImageView
-                    android:id="@+id/tv_assist2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_toRightOf="@id/tv_gol2"
-                    android:gravity="center"
-                    android:layout_centerVertical="true"
-                    android:src="@drawable/ic_assist"
-                    card:layout_widthPercent="10%" />
-
-                <ImageView
-                    android:id="@+id/tv_yellow_card2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_toRightOf="@id/tv_assist2"
-                    android:gravity="center"
-                    android:layout_centerVertical="true"
-                    android:src="@drawable/ic_yellow_card"
-                    card:layout_widthPercent="10%" />
-
-                <ImageView
-                    android:id="@+id/tv_red_card2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_toRightOf="@id/tv_yellow_card2"
-                    android:gravity="center"
-                    android:layout_centerVertical="true"
-                    android:src="@drawable/ic_red_card"
-                    card:layout_widthPercent="10%" />
-
-
-
-            </android.support.percent.PercentRelativeLayout>
-
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/rc_child2_rv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-        </LinearLayout>
-
-
-    </ScrollView>
+        </ScrollView>
     </android.support.v4.widget.SwipeRefreshLayout>
 
     <include
@@ -231,8 +232,7 @@
         layout="@layout/error_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_gravity="center"
-        />
+        android:layout_gravity="center" />
 
     <ProgressBar
         android:id="@+id/progress"

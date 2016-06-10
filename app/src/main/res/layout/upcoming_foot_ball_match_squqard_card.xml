@@ -15,7 +15,7 @@
         android:text=""
         android:textColor="@color/news_static"
         android:textSize="@dimen/font_size_small_medium"
-       android:visibility="gone" />
+        android:visibility="gone" />
 
     <android.support.percent.PercentRelativeLayout
         android:id="@+id/football_layout"
@@ -27,7 +27,7 @@
             android:id="@+id/ll_header"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            card:layout_widthPercent="34%">
+            card:layout_widthPercent="44%">
 
             <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
                 android:id="@+id/tv_player_name"
@@ -91,13 +91,14 @@
             android:text=""
             android:textColor="@color/news_static"
             android:textSize="@dimen/font_size_small_medium"
+            android:visibility="gone"
             card:layout_widthPercent="10%" />
 
         <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
             android:id="@+id/tv_yellow_card"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toRightOf="@id/tv_assist"
+            android:layout_toRightOf="@id/tv_gol"
             android:gravity="center"
             android:text=""
             android:textColor="@color/news_static"
