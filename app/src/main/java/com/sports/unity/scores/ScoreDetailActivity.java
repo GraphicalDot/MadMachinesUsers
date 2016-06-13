@@ -371,7 +371,9 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity {
             if (!checkIfDeepLinked(getIntent())) {
                 tab_index = getIntent().getIntExtra("tab_index", 1);
             }
-
+            if (mViewPager != null) {
+                tab_index = mViewPager.getCurrentItem();
+            }
             if (sportsType.equalsIgnoreCase(ScoresJsonParser.CRICKET)) {
                 fragmentVolleyHelperList = getListOfViewHelpersForCricket(sportsType, matchStatus);
             } else {
