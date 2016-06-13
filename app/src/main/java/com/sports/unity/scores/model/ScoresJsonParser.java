@@ -169,7 +169,7 @@ public class ScoresJsonParser {
             ex.printStackTrace();
             list = null;
         }
-        Collections.sort(list);
+        /*Collections.sort(list);*/
         return list;
 
     }

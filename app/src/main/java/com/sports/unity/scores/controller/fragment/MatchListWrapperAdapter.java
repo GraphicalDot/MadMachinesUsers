@@ -1094,21 +1094,24 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
         for (MatchListWrapperItem item : matchDay) {
             boolean isFav = false;
             matchJsonCaller.setJsonObject(item.getJsonObject());
+            String sportType = "";
             try {
                 if (matchJsonCaller.getType().equals(ScoresJsonParser.CRICKET)) {
                     cricketMatchJsonCaller.setJsonObject(item.getJsonObject());
                     homeTeamId = cricketMatchJsonCaller.getTeam1Id();
                     awayTeamId = cricketMatchJsonCaller.getTeam2Id();
+                    sportType = Constants.SPORTS_TYPE_CRICKET;
                 } else {
                     footballMatchJsonCaller.setJsonObject(item.getJsonObject());
                     homeTeamId = footballMatchJsonCaller.getTeam1Id();
                     awayTeamId = footballMatchJsonCaller.getTeam2Id();
+                    sportType = Constants.SPORTS_TYPE_FOOTBALL;
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            for (FavouriteItem f : favListCricket) {
-                if (f.getId().equalsIgnoreCase(homeTeamId) || f.getId().equalsIgnoreCase(awayTeamId)) {
+            for (FavouriteItem f : FavouriteItemWrapper.getInstance(activity).getAllTeams()) {
+                if ((f.getSportsType().equals(sportType)) && (f.getId().equalsIgnoreCase(homeTeamId) || f.getId().equalsIgnoreCase(awayTeamId))) {
                     isFav = true;
                     break;
                 }
@@ -1145,8 +1148,8 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
                         bannerDummyItem.setEpochTime(Long.valueOf(dummyBannerEpochTime));
                         bannerDummyItem.setLeagueName("dummy");
                         matchDay.add(i, bannerDummyItem);
-                        return position;
                     }
+                    return position;
                 }
 
             }
