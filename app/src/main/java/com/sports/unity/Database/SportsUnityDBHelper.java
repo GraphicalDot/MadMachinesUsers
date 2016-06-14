@@ -30,7 +30,7 @@ import static com.sports.unity.Database.SportsUnityContract.FriendRequestEntry;
  */
 public class SportsUnityDBHelper extends SQLiteOpenHelper {
 
-    public static final int DATABASE_VERSION = 4;
+    public static final int DATABASE_VERSION = 5;
     public static final String DATABASE_NAME = "spu.db";
 
     public static final int DEFAULT_ENTRY_ID = -1;
@@ -169,14 +169,12 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
                 db.execSQL(CREATE_FRIEND_REQUESTS_TABLE);
             }
             case 3: {
-                ArrayList<FavouriteItem> favList = new ArrayList<>();
-                FavouriteItemWrapper wrapper = FavouriteItemWrapper.getInstance(context);
-                favList.addAll(wrapper.getAllLeagues());
-                favList.addAll(wrapper.getAllTeams());
-                favList.addAll(wrapper.getCricketPlayers());
-                wrapper.saveList(context, favList);
+                clearFavourites();
             }
             case 4: {
+                clearFavourites();
+            }
+            case 5: {
 
             }
         }
@@ -186,6 +184,15 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
 //        db.execSQL(DROP_GROUP_USER_TABLE);
 //
 //        onCreate(db);
+    }
+
+    private void clearFavourites() {
+        ArrayList<FavouriteItem> favList = new ArrayList<>();
+        FavouriteItemWrapper wrapper = FavouriteItemWrapper.getInstance(context);
+        favList.addAll(wrapper.getAllLeagues());
+        favList.addAll(wrapper.getAllTeams());
+        favList.addAll(wrapper.getCricketPlayers());
+        wrapper.saveList(context, favList);
     }
 
     public void createGroupUserEntry(int chatId, ArrayList<Integer> selectedMembers) {
@@ -1721,7 +1728,7 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
         return list;
     }
 
-    public int updateMessageStanzaId(int messageId, String stanzaId){
+    public int updateMessageStanzaId(int messageId, String stanzaId) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();

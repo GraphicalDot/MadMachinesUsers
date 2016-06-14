@@ -136,6 +136,10 @@
                     android:host="@string/sportsunity.co"
                     android:pathPrefix="/9joo"
                     android:scheme="http" />
+                <data
+                    android:host="@string/sportsunity.co"
+                    android:pathPrefix="/sports"
+                    android:scheme="mobileapp" />
             </intent-filter>
         </activity>
         <activity
