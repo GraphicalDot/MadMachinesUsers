@@ -43,7 +43,7 @@ public class FriendsWatchingHandler {
 
     private HashMap<String, FriendsContentListener> mListenerQue = new HashMap<>();
 
-    public static final String GET_FRIENDS_WATCHING = "http://" + BuildConfig.XMPP_SERVER_BASE_URL + "/friends_watching?";
+    public static final String GET_FRIENDS_WATCHING = "http://" + BuildConfig.XMPP_SERVER_API_BASE_URL + "/friends_watching?";
 
     public static FriendsWatchingHandler getInstance(Context context) {
         if (FRIENDS_WATCHING == null) {
