@@ -29,13 +29,16 @@ public class SplashScreenActivity extends AppCompatActivity {
         setContentView(com.sports.unity.R.layout.activity_splash);
 
         Crittercism.initialize(getApplicationContext(), CRITTERCISM_API_KEY);
-
         UserUtil.init(this);
-        ChatScreenApplication application = (ChatScreenApplication) getApplication();
-        Tracker mTracker = application.getDefaultTracker();
-        mTracker.setScreenName("AppLaunchScreen");
-        mTracker.send(new HitBuilders.ScreenViewBuilder().build());
-//        cachedFlow( "9717261060", "641970");
+
+        {
+            ChatScreenApplication application = (ChatScreenApplication) getApplication();
+            Tracker mTracker = application.getDefaultTracker();
+            mTracker.setScreenName("AppLaunchScreen");
+            mTracker.send(new HitBuilders.ScreenViewBuilder().build());
+        }
+
+//        cachedFlow( "8750825720", "641970");
 //        showScreenSize();
 
         if (UserUtil.isUserRegistered()) {
