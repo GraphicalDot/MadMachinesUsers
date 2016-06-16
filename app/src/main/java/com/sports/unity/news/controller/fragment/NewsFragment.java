@@ -31,6 +31,7 @@ import com.sports.unity.common.model.UserUtil;
 import com.sports.unity.common.viewhelper.CustomComponentListener;
 import com.sports.unity.news.controller.activity.NewsSearchActivity;
 import com.sports.unity.news.model.NewsContentHandler;
+import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
 
 import org.json.JSONObject;
@@ -57,6 +58,13 @@ public class NewsFragment extends Fragment implements NewsContentHandler.Content
     private int sportsSelectedNum = 0;
     private ArrayList<String> sportSelected;
     private final String Showcase_News_Id = "news_showcase_id";
+
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        CommonUtil.sendAnalyticsData(getActivity().getApplication(), "NewsScreen");
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {

@@ -38,6 +38,7 @@ import com.sports.unity.scoredetails.MatchListScrollListener;
 import com.sports.unity.scores.model.ScoresContentHandler;
 import com.sports.unity.scores.model.ScoresJsonParser;
 import com.sports.unity.scores.model.ScoresUtil;
+import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
 import com.sports.unity.util.commons.DateUtil;
 
@@ -54,7 +55,7 @@ import java.util.Set;
 /**
  * Created by Edwin on 15/02/2015.
  */
-public class MatchListFragment extends Fragment{
+public class MatchListFragment extends Fragment {
 
     private static final String LIST_LISTENER_KEY = "list_listener";
     private static final String LIST_OF_MATCHES_REQUEST_TAG = "list_request_tag";
@@ -97,7 +98,7 @@ public class MatchListFragment extends Fragment{
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        CommonUtil.sendAnalyticsData(getActivity().getApplication(), "ScoresScreen");
         bundle = getArguments();
         if (bundle != null) {
             scoreDetailsId = bundle.getString(Constants.INTENT_KEY_ID);

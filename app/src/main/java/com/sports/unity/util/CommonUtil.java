@@ -2,6 +2,7 @@ package com.sports.unity.util;
 
 import android.app.Activity;
 import android.app.ActivityManager;
+import android.app.Application;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.Context;
@@ -20,9 +21,12 @@ import android.support.v7.app.NotificationCompat;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.android.gms.iid.InstanceID;
 import com.sports.unity.BuildConfig;
+import com.sports.unity.ChatScreenApplication;
 import com.sports.unity.Database.DBUtil;
 import com.sports.unity.R;
 import com.sports.unity.XMPPManager.XMPPService;
@@ -361,11 +365,13 @@ public class CommonUtil {
 
         return countryDetails;
     }
+
     public static String getToken(Context context) throws IOException {
-        SharedPreferences sharedPreferences  = PreferenceManager.getDefaultSharedPreferences(context);
-        return sharedPreferences.getString(Constants.REQUEST_PARAMETER_KEY_TOKEN,"");
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return sharedPreferences.getString(Constants.REQUEST_PARAMETER_KEY_TOKEN, "");
 
     }
+
     public static int getDefaults(Context context, int defaults, NotificationCompat.Builder builder) {
         if (UserUtil.isConversationVibrate()) {
             defaults = defaults | Notification.DEFAULT_VIBRATE;
@@ -386,6 +392,12 @@ public class CommonUtil {
 
         }
         return defaults;
+    }
+
+    public static void sendAnalyticsData(Application application, String screenName) {
+        Tracker mTracker = ((ChatScreenApplication) application).getDefaultTracker();
+        mTracker.setScreenName(screenName);
+        mTracker.send(new HitBuilders.ScreenViewBuilder().build());
     }
 
 }
