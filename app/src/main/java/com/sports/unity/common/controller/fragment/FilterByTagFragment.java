@@ -115,10 +115,12 @@ public class FilterByTagFragment extends Fragment implements AdvancedFilterActiv
     private void initViews(View view) {
         LinearLayout textPlayer = (LinearLayout) view.findViewById(R.id.text);
 
-        if (!SPORTS_FILTER_TYPE.equals(Constants.FILTER_TYPE_PLAYER)) {
+        if (SPORTS_FILTER_TYPE.equals(Constants.FILTER_TYPE_PLAYER)) {
+            textPlayer.setVisibility(View.VISIBLE);
+        } else if(SPORTS_TYPE.equals(Constants.SPORTS_TYPE_FOOTBALL) && SPORTS_FILTER_TYPE.equals(Constants.FILTER_TYPE_TEAM)){
+            textPlayer.setVisibility(View.VISIBLE);
+        }else{
             textPlayer.setVisibility(View.GONE);
-        } else {
-            //nothing
         }
 
         errorLayout = (ViewGroup) view.findViewById(R.id.error);

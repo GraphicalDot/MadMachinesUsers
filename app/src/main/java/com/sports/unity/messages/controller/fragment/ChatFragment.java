@@ -30,6 +30,7 @@ import com.sports.unity.messages.controller.viewhelper.OnSearchViewQueryListener
 import com.sports.unity.util.ActivityActionHandler;
 import com.sports.unity.util.ActivityActionListener;
 import com.sports.unity.util.AlertDialogUtil;
+import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
 import com.sports.unity.util.NotificationHandler;
 
@@ -52,6 +53,12 @@ public class ChatFragment extends Fragment implements OnSearchViewQueryListener 
 
     private ChatFragmentDialogListAdapter chatFragmentDialogListAdapter;
     private boolean isSearch;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        CommonUtil.sendAnalyticsData(getActivity().getApplication(), "ChatScreen");
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -106,7 +113,7 @@ public class ChatFragment extends Fragment implements OnSearchViewQueryListener 
             ArrayList<Chats> chatList = ((ChatListAdapter) chatListView.getAdapter()).getChatArrayList();
             Chats chatObject = chatList.get(position);
 
-            if( chatObject.block == false ) {
+            if (chatObject.block == false) {
                 AlertDialog.Builder build = new AlertDialog.Builder(
                         getActivity());
                 build.setMessage(

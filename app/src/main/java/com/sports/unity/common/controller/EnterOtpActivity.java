@@ -88,6 +88,7 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(com.sports.unity.R.layout.activity_enter_otp);
+        CommonUtil.sendAnalyticsData(getApplication(),"EnterOtpScreen");
         initViews();
 
         {

@@ -17,6 +17,8 @@ import android.widget.Toast;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookSdk;
 import com.facebook.login.widget.LoginButton;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 import com.sports.unity.XMPPManager.XMPPService;
 import com.sports.unity.common.controller.MainActivity;
 import com.sports.unity.common.controller.SelectSportsActivity;
@@ -235,6 +237,11 @@ public class ProfileCreationActivity extends AppCompatActivity implements Activi
     private void moveOn() {
         UserUtil.setProfileCreated(this, true);
         ContactsHandler.getInstance().addCallToProcessPendingActions(this);
+
+        {
+            ChatScreenApplication application = (ChatScreenApplication) getApplication();
+            application.userLoginTrack();
+        }
 
         if (UserUtil.isSportsSelected()) {
             Intent intent = new Intent(ProfileCreationActivity.this, MainActivity.class);

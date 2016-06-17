@@ -228,7 +228,7 @@ public class PeopleAroundActivity extends CustomAppCompatActivity implements Pla
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_people_around);
-
+        CommonUtil.sendAnalyticsData(getApplication(), "PeopleAroundMeScreen");
         tinyDB = TinyDB.getInstance(getApplicationContext());
         initToolbar();
 

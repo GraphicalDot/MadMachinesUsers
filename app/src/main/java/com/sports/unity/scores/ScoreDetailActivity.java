@@ -302,7 +302,7 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity {
             if (Constants.SPORTS_TYPE_CRICKET.equalsIgnoreCase(sportsType)) {
                 callerIntent.putExtra(Constants.INTENT_KEY_SERIES, seriesId);
             } else if (Constants.SPORTS_TYPE_FOOTBALL.equalsIgnoreCase(sportsType)) {
-                callerIntent.putExtra(Constants.LEAGUE_NAME, seriesId);
+                callerIntent.putExtra(Constants.INTENT_KEY_LEAGUE_ID, seriesId);
                 callerIntent.putExtra(Constants.INTENT_KEY_MATCH_LIVE, matchStatus.equalsIgnoreCase("L") ? true : false);
             }
         } catch (JSONException e) {
@@ -371,7 +371,9 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity {
             if (!checkIfDeepLinked(getIntent())) {
                 tab_index = getIntent().getIntExtra("tab_index", 1);
             }
-
+            if (mViewPager != null) {
+                tab_index = mViewPager.getCurrentItem();
+            }
             if (sportsType.equalsIgnoreCase(ScoresJsonParser.CRICKET)) {
                 fragmentVolleyHelperList = getListOfViewHelpersForCricket(sportsType, matchStatus);
             } else {

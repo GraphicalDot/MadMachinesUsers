@@ -5,7 +5,10 @@ import android.content.Context;
 import android.support.multidex.MultiDex;
 
 import com.google.android.gms.analytics.GoogleAnalytics;
+import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
+import com.sports.unity.common.model.TinyDB;
+import com.sports.unity.common.model.UserUtil;
 
 /**
  * Created by madmachines on 17/9/15.
@@ -45,8 +48,23 @@ public class ChatScreenApplication extends Application {
             // To enable debug logging use: adb shell setprop log.tag.GAv4 DEBUG
             mTracker = analytics.newTracker(R.xml.global_tracker);
             mTracker.enableExceptionReporting(true);
+
+            if(UserUtil.isProfileCreated()) {
+                TinyDB tinyDB = TinyDB.getInstance(this);
+                mTracker.set("&uid", tinyDB.getString(TinyDB.KEY_USER_JID));
+            }
         }
         return mTracker;
+    }
+
+    public void userLoginTrack(){
+        TinyDB tinyDB = TinyDB.getInstance(this);
+        getDefaultTracker().set("&uid", tinyDB.getString(TinyDB.KEY_USER_JID));
+
+        getDefaultTracker().send(new HitBuilders.EventBuilder()
+                .setCategory("UX")
+                .setAction("User Sign In")
+                .build());
     }
 
     @Override

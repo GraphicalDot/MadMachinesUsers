@@ -102,7 +102,7 @@ public class SUPushServiceListener extends GcmListenerService {
                         drawableId = getDrawableIconCricket(event);
                         if (matchiId != null && seriesid != null && matchStatus != null && title != null && content != null && event != 0) {
                             i = new Intent(this, ScoreDetailActivity.class);
-                            i.putExtra(INTENT_KEY_PUSH,true);
+                            i.putExtra(INTENT_KEY_PUSH, true);
                             i.putExtra(INTENT_KEY_TYPE, sportsType);
                             i.putExtra(Constants.INTENT_KEY_ID, matchiId);
                             i.putExtra(Constants.INTENT_KEY_SERIES, seriesid);
@@ -116,10 +116,10 @@ public class SUPushServiceListener extends GcmListenerService {
                         drawableId = getDrawableIconFootball(event);
                         if (matchiId != null && seriesid != null && matchStatus != null && title != null && content != null && event != 0) {
                             i = new Intent(this, ScoreDetailActivity.class);
-                            i.putExtra(INTENT_KEY_PUSH,true);
+                            i.putExtra(INTENT_KEY_PUSH, true);
                             i.putExtra(INTENT_KEY_TYPE, sportsType);
                             i.putExtra(Constants.INTENT_KEY_ID, matchiId);
-                            i.putExtra(Constants.LEAGUE_NAME, seriesid);
+                            i.putExtra(Constants.INTENT_KEY_LEAGUE_ID, seriesid);
                             i.putExtra(Constants.INTENT_KEY_MATCH_STATUS, matchStatus);
                             i.putExtra(Constants.INTENT_KEY_MATCH_LIVE, matchStatus.equalsIgnoreCase("L") ? true : false);
                         } else {
