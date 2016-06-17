@@ -11,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -102,9 +103,9 @@ public class ProfileCreationActivity extends AppCompatActivity implements Activi
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == LOAD_IMAGE_GALLERY_CAMERA && resultCode == Activity.RESULT_OK) {
-            CircleImageView circleImageView = (CircleImageView) findViewById(R.id.profile_image);
+            ImageView ImageView = (ImageView) findViewById(R.id.profile_image);
 
-            byteArray = ImageUtil.handleImageAndSetToView(data, circleImageView, ImageUtil.SMALL_THUMB_IMAGE_SIZE, ImageUtil.SMALL_THUMB_IMAGE_SIZE);
+            byteArray = ImageUtil.handleImageAndSetToView(data, ImageView, ImageUtil.SMALL_THUMB_IMAGE_SIZE, ImageUtil.SMALL_THUMB_IMAGE_SIZE);
         } else {
             callbackManager.onActivityResult(requestCode, resultCode, data);
         }
@@ -164,8 +165,8 @@ public class ProfileCreationActivity extends AppCompatActivity implements Activi
     }
 
     private void addListnerToProfilePicture() {
-        CircleImageView circleImageView = (CircleImageView) findViewById(R.id.profile_image);
-        circleImageView.setOnClickListener(profilePictureonOnClickListener);
+        ImageView ImageView = (ImageView) findViewById(R.id.profile_image);
+        ImageView.setOnClickListener(profilePictureonOnClickListener);
     }
 
     private void addListenerToContinueButton() {
@@ -185,8 +186,8 @@ public class ProfileCreationActivity extends AppCompatActivity implements Activi
     }
 
     private void setProfileImage(Bitmap image) {
-        CircleImageView circleImageView = (CircleImageView) findViewById(R.id.profile_image);
-        circleImageView.setImageBitmap(image);
+        ImageView ImageView = (ImageView) findViewById(R.id.profile_image);
+        ImageView.setImageBitmap(image);
         byteArray = ImageUtil.getCompressedBytes(image);
     }
 
@@ -213,8 +214,8 @@ public class ProfileCreationActivity extends AppCompatActivity implements Activi
     private void beforeAsyncCall() {
         Button continueButton = (Button) findViewById(R.id.continue_button);
         continueButton.setClickable(false);
-        CircleImageView circleImageView = (CircleImageView) findViewById(R.id.profile_image);
-        circleImageView.setClickable(false);
+        ImageView ImageView = (ImageView) findViewById(R.id.profile_image);
+        ImageView.setClickable(false);
 
         LoginButton loginButton = (LoginButton) findViewById(R.id.login_button);
         loginButton.setVisibility(View.GONE);
@@ -225,8 +226,8 @@ public class ProfileCreationActivity extends AppCompatActivity implements Activi
     private void afterAsyncCall() {
         Button continueButton = (Button) findViewById(R.id.continue_button);
         continueButton.setClickable(true);
-        CircleImageView circleImageView = (CircleImageView) findViewById(R.id.profile_image);
-        circleImageView.setClickable(true);
+        ImageView ImageView = (ImageView) findViewById(R.id.profile_image);
+        ImageView.setClickable(true);
 
         LoginButton loginButton = (LoginButton) findViewById(R.id.login_button);
         loginButton.setVisibility(View.VISIBLE);

@@ -19,8 +19,10 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -139,28 +141,30 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity {
         ProgressBar progressBar = (ProgressBar) findViewById(R.id.progressBar);
         progressBar.getIndeterminateDrawable().setColorFilter(getResources().getColor(R.color.gray1), android.graphics.PorterDuff.Mode.MULTIPLY);
 
-        LinearLayout editNumberLayout = (LinearLayout) findViewById(R.id.editNumberLayout);
-        editNumberLayout.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_WHITE, false));
+       // LinearLayout editNumberLayout = (LinearLayout) findViewById(R.id.editNumberLayout);
+        ImageButton ediImageButton = (ImageButton) findViewById(R.id.editNumberButton);
+        ediImageButton.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_WHITE, false));
         if (UserUtil.isFilterCompleted()) {
             // when user re-verify its account. Don't allow to change phone number.
-            editNumberLayout.setVisibility(View.GONE);
+            ediImageButton.setVisibility(View.GONE);
         } else {
 
         }
-        editNumberLayout.setOnClickListener(new View.OnClickListener() {
+        ediImageButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
                 onBackPressed();
+
             }
 
         });
 
-        TextView editNumberTextView = (TextView) findViewById(R.id.editNumber);
-        editNumberTextView.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoRegular());
+       // TextView editNumberTextView = (TextView) findViewById(R.id.editNumber);
+       // editNumberTextView.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoRegular());
 
-        final Button sendOtpButton = (Button) findViewById(com.sports.unity.R.id.sendOtpButton);
-        sendOtpButton.setVisibility(View.INVISIBLE);
+        final RelativeLayout sendOtpButton = (RelativeLayout) findViewById(com.sports.unity.R.id.sendOtpButton);
+      //  sendOtpButton.setVisibility(View.INVISIBLE);
         sendOtpButton.setOnClickListener(sendButtonClickListener);
 
         Button resendButton = (Button) findViewById(R.id.resend);
@@ -176,7 +180,7 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity {
         otpText.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoLight());
 
         otpEditText = (EditText) findViewById(com.sports.unity.R.id.enterOtp);
-        otpEditText.addTextChangedListener(new TextWatcher() {
+     /*   otpEditText.addTextChangedListener(new TextWatcher() {
 
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -197,7 +201,7 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity {
 
             }
 
-        });
+        });*/
 
         /*
          * to set initial focus to edit text view and open keyboard.

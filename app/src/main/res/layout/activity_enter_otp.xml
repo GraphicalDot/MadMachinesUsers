@@ -16,115 +16,109 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingLeft="@dimen/horizontal_padding_small"
-        android:paddingRight="@dimen/horizontal_padding_small"
         android:paddingTop="@dimen/vertical_padding_small"
-        android:paddingBottom="@dimen/vertical_padding_small">
+      >
 
         <RelativeLayout
-            android:id="@+id/editContent"
+            android:id="@+id/sendOtpButton"
             android:layout_width="fill_parent"
+            android:layout_alignParentBottom="true"
             android:layout_height="@dimen/edit_view_height"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="@dimen/activity_horizontal_margin"
-            android:layout_marginRight="@dimen/activity_horizontal_margin"
-            android:background="@drawable/number_bg"
-            android:orientation="vertical">
+            android:background="@drawable/ic_continue_button"
+            android:scrollbars="vertical"
+           >
 
-            <EditText
-                android:id="@+id/enterOtp"
+            <ImageButton
+                android:id="@+id/editNumberButton"
+                android:layout_width="@dimen/edit_view_height"
+                android:layout_height="match_parent"
+                android:src="@drawable/ic_menu_back"
+                android:layout_centerHorizontal="true"
+                android:layout_alignParentLeft="true"
+                android:background="@color/app_theme_blue"/>
+
+            <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
+                android:id="@+id/enterOtp1"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
                 android:background="@drawable/number_bg"
                 android:gravity="center"
-                android:inputType="number"
-                android:maxLength="4"
-                android:maxLines="1"
+                android:text="@string/otp_confirm"
                 android:textColor="@android:color/white"
                 android:textCursorDrawable="@null"
                 android:textSize="@dimen/font_size_medium"
                 />
 
-            <Button
-                android:id="@+id/sendOtpButton"
-                android:layout_width="@dimen/edit_view_height"
-                android:layout_height="@dimen/edit_view_height"
-                android:layout_alignParentRight="true"
-                android:background="@drawable/next" />
 
         </RelativeLayout>
 
-        <TextView
-            android:id="@+id/enterotpText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_above="@id/editContent"
-            android:layout_centerHorizontal="true"
-            android:layout_marginBottom="@dimen/vertical_padding_very_small"
-            android:layout_marginLeft="@dimen/horizontal_padding_medium"
-            android:layout_marginRight="@dimen/horizontal_padding_medium"
-            android:gravity="center"
-            android:text="@string/otp_message_verification"
-            android:textColor="@android:color/white"
-            android:textSize="@dimen/font_size_medium" />
 
-        <Button
-            android:id="@+id/resend"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/editContent"
-            android:layout_centerHorizontal="true"
-            android:background="@android:color/transparent"
-            android:text="@string/btn_resend"
-            android:textColor="@color/ColorPrimary"
-            android:textSize="@dimen/font_size_small_large"
-            />
+
 
         <RelativeLayout
+            android:id="@+id/image_otp_layout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_above="@id/enterotpText"
-            android:layout_below="@+id/editNumberLayout"
-            android:gravity="center">
+            android:layout_height="@dimen/profile_image_circle_radius"
+            android:layout_centerHorizontal="true"
+
+            >
 
             <ImageView
                 android:id="@+id/imageView"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_centerHorizontal="true"
                 android:layout_centerInParent="true"
                 android:layout_centerVertical="true"
                 android:src="@drawable/ic_ph_no_logo" />
         </RelativeLayout>
 
-        <LinearLayout
-            android:id="@+id/editNumberLayout"
+        <TextView
+            android:id="@+id/enterotpText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingLeft="@dimen/horizontal_padding_very_small"
-            android:paddingRight="@dimen/horizontal_padding_very_small"
-            android:paddingTop="@dimen/vertical_padding_very_small"
-            android:paddingBottom="@dimen/vertical_padding_very_small"
-            android:clickable="true"
-            >
+            android:layout_below="@id/image_otp_layout"
+            android:layout_centerHorizontal="true"
+            android:layout_marginLeft="@dimen/horizontal_padding_medium"
+            android:layout_marginRight="@dimen/horizontal_padding_medium"
+            android:gravity="center"
+            android:text="@string/otp_message_verification"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/font_size_small_xlarge" />
 
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginRight="@dimen/horizontal_padding_small"
-                android:src="@drawable/ic_signup_bk" />
+        <EditText
+            android:id="@+id/enterOtp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:textColorHint="@color/ColorPrimary"
+            android:backgroundTint="@color/ColorPrimary"
+            android:inputType="number"
+            android:maxLength="4"
+            android:maxLines="1"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@+id/enterotpText"
+            android:gravity="center_vertical"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/font_size_medium"
+            android:textCursorDrawable="@color/ColorPrimary"
+            />
 
-            <TextView
-                android:id="@+id/editNumber"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/edit_phone_number"
-                android:textColor="@android:color/white"
-                android:textSize="@dimen/font_size_small_large"
-                />
-        </LinearLayout>
+
+
+        <Button
+            android:id="@+id/resend"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/enterOtp"
+            android:layout_centerHorizontal="true"
+            android:background="@android:color/transparent"
+            android:text="@string/btn_resend"
+            android:textColor="@color/ColorPrimary"
+            android:textSize="@dimen/font_size_small_medium"
+            />
+
 
         <ProgressBar
             android:id="@+id/progressBar"

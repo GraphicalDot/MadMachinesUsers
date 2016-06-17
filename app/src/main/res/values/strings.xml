@@ -88,21 +88,26 @@
     <string name="filter_by_players">Filter By Players</string>
     <string name="news_checkbox">Mini Card</string>
 
-    <string name="country_code">+91</string>
+    <string name="country_code">(+91)</string>
     <string name="sim_not_found">Sim not found.</string>
     <string name="please_enter_valid_10_digit_numbers">Please enter a valid 10 digit number</string>
+    <string name="confirm">CONFIRM</string>
 
-    <string name="otp_message_verification">Enter the verification number\nwe sent to\n</string>
+    <string name="otp_message_verification">Enter the code we just sent u\n</string>
     <string name="otp_message_sending">Sending...</string>
     <string name="otp_message_otp_sent">Otp sent.</string>
     <string name="otp_message_resending_failed">Failed in sending otp, please try again.</string>
     <string name="otp_message_wrong_expired_token">Wrong or Expired otp</string>
     <string name="otp_message_invalid_number">Invalid number or Try again.</string>
     <string name="oops_try_again">oops, please try again.</string>
+    <string name="otp_confirm">OK HERE I AM</string>
 
     <string name="profile_facebook_login_failed">Login failed</string>
     <string name="profile_facebook_login_cancelled">Login cancelled</string>
     <string name="use_fb_details">USE MY FACEBOOK DETAILS</string>
+    <string name="user_profile_continue">READY?CONTINUE</string>
+    <string name="profile_text">Welcome! Whats your Full Name?</string>
+    <string name="add_photo_text">ADD PHOTO</string>
 
     <string name="select_your_favourite_sports">Select your favourite sports</string>
     <string name="select_atleast_one_sport_message">Select at least one sport.</string>
