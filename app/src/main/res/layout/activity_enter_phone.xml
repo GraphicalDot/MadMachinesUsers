@@ -45,7 +45,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text=""
-            android:backgroundTint="@color/ColorPrimary"
+            android:layout_marginTop="@dimen/horizontal_padding_very_very_small"
+            android:background="@android:color/transparent"
             android:maxLength="17"
             android:inputType="number"
             android:layout_centerHorizontal="true"
@@ -60,12 +61,17 @@
             android:id="@+id/view"
             android:layout_below="@id/phoneNumber"
             android:layout_width="match_parent"
+            android:background="@color/ColorPrimary"
+            android:layout_marginLeft="@dimen/menu_item_height"
+            android:layout_marginRight="@dimen/menu_item_height"
             android:layout_height="1dp"/>
+
         <LinearLayout
             android:id="@+id/policy"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/phoneNumber"
+            android:layout_marginTop="@dimen/activity_vertical_margin_small"
+            android:layout_below="@id/view"
             android:layout_centerHorizontal="true"
             android:gravity="center"
             android:orientation="vertical">

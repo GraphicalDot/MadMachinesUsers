@@ -39,10 +39,9 @@
 
             <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
                 android:id="@+id/enterOtp1"
-                android:layout_width="fill_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:background="@drawable/number_bg"
+               android:layout_centerInParent="true"
                 android:gravity="center"
                 android:text="@string/otp_confirm"
                 android:textColor="@android:color/white"
@@ -93,7 +92,7 @@
             android:layout_height="wrap_content"
             android:text=""
             android:textColorHint="@color/ColorPrimary"
-            android:backgroundTint="@color/ColorPrimary"
+            android:background="@android:color/transparent"
             android:inputType="number"
             android:maxLength="4"
             android:maxLines="1"
@@ -106,13 +105,23 @@
             />
 
 
+        <View
+            android:id="@+id/view"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginLeft="@dimen/news_mini_image_width"
+            android:layout_marginRight="@dimen/news_mini_image_width"
+            android:background="@color/ColorPrimary"
+            android:layout_below="@+id/enterOtp"
+            />
 
         <Button
             android:id="@+id/resend"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/enterOtp"
+            android:layout_below="@+id/view"
             android:layout_centerHorizontal="true"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
             android:background="@android:color/transparent"
             android:text="@string/btn_resend"
             android:textColor="@color/ColorPrimary"
