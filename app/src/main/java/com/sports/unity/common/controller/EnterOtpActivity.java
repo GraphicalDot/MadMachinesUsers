@@ -71,7 +71,11 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity {
 
         @Override
         public void onClick(View v) {
-            createUser();
+            if (!TextUtils.isEmpty(otpEditText.getText().toString())) {
+                createUser();
+            } else {
+                Toast.makeText(EnterOtpActivity.this, "Please enter otp", Toast.LENGTH_SHORT).show();
+            }
         }
 
     };
@@ -90,7 +94,7 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(com.sports.unity.R.layout.activity_enter_otp);
-        CommonUtil.sendAnalyticsData(getApplication(),"EnterOtpScreen");
+        CommonUtil.sendAnalyticsData(getApplication(), "EnterOtpScreen");
         initViews();
 
         {
@@ -141,7 +145,7 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity {
         ProgressBar progressBar = (ProgressBar) findViewById(R.id.progressBar);
         progressBar.getIndeterminateDrawable().setColorFilter(getResources().getColor(R.color.gray1), android.graphics.PorterDuff.Mode.MULTIPLY);
 
-       // LinearLayout editNumberLayout = (LinearLayout) findViewById(R.id.editNumberLayout);
+        // LinearLayout editNumberLayout = (LinearLayout) findViewById(R.id.editNumberLayout);
         ImageButton ediImageButton = (ImageButton) findViewById(R.id.editNumberButton);
         ediImageButton.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_WHITE, false));
         if (UserUtil.isFilterCompleted()) {
@@ -160,11 +164,11 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity {
 
         });
 
-       // TextView editNumberTextView = (TextView) findViewById(R.id.editNumber);
-       // editNumberTextView.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoRegular());
+        // TextView editNumberTextView = (TextView) findViewById(R.id.editNumber);
+        // editNumberTextView.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoRegular());
 
         final RelativeLayout sendOtpButton = (RelativeLayout) findViewById(com.sports.unity.R.id.sendOtpButton);
-      //  sendOtpButton.setVisibility(View.INVISIBLE);
+        //  sendOtpButton.setVisibility(View.INVISIBLE);
         sendOtpButton.setOnClickListener(sendButtonClickListener);
 
         Button resendButton = (Button) findViewById(R.id.resend);
@@ -480,6 +484,12 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity {
                     UserUtil.setOtpSent(EnterOtpActivity.this, false);
                     UserUtil.setUserRegistered(EnterOtpActivity.this, true);
 
+                    if (!response.isNull("photo")) {
+                        String base64Image = response.getString("photo");
+                        if (!TextUtils.isEmpty(base64Image)) {
+                            TinyDB.getInstance(getApplicationContext()).putString(TinyDB.KEY_PHOTO, base64Image);
+                        }
+                    }
                     //To Update the user interest from server if exist.
 
                     /*if (!response.isNull("interests")) {

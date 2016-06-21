@@ -47,6 +47,7 @@ public class TinyDB {
     public static final String KEY_USERNAME = "username";
     public static final String KEY_USER_JID = "userjid";
     public static final String KEY_PASSWORD = "password";
+    public static final String KEY_PHOTO = "photo";
 
     public static final String KEY_ALL_CONTACTS_SYNC_STATUS = "all_contacts_sync_status";
     public static final String KEY_ALL_CONTACTS_LAST_PROCESSED_TIMESTAMP = "all_contacts_last_processed_timestamp";

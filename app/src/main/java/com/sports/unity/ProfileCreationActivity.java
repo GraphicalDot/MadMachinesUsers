@@ -4,17 +4,18 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Looper;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
-
 import com.facebook.CallbackManager;
 import com.facebook.FacebookSdk;
 import com.facebook.login.widget.LoginButton;
@@ -47,7 +48,8 @@ public class ProfileCreationActivity extends AppCompatActivity implements Activi
     private EditText nameText;
     private byte[] byteArray;
     private String userName;
-
+    public Bitmap profileImage;
+    public static final String CROP_FRAGMENT_TAG = "crop_fragment_tag";
     private View.OnClickListener continueButtonOnClickListener = new View.OnClickListener() {
 
         @Override
@@ -105,10 +107,18 @@ public class ProfileCreationActivity extends AppCompatActivity implements Activi
         if (requestCode == LOAD_IMAGE_GALLERY_CAMERA && resultCode == Activity.RESULT_OK) {
             ImageView ImageView = (ImageView) findViewById(R.id.profile_image);
 
-            byteArray = ImageUtil.handleImageAndSetToView(data, ImageView, ImageUtil.SMALL_THUMB_IMAGE_SIZE, ImageUtil.SMALL_THUMB_IMAGE_SIZE);
+            byteArray = ImageUtil.handleImageAndSetToView(data, ImageView, ImageUtil.FULL_IMAGE_SIZE, ImageUtil.FULL_IMAGE_SIZE);
+            Bitmap bitmap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
+            initiateCrop(bitmap);
         } else {
             callbackManager.onActivityResult(requestCode, resultCode, data);
         }
+    }
+
+    private void initiateCrop(Bitmap bitmap) {
+        CropImageFragment cropImageFragment = new CropImageFragment();
+        cropImageFragment.setProfileImage(bitmap);
+        getSupportFragmentManager().beginTransaction().add(R.id.crop_container, cropImageFragment, CROP_FRAGMENT_TAG).addToBackStack(CROP_FRAGMENT_TAG).commit();
     }
 
     @Override
@@ -126,6 +136,7 @@ public class ProfileCreationActivity extends AppCompatActivity implements Activi
         addFacebookCallback();
         addListenerToContinueButton();
         addListnerToProfilePicture();
+        handleAvatar();
 
         {
             if (!PermissionUtil.getInstance().isRuntimePermissionRequired()) {
@@ -144,13 +155,21 @@ public class ProfileCreationActivity extends AppCompatActivity implements Activi
 //        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
     }
 
+    private void handleAvatar() {
+        String base64Image = TinyDB.getInstance(this).getString(TinyDB.KEY_PHOTO);
+        if (!TextUtils.isEmpty(base64Image)) {
+            ImageView ImageView = (ImageView) findViewById(R.id.profile_image);
+            byteArray = ImageUtil.handleAvatarAndSetToView(base64Image, ImageView);
+        }
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
 
         UserProfileHandler.getInstance().addContentListener(LISTENER_KEY, this);
 
-        if(UserProfileHandler.getInstance().requestInProgress()){
+        if (UserProfileHandler.getInstance().requestInProgress()) {
             //nothing
         } else {
             afterAsyncCall();
@@ -185,9 +204,9 @@ public class ProfileCreationActivity extends AppCompatActivity implements Activi
         UserProfileHandler.getInstance().setFacebookDetails(this, loginButton, LISTENER_KEY, callbackManager);
     }
 
-    private void setProfileImage(Bitmap image) {
+    public void setProfileImage(Bitmap image) {
         ImageView ImageView = (ImageView) findViewById(R.id.profile_image);
-        ImageView.setImageBitmap(image);
+        ImageView.setImageBitmap(ImageUtil.getRoundedCornerBitmap(image, ImageView));
         byteArray = ImageUtil.getCompressedBytes(image);
     }
 
@@ -305,7 +324,7 @@ public class ProfileCreationActivity extends AppCompatActivity implements Activi
                 }
             });
 
-        } else if (requestTag.equals(UserProfileHandler.DOWNLOADING_FACEBOOK_IMAGE_TAG) ) {
+        } else if (requestTag.equals(UserProfileHandler.DOWNLOADING_FACEBOOK_IMAGE_TAG)) {
             beforeAsyncCall();
         }
     }
@@ -317,7 +336,7 @@ public class ProfileCreationActivity extends AppCompatActivity implements Activi
         nameText.setText(profileDetail.getName());
 
         if (profileDetail.getBitmap() != null) {
-            setProfileImage(profileDetail.getBitmap());
+            initiateCrop(profileDetail.getBitmap());
         } else {
             //nothing
         }

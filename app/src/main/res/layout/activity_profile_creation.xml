@@ -76,13 +76,12 @@
         </LinearLayout>
 
 
-
-            <ImageView
-                android:id="@+id/profile_image"
-                android:layout_width="@dimen/profile_image_circle_radius"
-                android:layout_height="@dimen/profile_image_circle_radius"
-                android:layout_centerHorizontal="true"
-                android:src="@drawable/ic_image_placeholder" />
+        <ImageView
+            android:id="@+id/profile_image"
+            android:layout_width="@dimen/profile_image_circle_radius"
+            android:layout_height="@dimen/profile_image_circle_radius"
+            android:layout_centerHorizontal="true"
+            android:src="@drawable/ic_image_placeholder" />
 
 
         <TextView
@@ -180,5 +179,8 @@
 
     </RelativeLayout>
 
-
+    <FrameLayout
+        android:id="@+id/crop_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 </FrameLayout>

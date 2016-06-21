@@ -51,77 +51,11 @@ public class EnterPhoneActivity extends CustomAppCompatActivity implements Activ
 
         setContentView(R.layout.activity_enter_phone);
         init();
-
-        EditText phoneNumberEditText = (EditText) findViewById(R.id.phoneNumber);
-        final TextView countryCode = (TextView) findViewById(R.id.countryCode);
-        final TextView countryName = (TextView) findViewById(R.id.countryName);
-        final ImageView getCountry=(ImageView)findViewById(R.id.getcountry);
-
-
-        if(phoneNumberEditText.length()==0)
-
-        {
-            countryName.setVisibility(View.VISIBLE);
-            countryCode.setVisibility(View.VISIBLE);
-            getCountry.setVisibility(View.VISIBLE);
-            Button getOtp=(Button)findViewById(R.id.getotp);
-            EditText countryCodee=(EditText)findViewById(R.id.countryCodetext);
-            getOtp.setVisibility(View.GONE);
-            countryCodee.setVisibility(View.GONE);
-
-
     }
-
-    else {
-
-
-            countryName.setVisibility(View.GONE);
-            countryCode.setVisibility(View.GONE);
-            getCountry.setVisibility(View.GONE);
-            Button getOtp=(Button)findViewById(R.id.getotp);
-            EditText countryCodee=(EditText)findViewById(R.id.countryCodetext);
-            getOtp.setVisibility(View.VISIBLE);
-            countryCodee.setVisibility(View.VISIBLE);
-
-    }
-
-
-}
 
     @Override
     protected void onResume() {
         super.onResume();
-   /*     EditText phoneNumberEditText = (EditText) findViewById(R.id.phoneNumber);
-        final TextView countryCode = (TextView) findViewById(R.id.countryCode);
-        final TextView countryName = (TextView) findViewById(R.id.countryName);
-        final ImageView getCountry=(ImageView)findViewById(R.id.getcountry);
-        if(phoneNumberEditText.length()==0)
-
-        {
-            countryName.setVisibility(View.VISIBLE);
-            countryCode.setVisibility(View.VISIBLE);
-            getCountry.setVisibility(View.VISIBLE);
-            Button getOtp=(Button)findViewById(R.id.getotp);
-            EditText countryCodee=(EditText)findViewById(R.id.countryCodee);
-            getOtp.setVisibility(View.GONE);
-            countryCodee.setVisibility(View.GONE);
-
-
-
-        }
-
-        else {
-
-
-            countryName.setVisibility(View.GONE);
-            countryCode.setVisibility(View.GONE);
-            getCountry.setVisibility(View.GONE);
-            Button getOtp=(Button)findViewById(R.id.getotp);
-            EditText countryCodee=(EditText)findViewById(R.id.countryCodee);
-            getOtp.setVisibility(View.VISIBLE);
-            countryCodee.setVisibility(View.VISIBLE);
-
-        }*/
     }
 
     @Override
@@ -130,12 +64,9 @@ public class EnterPhoneActivity extends CustomAppCompatActivity implements Activ
     }
 
     private void init() {
-        final ImageView getCountry=(ImageView)findViewById(R.id.getcountry);
+        final ImageView getCountry = (ImageView) findViewById(R.id.getcountry);
         TextView entr_ph_no = (TextView) findViewById(R.id.entr_ph_no);
         entr_ph_no.setTypeface(FontTypeface.getInstance(this).getRobotoLight());
-
-       // TextView txt_details = (TextView) findViewById(R.id.txt_details);
-       // txt_details.setTypeface(FontTypeface.getInstance(this).getRobotoLight());
 
         TextView take_a_minut = (TextView) findViewById(R.id.take_a_minut);
         take_a_minut.setTypeface(FontTypeface.getInstance(this).getRobotoLight());
@@ -152,7 +83,7 @@ public class EnterPhoneActivity extends CustomAppCompatActivity implements Activ
 
         final TextView countryCode = (TextView) findViewById(R.id.countryCode);
         final TextView countryName = (TextView) findViewById(R.id.countryName);
-        final EditText countryCodetext=(EditText)findViewById(R.id.countryCodetext);
+        final EditText countryCodetext = (EditText) findViewById(R.id.countryCodetext);
 
         countryCodetext.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -167,8 +98,8 @@ public class EnterPhoneActivity extends CustomAppCompatActivity implements Activ
         Log.i("details", "" + countryDetails.size());
 
         countryName.setText(countryDetails.get(2));
-        countryCode.setText("( +" + countryDetails.get(0)+")");
-        countryCodetext.setText( "+" + countryDetails.get(0));
+        countryCode.setText("( +" + countryDetails.get(0) + ")");
+        countryCodetext.setText("+" + countryDetails.get(0));
 
         getCountryCode.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -176,13 +107,6 @@ public class EnterPhoneActivity extends CustomAppCompatActivity implements Activ
                 getCountryCodeWithCountryName();
             }
         });
-
-//        countryCode.setVisibility(View.GONE);
-//        countryName.setVisibility(View.GONE);
-      //  EditText countryCode1 = (EditText) findViewById(R.id.countryCode1);
-      //  TextView confirm = (TextView) findViewById(R.id.confirm);
-      //  countryCode1.setVisibility(View.VISIBLE);
-       // confirm.setVisibility(View.VISIBLE);
 
         final EditText phoneNumberEditText = (EditText) findViewById(R.id.phoneNumber);
         phoneNumberEditText.addTextChangedListener(new TextWatcher() {
@@ -199,26 +123,24 @@ public class EnterPhoneActivity extends CustomAppCompatActivity implements Activ
             @Override
             public void afterTextChanged(Editable s) {
 
-                String text= s.toString();
-                if( (text.length()==1)) {
+                String text = s.toString();
+                if ((text.length() == 1)) {
 
                     countryName.setVisibility(View.GONE);
                     countryCode.setVisibility(View.GONE);
                     getCountry.setVisibility(View.GONE);
-                    Button getOtp=(Button)findViewById(R.id.getotp);
-                    EditText countryCodetext=(EditText)findViewById(R.id.countryCodetext);
+                    Button getOtp = (Button) findViewById(R.id.getotp);
+                    EditText countryCodetext = (EditText) findViewById(R.id.countryCodetext);
                     getOtp.setVisibility(View.VISIBLE);
                     countryCodetext.setVisibility(View.VISIBLE);
 
-                }
-
-                else if(text.length()==0){
+                } else if (text.length() == 0) {
 
                     countryName.setVisibility(View.VISIBLE);
                     countryCode.setVisibility(View.VISIBLE);
                     getCountry.setVisibility(View.VISIBLE);
-                    Button getOtp=(Button)findViewById(R.id.getotp);
-                    EditText countryCodetext=(EditText)findViewById(R.id.countryCodetext);
+                    Button getOtp = (Button) findViewById(R.id.getotp);
+                    EditText countryCodetext = (EditText) findViewById(R.id.countryCodetext);
                     getOtp.setVisibility(View.GONE);
                     countryCodetext.setVisibility(View.GONE);
 
@@ -227,14 +149,10 @@ public class EnterPhoneActivity extends CustomAppCompatActivity implements Activ
 
             }
         });
-        if (!PermissionUtil.getInstance().isRuntimePermissionRequired()) {
-            setUserPhoneNumber(phoneNumberEditText, continueButton);
-        } else {
-            if (PermissionUtil.getInstance().requestPermission(EnterPhoneActivity.this, new ArrayList<String>(Arrays.asList(Manifest.permission.RECEIVE_SMS)), getResources().getString(R.string.read_sms_permission_message), Constants.REQUEST_CODE_PHONE_STATE_PERMISSION)) {
-                setUserPhoneNumber(phoneNumberEditText, continueButton);
-            }
+        if (PermissionUtil.getInstance().isRuntimePermissionRequired()) {
+            PermissionUtil.getInstance().requestPermission(EnterPhoneActivity.this, new ArrayList<String>(Arrays.asList(Manifest.permission.RECEIVE_SMS)), getResources().getString(R.string.read_sms_permission_message), Constants.REQUEST_CODE_PHONE_STATE_PERMISSION);
         }
-
+        setUserPhoneNumber(phoneNumberEditText);
         /*
          * to set initial focus to edit text view and open keyboard.
          */
@@ -267,7 +185,7 @@ public class EnterPhoneActivity extends CustomAppCompatActivity implements Activ
 
                 TextView countryCode = (TextView) findViewById(R.id.countryCode);
                 TextView countryName = (TextView) findViewById(R.id.countryName);
-                EditText countryCodetext=(EditText)findViewById(R.id.countryCodetext);
+                EditText countryCodetext = (EditText) findViewById(R.id.countryCodetext);
 
                 countryName.setText(cName);
                 countryCode.setText("(+" + cCode + " )");
@@ -278,11 +196,22 @@ public class EnterPhoneActivity extends CustomAppCompatActivity implements Activ
         }
     }
 
-    private void setUserPhoneNumber(EditText phoneNumberEditText, Button continueButton) {
+    private void setUserPhoneNumber(EditText phoneNumberEditText) {
         String phone_Number = getIntent().getStringExtra(Constants.INTENT_KEY_PHONE_NUMBER);
 
         if (phone_Number != null) {
             phoneNumberEditText.setText(phone_Number);
+            final TextView countryCode = (TextView) findViewById(R.id.countryCode);
+            final TextView countryName = (TextView) findViewById(R.id.countryName);
+            final ImageView getCountry = (ImageView) findViewById(R.id.getcountry);
+            countryName.setVisibility(View.GONE);
+            countryCode.setVisibility(View.GONE);
+            getCountry.setVisibility(View.GONE);
+            Button getOtp = (Button) findViewById(R.id.getotp);
+            EditText countryCodee = (EditText) findViewById(R.id.countryCodetext);
+            getOtp.setVisibility(View.VISIBLE);
+            countryCodee.setVisibility(View.VISIBLE);
+
         } else {
 //            String phoneNumber = CommonUtil.getUserSimNumber(this);
 //
@@ -316,11 +245,11 @@ public class EnterPhoneActivity extends CustomAppCompatActivity implements Activ
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == Constants.REQUEST_CODE_CONTACT_PERMISSION) {
-            if (PermissionUtil.getInstance().verifyPermissions(grantResults)) {
-                setUserPhoneNumber((EditText) findViewById(R.id.phoneNumber), (Button) findViewById(R.id.getotp));
-            } else {
+        if (requestCode == Constants.REQUEST_CODE_PHONE_STATE_PERMISSION) {
+            if (!PermissionUtil.getInstance().verifyPermissions(grantResults)) {
                 PermissionUtil.getInstance().showSnackBar(this, getString(R.string.permission_denied));
+            } else {
+                //nothing
             }
         }
     }

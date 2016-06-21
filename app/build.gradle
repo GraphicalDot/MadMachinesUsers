@@ -4,7 +4,7 @@ android {
         config {
             keyAlias 'sportsunityalias'
             keyPassword 'info12345'
-            storeFile file('/home/amandeep/Downloads/sportsunitykeystore.jks')
+            storeFile file('D:/Android/StudioWorkspace/sportsunitykeystore.jks')
             storePassword 'info12345'
         }
     }
@@ -38,8 +38,8 @@ android {
             buildConfigField "String", "SEARCH_BASE_URL", "\"http://NewsLB-388179569.ap-northeast-2.elb.amazonaws.com:8080/\""
             buildConfigField "String", "NEWS_BASE_URL", "\"http://NewsLB-388179569.ap-northeast-2.elb.amazonaws.com/\""
             buildConfigField "String", "PLAYER_PROFILE_BASE_URL", "\"http://52.76.74.188:5600/\""
-            buildConfigField "String", "XMPP_SERVER_API_BASE_URL", "\"52.79.77.105\""
-            buildConfigField "String", "XMPP_SERVER_BASE_URL", "\"52.79.152.87\""
+            buildConfigField "String", "XMPP_SERVER_API_BASE_URL", "\"54.169.217.88\""
+            buildConfigField "String", "XMPP_SERVER_BASE_URL", "\"54.169.217.88\""
             buildConfigField "String", "CRITTERCISM_API_KEY", "\"564059fcd224ac0a00ed42a3\""
             resValue "string", "GOOGLE_API_KEY", "AIzaSyAtd8j1WX4Ekl1Jcz27E0jrJGfSi07uCb0"
         }
@@ -48,8 +48,8 @@ android {
             buildConfigField "String", "SEARCH_BASE_URL", "\"http://NewsLB-388179569.ap-northeast-2.elb.amazonaws.com:8080/\""
             buildConfigField "String", "NEWS_BASE_URL", "\"http://NewsLB-388179569.ap-northeast-2.elb.amazonaws.com/\""
             buildConfigField "String", "PLAYER_PROFILE_BASE_URL", "\"http://52.76.74.188:5600/\""
-            buildConfigField "String", "XMPP_SERVER_API_BASE_URL", "\"52.79.77.105\""
-            buildConfigField "String", "XMPP_SERVER_BASE_URL", "\"52.79.152.87\""
+            buildConfigField "String", "XMPP_SERVER_API_BASE_URL", "\"54.169.217.88\""
+            buildConfigField "String", "XMPP_SERVER_BASE_URL", "\"54.169.217.88\""
             buildConfigField "String", "CRITTERCISM_API_KEY", "\"6ce5957522274640a8a67d8f95603e4200555300\""
             resValue "string", "GOOGLE_API_KEY", "AIzaSyAtd8j1WX4Ekl1Jcz27E0jrJGfSi07uCb0"
             minSdkVersion 19
@@ -107,6 +107,7 @@ dependencies {
     compile 'com.google.maps.android:android-maps-utils:0.4.+'
     compile 'org.solovyev.android.views:linear-layout-manager:0.5@aar'
     compile 'com.mixpanel.android:mixpanel-android:4.+'
+    compile 'com.theartofdev.edmodo:android-image-cropper:2.2.+'
 }
 
 apply plugin: 'com.google.gms.google-services'

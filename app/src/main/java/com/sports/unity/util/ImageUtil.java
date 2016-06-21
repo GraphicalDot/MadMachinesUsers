@@ -6,7 +6,13 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.Matrix;
+import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.Rect;
+import android.graphics.RectF;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Build;
@@ -19,6 +25,7 @@ import android.renderscript.ScriptIntrinsicBlur;
 import android.util.Base64;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.util.TypedValue;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -38,6 +45,7 @@ import java.nio.ByteBuffer;
 public class ImageUtil {
 
     public static final int SMALL_THUMB_IMAGE_SIZE = 100;
+    public static final int FULL_IMAGE_SIZE = 650;
 
     public static byte[] handleImageAndSetToView(Intent data, ImageView imageView, int requiredWidth, int requiredHeight) {
         byte[] compressedContent = null;
@@ -81,6 +89,46 @@ public class ImageUtil {
             }
         }
         return compressedContent;
+    }
+
+    public static byte[] handleAvatarAndSetToView(String base64Image, ImageView imageView) {
+        byte[] compressedContent = null;
+        compressedContent = Base64.decode(base64Image, Base64.DEFAULT);
+        Bitmap bitmap = BitmapFactory.decodeByteArray(compressedContent, 0, compressedContent.length);
+        bitmap = getRoundedCornerBitmap(bitmap, imageView);
+        imageView.setImageBitmap(bitmap);
+        return compressedContent;
+    }
+
+    public static Bitmap getRoundedCornerBitmap(Bitmap bitmap, ImageView imageView) {
+        Bitmap output = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(),
+                Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(output);
+
+        final int borderSizePx = 20;
+        final int cornerSizePx = 40;
+        final Paint paint = new Paint();
+        final Rect rect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
+        final RectF rectF = new RectF(rect);
+
+        // prepare canvas for transfer
+        paint.setAntiAlias(true);
+        paint.setColor(0xFFFFFFFF);
+        paint.setStyle(Paint.Style.FILL);
+        canvas.drawARGB(0, 0, 0, 0);
+        canvas.drawRoundRect(rectF, cornerSizePx, cornerSizePx, paint);
+
+        // draw bitmap
+        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
+        canvas.drawBitmap(bitmap, rect, rect, paint);
+
+        // draw border
+        paint.setColor(imageView.getContext().getResources().getColor(R.color.app_theme_blue_dark));
+        paint.setStyle(Paint.Style.STROKE);
+        paint.setStrokeWidth((float) borderSizePx);
+        canvas.drawRoundRect(rectF, cornerSizePx, cornerSizePx, paint);
+
+        return output;
     }
 
     public static String getBaseEncoded_ThumbnailImage(Context context, String fileName) {
@@ -254,8 +302,9 @@ public class ImageUtil {
     private static byte[] getAndSetScaledDownAndCompressedImageToView(String filePath, ImageView imageView, int requiredWidth, int requiredHeight) throws Exception {
         byte[] content = ImageUtil.getScaledDownAndCompressedBytes(filePath, requiredWidth, requiredHeight);
 
-        Bitmap bitmap = BitmapFactory.decodeByteArray(content, 0, content.length);
-        imageView.setImageBitmap(bitmap);
+        /*Bitmap bitmap = BitmapFactory.decodeByteArray(content, 0, content.length);
+        bitmap = getRoundedCornerBitmap(bitmap, imageView);
+        imageView.setImageBitmap(bitmap);*/
 
         return content;
     }

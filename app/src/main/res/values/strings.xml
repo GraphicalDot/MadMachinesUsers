@@ -416,4 +416,6 @@ message to verify your mobile number.</string>
     </plurals>
     <string name="couldnt_fetch_promo_code">Looks like there was a problem fetching your promo code please check your connection and try again later</string>
     <string name="title_activity_search_favoriates">SearchFavoriatesActivity</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
 </resources>    
