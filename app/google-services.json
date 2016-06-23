@@ -1,8 +1,9 @@
 {
   "project_info": {
-    "project_id": "sportsunity-391f6",
     "project_number": "441003196780",
-    "name": "SportsUnity"
+    "firebase_url": "https://sportsunity-391f6.firebaseio.com",
+    "project_id": "sportsunity-391f6",
+    "storage_bucket": "sportsunity-391f6.appspot.com"
   },
   "client": [
     {
@@ -11,8 +12,7 @@
         "client_id": "android:co.sports.unity",
         "client_type": 1,
         "android_client_info": {
-          "package_name": "co.sports.unity",
-          "certificate_hash": []
+          "package_name": "co.sports.unity"
         }
       },
       "oauth_client": [
@@ -23,9 +23,21 @@
             "package_name": "co.sports.unity",
             "certificate_hash": "7E362F2FE37F6CC7695E415FC7455B144A696DB3"
           }
+        },
+        {
+          "client_id": "441003196780-h4prvosob9frnh9st17qghq9glcfg77c.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "441003196780-vsk2vu3o56lss5tk3s9074srm638p592.apps.googleusercontent.com",
+          "client_type": 3
         }
       ],
-      "api_key": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAtd8j1WX4Ekl1Jcz27E0jrJGfSi07uCb0"
+        }
+      ],
       "services": {
         "analytics_service": {
           "status": 2,
@@ -38,8 +50,13 @@
           "apns_config": []
         },
         "appinvite_service": {
-          "status": 1,
-          "other_platform_oauth_client": []
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "441003196780-h4prvosob9frnh9st17qghq9glcfg77c.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         },
         "google_signin_service": {
           "status": 1
@@ -50,6 +67,5 @@
       }
     }
   ],
-  "client_info": [],
-  "ARTIFACT_VERSION": "1"
+  "configuration_version": "1"
 }
