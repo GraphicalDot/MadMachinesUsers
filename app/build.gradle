@@ -4,7 +4,7 @@ android {
         config {
             keyAlias 'sportsunityalias'
             keyPassword 'info12345'
-            storeFile file('/home/amandeep/Downloads/sportsunitykeystore.jks')
+            storeFile file('D:/Android/StudioWorkspace/sportsunitykeystore.jks')
             storePassword 'info12345'
         }
     }
@@ -77,7 +77,7 @@ repositories {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile fileTree(include: ['*.jar'], dir: 'libs')
     compile project(':library')
     compile 'de.hdodenhof:circleimageview:2.0.0'
     compile 'com.facebook.android:facebook-android-sdk:4.9.0'
@@ -108,6 +108,7 @@ dependencies {
     compile 'org.solovyev.android.views:linear-layout-manager:0.5@aar'
     compile 'com.mixpanel.android:mixpanel-android:4.+'
     compile 'com.theartofdev.edmodo:android-image-cropper:2.2.+'
+    compile 'com.android.support:palette-v7:23.1.1'
 }
 
 apply plugin: 'com.google.gms.google-services'

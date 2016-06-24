@@ -48,7 +48,6 @@ public class ProfileCreationActivity extends AppCompatActivity implements Activi
     private EditText nameText;
     private byte[] byteArray;
     private String userName;
-    public Bitmap profileImage;
     public static final String CROP_FRAGMENT_TAG = "crop_fragment_tag";
     private View.OnClickListener continueButtonOnClickListener = new View.OnClickListener() {
 

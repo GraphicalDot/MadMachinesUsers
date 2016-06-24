@@ -105,8 +105,9 @@ public class ImageUtil {
                 Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(output);
 
-        final int borderSizePx = 20;
-        final int cornerSizePx = 40;
+        final int borderSizePx = ((int) (bitmap.getWidth() * 0.05));
+        final int cornerSizePx = ((int) (bitmap.getWidth() * 0.1));
+        ;
         final Paint paint = new Paint();
         final Rect rect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
         final RectF rectF = new RectF(rect);

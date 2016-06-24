@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
 
+import com.sports.unity.common.controller.UserProfileActivity;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
 /**
@@ -89,7 +90,11 @@ public class CropImageFragment extends Fragment {
         Matrix matrix = new Matrix();
         matrix.postScale(sr, sr);
         profileImage = Bitmap.createBitmap(profileImage, 0, 0, imageWidth, imageHeight, matrix, false);
-        ((ProfileCreationActivity) getActivity()).setProfileImage(profileImage);
+        if (getActivity() instanceof ProfileCreationActivity) {
+            ((ProfileCreationActivity) getActivity()).setProfileImage(profileImage);
+        } else if (getActivity() instanceof UserProfileActivity) {
+            ((UserProfileActivity) getActivity()).setProfileImage(profileImage);
+        }
         Fragment fragment = getActivity().getSupportFragmentManager().findFragmentByTag(ProfileCreationActivity.CROP_FRAGMENT_TAG);
         getActivity().getSupportFragmentManager().beginTransaction().remove(fragment).commit();
     }

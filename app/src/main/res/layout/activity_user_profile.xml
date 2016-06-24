@@ -9,8 +9,7 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        >
+        android:layout_height="match_parent">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -26,10 +25,10 @@
                 android:orientation="vertical">
 
                 <FrameLayout
-                    android:background="@color/app_theme_blue"
+                    android:id="@+id/profile_parent"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/profile_thumb_image_xxlarge"
-                    >
+                    android:background="@color/app_theme_blue">
 
                     <ImageView
                         android:id="@+id/user_picture"
@@ -37,23 +36,22 @@
                         android:layout_height="match_parent"
                         android:layout_gravity="center"
                         android:layout_marginBottom="@dimen/vertical_padding_very_very_small"
-                        android:layout_marginTop="@dimen/vertical_padding_very_very_small"
-                         />
+                        android:layout_marginTop="@dimen/vertical_padding_very_very_small" />
 
                     <ImageView
                         android:id="@+id/back_image"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:src="@drawable/ic_menu_back"
-                        android:layout_margin="@dimen/activity_vertical_margin_small"/>
+                        android:layout_margin="@dimen/activity_vertical_margin_small"
+                        android:src="@drawable/ic_menu_back" />
 
                     <ImageView
                         android:id="@+id/edit_image"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:src="@drawable/ic_profile_edit"
                         android:layout_gravity="bottom|right"
-                        android:visibility="gone"/>
+                        android:src="@drawable/ic_profile_edit"
+                        android:visibility="gone" />
 
                 </FrameLayout>
 
@@ -66,11 +64,11 @@
                     android:layout_marginRight="@dimen/horizontal_padding_very_small"
                     android:layout_marginTop="@dimen/vertical_padding_very_small"
                     android:gravity="center"
-                    android:text="Fay Butler"
                     android:paddingBottom="@dimen/vertical_padding_very_small"
                     android:paddingLeft="@dimen/horizontal_padding_very_small"
                     android:paddingRight="@dimen/horizontal_padding_very_small"
                     android:paddingTop="@dimen/vertical_padding_very_small"
+                    android:text="Fay Butler"
                     android:textColor="@android:color/black"
                     android:textSize="@dimen/font_size_large" />
 
@@ -79,41 +77,40 @@
                     android:id="@+id/accept_block_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/activity_vertical_margin_small"
                     android:gravity="center"
                     android:orientation="vertical"
-                    android:layout_marginBottom="@dimen/activity_vertical_margin_small"
                     android:visibility="gone">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Sent you a friend request"
-                        android:textColor="@color/gray1"
-                        />
+                        android:textColor="@color/gray1" />
 
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:layout_marginTop="@dimen/activity_vertical_margin_small">
+                        android:layout_marginTop="@dimen/activity_vertical_margin_small"
+                        android:orientation="horizontal">
 
                         <Button
                             android:id="@+id/accept"
                             android:layout_width="wrap_content"
                             android:layout_height="@dimen/invite_button_height"
+                            android:layout_marginRight="@dimen/activity_vertical_margin_small"
                             android:background="@drawable/round_edge_box_blue"
                             android:text="Accept"
-                            android:layout_marginRight="@dimen/activity_vertical_margin_small"
-                            android:textColor="@color/ColorPrimary"/>
+                            android:textColor="@color/ColorPrimary" />
 
                         <Button
                             android:id="@+id/block_user"
                             android:layout_width="wrap_content"
                             android:layout_height="@dimen/invite_button_height"
-                            android:background="@drawable/round_edge_gray_box"
                             android:layout_marginLeft="@dimen/activity_vertical_margin_small"
+                            android:background="@drawable/round_edge_gray_box"
                             android:text="Block"
-                            android:textColor="@color/gray4"/>
+                            android:textColor="@color/gray4" />
                     </LinearLayout>
 
                 </LinearLayout>
@@ -122,43 +119,40 @@
                     android:id="@+id/add_friends"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/edit_profile_button_height"
-                    android:layout_marginTop="@dimen/horizontal_padding_very_small"
                     android:layout_marginBottom="@dimen/horizontal_padding_very_small"
                     android:layout_marginLeft="@dimen/profile_thumb_image_large"
                     android:layout_marginRight="@dimen/profile_thumb_image_large"
+                    android:layout_marginTop="@dimen/horizontal_padding_very_small"
+                    android:background="@drawable/round_edge_box_blue"
                     android:text="ADD FRIEND"
                     android:textColor="@color/ColorPrimary"
-                    android:background="@drawable/round_edge_box_blue"
-                    android:visibility="gone"/>
+                    android:visibility="gone" />
 
                 <Button
                     android:id="@+id/block"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/edit_profile_button_height"
-                    android:layout_marginTop="@dimen/horizontal_padding_very_small"
                     android:layout_marginBottom="@dimen/horizontal_padding_very_small"
                     android:layout_marginLeft="@dimen/profile_thumb_image_large"
                     android:layout_marginRight="@dimen/profile_thumb_image_large"
+                    android:layout_marginTop="@dimen/horizontal_padding_very_small"
+                    android:background="@drawable/round_edge_box_blue"
                     android:text="BLOCK"
                     android:textColor="@color/ColorPrimary"
-                    android:background="@drawable/round_edge_box_blue"
-                    android:visibility="gone"
-                    />
+                    android:visibility="gone" />
 
                 <Button
                     android:id="@+id/edit_profile"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/edit_profile_button_height"
-                    android:layout_marginTop="@dimen/horizontal_padding_very_small"
                     android:layout_marginBottom="@dimen/horizontal_padding_very_small"
                     android:layout_marginLeft="@dimen/profile_thumb_image_large"
                     android:layout_marginRight="@dimen/profile_thumb_image_large"
+                    android:layout_marginTop="@dimen/horizontal_padding_very_small"
+                    android:background="@drawable/round_edge_blue_box"
                     android:text="EDIT PROFILE"
                     android:textColor="@color/app_theme_blue"
-                    android:background="@drawable/round_edge_blue_box"
-                    android:visibility="gone"
-                    />
-
+                    android:visibility="gone" />
 
 
                 <FrameLayout
@@ -170,8 +164,7 @@
                     android:layout_marginLeft="@dimen/profile_thumb_image_large"
                     android:layout_marginRight="@dimen/profile_thumb_image_large"
                     android:layout_marginTop="@dimen/vertical_padding_very_small"
-                    android:visibility="gone"
-                    >
+                    android:visibility="gone">
 
                     <com.facebook.login.widget.LoginButton xmlns:facebook="http://schemas.android.com/apk/res-auto"
                         android:id="@+id/login_button_facebook"
@@ -219,15 +212,14 @@
                     android:id="@+id/save_profile"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/edit_profile_button_height"
-                    android:layout_marginTop="@dimen/horizontal_padding_very_small"
                     android:layout_marginBottom="@dimen/horizontal_padding_very_small"
                     android:layout_marginLeft="@dimen/profile_thumb_image_large"
                     android:layout_marginRight="@dimen/profile_thumb_image_large"
+                    android:layout_marginTop="@dimen/horizontal_padding_very_small"
+                    android:background="@drawable/round_edge_box_blue"
                     android:text="SAVE PROFILE"
                     android:textColor="@color/ColorPrimary"
-                    android:background="@drawable/round_edge_box_blue"
-                    android:visibility="gone"
-                    />
+                    android:visibility="gone" />
 
                 <LinearLayout
                     android:id="@+id/status"
@@ -459,6 +451,10 @@
         </LinearLayout>
     </ScrollView>
 
+    <FrameLayout
+        android:id="@+id/crop_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 </RelativeLayout>
 
 
