@@ -24,6 +24,7 @@ import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -87,7 +88,7 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
     private TextView toolbarActionButton;
     private EditText name;
     private EditText status;
-    private CircleImageView profileImage;
+    private ImageView profileImage;
     private TextView editFavourite, statusTitle;
     private LinearLayout statusView;
     private LinearLayout statusList;
@@ -98,6 +99,9 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
     private ProgressBar progressBar;
     private TextView currentStatus;
     private boolean ownProfile;
+    private Button editProfile;
+    private ImageView editImage;
+    private Button saveProfile;
 
     private String jabberId = null;
 
@@ -114,11 +118,11 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
     private Drawable oldBackgroundForStatusEditView = null;
 
 
-    private TextView.OnClickListener onClickListener = new View.OnClickListener() {
+/*    private TextView.OnClickListener onClickListener = new View.OnClickListener() {
 
         @Override
         public void onClick(View v) {
-            if (toolbarActionButton.getText().equals(ADD_FRIEND)) {
+            if ( toolbarActionButton.getText().equals(ADD_FRIEND) {
                 onClickAddFriend();
             } else if (toolbarActionButton.getText().equals(ACCEPT_REQUEST)) {
                 onClickAcceptFriend();
@@ -133,6 +137,53 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
             }
         }
 
+    };
+    */
+
+    private View.OnClickListener acceptClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            onClickAcceptFriend();
+        }
+    };
+
+    private View.OnClickListener blockClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+
+        }
+    };
+
+    private View.OnClickListener addFriendsClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            onClickAddFriend();
+        }
+    };
+
+    private View.OnClickListener editImageClickListner = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            onClickEditButton();
+
+
+        }
+    };
+
+    private View.OnClickListener saveProfileClickListner =new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            onClickSaveButton();
+
+
+        }
+    };
+
+    private View.OnClickListener editProfieClickListner = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            onClickEditButton();
+        }
     };
 
     private View.OnClickListener editFavoritesClickListener = new View.OnClickListener() {
@@ -224,36 +275,59 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
         }
     }
 
-    private void setToolbar(boolean ownProfile) {
-        Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
+  private void setToolbar(boolean ownProfile) {
+      // Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
 
-        LinearLayout clickAction = (LinearLayout) toolbar.findViewById(R.id.click_action);
-        clickAction.setOnClickListener(onClickListener);
+      LinearLayout acceptBlockLayout=(LinearLayout)findViewById(R.id.accept_block_layout);
+      ImageView backImage=(ImageView)findViewById(R.id.back_image);
+      ImageView editImage=(ImageView)findViewById(R.id.edit_image);
+      Button editProfie=(Button)findViewById(R.id.edit_profile);
+      Button accept=(Button)findViewById(R.id.accept);
+      Button block=(Button)findViewById(R.id.block);
+      Button addFriends=(Button)findViewById(R.id.add_friends);
+      Button saveProfile=(Button)findViewById(R.id.save_profile);
 
-        toolbarActionButton = (TextView) toolbar.findViewById(R.id.toolbar_action_button);
-        toolbarActionButton.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoCondensedBold());
+
+      accept.setOnClickListener(acceptClickListener);
+      block.setOnClickListener(blockClickListener);
+      addFriends.setOnClickListener(addFriendsClickListener);
+      editImage.setOnClickListener(editImageClickListner);
+      saveProfile.setOnClickListener(saveProfileClickListner);
+      editProfie.setOnClickListener(editProfieClickListner);
+
+
+       //  LinearLayout clickAction = (LinearLayout) toolbar.findViewById(R.id.click_action);
+      // clickAction.setOnClickListener(onClickListener);
+
+       // toolbarActionButton = (TextView) toolbar.findViewById(R.id.toolbar_action_button);
+      //  toolbarActionButton.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoCondensedBold());
 
         if (ownProfile) {
-            toolbarActionButton.setText(INFO_EDIT);
+           // editImage.setVisibility(View.VISIBLE);
+            //toolbarActionButton.setText(INFO_EDIT);
+            editProfie.setVisibility(View.VISIBLE);
         } else {
             if (getIntent().getBooleanExtra("otherChat", false)) {
                 requestId = SportsUnityDBHelper.getInstance(getApplicationContext()).checkJidForPendingRequest(getIntent().getStringExtra("jid"));
                 if (requestId == Contacts.PENDING_REQUESTS_TO_PROCESS) {
-                    toolbarActionButton.setText(ACCEPT_REQUEST);
+                    //toolbarActionButton.setText(ACCEPT_REQUEST);
+                    acceptBlockLayout.setVisibility(View.VISIBLE);
                 } else if (requestId == Contacts.DEFAULT_PENDNG_REQUEST_ID) {
-                    toolbarActionButton.setText(ADD_FRIEND);
+                    addFriends.setVisibility(View.VISIBLE);
+                   // toolbarActionButton.setText(ADD_FRIEND);
                 } else if (requestId == Contacts.WAITING_FOR_REQUEST_ACCEPTANCE) {
-                    toolbarActionButton.setText(REQUEST_SENT);
+                  //  toolbarActionButton.setText(REQUEST_SENT);
+                    addFriends.setText("REQUEST SENT");
                 }
-                toolbarActionButton.setBackground(getResources().getDrawable(R.drawable.round_edge_blue_box));
+               // toolbarActionButton.setBackground(getResources().getDrawable(R.drawable.round_edge_blue_box));
             } else {
-                toolbarActionButton.setVisibility(View.GONE);
+               // toolbarActionButton.setVisibility(View.GONE);
             }
         }
 
-        ImageView backButton = (ImageView) toolbar.findViewById(R.id.backarrow);
-        backButton.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_WHITE, true));
-        backButton.setOnClickListener(new View.OnClickListener() {
+
+       backImage.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_WHITE, true));
+       backImage.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
@@ -261,7 +335,6 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
             }
         });
     }
-
     private void onClickAcceptFriend() {
         if (XMPPClient.getInstance().isConnectionAuthenticated()) {
             boolean success = PersonalMessaging.getInstance(getApplicationContext()).acceptFriendRequest(getIntent().getStringExtra("jid"));
@@ -313,9 +386,17 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
             String jid = TinyDB.getInstance(UserProfileActivity.this).getString(TinyDB.KEY_USER_JID);
 
             Contacts contacts = new Contacts(nickname, jid, phoneNumber, byteArray, -1, status, Contacts.AVAILABLE_NOT);
+            editProfile.setVisibility(View.VISIBLE);
+            //editProfile.setVisibility(View.VISIBLE);
+            saveProfile.setVisibility(View.GONE);
+            fbButton.setVisibility(View.GONE);
+            editImage.setVisibility(View.GONE);
+
             int requestStatus = UserProfileHandler.getInstance().submitUserProfile(UserProfileActivity.this, contacts, LISTENER_KEY);
             if (requestStatus == UserProfileHandler.REQUEST_STATUS_FAILED) {
                 onUnSuccessfulVCardSubmit();
+
+
             }
         } else {
             if (TextUtils.isEmpty(name.getText().toString())) {
@@ -324,6 +405,7 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
                 Toast.makeText(this, "Please enter your status", Toast.LENGTH_SHORT).show();
             }
         }
+
     }
 
     private void onClickEditButton() {
@@ -331,8 +413,14 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
         statusView.setVisibility(View.VISIBLE);
 
         fbButton.setVisibility(View.VISIBLE);
+        Button saveProfie = (Button)findViewById(R.id.save_profile);
+        //  fbButton.setVisibility(View.VISIBLE);
+        saveProfie.setVisibility(View.VISIBLE);
+        editProfile.setVisibility(View.GONE);
+        editImage.setVisibility(View.VISIBLE);
 
-        toolbarActionButton.setText(INFO_SAVE);
+
+       // toolbarActionButton.setText(INFO_SAVE);
 
         name.setEnabled(true);
         name.setBackground(oldBackgroundForNameEditView);
@@ -348,9 +436,9 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
         status.setPadding(pL, pT, pR, pB);
         status.getBackground().setColorFilter(getResources().getColor(R.color.app_theme_blue), PorterDuff.Mode.SRC_IN);
 
-        profileImage.setBorderColor(getResources().getColor(R.color.app_theme_blue));
+      //  profileImage.setBorderColor(getResources().getColor(R.color.app_theme_blue));
         profileImage.setEnabled(true);
-        profileImage.setBorderWidth(2);
+      //  profileImage.setBorderWidth(2);
         addListnerToProfilePicture();
     }
 
@@ -383,14 +471,20 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
     }
 
     private void addListnerToProfilePicture() {
-        CircleImageView circleImageView = (CircleImageView) findViewById(R.id.user_picture);
-        circleImageView.setOnClickListener(profilePictureonOnClickListener);
+        ImageView ImageView = (ImageView) findViewById(R.id.user_picture);
+        ImageView.setOnClickListener(profilePictureonOnClickListener);
     }
 
     private void initView(boolean ownProfile) {
 
         favDetails = (LinearLayout) findViewById(R.id.favDetails);
+        editProfile = (Button) findViewById(R.id.edit_profile);
+        //editProfile.setVisibility(View.VISIBLE);
+        saveProfile = (Button)findViewById(R.id.save_profile);
+        editImage=(ImageView)findViewById(R.id.edit_image);
         fbButton = (FrameLayout) findViewById(R.id.faceBook_btn);
+        ImageView backImage = (ImageView)findViewById(R.id.back_image);
+
 
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
 //        progressBar.setVisibility(View.GONE);
@@ -415,7 +509,7 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
         progressBar.setIndeterminate(true);
 
         currentStatus = (TextView) findViewById(R.id.current_status);
-        profileImage = (CircleImageView) findViewById(R.id.user_picture);
+        profileImage = (ImageView) findViewById(R.id.user_picture);
         profileImage.setEnabled(false);
 
         editFavourite = (TextView) findViewById(R.id.edit_fav);
@@ -458,7 +552,7 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
         addStatusList();
 
 
-        profileImage = (CircleImageView) findViewById(R.id.user_picture);
+        profileImage = (ImageView) findViewById(R.id.user_picture);
 
         byteArray = getIntent().getByteArrayExtra("profilePicture");
         if (byteArray != null) {
@@ -490,7 +584,7 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
         statusView.setVisibility(View.GONE);
 
 
-        profileImage = (CircleImageView) findViewById(R.id.user_picture);
+        profileImage = (ImageView) findViewById(R.id.user_picture);
         byte[] imageArray = getIntent().getByteArrayExtra("profilePicture");
         if (imageArray != null) {
             profileImage.setImageBitmap(BitmapFactory.decodeByteArray(imageArray, 0, imageArray.length));
@@ -621,8 +715,8 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
     }
 
     private void setProfileImage(Bitmap image) {
-        CircleImageView circleImageView = (CircleImageView) findViewById(R.id.user_picture);
-        circleImageView.setImageBitmap(image);
+        ImageView ImageView = (ImageView) findViewById(R.id.user_picture);
+        ImageView.setImageBitmap(image);
         byteArray = ImageUtil.getCompressedBytes(image);
     }
 
@@ -650,10 +744,10 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
 
     private void initViewUI() {
         favDetails.setVisibility(View.VISIBLE);
-        profileImage.setBorderWidth(0);
+      //  profileImage.setBorderWidth(0);
         profileImage.setEnabled(false);
         fbButton.setVisibility(View.GONE);
-        toolbarActionButton.setText(INFO_EDIT);
+//        toolbarActionButton.setText(INFO_EDIT);
         name.setEnabled(false);
         name.setBackground(getResources().getDrawable(R.drawable.round_edge_black_box));
         status.setEnabled(false);
@@ -882,7 +976,7 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
     }
 
     private void onBack() {
-        if (toolbarActionButton.getText().equals(INFO_SAVE) && progressBar.getVisibility() == View.GONE) {
+        if (editProfile.getVisibility() == View.GONE && progressBar.getVisibility() == View.GONE) {
             AlertDialog.Builder build = new AlertDialog.Builder(UserProfileActivity.this);
             build.setTitle("Discard Edits ? ");
             build.setMessage("If you cancel now, your edits will be discarded.");
@@ -916,9 +1010,14 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
         favDetails.setVisibility(View.VISIBLE);
         statusView.setVisibility(View.GONE);
         fbButton.setVisibility(View.GONE);
+        saveProfile.setVisibility(View.GONE);
+        editProfile.setVisibility(View.VISIBLE);
+        editImage.setVisibility(View.GONE);
 
-        profileImage.setBorderWidth(0);
-        toolbarActionButton.setText(INFO_EDIT);
+      //  profileImage.setBorderWidth(0);
+      //  toolbarActionButton.setText(INFO_EDIT);
+
+
 
         name.setEnabled(false);
         name.setText(getIntent().getStringExtra("name"));
