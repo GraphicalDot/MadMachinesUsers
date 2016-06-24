@@ -65,12 +65,12 @@ import com.sports.unity.messages.controller.model.Person;
 import com.sports.unity.scores.model.ScoresContentHandler;
 import com.sports.unity.scores.model.ScoresJsonParser;
 import com.sports.unity.util.Constants;
+import com.sports.unity.util.UserCard;
 import com.sports.unity.util.network.LocManager;
 
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
-import org.jivesoftware.smackx.vcardtemp.packet.VCard;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -621,10 +621,10 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity implements People
         ScoresContentHandler.getInstance().requestCall(CALL_NAME_NEAR_BY_USERS, parameters, REQUEST_LISTENER_KEY, REQUEST_TAG);
     }
 
-    private boolean createContact(String jid, Context context, VCard vCard) {
+    private boolean createContact(String jid, Context context, UserCard card) {
         boolean success = false;
-        SportsUnityDBHelper.getInstance(context).addToContacts(vCard.getNickName(), null, jid, ContactsHandler.getInstance().defaultStatus, null, Contacts.AVAILABLE_BY_PEOPLE_AROUND_ME);
-        SportsUnityDBHelper.getInstance(context).updateContacts(jid, vCard.getAvatar(), vCard.getMiddleName());
+        SportsUnityDBHelper.getInstance(context).addToContacts(card.getName(), null, jid, ContactsHandler.getInstance().defaultStatus, null, Contacts.AVAILABLE_BY_PEOPLE_AROUND_ME);
+        SportsUnityDBHelper.getInstance(context).updateContacts(jid, card.getThumbnail(), card.getStatus());
         return success;
     }
 
@@ -679,7 +679,7 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity implements People
 
     }
 
-    private void populateProfilePopup(final VCard vCard, View popupProfile, final String jid, int distance, String info, Person person) {
+    private void populateProfilePopup(final UserCard card, View popupProfile, final String jid, int distance, String info, Person person) {
 
         CircleImageView imageview = (CircleImageView) aDialog.findViewById(R.id.user_pic);
 
@@ -704,7 +704,7 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity implements People
         });
         aDialog.findViewById(R.id.progressBarProfile).setVisibility(GONE);
 
-        if (vCard == null) {
+        if (card == null) {
             if (info == null) {
                 sayHello.setVisibility(GONE);
                 aDialog.findViewById(R.id.dot).setVisibility(GONE);
@@ -724,8 +724,8 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity implements People
             }
 
         } else {
-            name.setText(vCard.getNickName());
-            byte[] image = vCard.getAvatar();
+            name.setText(card.getName());
+            byte[] image = card.getThumbnail();
             if (image != null) {
                 imageview.setImageBitmap(BitmapFactory.decodeByteArray(image, 0, image.length));
             } else {
@@ -746,7 +746,7 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity implements People
                 public void onClick(View v) {
                     Contacts contact = SportsUnityDBHelper.getInstance(getApplicationContext()).getContactByJid(jid);
                     if (contact == null) {
-                        createContact(jid, getApplicationContext(), vCard);
+                        createContact(jid, getApplicationContext(), card);
                         contact = SportsUnityDBHelper.getInstance(getApplicationContext()).getContactByJid(jid);
                         moveToChatActivity(contact, false);
                     } else {
@@ -898,8 +898,8 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity implements People
         //TODO
     }
 
-    private void onSuccessfulVcardRetrieval(View view, VCard vCard, String jid, int distance, Person person) {
-        populateProfilePopup(vCard, view, jid, distance, null, person);
+    private void onSuccessfulVcardRetrieval(View view, UserCard card, String jid, int distance, Person person) {
+        populateProfilePopup(card, view, jid, distance, null, person);
     }
 
     @Override
@@ -961,7 +961,7 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity implements People
         }
     }
 
-    private class GetVcardForUser extends AsyncTask<String, Void, VCard> {
+    private class GetVcardForUser extends AsyncTask<String, Void, UserCard> {
         private boolean success = false;
         private String jid = null;
 
@@ -976,29 +976,17 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity implements People
         }
 
         @Override
-        protected VCard doInBackground(String... param) {
-            XMPPTCPConnection connection = XMPPClient.getInstance().getConnection();
-            VCard card = new VCard();
-            try {
-                jid = param[0];
-                if (connection.isAuthenticated()) {
-                    card.load(connection, jid + "@mm.io");
-                    success = true;
-                } else {
-                    success = false;
-                }
-            } catch (XMPPException e) {
-                e.printStackTrace();
-            } catch (SmackException e) {
-                e.printStackTrace();
-            }
+        protected UserCard doInBackground(String... param) {
+            UserCard card = new UserCard();
+            jid = param[0];
+            success = card.loadCard( PeopleAroundMeMap.this.getApplication(), jid, true, true, false, false, false);
             return card;
         }
 
         @Override
-        protected void onPostExecute(VCard vCard) {
+        protected void onPostExecute(UserCard card) {
             if (success) {
-                onSuccessfulVcardRetrieval(view, vCard, jid, distance, person);
+                onSuccessfulVcardRetrieval(view, card, jid, distance, person);
             } else {
                 onUnSuccessfulVcardRetrieval(view, person);
             }

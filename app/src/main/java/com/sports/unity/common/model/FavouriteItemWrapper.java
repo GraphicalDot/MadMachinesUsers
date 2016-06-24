@@ -186,9 +186,23 @@ public class FavouriteItemWrapper {
         if (favItem != null) {
             try {
                 JSONArray favArray = new JSONArray(favItem);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        Collections.sort(favouriteItems);
+        return new ArrayList<>(favouriteItems);
+    }
+
+    public ArrayList<FavouriteItem> getFavListOfOthers(JSONArray favItem) {
+        List<FavouriteItem> favouriteItems = new ArrayList<FavouriteItem>();
+        if (favItem != null) {
+            try {
+                JSONArray favArray = favItem;
                 for (int i = 0; i < favArray.length(); i++) {
                     FavouriteItem item = new FavouriteItem();
-                    JSONObject object = favArray.getJSONObject(i);
+                    JSONObject object = favArray.getJSONObject(i).getJSONObject("properties");
                     item.setName(object.getString(name));
                     String sportsType = object.getString(this.sportsType);
                     String filterType = object.getString(this.filterType);

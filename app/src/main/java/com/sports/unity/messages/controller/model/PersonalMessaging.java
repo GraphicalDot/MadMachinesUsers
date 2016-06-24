@@ -640,9 +640,6 @@ public class PersonalMessaging {
         String userJid = TinyDB.getInstance(context).getString(TinyDB.KEY_USER_JID);
         Contacts contact = sportsUnityDBHelper.getContactByJid(userJid);
         String name = contact.getName();
-        if (name == null) {
-            name = "unknown";
-        }
         Message message = new Message();
         message.setStanzaId(message.getStanzaId().concat("REQUEST"));
         message.setTo(jid.concat("@mm.io"));

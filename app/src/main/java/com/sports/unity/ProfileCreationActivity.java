@@ -59,7 +59,11 @@ public class ProfileCreationActivity extends AppCompatActivity implements Activi
 
                 userName = nameText.getText().toString();
 
-                int requestStatus = UserProfileHandler.getInstance().connectToXmppServer(ProfileCreationActivity.this, LISTENER_KEY);
+                String phoneNumber = TinyDB.getInstance(ProfileCreationActivity.this).getString(TinyDB.KEY_USERNAME);
+                String jid = TinyDB.getInstance(ProfileCreationActivity.this).getString(TinyDB.KEY_USER_JID);
+
+                Contacts contacts = new Contacts(userName, jid, phoneNumber, byteArray, -1, getResources().getString(R.string.default_status), Contacts.AVAILABLE_NOT);
+                UserProfileHandler.getInstance().submitUserProfile(ProfileCreationActivity.this, contacts, LISTENER_KEY);
             } else {
                 Toast.makeText(getApplicationContext(), "Please enter your name", Toast.LENGTH_SHORT).show();
             }
@@ -276,26 +280,7 @@ public class ProfileCreationActivity extends AppCompatActivity implements Activi
 
     @Override
     public void handleContent(String requestTag, Object content) {
-
-        if (requestTag.equals(UserProfileHandler.CONNECT_XMPP_SERVER_TAG)) {
-            Boolean success = (Boolean) content;
-
-            if (success == true) {
-                String phoneNumber = TinyDB.getInstance(ProfileCreationActivity.this).getString(TinyDB.KEY_USERNAME);
-                String jid = TinyDB.getInstance(ProfileCreationActivity.this).getString(TinyDB.KEY_USER_JID);
-
-                Contacts contacts = new Contacts(userName, jid, phoneNumber, byteArray, -1, getResources().getString(R.string.default_status), Contacts.AVAILABLE_NOT);
-                UserProfileHandler.getInstance().submitUserProfile(ProfileCreationActivity.this, contacts, LISTENER_KEY);
-            } else {
-                ProfileCreationActivity.this.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        onUnSuccessfulLogin();
-                        afterAsyncCall();
-                    }
-                });
-            }
-        } else if (requestTag.equals(UserProfileHandler.FB_REQUEST_TAG) && content != null) {
+        if (requestTag.equals(UserProfileHandler.FB_REQUEST_TAG) && content != null) {
             final UserProfileHandler.ProfileDetail profileDetail = (UserProfileHandler.ProfileDetail) content;
 
             if (Looper.myLooper() == Looper.getMainLooper()) {

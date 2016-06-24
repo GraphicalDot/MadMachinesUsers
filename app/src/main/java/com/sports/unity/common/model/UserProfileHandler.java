@@ -29,11 +29,10 @@ import com.sports.unity.messages.controller.model.PubSubMessaging;
 import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
 import com.sports.unity.util.ThreadTask;
+import com.sports.unity.util.UserCard;
 
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smackx.vcardtemp.VCardManager;
-import org.jivesoftware.smackx.vcardtemp.packet.VCard;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -57,7 +56,6 @@ public class UserProfileHandler {
 
     public static final String FB_REQUEST_TAG = "fb_request_tag";
     public static final String DOWNLOADING_FACEBOOK_IMAGE_TAG = "download_facebook_image_request_tag";
-    public static final String CONNECT_XMPP_SERVER_TAG = "connect_xmpp_server_request_tag";
     public static final String SUBMIT_PROFILE_REQUEST_TAG = "submit_profile_tag";
     public static final String LOAD_PROFILE_REQUEST_TAG = "load_profile_tag";
     public static final String SUBMIT_GROUP_INFO_REQUEST_TAG = "submit_group_info_tag";
@@ -66,6 +64,7 @@ public class UserProfileHandler {
     public static int REQUEST_STATUS_ALREADY_EXIST = 2;
     public static int REQUEST_STATUS_FAILED = 3;
 
+    private static final String GET_USER_INFO_URL = "http://" + BuildConfig.XMPP_SERVER_API_BASE_URL + "/get_user_info?";
     private static final String SET_USER_INFO_URL = "http://" + BuildConfig.XMPP_SERVER_API_BASE_URL + "/set_user_info?";
     private static final String SET_USER_INTEREST = "http://" + BuildConfig.XMPP_SERVER_API_BASE_URL + "/v1/set_user_interests?";
 
@@ -112,36 +111,6 @@ public class UserProfileHandler {
         return inProgress;
     }
 
-    public int connectToXmppServer(Context context, String listenerKey) {
-        int requestStatus = REQUEST_STATUS_FAILED;
-        if (!requestInProcess_RequestTagAndListenerKey.containsKey(CONNECT_XMPP_SERVER_TAG)) {
-
-            requestInProcess_RequestTagAndListenerKey.put(CONNECT_XMPP_SERVER_TAG, listenerKey);
-            requestStatus = REQUEST_STATUS_QUEUED;
-
-            UserThreadTask userThreadTask = new UserThreadTask(context, CONNECT_XMPP_SERVER_TAG, null) {
-
-                @Override
-                public Object process() {
-                    Boolean success = XMPPClient.getInstance().reconnectConnection();
-                    if (success) {
-                        success = XMPPClient.getInstance().authenticateConnection(this.context);
-                    } else {
-                        //nothing
-                    }
-                    return success;
-                }
-
-            };
-            userThreadTask.start();
-
-        } else {
-            requestStatus = REQUEST_STATUS_ALREADY_EXIST;
-        }
-
-        return requestStatus;
-    }
-
     public int loadMyProfile(Context context, String listenerKey) {
         String jid = TinyDB.getInstance(context).getString(TinyDB.KEY_USER_JID);
         return loadProfile(context, jid, listenerKey);
@@ -150,23 +119,19 @@ public class UserProfileHandler {
     public int loadProfile(Context context, String jid, String listenerKey) {
         int requestStatus = REQUEST_STATUS_FAILED;
         if (!requestInProcess_RequestTagAndListenerKey.containsKey(LOAD_PROFILE_REQUEST_TAG)) {
+            requestInProcess_RequestTagAndListenerKey.put(LOAD_PROFILE_REQUEST_TAG, listenerKey);
+            requestStatus = REQUEST_STATUS_QUEUED;
 
-            if (XMPPClient.getInstance().isConnectionAuthenticated()) {
-                requestInProcess_RequestTagAndListenerKey.put(LOAD_PROFILE_REQUEST_TAG, listenerKey);
-                requestStatus = REQUEST_STATUS_QUEUED;
+            UserThreadTask userThreadTask = new UserThreadTask(context, LOAD_PROFILE_REQUEST_TAG, jid) {
 
-                UserThreadTask userThreadTask = new UserThreadTask(context, LOAD_PROFILE_REQUEST_TAG, jid) {
+                @Override
+                public Object process() {
+                    Contacts contacts = SportsUnityDBHelper.getInstance(context).getContactByJid((String)object);
+                    return loadVCardAndUpdateDB( this.context, (String)object, true, contacts.availableStatus == Contacts.AVAILABLE_BY_MY_CONTACTS);
+                }
 
-                    @Override
-                    public Object process() {
-                        return loadVCardAndUpdateDB( this.context, (String)object);
-                    }
-
-                };
-                userThreadTask.start();
-            } else {
-                //nothing
-            }
+            };
+            userThreadTask.start();
         } else {
             requestStatus = REQUEST_STATUS_ALREADY_EXIST;
         }
@@ -174,18 +139,18 @@ public class UserProfileHandler {
         return requestStatus;
     }
 
-    VCard loadVCardAndUpdateDB(Context context, String jid){
-        return loadVCardAndUpdateDB(context, jid, true);
+    UserCard loadVCardAndUpdateDB(Context context, String jid, boolean loadInterests){
+        return loadVCardAndUpdateDB(context, jid, loadInterests, true);
     }
 
-    VCard loadVCardAndUpdateDBWithNoUpdateRequired(Context context, String jid, boolean isAvailableInMyContacts){
-        VCard card = new VCard();
+    UserCard loadVCardAndUpdateDBWithNoUpdateRequired(Context context, String jid, boolean loadInterests, boolean isAvailableInMyContacts){
+        UserCard card = new UserCard();
         try {
-            card.load(XMPPClient.getConnection(), jid + "@" + XMPPClient.SERVICE_NAME);
+            card.loadCard( context, jid, true, true, loadInterests, true, false);
 
-            String status = card.getMiddleName();
-            byte[] image = card.getAvatar();
-            String nickname = card.getNickName();
+            String status = card.getStatus();
+            byte[] image = card.getThumbnail();
+            String nickname = card.getName();
 
             if( isAvailableInMyContacts ) {
                 SportsUnityDBHelper.getInstance(context).updateContacts(jid, image, status, false);
@@ -200,19 +165,22 @@ public class UserProfileHandler {
         return card;
     }
 
-    VCard loadVCardAndUpdateDB(Context context, String jid, boolean isAvailableInMyContacts){
-        VCard card = new VCard();
+    UserCard loadVCardAndUpdateDB(Context context, String jid, boolean loadInterests, boolean isAvailableInMyContacts){
+        UserCard card = new UserCard();
         try {
-            card.load(XMPPClient.getConnection(), jid + "@" + XMPPClient.SERVICE_NAME);
+            boolean success = card.loadCard( context, jid, true, true, loadInterests, true, false);
+            if( success ) {
+                String status = card.getStatus();
+                byte[] image = card.getThumbnail();
+                String nickname = card.getName();
 
-            String status = card.getMiddleName();
-            byte[] image = card.getAvatar();
-            String nickname = card.getNickName();
-
-            if( isAvailableInMyContacts ) {
-                SportsUnityDBHelper.getInstance(context).updateContacts(jid, image, status);
+                if (isAvailableInMyContacts) {
+                    SportsUnityDBHelper.getInstance(context).updateContacts(jid, image, status);
+                } else {
+                    SportsUnityDBHelper.getInstance(context).updateContacts(jid, nickname, image, status);
+                }
             } else {
-                SportsUnityDBHelper.getInstance(context).updateContacts(jid, nickname, image, status);
+                card = null;
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -225,28 +193,21 @@ public class UserProfileHandler {
     public int submitUserProfile(Context context, Contacts contacts, String listenerKey) {
         int requestStatus = REQUEST_STATUS_FAILED;
         if (!requestInProcess_RequestTagAndListenerKey.containsKey(SUBMIT_PROFILE_REQUEST_TAG)) {
+            requestInProcess_RequestTagAndListenerKey.put(SUBMIT_PROFILE_REQUEST_TAG, listenerKey);
+            requestStatus = REQUEST_STATUS_QUEUED;
 
-            if (XMPPClient.getInstance().isConnectionAuthenticated()) {
+            UserThreadTask userThreadTask = new UserThreadTask(context, SUBMIT_PROFILE_REQUEST_TAG, contacts) {
 
-                requestInProcess_RequestTagAndListenerKey.put(SUBMIT_PROFILE_REQUEST_TAG, listenerKey);
-                requestStatus = REQUEST_STATUS_QUEUED;
+                @Override
+                public Object process() {
+                    Contacts userContact = (Contacts) object;
 
-                UserThreadTask userThreadTask = new UserThreadTask(context, SUBMIT_PROFILE_REQUEST_TAG, contacts) {
+                    Boolean success = submitUserVCard(context, userContact);
+                    return success;
+                }
 
-                    @Override
-                    public Object process() {
-                        Contacts userContact = (Contacts) object;
-
-                        Boolean success = submitUserInfo(context, userContact);
-                        if( success ) {
-                            success = submitUserVCard(context, userContact);
-                        }
-                        return success;
-                    }
-
-                };
-                userThreadTask.start();
-            }
+            };
+            userThreadTask.start();
         } else {
             requestStatus = REQUEST_STATUS_ALREADY_EXIST;
         }
@@ -290,31 +251,17 @@ public class UserProfileHandler {
     public boolean submitUserFavorites(Context context){
         boolean success = false;
         try {
-            success = sendInterests(context);
+            JSONArray interests = FavouriteItemWrapper.getInstance(context).getAllInterestsAsJsonArray();
 
-            if( success ) {
-                success = false;
+            UserCard card = new UserCard();
+            card.setInterest( interests);
+            success = card.saveInterests(context);
 
-                if (UserUtil.isFilterCompleted() && XMPPClient.getConnection() != null) {
-                    VCardManager manager = VCardManager.getInstanceFor(XMPPClient.getConnection());
-                    VCard vCard = new VCard();
-                    vCard.load(XMPPClient.getConnection());
-                    vCard.setField("fav_list", TinyDB.getInstance(context).getString(TinyDB.FAVOURITE_FILTERS));
-                    manager.saveVCard(vCard);
-
-                    success = true;
-                    UserUtil.setFavouriteVcardUpdated(context, true);
-                } else {
-                    success = false;
-                    UserUtil.setFavouriteVcardUpdated(context, false);
-                }
+            if(success) {
+                UserUtil.setFavouriteVcardUpdated(context, true);
+            } else {
+                UserUtil.setFavouriteVcardUpdated(context, false);
             }
-        } catch (SmackException.NoResponseException e) {
-            e.printStackTrace();
-        } catch (XMPPException.XMPPErrorException e) {
-            e.printStackTrace();
-        } catch (SmackException.NotConnectedException e) {
-            e.printStackTrace();
         } catch (Exception ex){
             ex.printStackTrace();
         }
@@ -326,10 +273,7 @@ public class UserProfileHandler {
         String jid = TinyDB.getInstance(context).getString(TinyDB.KEY_USER_JID);
         Contacts userContact = SportsUnityDBHelper.getInstance(context).getContactByJid(jid);
 
-        boolean success = submitUserInfo(context, userContact);
-        if( success ) {
-            success = submitUserVCard(context, userContact);
-        }
+        boolean success = submitUserVCard(context, userContact);
         return success;
     }
 
@@ -338,63 +282,17 @@ public class UserProfileHandler {
         return SportsUnityDBHelper.getInstance(context).getContactByJid(jid);
     }
 
-    private boolean submitUserInfo(Context context, Contacts userContact){
-        String jsonString = getUserInfoAsJSON(context, userContact);
-        boolean success = false;
-        HttpURLConnection httpURLConnection = null;
-        ByteArrayInputStream byteArrayInputStream = null;
-        try {
-            URL sendInterests = new URL(SET_USER_INFO_URL);
-            httpURLConnection = (HttpURLConnection) sendInterests.openConnection();
-            httpURLConnection.setConnectTimeout(Constants.CONNECTION_TIME_OUT);
-            httpURLConnection.setDoInput(false);
-            httpURLConnection.setDoOutput(true);
-            httpURLConnection.setRequestMethod("POST");
-
-            byteArrayInputStream = new ByteArrayInputStream(jsonString.getBytes());
-            OutputStream outputStream = httpURLConnection.getOutputStream();
-
-            byte chunk[] = new byte[4096];
-            int read = 0;
-            while ((read = byteArrayInputStream.read(chunk) ) != -1) {
-                outputStream.write(chunk, 0, read);
-            }
-
-            if (httpURLConnection.getResponseCode() == HttpURLConnection.HTTP_OK) {
-                success = true;
-            } else {
-
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                httpURLConnection.disconnect();
-            } catch (Exception ex) {
-            }
-        }
-        return success;
-    }
-
     private boolean submitUserVCard(Context context, Contacts userContact){
         boolean success = false;
         try {
-            VCardManager manager = VCardManager.getInstanceFor(XMPPClient.getConnection());
-            VCard vCard = new VCard();
-            vCard.setNickName(userContact.getName());
-            vCard.setAvatar(userContact.image);
-            vCard.setMiddleName(userContact.status);
-            vCard.setJabberId(XMPPClient.getConnection().getUser());
-            manager.saveVCard(vCard);
+            UserCard card = new UserCard();
+            card.setName(userContact.getName());
+            card.setPic(userContact.image);
+            card.setStatus(userContact.status);
+            card.saveCard(context, true, true, false, false, true);
 
             success = true;
             saveLoginUserDetail(context, userContact);
-        } catch (SmackException.NoResponseException e) {
-            e.printStackTrace();
-        } catch (XMPPException.XMPPErrorException e) {
-            e.printStackTrace();
-        } catch (SmackException.NotConnectedException e) {
-            e.printStackTrace();
         } catch (Exception ex){
             ex.printStackTrace();
         }
@@ -422,7 +320,7 @@ public class UserProfileHandler {
     private void saveLoginUserDetail(Context context, Contacts loginUserDetail){
         int count = SportsUnityDBHelper.getInstance(context).updateContacts(loginUserDetail.phoneNumber, loginUserDetail.jid, loginUserDetail.getName(), loginUserDetail.image, loginUserDetail.status, Contacts.AVAILABLE_NOT);
         if( count == 0 ) {
-            SportsUnityDBHelper.getInstance(context).addToContacts(loginUserDetail.getName(), loginUserDetail.phoneNumber, loginUserDetail.jid, loginUserDetail.status, loginUserDetail.image, Contacts.AVAILABLE_NOT);
+            SportsUnityDBHelper.getInstance(context).addToContacts(loginUserDetail.getName(), loginUserDetail.phoneNumber, loginUserDetail.jid, loginUserDetail.status, loginUserDetail.image, Contacts.AVAILABLE_NOT, false);
         }
     }
 

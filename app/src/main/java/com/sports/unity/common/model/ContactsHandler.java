@@ -11,14 +11,13 @@ import com.sports.unity.BuildConfig;
 import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.XMPPManager.PubSubUtil;
 import com.sports.unity.XMPPManager.RosterHandler;
-import com.sports.unity.XMPPManager.XMPPClient;
 import com.sports.unity.messages.controller.model.Contacts;
 import com.sports.unity.messages.controller.model.PubSubMessaging;
 import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
+import com.sports.unity.util.UserCard;
 
 import org.jivesoftware.smack.roster.Roster;
-import org.jivesoftware.smackx.vcardtemp.packet.VCard;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -458,8 +457,8 @@ public class ContactsHandler {
                         break;
                     }
                 } else {
-                    VCard vCard = UserProfileHandler.getInstance().loadVCardAndUpdateDBWithNoUpdateRequired(context, contact.jid, contact.availableStatus == Contacts.AVAILABLE_BY_MY_CONTACTS);
-                    if (vCard == null) {
+                    UserCard card = UserProfileHandler.getInstance().loadVCardAndUpdateDBWithNoUpdateRequired(context, contact.jid, false, contact.availableStatus == Contacts.AVAILABLE_BY_MY_CONTACTS);
+                    if (card == null) {
                         success = false;
                         break;
                     }

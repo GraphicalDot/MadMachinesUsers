@@ -596,7 +596,7 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
                 ContactChatEntry.COLUMN_AVAILABLE_STATUS
         };
 
-        String selection = (forcedSync ? " " : ContactChatEntry.COLUMN_UPDATE_REQUIRED + " == 1 AND ") + ContactChatEntry.COLUMN_JID + " is not null ";
+        String selection = ContactChatEntry.COLUMN_AVAILABLE_STATUS + " > " + Contacts.AVAILABLE_NOT + " AND " + (forcedSync ? " " : ContactChatEntry.COLUMN_UPDATE_REQUIRED + " == 1 AND ") + ContactChatEntry.COLUMN_JID + " is not null ";
         String[] selectionArgs = null;
 
         Cursor c = db.query(ContactChatEntry.TABLE_NAME, projection, selection, selectionArgs, null, null, null);
@@ -1933,7 +1933,7 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
             c.close();
 
             if (!exist) {
-                DUMMY_CONTACT_ROW_ID = addToContacts("", "", DUMMY_JID, "", null, Contacts.AVAILABLE_NOT);
+                DUMMY_CONTACT_ROW_ID = addToContacts("", "", DUMMY_JID, "", null, Contacts.AVAILABLE_NOT, false);
             } else {
                 //nothing
             }

@@ -56,8 +56,9 @@ import com.sports.unity.util.ActivityActionListener;
 import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
 import com.sports.unity.util.ImageUtil;
+import com.sports.unity.util.UserCard;
 
-import org.jivesoftware.smackx.vcardtemp.packet.VCard;
+import org.json.JSONArray;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -637,11 +638,11 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
                     }
                 });
             }
-        } else if (requestTag.equals(UserProfileHandler.LOAD_PROFILE_REQUEST_TAG) && content != null) {
+        } else if (requestTag.equals(UserProfileHandler.LOAD_PROFILE_REQUEST_TAG) ) {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    VCard card = (VCard) content;
+                    UserCard card = (UserCard) content;
                     if (card != null) {
                         successfulVCardLoad(card);
                     } else {
@@ -678,15 +679,13 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
         }
     }
 
-    private void updateUserDetail(VCard card) {
-        //TODO
-
+    private void updateUserDetail(UserCard card) {
         try {
             int contactAvailableStatus = getIntent().getIntExtra(ChatScreenActivity.INTENT_KEY_CONTACT_AVAILABLE_STATUS, Contacts.AVAILABLE_BY_MY_CONTACTS);
 
-            String userStatus = card.getMiddleName();
-            imageArray = card.getAvatar();
-            String nickname = card.getNickName();
+            String userStatus = card.getStatus();
+            imageArray = card.getThumbnail();
+            String nickname = card.getName();
 
             if (imageArray != null) {
                 profileImage.setImageBitmap(BitmapFactory.decodeByteArray(imageArray, 0, imageArray.length));
@@ -703,7 +702,7 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
             status.setText(userStatus);
 
             {
-                String favorite = card.getField("fav_list");
+                JSONArray favorite = card.getInterest();
                 ArrayList<FavouriteItem> savedList = FavouriteItemWrapper.getInstance(this).getFavListOfOthers(favorite);
                 setFavouriteProfile(savedList);
             }
@@ -720,7 +719,7 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
         byteArray = ImageUtil.getCompressedBytes(image);
     }
 
-    private void successfulVCardLoad(VCard vCard) {
+    private void successfulVCardLoad(UserCard vCard) {
         progressBar.setVisibility(View.GONE);
         updateUserDetail(vCard);
     }

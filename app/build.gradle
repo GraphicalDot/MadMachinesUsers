@@ -4,7 +4,7 @@ android {
         config {
             keyAlias 'sportsunityalias'
             keyPassword 'info12345'
-            storeFile file('D:/Android/StudioWorkspace/sportsunitykeystore.jks')
+            storeFile file('/home/amandeep/Downloads/sportsunitykeystore.jks')
             storePassword 'info12345'
         }
     }
