@@ -50,6 +50,8 @@
     <string name="btn_resend">RESEND</string>
     <string name="edit_phone_number">EDIT PHONE NUMBER</string>
     <string name="btn_create_account">Create Account</string>
+    <string name="near_by_text">See Nearby Fans</string>
+    <string name="connect_around_text">Connect to fans around you</string>
 
     <string name="default_status">Available</string>
     <string name="others_default_status">No Status</string>
