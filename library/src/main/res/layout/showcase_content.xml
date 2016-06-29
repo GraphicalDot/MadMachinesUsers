@@ -60,7 +60,7 @@
             android:textAllCaps="true"
             android:textColor="#2c84cc"
             android:textSize="15sp"
-            android:visibility="visible" />
+            android:visibility="gone" />
 
     </RelativeLayout>
 

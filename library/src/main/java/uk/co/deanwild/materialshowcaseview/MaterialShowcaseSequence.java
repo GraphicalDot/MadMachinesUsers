@@ -35,7 +35,7 @@ public class MaterialShowcaseSequence implements IDetachedListener {
 
     public MaterialShowcaseSequence addSequenceItem(View targetView, String heading, String content, String dismissText) {
 
-        MaterialShowcaseView sequenceItem = new MaterialShowcaseView.Builder(mActivity)
+        MaterialShowcaseView sequenceItem = new MaterialShowcaseView.Builder(mActivity, true)
                 .setTarget(targetView)
                 .setDismissText(dismissText)
                 .setContentHeadingText(heading)
@@ -52,7 +52,7 @@ public class MaterialShowcaseSequence implements IDetachedListener {
     }
 
     public MaterialShowcaseSequence addSequenceItemWithRectShape(View targetView, String heading, String content, String dismissText) {
-        MaterialShowcaseView sequenceItem = new MaterialShowcaseView.Builder(mActivity)
+        MaterialShowcaseView sequenceItem = new MaterialShowcaseView.Builder(mActivity,true)
                 .setTarget(targetView)
                 .setDismissText(dismissText)
                 .setContentHeadingText(heading)
