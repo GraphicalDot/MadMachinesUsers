@@ -25,6 +25,7 @@ import android.widget.Toast;
 
 import com.sports.unity.R;
 import com.sports.unity.common.controller.FilterActivity;
+import com.sports.unity.common.controller.GlobalSearchActivity;
 import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.common.model.TinyDB;
 import com.sports.unity.common.model.UserUtil;
@@ -128,7 +129,8 @@ public class NewsFragment extends Fragment implements NewsContentHandler.Content
         int id = item.getItemId();
 
         if (id == R.id.action_search) {
-            Intent intent = new Intent(getActivity(), NewsSearchActivity.class);
+            Intent intent = new Intent(getActivity(), GlobalSearchActivity.class);
+            intent.putExtra(Constants.INTENT_KEY_GLOBAL_POSITION, 1);
             startActivity(intent);
             return true;
         }

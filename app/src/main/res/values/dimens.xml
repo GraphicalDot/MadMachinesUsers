@@ -42,7 +42,7 @@
     <dimen name="record_button_size">10dp</dimen>
     <dimen name="stickers_size">70dp</dimen>
     <dimen name="facebook_logo_padding">24dp</dimen>
-    <dimen name="edit_profile_button_height">35dp</dimen>
+    <dimen name="edit_profile_button_height">30dp</dimen>
     <!-- ends -->
 
     <!-- tour related -->

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">
+
+    <com.sports.unity.common.view.CustomRobotoSlabRegularTextView
+        android:id="@+id/category"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="left"
+        android:paddingBottom="@dimen/vertical_padding_very_very_small"
+        android:paddingLeft="@dimen/horizontal_padding_very_very_small"
+        android:paddingTop="@dimen/vertical_padding_very_very_small"
+        android:text="Contacts" />
+
+    <com.sports.unity.common.view.CustomRobotoSlabRegularTextView
+        android:id="@+id/show_all"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:paddingBottom="@dimen/vertical_padding_very_very_small"
+        android:paddingRight="@dimen/horizontal_padding_very_very_small"
+        android:paddingTop="@dimen/vertical_padding_very_very_small"
+        android:text="Show All"
+        android:textColor="@color/app_theme_blue" />
+</LinearLayout>

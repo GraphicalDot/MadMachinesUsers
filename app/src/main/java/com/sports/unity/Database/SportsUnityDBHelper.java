@@ -17,6 +17,7 @@ import com.sports.unity.messages.controller.model.Message;
 import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -1873,6 +1874,93 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
         }
         c.close();
         return -1;
+    }
+
+    public ArrayList<Contacts> getMatchingContacts(String text) {
+        ArrayList<Contacts> list = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String[] projection = {
+                ContactChatEntry.COLUMN_NAME,
+                ContactChatEntry.COLUMN_JID,
+                ContactChatEntry.COLUMN_PHONE_NUMBER,
+                ContactChatEntry.COLUMN_IMAGE,
+                ContactChatEntry.COLUMN_ID,
+                ContactChatEntry.COLUMN_STATUS,
+                ContactChatEntry.COLUMN_AVAILABLE_STATUS};
+
+        String sortOrder = ContactChatEntry.COLUMN_NAME + " DESC";
+
+        String selection = ContactChatEntry.COLUMN_NAME + " LIKE ? ";
+        String[] selectionArgs = {"%" + text + "%"};
+
+        Cursor c = db.query(
+                ContactChatEntry.TABLE_NAME,  // The table to query
+                projection,                               // The columns to return
+                selection,                                // The columns for the WHERE clause
+                selectionArgs,                            // The values for the WHERE clause
+                null,                                     // don't group the rows
+                null,                                     // don't filter by row groups
+                sortOrder                                 // The sort order
+        );
+
+        if (c.moveToFirst()) {
+            do {
+                list.add(new Contacts(c.getString(0), c.getString(1), c.getString(2), c.getBlob(3), c.getInt(4), c.getString(5), c.getInt(6)));
+            } while (c.moveToNext());
+        }
+        return list;
+    }
+
+    public ArrayList<Message> getMatchingChat(String text) {
+        ArrayList<Message> list = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String[] projection = {
+                MessagesEntry.COLUMN_PHONENUMBER,                               //0th column
+                MessagesEntry.COLUMN_DATA_TEXT,                                 //1th column
+                MessagesEntry.COLUMN_DATA_MEDIA,                                //2th column
+                MessagesEntry.COLUMN_MIME_TYPE,                                 //3th column
+                MessagesEntry.COLUMN_SERVER_RECEIPT,                            //4th column
+                MessagesEntry.COLUMN_RECIPIENT_RECEIPT,                         //5th column
+                MessagesEntry.COLUMN_NAME_I_AM_SENDER,                          //6th column
+                MessagesEntry.COLUMN_RECEIVE_TIMESTAMP,                         //7th column
+                MessagesEntry.COLUMN_SEND_TIMESTAMP,                            //8th column
+                MessagesEntry.COLUMN_ID,                                        //9th column
+                MessagesEntry.COLUMN_READ_STATUS,                               //10th column
+                MessagesEntry.COLUMN_MEDIA_FILE_NAME,
+                MessagesEntry.COLUMN_MESSAGE_ID,
+                MessagesEntry.COLUMN_CHAT_ID
+        };
+
+        String sortOrder = MessagesEntry.COLUMN_SEND_TIMESTAMP + " DESC";
+
+        String selection = MessagesEntry.COLUMN_DATA_TEXT + " LIKE ? AND " + MessagesEntry.COLUMN_MIME_TYPE + " LIKE ?";
+        String[] selectionArgs = {"%" + text + "%", MIME_TYPE_TEXT};
+
+        Cursor c = db.query(
+                MessagesEntry.TABLE_NAME,  // The table to query
+                projection,                               // The columns to return
+                selection,                                // The columns for the WHERE clause
+                selectionArgs,                            // The values for the WHERE clause
+                null,                                     // don't group the rows
+                null,                                     // don't filter by row groups
+                sortOrder                                 // The sort order
+        );
+
+        if (c.moveToFirst()) {
+            do {
+                boolean value = c.getInt(6) > 0;
+                int id = c.getInt(9);
+                if (id != DUMMY_MESSAGE_ROW_ID) {
+                    boolean read = c.getInt(10) > 0;
+                    list.add(new Message(id, c.getString(0), c.getString(1), c.getBlob(2), c.getString(3), c.getString(4), c.getString(5), value, c.getString(7), c.getString(8), read, c.getInt(13), c.getString(11), c.getString(12)));
+                } else {
+                    //nothing
+                }
+            } while (c.moveToNext());
+        }
+        return list;
     }
 
     public static class GroupParticipants {

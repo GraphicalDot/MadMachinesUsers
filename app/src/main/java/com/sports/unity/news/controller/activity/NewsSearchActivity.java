@@ -22,6 +22,7 @@ import android.widget.Toast;
 
 import com.sports.unity.R;
 import com.sports.unity.common.controller.CustomAppCompatActivity;
+import com.sports.unity.common.controller.GlobalSearchActivity;
 import com.sports.unity.news.controller.fragment.NewsFragment;
 import com.sports.unity.news.model.NewsContentHandler;
 import com.sports.unity.util.CommonUtil;
@@ -31,6 +32,8 @@ public class NewsSearchActivity extends CustomAppCompatActivity {
     private Bundle searchFilterBundle;
 
     private static final String NEWS_FRAGMENT_TAG = "news_fragment_tag";
+
+    private EditText search;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +47,16 @@ public class NewsSearchActivity extends CustomAppCompatActivity {
     protected void onResume() {
         super.onResume();
         automaticSearch();
+        checkForGlobalSearchKeyword();
+    }
+
+    private void checkForGlobalSearchKeyword() {
+        String keyword = getIntent().getStringExtra(GlobalSearchActivity.KEYWORD);
+        if (keyword != null) {
+            search.setText(keyword);
+            performSearch(keyword);
+            search.clearFocus();
+        }
     }
 
     private void automaticSearch() {
@@ -57,7 +70,7 @@ public class NewsSearchActivity extends CustomAppCompatActivity {
 
     private void initView() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar_search);
-        final EditText search = (EditText) toolbar.findViewById(R.id.search_view);
+        search = (EditText) toolbar.findViewById(R.id.search_view);
         ImageView back = (ImageView) toolbar.findViewById(R.id.img_back);
         back.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_WHITE, true));
         final ImageView clear_search = (ImageView) toolbar.findViewById(R.id.search_clear);

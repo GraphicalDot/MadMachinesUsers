@@ -40,6 +40,7 @@ public class ScoresContentHandler {
     public static final String CALL_NAME_MATCH_COMMENTARIES = "MATCH_COMMENTARIES";
     public static final String CALL_NAME_NEAR_BY_USERS = "NEAR_BY_USERS";
     public static final String CALL_NAME_PLAYER_PROFILE = "PLAYER_PROFILE";
+    public static final String CALL_NAME_GLOBAL_SEARCH = "GLOBAL SEARCH";
 
     public static final String CALL_NAME_CRICKET_MATCH_SUMMARY = "CRICKET_MATCH_SUMMARY";
     public static final String CALL_NAME_CRICKET_MATCH_SCORECARD = "CRICKET_MATCH_SCORECARD";
@@ -59,6 +60,7 @@ public class ScoresContentHandler {
     private static final String URL_CREATE = "http://" + BuildConfig.XMPP_SERVER_API_BASE_URL + "/create?";
     private static final String URL_REQUEST_OTP = "http://" + BuildConfig.XMPP_SERVER_API_BASE_URL + "/create?";
     private static final String URL_NEAR_BY = "http://" + BuildConfig.XMPP_SERVER_API_BASE_URL + "/get_nearby_users?";
+    private static final String URL_GLOBAL_SEARCH = "http://52.78.56.248:5000/fav_anything?search=";
 
     private static final String URL_PARAMS_NEWS_IMAGE_DPI = "image_size";
     private static final String URL_PARAMS_NEWS_ID = "news_id";
@@ -201,7 +203,7 @@ public class ScoresContentHandler {
             requestPlayerProfile(sportsType, playerName, requestListenerKey, requestTag);
         } else if (callName.equals(CALL_NAME_LEAGUE_TABLE)) {
             String leagueId = parameters.get(PARAM_SERIESID);
-            requestLeagueTable( leagueId, requestListenerKey, requestTag);
+            requestLeagueTable(leagueId, requestListenerKey, requestTag);
         } else if (callName.equals(CALL_NAME_FOOTBALL_STAFF_PICK)) {
             String leagueId = parameters.get(PARAM_SERIESID);
             requestStaffPick(leagueId, requestListenerKey, requestTag);
@@ -224,7 +226,7 @@ public class ScoresContentHandler {
         } else if (callName.equals(CALL_NAME_FOOTBALL_SQUAD)) {
             String team1 = parameters.get(PARAM_TEAM_1);
             String team2 = parameters.get(PARAM_TEAM_2);
-            requestFootballSquad( team1, team2, requestListenerKey, requestTag);
+            requestFootballSquad(team1, team2, requestListenerKey, requestTag);
         } else if (callName.equals(CALL_NAME_FOOTBALL_PLAYERS)) {
             String teamId = parameters.get(PARAM_TEAM_1);
             requestFootballPlayers(teamId, requestListenerKey, requestTag);
@@ -237,8 +239,21 @@ public class ScoresContentHandler {
         } else if (callName.equals(CALL_NAME_FOOTBALL_TIMELINE)) {
             String matchId = parameters.get(PARAM_ID);
             requestFootballTimeLine(matchId, requestListenerKey, requestTag);
+        } else if (callName.endsWith(CALL_NAME_GLOBAL_SEARCH)) {
+            String keyword = parameters.get(Constants.GLOBAL_SEARCH_KEYWORD);
+            String endpoint = keyword.concat(parameters.get(Constants.GLOBAL_SEARCH_ENDPOINT));
+            String uri = endpoint.concat(parameters.get(Constants.GLOBAL_SEARCH_TYPE));
+            searchGlobally(uri, requestTag, requestListenerKey);
         }
 
+    }
+
+    private void searchGlobally(String uri, String requestTag, String requestListenerKey) {
+        if (!requestInProcess_RequestTagAndListenerKey.containsKey(requestTag)) {
+            String url = URL_GLOBAL_SEARCH;
+            url = url.concat(uri);
+            requestContent(requestTag, requestListenerKey, url);
+        }
     }
 
     public boolean isRequestInProcess(String requestTag) {
@@ -413,23 +428,23 @@ public class ScoresContentHandler {
         }
     }
 
-    private void requestMatchSummary(String seriesId, String matchId, String listenerKey, String requestTag){
+    private void requestMatchSummary(String seriesId, String matchId, String listenerKey, String requestTag) {
         if (!requestInProcess_RequestTagAndListenerKey.containsKey(requestTag)) {
-            String url = String.format(URL_PARAMS_FOR_CRICKET_MATCH_SUMMARY, seriesId,matchId);
+            String url = String.format(URL_PARAMS_FOR_CRICKET_MATCH_SUMMARY, seriesId, matchId);
 
             requestContent(requestTag, listenerKey, url);
         }
     }
 
-    private void requestMatchScorecard(String seriesId, String matchId, String listenerKey, String requestTag){
+    private void requestMatchScorecard(String seriesId, String matchId, String listenerKey, String requestTag) {
         if (!requestInProcess_RequestTagAndListenerKey.containsKey(requestTag)) {
-            String url = String.format(URL_PARAMS_FOR_CRICKET_MATCH_SCORECARD, seriesId,matchId);
+            String url = String.format(URL_PARAMS_FOR_CRICKET_MATCH_SCORECARD, seriesId, matchId);
 
             requestContent(requestTag, listenerKey, url);
         }
     }
 
-    private void requestCricketPlayer(String matchId, String listenerKey, String requestTag){
+    private void requestCricketPlayer(String matchId, String listenerKey, String requestTag) {
         if (!requestInProcess_RequestTagAndListenerKey.containsKey(requestTag)) {
             String url = String.format(URL_PARAMS_FOR_CRICKET_PLAYER, matchId);
 
@@ -453,42 +468,42 @@ public class ScoresContentHandler {
         }
     }
 
-    private void requestFootballForms(String leagueId, String team1, String team2, String listenerKey, String requestTag){
+    private void requestFootballForms(String leagueId, String team1, String team2, String listenerKey, String requestTag) {
         if (!requestInProcess_RequestTagAndListenerKey.containsKey(requestTag)) {
             String url = String.format(URL_PARAMS_FOR_FOOTBALL_FORM, team1, team2, leagueId);
             requestContent(requestTag, listenerKey, url);
         }
     }
 
-    private void requestFootballSquad( String team1, String team2, String listenerKey, String requestTag){
+    private void requestFootballSquad(String team1, String team2, String listenerKey, String requestTag) {
         if (!requestInProcess_RequestTagAndListenerKey.containsKey(requestTag)) {
             String url = String.format(URL_PARAMS_FOR_FOOTBALL_SQUAD, team1, team2);
             requestContent(requestTag, listenerKey, url);
         }
     }
 
-    private void requestFootballPlayers( String teamId, String listenerKey, String requestTag){
+    private void requestFootballPlayers(String teamId, String listenerKey, String requestTag) {
         if (!requestInProcess_RequestTagAndListenerKey.containsKey(requestTag)) {
             String url = String.format(URL_PARAMS_FOR_FOOTBALL_PLAYERS, teamId);
             requestContent(requestTag, listenerKey, url);
         }
     }
 
-    private void requestFootballLineUp( String matchId, String listenerKey, String requestTag){
+    private void requestFootballLineUp(String matchId, String listenerKey, String requestTag) {
         if (!requestInProcess_RequestTagAndListenerKey.containsKey(requestTag)) {
             String url = String.format(URL_PARAMS_FOR_FOOTBALL_LINE_UP, matchId);
             requestContent(requestTag, listenerKey, url);
         }
     }
 
-    private void requestFootballStats( String matchId, String listenerKey, String requestTag){
+    private void requestFootballStats(String matchId, String listenerKey, String requestTag) {
         if (!requestInProcess_RequestTagAndListenerKey.containsKey(requestTag)) {
             String url = String.format(URL_PARAMS_FOR_FOOTBALL_STATS, matchId);
             requestContent(requestTag, listenerKey, url);
         }
     }
 
-    private void requestFootballTimeLine( String matchId, String listenerKey, String requestTag){
+    private void requestFootballTimeLine(String matchId, String listenerKey, String requestTag) {
         if (!requestInProcess_RequestTagAndListenerKey.containsKey(requestTag)) {
             String url = String.format(URL_PARAMS_FOR_FOOTBALL_TIMELINE, matchId);
             requestContent(requestTag, listenerKey, url);

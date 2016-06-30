@@ -25,6 +25,7 @@ import android.widget.Toast;
 
 import com.sports.unity.R;
 import com.sports.unity.common.controller.FilterActivity;
+import com.sports.unity.common.controller.GlobalSearchActivity;
 import com.sports.unity.common.controller.MainActivity;
 import com.sports.unity.common.model.DataChangeCounterHandler;
 import com.sports.unity.common.model.FavouriteItem;
@@ -34,6 +35,7 @@ import com.sports.unity.common.model.FriendsWatchingHandler.FriendsContentListen
 import com.sports.unity.common.model.TinyDB;
 import com.sports.unity.common.model.UserUtil;
 import com.sports.unity.common.viewhelper.CustomComponentListener;
+import com.sports.unity.news.controller.activity.NewsSearchActivity;
 import com.sports.unity.scoredetails.MatchListScrollListener;
 import com.sports.unity.scores.model.ScoresContentHandler;
 import com.sports.unity.scores.model.ScoresJsonParser;
@@ -124,7 +126,6 @@ public class MatchListFragment extends Fragment {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.fragment_scores_menu, menu);
-        menu.findItem(R.id.action_search).setVisible(false);
 
         MenuItem item = menu.findItem(R.id.myswitch);
         item.setActionView(R.layout.switch_matchlist);
@@ -161,8 +162,9 @@ public class MatchListFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.action_search) {
-//            Intent intent = new Intent(getActivity(), NewsSearchActivity.class);
-//            startActivity(intent);
+            Intent intent = new Intent(getActivity(), GlobalSearchActivity.class);
+            intent.putExtra(Constants.INTENT_KEY_GLOBAL_POSITION, 0);
+            startActivity(intent);
             return true;
         }
 
