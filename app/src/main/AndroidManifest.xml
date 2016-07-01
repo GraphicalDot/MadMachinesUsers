@@ -317,6 +317,11 @@
             android:name=".common.controller.SearchFavoriatesActivity"
             android:label="@string/title_activity_search_favoriates"
             android:theme="@style/AppTheme"></activity>
+        <activity
+            android:name=".common.controller.GlobalSearchActivity"
+            android:label="@string/title_activity_search_favoriates"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme"></activity>
     </application>
 
 </manifest>

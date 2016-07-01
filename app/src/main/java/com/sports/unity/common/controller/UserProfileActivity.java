@@ -107,6 +107,11 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
     private ImageView editImage;
     private Button saveProfile;
 
+    private LinearLayout acceptBlockLayout;
+    private Button addFriends;
+    private Button accept;
+    private Button block;
+
     private String jabberId = null;
 
     private LayoutInflater mInflater;
@@ -156,7 +161,7 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
     private View.OnClickListener blockClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-
+            //TODO
         }
     };
 
@@ -218,12 +223,13 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
                 public void run() {
                     requestId = SportsUnityDBHelper.getInstance(getApplicationContext()).checkJidForPendingRequest(getIntent().getStringExtra("jid"));
                     if (eventId == ActivityActionHandler.EVENT_FRIEND_REQUEST_SENT) {
-                        toolbarActionButton.setText(REQUEST_SENT);
+                        addFriends.setText(REQUEST_SENT);
                     } else if (eventId == ActivityActionHandler.EVENT_FRIEND_REQUEST_RECEIVED) {
-                        toolbarActionButton.setText(ACCEPT_REQUEST);
+//                        toolbarActionButton.setText(ACCEPT_REQUEST);
+                        acceptBlockLayout.setVisibility(View.VISIBLE);
                         Toast.makeText(getApplicationContext(), "Friend request received", Toast.LENGTH_SHORT).show();
                     } else if (eventId == ActivityActionHandler.EVENT_FRIEND_REQUEST_ACCEPTED) {
-                        toolbarActionButton.setVisibility(View.GONE);
+                        acceptBlockLayout.setVisibility(View.GONE);
                         Toast.makeText(getApplicationContext(), "You are now friends", Toast.LENGTH_SHORT).show();
                     }
                 }
@@ -287,14 +293,16 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
     private void setToolbar(boolean ownProfile) {
         // Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
 
-        LinearLayout acceptBlockLayout = (LinearLayout) findViewById(R.id.accept_block_layout);
+        acceptBlockLayout = (LinearLayout) findViewById(R.id.accept_block_layout);
         ImageView backImage = (ImageView) findViewById(R.id.back_image);
         ImageView editImage = (ImageView) findViewById(R.id.edit_image);
-        Button editProfie = (Button) findViewById(R.id.edit_profile);
-        Button accept = (Button) findViewById(R.id.accept);
-        Button block = (Button) findViewById(R.id.block);
-        Button addFriends = (Button) findViewById(R.id.add_friends);
+        Button editProfile = (Button) findViewById(R.id.edit_profile);
+        accept = (Button) findViewById(R.id.accept);
+        block = (Button) findViewById(R.id.block);
+        addFriends = (Button) findViewById(R.id.add_friends);
         Button saveProfile = (Button) findViewById(R.id.save_profile);
+
+        editProfile.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoLight());
 
 
         accept.setOnClickListener(acceptClickListener);
@@ -302,7 +310,7 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
         addFriends.setOnClickListener(addFriendsClickListener);
         editImage.setOnClickListener(editImageClickListner);
         saveProfile.setOnClickListener(saveProfileClickListner);
-        editProfie.setOnClickListener(editProfieClickListner);
+        editProfile.setOnClickListener(editProfieClickListner);
 
 
         //  LinearLayout clickAction = (LinearLayout) toolbar.findViewById(R.id.click_action);
@@ -314,8 +322,9 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
         if (ownProfile) {
             // editImage.setVisibility(View.VISIBLE);
             //toolbarActionButton.setText(INFO_EDIT);
-            editProfie.setVisibility(View.VISIBLE);
+            editProfile.setVisibility(View.VISIBLE);
         } else {
+            editProfile.setVisibility(View.GONE);
             if (getIntent().getBooleanExtra("otherChat", false)) {
                 requestId = SportsUnityDBHelper.getInstance(getApplicationContext()).checkJidForPendingRequest(getIntent().getStringExtra("jid"));
                 if (requestId == Contacts.PENDING_REQUESTS_TO_PROCESS) {
@@ -326,6 +335,7 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
                     // toolbarActionButton.setText(ADD_FRIEND);
                 } else if (requestId == Contacts.WAITING_FOR_REQUEST_ACCEPTANCE) {
                     //  toolbarActionButton.setText(REQUEST_SENT);
+                    addFriends.setVisibility(View.VISIBLE);
                     addFriends.setText("REQUEST SENT");
                 }
                 // toolbarActionButton.setBackground(getResources().getDrawable(R.drawable.round_edge_blue_box));
@@ -349,6 +359,8 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
         if (XMPPClient.getInstance().isConnectionAuthenticated()) {
             boolean success = PersonalMessaging.getInstance(getApplicationContext()).acceptFriendRequest(getIntent().getStringExtra("jid"));
             if (success) {
+                accept.setText("Accepting...");
+                block.setVisibility(View.GONE);
                 Toast.makeText(getApplicationContext(), "Accepting...", Toast.LENGTH_SHORT).show();
             } else {
                 Toast.makeText(getApplicationContext(), R.string.conn_not_authenticated, Toast.LENGTH_SHORT).show();
@@ -360,6 +372,7 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
         if (XMPPClient.getInstance().isConnectionAuthenticated()) {
             boolean success = PersonalMessaging.getInstance(getApplicationContext()).sendFriendRequest(getIntent().getStringExtra("jid"));
             if (success) {
+                addFriends.setText("Sending request..");
                 Toast.makeText(getApplicationContext(), "Sending...", Toast.LENGTH_SHORT).show();
             }
         } else {
@@ -504,7 +517,7 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
         name.setText(getIntent().getStringExtra("name"));
         name.setBackground(getResources().getDrawable(R.drawable.round_edge_black_box));
         name.setTextColor(getResources().getColor(R.color.ColorPrimaryDark));
-        name.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoCondensedBold());
+        name.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoLight());
         name.setEnabled(false);
         favDetails = (LinearLayout) findViewById(R.id.favDetails);
         status = (EditText) findViewById(R.id.your_status);
@@ -1026,34 +1039,42 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
     }
 
     private void onBack() {
-        if (editProfile.getVisibility() == View.GONE && progressBar.getVisibility() == View.GONE) {
-            AlertDialog.Builder build = new AlertDialog.Builder(UserProfileActivity.this);
-            build.setTitle("Discard Edits ? ");
-            build.setMessage("If you cancel now, your edits will be discarded.");
-            build.setPositiveButton("DISCARD", new DialogInterface.OnClickListener() {
+        if (ownProfile) {
+            if (editProfile.getVisibility() == View.GONE && progressBar.getVisibility() == View.GONE) {
+                AlertDialog.Builder build = new AlertDialog.Builder(UserProfileActivity.this);
+                build.setTitle("Discard Edits ? ");
+                build.setMessage("If you cancel now, your edits will be discarded.");
+                build.setPositiveButton("DISCARD", new DialogInterface.OnClickListener() {
 
-                public void onClick(DialogInterface dialog, int id) {
-                    discardChanges();
-                }
+                    public void onClick(DialogInterface dialog, int id) {
+                        discardChanges();
+                    }
 
-            });
-            build.setNegativeButton("KEEP", new DialogInterface.OnClickListener() {
+                });
+                build.setNegativeButton("KEEP", new DialogInterface.OnClickListener() {
 
-                public void onClick(DialogInterface dialog, int id) {
-                    //nothing
+                    public void onClick(DialogInterface dialog, int id) {
+                        //nothing
 
-                }
+                    }
 
-            });
+                });
 
-            AlertDialog dialog = build.create();
-            dialog.show();
+                AlertDialog dialog = build.create();
+                dialog.show();
+            } else {
+                finishActivity();
+            }
         } else {
-            Intent i = new Intent();
-            i.putExtra(ChatScreenActivity.INTENT_KEY_IMAGE, imageArray);
-            setResult(RESULT_OK, i);
-            finish();
+            finishActivity();
         }
+    }
+
+    private void finishActivity() {
+        Intent i = new Intent();
+        i.putExtra(ChatScreenActivity.INTENT_KEY_IMAGE, imageArray);
+        setResult(RESULT_OK, i);
+        finish();
     }
 
     private void discardChanges() {

@@ -356,7 +356,9 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
             @Override
             public void onDrawerSlide(View drawerView, float slideOffset) {
                 super.onDrawerSlide(drawerView, slideOffset);
-                navigationFragment.updatePendingFriendRequestCount(requestsCount);
+                if (navigationFragment != null) {
+                    navigationFragment.updatePendingFriendRequestCount(requestsCount);
+                }
             }
         };
 
