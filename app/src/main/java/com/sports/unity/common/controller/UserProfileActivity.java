@@ -17,8 +17,13 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Looper;
+import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.graphics.Palette;
+import android.support.v7.widget.SwitchCompat;
+import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Base64;
 import android.util.DisplayMetrics;
@@ -267,7 +272,6 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
 
         setToolbar(ownProfile);
         initView(ownProfile);
-
         jabberId = getIntent().getStringExtra("jid");
         if (jabberId == null) {
             jabberId = "ownProfile";
@@ -293,8 +297,18 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
     private void setToolbar(boolean ownProfile) {
         // Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
 
+        Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_menu_back);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBack();
+            }
+        });
         acceptBlockLayout = (LinearLayout) findViewById(R.id.accept_block_layout);
-        ImageView backImage = (ImageView) findViewById(R.id.back_image);
         ImageView editImage = (ImageView) findViewById(R.id.edit_image);
         Button editProfile = (Button) findViewById(R.id.edit_profile);
         accept = (Button) findViewById(R.id.accept);
@@ -343,16 +357,6 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
                 // toolbarActionButton.setVisibility(View.GONE);
             }
         }
-
-
-        backImage.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_WHITE, true));
-        backImage.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                onBack();
-            }
-        });
     }
 
     private void onClickAcceptFriend() {
@@ -500,13 +504,14 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
 
     private void initView(boolean ownProfile) {
 
+        CollapsingToolbarLayout collapsingToolbar = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
+        //collapsingToolbar.setTitle(getIntent().getStringExtra("name"));
         favDetails = (LinearLayout) findViewById(R.id.favDetails);
         editProfile = (Button) findViewById(R.id.edit_profile);
         //editProfile.setVisibility(View.VISIBLE);
         saveProfile = (Button) findViewById(R.id.save_profile);
         editImage = (ImageView) findViewById(R.id.edit_image);
         fbButton = (FrameLayout) findViewById(R.id.faceBook_btn);
-        ImageView backImage = (ImageView) findViewById(R.id.back_image);
 
 
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
@@ -550,6 +555,23 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
         } else {
             setInitDataOthers();
         }
+
+        final Bitmap bitmap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
+        setAppBarOffset(((int) (bitmap.getHeight() / 2)));
+    }
+
+    private void setAppBarOffset(final int offsetPx) {
+        final AppBarLayout mAppBarLayout = (AppBarLayout) findViewById(R.id.app_bar);
+        final CoordinatorLayout mCoordinatorLayout = (CoordinatorLayout) findViewById(R.id.root_coordinator_layout);
+
+        mAppBarLayout.post(new Runnable() {
+            @Override
+            public void run() {
+                CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) mAppBarLayout.getLayoutParams();
+                AppBarLayout.Behavior behavior = (AppBarLayout.Behavior) params.getBehavior();
+                behavior.onNestedPreScroll(mCoordinatorLayout, mAppBarLayout, null, 0, offsetPx, new int[]{0, 0});
+            }
+        });
     }
 
     private void setcustomFont() {
@@ -599,7 +621,7 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
                 public void onGenerated(Palette palette) {
                     Palette.Swatch vibrantSwatch = palette.getLightMutedSwatch();
                     if (vibrantSwatch != null) {
-                        LinearLayout.LayoutParams params1 = new LinearLayout.LayoutParams(screenWidth, ((int) (screenWidth * 0.6)));
+                        CollapsingToolbarLayout.LayoutParams params1 = new CollapsingToolbarLayout.LayoutParams(screenWidth, ((int) (screenWidth * 0.6)));
                         frameLayout.setLayoutParams(params1);
                         frameLayout.setBackgroundColor(vibrantSwatch.getRgb());
                     }
@@ -612,7 +634,7 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
         } else {
             FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(screenWidth, screenWidth);
             profileImage.setLayoutParams(params);
-            LinearLayout.LayoutParams params1 = new LinearLayout.LayoutParams(screenWidth, screenWidth);
+            CollapsingToolbarLayout.LayoutParams params1 = new CollapsingToolbarLayout.LayoutParams(screenWidth, screenWidth);
             frameLayout.setLayoutParams(params1);
             profileImage.setImageBitmap(bitmap);
         }
@@ -722,7 +744,8 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
     private void setProfileDetail(UserProfileHandler.ProfileDetail profileDetail) {
         name = (EditText) findViewById(R.id.name);
         name.setText(profileDetail.getName());
-
+        CollapsingToolbarLayout collapsingToolbar = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
+        // collapsingToolbar.setTitle(profileDetail.getName());
         if (profileDetail.getBitmap() != null) {
             initiateCrop(profileDetail.getBitmap());
         } else {
@@ -746,6 +769,8 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
 
             if (contactAvailableStatus <= Contacts.AVAILABLE_BY_OTHER_CONTACTS) {
                 name.setText(nickname);
+                CollapsingToolbarLayout collapsingToolbar = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
+                //  collapsingToolbar.setTitle(nickname);
             } else {
                 //nothing
             }
@@ -770,7 +795,7 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
         ImageView.setLayoutParams(params);
         ImageView.setImageBitmap(image);
         FrameLayout frameLayout = (FrameLayout) findViewById(R.id.profile_parent);
-        LinearLayout.LayoutParams params1 = new LinearLayout.LayoutParams(screenWidth, screenWidth);
+        CollapsingToolbarLayout.LayoutParams params1 = new CollapsingToolbarLayout.LayoutParams(screenWidth, screenWidth);
         frameLayout.setLayoutParams(params1);
         byteArray = ImageUtil.getCompressedBytes(image);
     }
@@ -808,6 +833,9 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
         status.setEnabled(false);
         status.setBackground(new ColorDrawable(Color.TRANSPARENT));
         name.setTextColor(getResources().getColor(R.color.ColorPrimaryDark));
+
+        CollapsingToolbarLayout collapsingToolbar = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
+        //collapsingToolbar.setTitle(name.getText().toString());
         status.setTextColor(getResources().getColor(R.color.ColorPrimaryDark));
     }
 
@@ -1091,6 +1119,9 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
 
         name.setEnabled(false);
         name.setText(getIntent().getStringExtra("name"));
+
+        CollapsingToolbarLayout collapsingToolbar = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
+        //collapsingToolbar.setTitle(getIntent().getStringExtra("name"));
         name.setTextColor(getResources().getColor(R.color.ColorPrimaryDark));
         name.setBackground(getResources().getDrawable(R.drawable.round_edge_black_box));
 
