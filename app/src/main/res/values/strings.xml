@@ -95,7 +95,7 @@
     <string name="please_enter_valid_10_digit_numbers">Please enter a valid 10 digit number</string>
     <string name="confirm">CONFIRM</string>
 
-    <string name="otp_message_verification">Enter the code we just sent u\n</string>
+    <string name="otp_message_verification">Enter the code we just sent you\n</string>
     <string name="otp_message_sending">Sending...</string>
     <string name="otp_message_otp_sent">Otp sent.</string>
     <string name="otp_message_resending_failed">Failed in sending otp, please try again.</string>
