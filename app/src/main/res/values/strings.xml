@@ -102,12 +102,12 @@
     <string name="otp_message_wrong_expired_token">Wrong or Expired otp</string>
     <string name="otp_message_invalid_number">Invalid number or Try again.</string>
     <string name="oops_try_again">oops, please try again.</string>
-    <string name="otp_confirm">OK HERE I AM</string>
+    <string name="otp_confirm">CONTINUE</string>
 
     <string name="profile_facebook_login_failed">Login failed</string>
     <string name="profile_facebook_login_cancelled">Login cancelled</string>
     <string name="use_fb_details">USE MY FACEBOOK DETAILS</string>
-    <string name="user_profile_continue">READY?CONTINUE</string>
+    <string name="user_profile_continue">PROCEED</string>
     <string name="profile_text">Welcome! Whats your Full Name?</string>
     <string name="add_photo_text">ADD PHOTO</string>
 

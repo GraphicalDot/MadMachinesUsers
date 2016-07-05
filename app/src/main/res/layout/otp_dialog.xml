@@ -14,7 +14,7 @@
     <com.sports.unity.common.view.CustomRobotoRegularTextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="SMS Verification"
+        android:text="SMS Verification Pending"
         android:textSize="@dimen/font_size_large" />
 
     <TextView
@@ -22,7 +22,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/activity_vertical_margin_small"
         android:gravity="center"
-        android:text="Waiting to  automatically detect \n an SMS sent to "
+        android:text="Waiting to  automatically detect \n the SMS sent to "
         android:textColor="@color/gray2" />
 
     <com.sports.unity.common.view.CustomRobotoRegularTextView
