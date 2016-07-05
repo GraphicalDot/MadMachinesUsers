@@ -93,7 +93,7 @@ public class CropImageFragment extends Fragment {
         if (getActivity() instanceof ProfileCreationActivity) {
             ((ProfileCreationActivity) getActivity()).setProfileImage(profileImage);
         } else if (getActivity() instanceof UserProfileActivity) {
-            ((UserProfileActivity) getActivity()).setProfileImage(profileImage);
+            ((UserProfileActivity) getActivity()).setProfileImage(profileImage,true);
         }
         Fragment fragment = getActivity().getSupportFragmentManager().findFragmentByTag(ProfileCreationActivity.CROP_FRAGMENT_TAG);
         getActivity().getSupportFragmentManager().beginTransaction().remove(fragment).commit();

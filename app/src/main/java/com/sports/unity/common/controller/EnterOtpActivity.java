@@ -492,7 +492,7 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity {
                     }
                     //To Update the user interest from server if exist.
 
-                    /*if (!response.isNull("interests")) {
+                    if (!response.isNull("interests")) {
                         String favString = response.getString("interests");
                         if (!TextUtils.isEmpty(favString)) {
 
@@ -518,7 +518,9 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity {
                             }
 
                         }
-                    }*/
+                    }
+
+
                     this.success = true;
                 } else {
                     this.success = false;

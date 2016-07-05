@@ -60,6 +60,9 @@ public class UserProfileHandler {
     public static final String LOAD_PROFILE_REQUEST_TAG = "load_profile_tag";
     public static final String SUBMIT_GROUP_INFO_REQUEST_TAG = "submit_group_info_tag";
 
+    public static final String IMAGE_THUMNB = "S";
+    public static final String IMAGE_LARGE = "L";
+
     public static int REQUEST_STATUS_QUEUED = 1;
     public static int REQUEST_STATUS_ALREADY_EXIST = 2;
     public static int REQUEST_STATUS_FAILED = 3;
@@ -95,7 +98,7 @@ public class UserProfileHandler {
         contentListenerHashMap.remove(key);
     }
 
-    public boolean requestInProgress(){
+    public boolean requestInProgress() {
         boolean inProgress = false;
         if (requestInProcess_RequestTagAndListenerKey.size() > 0) {
             inProgress = true;
@@ -103,7 +106,7 @@ public class UserProfileHandler {
         return inProgress;
     }
 
-    public boolean isFacebookDetailFetchingInProgress(){
+    public boolean isFacebookDetailFetchingInProgress() {
         boolean inProgress = false;
         if (requestInProcess_RequestTagAndListenerKey.containsKey(FB_REQUEST_TAG)) {
             inProgress = true;
@@ -126,8 +129,8 @@ public class UserProfileHandler {
 
                 @Override
                 public Object process() {
-                    Contacts contacts = SportsUnityDBHelper.getInstance(context).getContactByJid((String)object);
-                    return loadVCardAndUpdateDB( this.context, (String)object, true, contacts.availableStatus == Contacts.AVAILABLE_BY_MY_CONTACTS);
+                    Contacts contacts = SportsUnityDBHelper.getInstance(context).getContactByJid((String) object);
+                    return loadVCardAndUpdateDB(this.context, (String) object, true, contacts.availableStatus == Contacts.AVAILABLE_BY_MY_CONTACTS);
                 }
 
             };
@@ -139,20 +142,20 @@ public class UserProfileHandler {
         return requestStatus;
     }
 
-    UserCard loadVCardAndUpdateDB(Context context, String jid, boolean loadInterests){
+    UserCard loadVCardAndUpdateDB(Context context, String jid, boolean loadInterests) {
         return loadVCardAndUpdateDB(context, jid, loadInterests, true);
     }
 
-    UserCard loadVCardAndUpdateDBWithNoUpdateRequired(Context context, String jid, boolean loadInterests, boolean isAvailableInMyContacts){
+    UserCard loadVCardAndUpdateDBWithNoUpdateRequired(Context context, String jid, boolean loadInterests, boolean isAvailableInMyContacts) {
         UserCard card = new UserCard();
         try {
-            card.loadCard( context, jid, true, true, loadInterests, true, false);
+            card.loadCard(context, jid, true, true, loadInterests, true, false);
 
             String status = card.getStatus();
             byte[] image = card.getThumbnail();
             String nickname = card.getName();
 
-            if( isAvailableInMyContacts ) {
+            if (isAvailableInMyContacts) {
                 SportsUnityDBHelper.getInstance(context).updateContacts(jid, image, status, false);
             } else {
                 SportsUnityDBHelper.getInstance(context).updateContacts(jid, nickname, image, status, false);
@@ -165,11 +168,11 @@ public class UserProfileHandler {
         return card;
     }
 
-    UserCard loadVCardAndUpdateDB(Context context, String jid, boolean loadInterests, boolean isAvailableInMyContacts){
+    UserCard loadVCardAndUpdateDB(Context context, String jid, boolean loadInterests, boolean isAvailableInMyContacts) {
         UserCard card = new UserCard();
         try {
-            boolean success = card.loadCard( context, jid, true, true, loadInterests, true, false);
-            if( success ) {
+            boolean success = card.loadCard(context, jid, true, true, loadInterests, true, false);
+            if (success) {
                 String status = card.getStatus();
                 byte[] image = card.getThumbnail();
                 String nickname = card.getName();
@@ -230,13 +233,13 @@ public class UserProfileHandler {
 
                 @Override
                 public Object process() {
-                    ArrayList content = (ArrayList)object;
+                    ArrayList content = (ArrayList) object;
 
-                    String groupJid = (String)content.get(0);
-                    String groupTitle = (String)content.get(1);
-                    String groupImage = (String)content.get(2);
+                    String groupJid = (String) content.get(0);
+                    String groupTitle = (String) content.get(1);
+                    String groupImage = (String) content.get(2);
 
-                    boolean success = PubSubMessaging.getInstance().updateGroupInfo( groupJid, groupTitle, groupImage, context);
+                    boolean success = PubSubMessaging.getInstance().updateGroupInfo(groupJid, groupTitle, groupImage, context);
                     return success;
                 }
 
@@ -248,28 +251,28 @@ public class UserProfileHandler {
         return requestStatus;
     }
 
-    public boolean submitUserFavorites(Context context){
+    public boolean submitUserFavorites(Context context) {
         boolean success = false;
         try {
             JSONArray interests = FavouriteItemWrapper.getInstance(context).getAllInterestsAsJsonArray();
 
             UserCard card = new UserCard();
-            card.setInterest( interests);
+            card.setInterest(interests);
             success = card.saveInterests(context);
 
-            if(success) {
+            if (success) {
                 UserUtil.setFavouriteVcardUpdated(context, true);
             } else {
                 UserUtil.setFavouriteVcardUpdated(context, false);
             }
-        } catch (Exception ex){
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
 
         return success;
     }
 
-    public boolean submitUserCompleteProfile(Context context){
+    public boolean submitUserCompleteProfile(Context context) {
         String jid = TinyDB.getInstance(context).getString(TinyDB.KEY_USER_JID);
         Contacts userContact = SportsUnityDBHelper.getInstance(context).getContactByJid(jid);
 
@@ -277,12 +280,12 @@ public class UserProfileHandler {
         return success;
     }
 
-    public Contacts getLoginUserDetail(Context context){
+    public Contacts getLoginUserDetail(Context context) {
         String jid = TinyDB.getInstance(context).getString(TinyDB.KEY_USER_JID);
         return SportsUnityDBHelper.getInstance(context).getContactByJid(jid);
     }
 
-    private boolean submitUserVCard(Context context, Contacts userContact){
+    private boolean submitUserVCard(Context context, Contacts userContact) {
         boolean success = false;
         try {
             UserCard card = new UserCard();
@@ -293,13 +296,13 @@ public class UserProfileHandler {
 
             success = true;
             saveLoginUserDetail(context, userContact);
-        } catch (Exception ex){
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
         return success;
     }
 
-    private String getUserInfoAsJSON(Context context, Contacts userContact){
+    private String getUserInfoAsJSON(Context context, Contacts userContact) {
         String jsonString = null;
         try {
             String password = TinyDB.getInstance(context).getString(TinyDB.KEY_PASSWORD);
@@ -311,15 +314,15 @@ public class UserProfileHandler {
             jsonObject.put("udid", CommonUtil.getDeviceId(context));
 
             jsonString = jsonObject.toString();
-        }catch (Exception ex){
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
         return jsonString;
     }
 
-    private void saveLoginUserDetail(Context context, Contacts loginUserDetail){
+    private void saveLoginUserDetail(Context context, Contacts loginUserDetail) {
         int count = SportsUnityDBHelper.getInstance(context).updateContacts(loginUserDetail.phoneNumber, loginUserDetail.jid, loginUserDetail.getName(), loginUserDetail.image, loginUserDetail.status, Contacts.AVAILABLE_NOT);
-        if( count == 0 ) {
+        if (count == 0) {
             SportsUnityDBHelper.getInstance(context).addToContacts(loginUserDetail.getName(), loginUserDetail.phoneNumber, loginUserDetail.jid, loginUserDetail.status, loginUserDetail.image, Contacts.AVAILABLE_NOT, false);
         }
     }
@@ -419,7 +422,7 @@ public class UserProfileHandler {
     }
 
     private static boolean sendInterests(Context context) {
-        boolean  success = false;
+        boolean success = false;
         String jsonContent = null;
         try {
             JSONArray interests = FavouriteItemWrapper.getInstance(context).getAllInterestsAsJsonArray();
@@ -435,11 +438,11 @@ public class UserProfileHandler {
             jsonObject.put("udid", CommonUtil.getDeviceId(context));
 
             jsonContent = jsonObject.toString();
-        }catch (Exception ex){
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
 
-        if( jsonContent != null ) {
+        if (jsonContent != null) {
             HttpURLConnection httpURLConnection = null;
             ByteArrayInputStream byteArrayInputStream = null;
             try {
@@ -454,7 +457,7 @@ public class UserProfileHandler {
 
                 byte chunk[] = new byte[4096];
                 int read = 0;
-                while ((read = byteArrayInputStream.read(chunk) ) != -1) {
+                while ((read = byteArrayInputStream.read(chunk)) != -1) {
                     outputStream.write(chunk, 0, read);
                 }
 
@@ -479,8 +482,8 @@ public class UserProfileHandler {
     }
 
     public static boolean uploadDisplayPic(Context context, String jid, String imageContent) {
-        boolean  success = false;
-        if( imageContent == null ) {
+        boolean success = false;
+        if (imageContent == null) {
             success = true;
         } else {
             String jsonContent = null;
@@ -546,7 +549,7 @@ public class UserProfileHandler {
      * NULL means some issue with downloading,
      * EMPTY STRING means no image uploaded for this.
      */
-    public static String downloadDisplayPic(Context context, String jid) {
+    public static String downloadDisplayPic(Context context, String jid, String imageVersion) {
         String imageContent = null;
         String requestJsonContent = null;
         try {
@@ -559,14 +562,14 @@ public class UserProfileHandler {
             jsonObject.put("jid", jid);
             jsonObject.put("apk_version", CommonUtil.getBuildConfig());
             jsonObject.put("udid", CommonUtil.getDeviceId(context));
-            jsonObject.put("version", "S");
+            jsonObject.put("version", imageVersion);
 
             requestJsonContent = jsonObject.toString();
-        }catch (Exception ex){
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
 
-        if( requestJsonContent != null ) {
+        if (requestJsonContent != null) {
             HttpURLConnection httpURLConnection = null;
             ByteArrayOutputStream byteArrayOutputStream = null;
             ByteArrayInputStream byteArrayInputStream = null;
@@ -605,8 +608,8 @@ public class UserProfileHandler {
 
                     String content = String.valueOf(byteArrayOutputStream.toString());
                     JSONObject responseJsonContent = new JSONObject(content);
-                    if( responseJsonContent.getInt("status") == 200 ) {
-                        if( responseJsonContent.has("content") ) {
+                    if (responseJsonContent.getInt("status") == 200) {
+                        if (responseJsonContent.has("content")) {
                             imageContent = responseJsonContent.getString("content");
                         } else {
                             imageContent = "";

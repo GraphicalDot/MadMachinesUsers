@@ -66,6 +66,7 @@ import com.sports.unity.util.ActivityActionListener;
 import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
 import com.sports.unity.util.ImageUtil;
+import com.sports.unity.util.ThreadTask;
 import com.sports.unity.util.UserCard;
 
 import org.json.JSONArray;
@@ -269,13 +270,15 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
         screenWidth = displaymetrics.widthPixels;
         mInflater = LayoutInflater.from(this);
         ownProfile = getIntent().getBooleanExtra(Constants.IS_OWN_PROFILE, false);
+        imageArray = byteArray = getIntent().getByteArrayExtra("profilePicture");
 
-        setToolbar(ownProfile);
-        initView(ownProfile);
         jabberId = getIntent().getStringExtra("jid");
         if (jabberId == null) {
             jabberId = "ownProfile";
         }
+
+        setToolbar(ownProfile);
+        initView(ownProfile);
     }
 
     private void initFacebookLogin() {
@@ -555,9 +558,12 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
         } else {
             setInitDataOthers();
         }
+        if (byteArray != null) {
+            Bitmap bitmap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
+            setAppBarOffset(((int) (screenWidth / 2)));
 
-        final Bitmap bitmap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
-        setAppBarOffset(((int) (bitmap.getHeight() / 2)));
+        }
+        loadImageFromServer(ownProfile);
     }
 
     private void setAppBarOffset(final int offsetPx) {
@@ -614,30 +620,53 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
         editFavourite.setOnClickListener(editFavoritesClickListener);
     }
 
-    private void setMajorColor(final Bitmap bitmap) {
-        final FrameLayout frameLayout = (FrameLayout) findViewById(R.id.profile_parent);
-        if (bitmap.getWidth() < 300) {
-            Palette.from(bitmap).generate(new Palette.PaletteAsyncListener() {
-                public void onGenerated(Palette palette) {
-                    Palette.Swatch vibrantSwatch = palette.getLightMutedSwatch();
-                    if (vibrantSwatch != null) {
-                        CollapsingToolbarLayout.LayoutParams params1 = new CollapsingToolbarLayout.LayoutParams(screenWidth, ((int) (screenWidth * 0.6)));
-                        frameLayout.setLayoutParams(params1);
-                        frameLayout.setBackgroundColor(vibrantSwatch.getRgb());
+    private void loadImageFromServer(final boolean ownProfile) {
+        String jid = null;
+        if (ownProfile) {
+            jid = TinyDB.getInstance(this).getString(TinyDB.KEY_USER_JID);
+        } else {
+            jid = jabberId;
+        }
+        ThreadTask imageLoaderTask = new ThreadTask(jid) {
+            @Override
+            public Object process() {
+                String imageContent = UserProfileHandler.downloadDisplayPic(UserProfileActivity.this, (String) (object), UserProfileHandler.IMAGE_LARGE);
+                return imageContent;
+            }
+
+            @Override
+            public void postAction(Object object) {
+                if (!TextUtils.isEmpty((String) object)) {
+                    byteArray = Base64.decode((String) object, Base64.DEFAULT);
+                    if (byteArray.length > 0) {
+                        final Bitmap bitmap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
+                        UserProfileActivity.this.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+
+                                setProfileImage(bitmap, false);
+                                if (ownProfile) {
+                                    String jid = TinyDB.getInstance(UserProfileActivity.this).getString(TinyDB.KEY_USER_JID);
+                                    Contacts contacts = SportsUnityDBHelper.getInstance(UserProfileActivity.this).getContactByJid(jid);
+                                    SportsUnityDBHelper.getInstance(UserProfileActivity.this).updateContacts(jid, byteArray, contacts.status);
+                                }
+                            }
+                        });
                     }
                 }
-            });
-            FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(200, 200);
-            params.gravity = Gravity.CENTER;
-            profileImage.setLayoutParams(params);
-            profileImage.setImageBitmap(ImageUtil.getRoundedCornerBitmap(bitmap, profileImage));
-        } else {
-            FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(screenWidth, screenWidth);
-            profileImage.setLayoutParams(params);
-            CollapsingToolbarLayout.LayoutParams params1 = new CollapsingToolbarLayout.LayoutParams(screenWidth, screenWidth);
-            frameLayout.setLayoutParams(params1);
-            profileImage.setImageBitmap(bitmap);
-        }
+            }
+        };
+        imageLoaderTask.start();
+    }
+
+    private void setMajorColor(final Bitmap bitmap) {
+        final FrameLayout frameLayout = (FrameLayout) findViewById(R.id.profile_parent);
+        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(screenWidth, screenWidth);
+        profileImage.setLayoutParams(params);
+        CollapsingToolbarLayout.LayoutParams params1 = new CollapsingToolbarLayout.LayoutParams(screenWidth, screenWidth);
+        frameLayout.setLayoutParams(params1);
+        profileImage.setImageBitmap(bitmap);
+
     }
 
     private void onClickEditFavorites() {
@@ -789,7 +818,7 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
 
     }
 
-    public void setProfileImage(Bitmap image) {
+    public void setProfileImage(Bitmap image, boolean expand) {
         ImageView ImageView = (ImageView) findViewById(R.id.user_picture);
         FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(screenWidth, screenWidth);
         ImageView.setLayoutParams(params);
@@ -797,6 +826,11 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
         FrameLayout frameLayout = (FrameLayout) findViewById(R.id.profile_parent);
         CollapsingToolbarLayout.LayoutParams params1 = new CollapsingToolbarLayout.LayoutParams(screenWidth, screenWidth);
         frameLayout.setLayoutParams(params1);
+        if (expand) {
+            AppBarLayout layout = (AppBarLayout) findViewById(R.id.app_bar);
+            layout.setExpanded(true);
+            layout.invalidate();
+        }
         byteArray = ImageUtil.getCompressedBytes(image);
     }
 
