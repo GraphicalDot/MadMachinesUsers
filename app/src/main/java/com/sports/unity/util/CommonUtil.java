@@ -23,6 +23,10 @@ import android.util.Log;
 
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
+import com.google.android.gms.appindexing.Action;
+import com.google.android.gms.appindexing.AppIndex;
+import com.google.android.gms.appindexing.Thing;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.android.gms.iid.InstanceID;
 import com.sports.unity.BuildConfig;
@@ -45,6 +49,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.math.BigInteger;
+import java.net.URL;
 import java.nio.ByteBuffer;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -394,10 +399,71 @@ public class CommonUtil {
         return defaults;
     }
 
+
     public static void sendAnalyticsData(Application application, String screenName) {
         Tracker mTracker = ((ChatScreenApplication) application).getDefaultTracker();
         mTracker.setScreenName(screenName);
         mTracker.send(new HitBuilders.ScreenViewBuilder().build());
+    }
+
+
+    /**
+     * Implementation of FireBase AppIndexing.
+     * To start the app indexing a GoogleApiClient is required.
+     * This methods returns a new GoogleApiClient.
+     *
+     * @param context - context of activity.
+     * @return {@link GoogleApiClient} for AppIndexing.
+     */
+    public static GoogleApiClient getAppIndexingClient(Context context) {
+        GoogleApiClient mClient = new GoogleApiClient.Builder(context).addApi(AppIndex.API).build();
+        return mClient;
+    }
+
+    /**
+     * Use the correct Action type for your content.
+     * For example, use for opening static content and {@link Action#TYPE_WATCH} for playing video content.
+     *
+     * @param mTitle       - Title of the activity.
+     * @param mDescription - Description of the activity.
+     * @param mUrl         - DeepLink for this activity.
+     * @return Action type for content.
+     */
+    public static Action getAction(String mTitle, String mDescription, Uri mUrl) {
+        Thing object = new Thing.Builder()
+                .setName(mTitle)
+                .setDescription(mDescription)
+                .setUrl(mUrl)
+                .build();
+
+        return new Action.Builder(Action.TYPE_VIEW)
+                .setObject(object)
+                .setActionStatus(Action.STATUS_TYPE_COMPLETED)
+                .build();
+    }
+
+    /**
+     * Starts the AppIndexing.
+     * <b>This must be called after <i>super.onStart()</i></b>
+     *
+     * @param mClient GoogleApiClient
+     * @param action  Action type for your content.
+     */
+    public static void startAppIndexing(GoogleApiClient mClient, Action action) {
+        mClient.connect();
+        AppIndex.AppIndexApi.start(mClient, action);
+    }
+
+    /**
+     * Stops the AppIndexing.
+     * <b>This must be called before <i>super.onStop()</i></b>
+     *
+     * @param mClient GoogleApiClient
+     * @param action  Action type for your content.
+     */
+    public static void stopAppIndexing(GoogleApiClient mClient, Action action) {
+        AppIndex.AppIndexApi.end(mClient, action);
+        mClient.disconnect();
     }
 
 }

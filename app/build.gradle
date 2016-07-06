@@ -109,6 +109,7 @@ dependencies {
     compile 'com.mixpanel.android:mixpanel-android:4.+'
     compile 'com.theartofdev.edmodo:android-image-cropper:2.2.+'
     compile 'com.android.support:palette-v7:23.1.1'
+    compile 'com.google.android.gms:play-services-appindexing:9.0.2'
 }
 
 apply plugin: 'com.google.gms.google-services'

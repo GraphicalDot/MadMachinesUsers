@@ -1,6 +1,7 @@
 package com.sports.unity.scores.controller.fragment;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -23,6 +24,8 @@ import android.widget.RelativeLayout;
 import android.widget.Switch;
 import android.widget.Toast;
 
+import com.google.android.gms.appindexing.Action;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.sports.unity.R;
 import com.sports.unity.common.controller.FilterActivity;
 import com.sports.unity.common.controller.GlobalSearchActivity;
@@ -87,6 +90,11 @@ public class MatchListFragment extends Fragment {
     private ArrayList<FavouriteItem> flagFavItem;
     private ArrayList<MatchListWrapperItem> dataItem = new ArrayList<MatchListWrapperItem>();
 
+    private GoogleApiClient mClient;
+    private Uri mUrl;
+    private String mTitle="Live Scores";
+    private String mDescription="Live minute by minute commentary and updated scores of all the matches happening, plus get notified for the ones you love most.";
+
     MatchListScrollListener matchListScrollListener = new MatchListScrollListener() {
         @Override
         public void scroll(int position) {
@@ -108,6 +116,23 @@ public class MatchListFragment extends Fragment {
             favouriteItem = new FavouriteItem(scoreDetailsId);
             scoreDetailsId = favouriteItem.getId();
         }
+
+        mUrl=Uri.parse("android-app://co.sports.unity/mobileapp/sportsunity.co/matches");
+        mClient = CommonUtil.getAppIndexingClient(getActivity());
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        Action action = CommonUtil.getAction(mTitle, mDescription, mUrl);
+        CommonUtil.startAppIndexing(mClient, action);
+    }
+
+    @Override
+    public void onStop() {
+        Action action = CommonUtil.getAction(mTitle, mDescription, mUrl);
+        CommonUtil.stopAppIndexing(mClient, action);
+        super.onStop();
     }
 
     @Override

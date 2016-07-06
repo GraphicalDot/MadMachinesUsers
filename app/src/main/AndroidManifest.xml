@@ -141,6 +141,18 @@
                     android:host="@string/sportsunity.co"
                     android:pathPrefix="/sports"
                     android:scheme="mobileapp" />
+                <data
+                    android:host="@string/sportsunity.co"
+                    android:pathPrefix="/news"
+                    android:scheme="mobileapp" />
+                <data
+                    android:host="@string/sportsunity.co"
+                    android:pathPrefix="/chat"
+                    android:scheme="mobileapp" />
+                <data
+                    android:host="@string/sportsunity.co"
+                    android:pathPrefix="/matches"
+                    android:scheme="mobileapp" />
             </intent-filter>
         </activity>
         <activity
@@ -158,7 +170,7 @@
         <activity
             android:name=".ProfileCreationActivity"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustResize"/>
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".common.controller.SelectSportsActivity"
             android:screenOrientation="portrait" />

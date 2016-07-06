@@ -2,6 +2,7 @@ package com.sports.unity.messages.controller.fragment;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -17,6 +18,8 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.appindexing.Action;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.R;
 import com.sports.unity.common.model.TinyDB;
@@ -54,11 +57,21 @@ public class ChatFragment extends Fragment implements OnSearchViewQueryListener 
     private ChatFragmentDialogListAdapter chatFragmentDialogListAdapter;
     private boolean isSearch;
 
+    private GoogleApiClient mClient;
+    private Uri mUrl;
+    private String mTitle="Chat With Your Friends";
+    private String mDescription="chat through the match and otherwise with your buddies.";
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         CommonUtil.sendAnalyticsData(getActivity().getApplication(), "ChatScreen");
+
+
+       mUrl=Uri.parse("android-app://co.sports.unity/mobileapp/sportsunity.co/chat");
+        mClient = CommonUtil.getAppIndexingClient(getActivity());
     }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -393,11 +406,6 @@ public class ChatFragment extends Fragment implements OnSearchViewQueryListener 
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
-    }
-
-    @Override
     public void onResume() {
         super.onResume();
         if (!isSearch) {
@@ -417,7 +425,16 @@ public class ChatFragment extends Fragment implements OnSearchViewQueryListener 
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+        Action action = CommonUtil.getAction(mTitle, mDescription, mUrl);
+        CommonUtil.startAppIndexing(mClient, action);
+    }
+
+    @Override
     public void onStop() {
+        Action action = CommonUtil.getAction(mTitle, mDescription, mUrl);
+        CommonUtil.stopAppIndexing(mClient, action);
         super.onStop();
         ActivityActionHandler.getInstance().removeActionListener(ActivityActionHandler.CHAT_LIST_KEY);
     }
