@@ -126,13 +126,16 @@ public class SelectSportsActivity extends CustomAppCompatActivity {
         {
             Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
             ImageView hamburgericon = (ImageView)toolbar.findViewById(R.id.hamburger_icon);
-            hamburgericon.setVisibility(View.INVISIBLE);
+            hamburgericon.setVisibility(View.GONE);
             setSupportActionBar(toolbar);
             getSupportActionBar().setDisplayShowTitleEnabled(false);
             TextView mTitle = (TextView) toolbar.findViewById(R.id.toolbar_title);
-            mTitle.setText(R.string.select_your_favourite_sports);
-            mTitle.setTypeface(FontTypeface.getInstance(this).getRobotoCondensedRegular());
-            mTitle.setGravity(Gravity.CENTER);
+            mTitle.setVisibility(View.GONE);
+            TextView selectSports = (TextView) toolbar.findViewById(R.id.select_sports);
+            selectSports.setVisibility(View.VISIBLE);
+           // mTitle.setText(R.string.select_your_favourite_sports);
+           // mTitle.setTypeface(FontTypeface.getInstance(this).getRobotoCondensedRegular());
+           // mTitle.setGravity(Gravity.CENTER);
         }
 
 //        GridView gridview = (GridView) findViewById(R.id.gridview);
