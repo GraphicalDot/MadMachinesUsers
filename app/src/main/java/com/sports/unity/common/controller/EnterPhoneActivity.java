@@ -77,11 +77,10 @@ public class EnterPhoneActivity extends CustomAppCompatActivity implements Activ
         countryCodetext.setOnClickListener(viewClickListener);
         getCountryCode.setOnClickListener(viewClickListener);
 
-
         ArrayList<String> countryDetails = CommonUtil.getCountryDetailsByCountryCode(EnterPhoneActivity.this, UserUtil.getCountryCode());
 
         countryName.setText(countryDetails.get(2));
-        countryCode.setText("( +" + countryDetails.get(0) + ")");
+        countryCode.setText("(+" + countryDetails.get(0) + ")");
         countryCodetext.setText("+" + countryDetails.get(0));
 
 
@@ -151,7 +150,7 @@ public class EnterPhoneActivity extends CustomAppCompatActivity implements Activ
                 String cCode = data.getStringExtra("countryCode");
 
                 countryName.setText(cName);
-                countryCode.setText("(+" + cCode + " )");
+                countryCode.setText("(+" + cCode + ")");
                 countryCodetext.setText("+" + cCode);
 
                 UserUtil.setCountryCode(getApplicationContext(), cCode);
