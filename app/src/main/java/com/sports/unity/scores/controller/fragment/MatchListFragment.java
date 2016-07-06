@@ -21,7 +21,6 @@ import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
-import android.widget.Switch;
 import android.widget.Toast;
 
 import com.google.android.gms.appindexing.Action;
@@ -38,7 +37,6 @@ import com.sports.unity.common.model.FriendsWatchingHandler.FriendsContentListen
 import com.sports.unity.common.model.TinyDB;
 import com.sports.unity.common.model.UserUtil;
 import com.sports.unity.common.viewhelper.CustomComponentListener;
-import com.sports.unity.news.controller.activity.NewsSearchActivity;
 import com.sports.unity.scoredetails.MatchListScrollListener;
 import com.sports.unity.scores.model.ScoresContentHandler;
 import com.sports.unity.scores.model.ScoresJsonParser;
@@ -243,7 +241,7 @@ public class MatchListFragment extends Fragment {
         String staffFavString = UserUtil.getStaffSelectedData(getActivity());
         ArrayList<FavouriteItem> favouriteItems = new ArrayList<FavouriteItem>();
         if (null != staffFavString && !TextUtils.isEmpty(staffFavString)) {
-            flagFavItem = FavouriteItemWrapper.getInstance(getActivity()).getFavListOfOthers(staffFavString);
+            flagFavItem = FavouriteItemWrapper.getInstance(getActivity()).getFavListForStaffContent(staffFavString);
             if (flagFavItem != null && flagFavItem.size() > 0) {
                 for (FavouriteItem f : flagFavItem) {
                     final String id = f.getId();

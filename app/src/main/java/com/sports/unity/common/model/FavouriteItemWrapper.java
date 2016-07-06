@@ -175,26 +175,54 @@ public class FavouriteItemWrapper {
     }
 
     /**
-     * This method helps to retrieve the favorite selection of other users.
+     * This method converts the staff picked content to FavouriteItem.
      * it parse the Json String back to ArrayList of {@link FavouriteItem}.
      *
-     * @param favItem
-     * @return
+     * @param staffPickedContent JsonArray String of staff picked content.
+     * @return ArrayList of FavouriteItem.
      */
-    public ArrayList<FavouriteItem> getFavListOfOthers(String favItem) {
+    public ArrayList<FavouriteItem> getFavListForStaffContent(String staffPickedContent) {
         List<FavouriteItem> favouriteItems = new ArrayList<FavouriteItem>();
-        if (favItem != null) {
+        if (staffPickedContent != null) {
             try {
-                JSONArray favArray = new JSONArray(favItem);
+                JSONArray favArray = new JSONArray(staffPickedContent);
+                for (int i = 0; i < favArray.length(); i++) {
+                    FavouriteItem item = new FavouriteItem();
+                    JSONObject object = favArray.getJSONObject(i);
+                    item.setName(object.getString(name));
+                    String sportsType = object.getString(this.sportsType);
+                    String filterType = object.getString(this.filterType);
+                    item.setSportsType(sportsType);
+                    item.setFilterType(filterType);
+
+                    try {
+                        if (!object.isNull(this.flag)) {
+                            item.setFlagImageUrl(object.getString(this.flag));
+                        }
+                        if (!object.isNull(this.id)) {
+                            item.setId(object.getString(this.id));
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    favouriteItems.add(item);
+
+                }
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
-
-        Collections.sort(favouriteItems);
         return new ArrayList<>(favouriteItems);
     }
 
+
+    /**
+     * This method helps to retrieve the favorite selection of other users.
+     * it parse the Json Array back to ArrayList of {@link FavouriteItem}.
+     *
+     * @param favItem JsonArray of favourites.
+     * @return ArrayList of FavouriteItem.
+     */
     public ArrayList<FavouriteItem> getFavListOfOthers(JSONArray favItem) {
         List<FavouriteItem> favouriteItems = new ArrayList<FavouriteItem>();
         if (favItem != null) {
