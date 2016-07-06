@@ -1,5 +1,6 @@
 package com.sports.unity.news.controller.activity;
 
+import android.app.Activity;
 import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -56,6 +57,7 @@ public class NewsSearchActivity extends CustomAppCompatActivity {
             search.setText(keyword);
             performSearch(keyword);
             search.clearFocus();
+            this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
         }
     }
 
@@ -114,11 +116,10 @@ public class NewsSearchActivity extends CustomAppCompatActivity {
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_SEARCH) {
 
-                    InputMethodManager inputManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                    inputManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+                    closeKeyboard();
 
                     if (CommonUtil.isInternetConnectionAvailable(NewsSearchActivity.this)) {
-                        performSearch(search.getText().toString());
+                        performSearch(search.getText().toString().trim());
                     } else {
                         Toast.makeText(NewsSearchActivity.this, "Check your internet connection", Toast.LENGTH_LONG).show();
                     }
@@ -143,6 +144,16 @@ public class NewsSearchActivity extends CustomAppCompatActivity {
             }
         });
 //        checkForFilteredSearch(search, clear_search);
+    }
+
+    private void closeKeyboard() {
+        View view = this.getCurrentFocus();
+        if (view != null) {
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
+//        InputMethodManager imm = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
+//        imm.toggleSoftInput(InputMethodManager.HIDE_NOT_ALWAYS, 0);
     }
 
     private void performSearch(String celebrity_name) {

@@ -1,81 +1,65 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/rootview"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.sports.unity.common.controller.EnterPhoneActivity"
-    android:id="@+id/rootview"
-    >
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scaleType="centerCrop"
-        android:src="@drawable/splash_bg" />
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:paddingTop="@dimen/vertical_padding_small"
-        >
-        <RelativeLayout
-            android:id="@+id/image_layout"
-            android:layout_width="@dimen/profile_image_circle_radius"
-            android:layout_height="@dimen/profile_image_circle_radius"
-            android:layout_centerHorizontal="true"
-            >
-            <ImageView
-                android:id="@+id/imageView"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_centerHorizontal="true"
-                android:layout_centerInParent="true"
-                android:layout_centerVertical="true"
-                android:src="@drawable/ic_ph_no_logo" />
-        </RelativeLayout>
-        <TextView
-            android:id="@+id/entr_ph_no"
-            android:layout_below="@+id/image_layout"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:gravity="center"
-            android:text="@string/enter_phone_number_text"
-            android:textColor="@color/ColorPrimary"
-            android:textSize="@dimen/font_size_medium" />
-        <EditText
-            android:id="@+id/phoneNumber"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text=""
-            android:layout_marginTop="@dimen/horizontal_padding_very_very_small"
-            android:background="@android:color/transparent"
-            android:maxLength="17"
-            android:inputType="number"
-            android:layout_centerHorizontal="true"
-            android:layout_below="@+id/entr_ph_no"
-            android:gravity="center_vertical"
-            android:textColor="@android:color/white"
-            android:textSize="@dimen/font_size_medium"
-            android:textCursorDrawable="@null"
-            />
+    android:orientation="vertical"
+    tools:context="com.sports.unity.common.controller.EnterPhoneActivity">
 
-        <View
-            android:id="@+id/view"
-            android:layout_below="@id/phoneNumber"
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
             android:layout_width="match_parent"
-            android:background="@color/ColorPrimary"
-            android:layout_marginLeft="@dimen/menu_item_height"
-            android:layout_marginRight="@dimen/menu_item_height"
-            android:layout_height="1dp"/>
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            android:src="@drawable/splash_bg" />
 
         <LinearLayout
-            android:id="@+id/policy"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/activity_vertical_margin_small"
-            android:layout_below="@id/view"
-            android:layout_centerHorizontal="true"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:gravity="center"
             android:orientation="vertical">
-            <TextView
+
+
+            <ImageView
+                android:id="@+id/imageView"
+                android:layout_width="@dimen/profile_image_circle_radius"
+                android:layout_height="@dimen/profile_image_circle_radius"
+                android:src="@drawable/ic_ph_no_logo" />
+
+            <com.sports.unity.common.view.CustomRobotoLightTextView
+                android:id="@+id/entr_ph_no"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/enter_phone_number_text"
+                android:textColor="@color/ColorPrimary"
+                android:textSize="@dimen/font_size_medium" />
+
+            <EditText
+                android:id="@+id/phoneNumber"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:gravity="center"
+                android:inputType="number"
+                android:maxLength="17"
+                android:text=""
+                android:textColor="@android:color/white"
+                android:textCursorDrawable="@null"
+                android:textSize="@dimen/font_size_medium" />
+
+            <View
+                android:id="@+id/view"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginLeft="@dimen/menu_item_height"
+                android:layout_marginRight="@dimen/menu_item_height"
+                android:background="@color/ColorPrimary" />
+
+            <com.sports.unity.common.view.CustomRobotoLightTextView
                 android:id="@+id/take_a_minut"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -83,82 +67,89 @@
                 android:paddingTop="@dimen/vertical_padding_very_very_small"
                 android:text="Take a minute to review our"
                 android:textColor="@color/take_a_minut"
-                android:textSize="@dimen/font_size_small_large"
-                />
-            <TextView
+                android:textSize="@dimen/font_size_small_large" />
+
+            <com.sports.unity.common.view.CustomRobotoLightTextView
                 android:id="@+id/privacy_policy"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:clickable="true"
                 android:gravity="center"
                 android:text="Privacy Policy"
                 android:textColor="@color/ColorPrimary"
-                android:textSize="@dimen/font_size_small_large"
-                android:clickable="true"
-                />
+                android:textSize="@dimen/font_size_small_large" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/edit_view_height"
+                android:visibility="invisible" />
         </LinearLayout>
+
         <RelativeLayout
             android:id="@+id/getCountryCode"
             android:layout_width="fill_parent"
-            android:layout_alignParentBottom="true"
-            android:scrollbars="vertical"
             android:layout_height="@dimen/edit_view_height"
-            android:background="@drawable/ic_continue_button">
+            android:layout_gravity="bottom"
+            android:background="@drawable/ic_continue_button"
+            android:scrollbars="vertical">
 
             <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
                 android:id="@+id/countryName"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_alignParentLeft="true"
-                android:paddingLeft="@dimen/activity_vertical_margin"
                 android:gravity="center"
+                android:paddingLeft="@dimen/activity_vertical_margin"
+                android:text="INDIA"
                 android:textColor="@android:color/white"
                 android:textSize="@dimen/font_size_medium"
-                android:text="INDIA"
 
                 />
+
             <TextView
                 android:id="@+id/countryCode"
-                android:layout_toRightOf="@+id/countryName"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:editable="false"
-                android:inputType="number"
-                android:gravity="center"
-                android:paddingLeft="@dimen/horizontal_padding_very_small"
-                android:paddingRight="@dimen/horizontal_padding_very_small"
-                android:background="@android:color/transparent"
                 android:layout_centerVertical="true"
+                android:layout_toRightOf="@+id/countryName"
+                android:background="@android:color/transparent"
+                android:editable="false"
+                android:gravity="center"
+                android:inputType="number"
+                android:paddingLeft="@dimen/horizontal_padding_very_small"
                 android:text="@string/country_code"
                 android:textColor="@android:color/white"
                 android:textSize="@dimen/font_size_medium"
 
                 />
+
             <Button
                 android:id="@+id/getotp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_centerInParent="true"
+                android:layout_toRightOf="@+id/countryCodetext"
                 android:background="@android:color/transparent"
                 android:text="@string/confirm"
-                android:layout_centerVertical="true"
-                android:layout_centerHorizontal="true"
-                android:textSize="@dimen/font_size_medium"
                 android:textColor="@android:color/white"
-                android:visibility="gone"
-                />
-            <EditText
+                android:textSize="@dimen/font_size_medium"
+                android:visibility="gone" />
+
+            <TextView
                 android:id="@+id/countryCodetext"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_alignParentLeft="true"
-                android:editable="false"
                 android:background="@color/semi_transparent"
+                android:editable="false"
+                android:gravity="center"
                 android:paddingLeft="@dimen/horizontal_padding_very_small"
                 android:paddingRight="@dimen/horizontal_padding_very_small"
                 android:text="@string/country_code"
                 android:textColor="@android:color/white"
                 android:textSize="@dimen/font_size_medium"
-                android:visibility="gone"
-                />
+                android:visibility="gone" />
+
             <ImageButton
                 android:id="@+id/getcountry"
                 android:layout_width="wrap_content"
@@ -166,8 +157,10 @@
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
                 android:layout_marginRight="@dimen/activity_horizontal_margin"
-                android:background="@drawable/next_vector_white"
-                 />
+                android:background="@drawable/next_vector_white" />
         </RelativeLayout>
-    </RelativeLayout>
-</FrameLayout>
+
+
+    </FrameLayout>
+
+</LinearLayout>

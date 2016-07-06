@@ -1876,7 +1876,7 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
         return -1;
     }
 
-    public ArrayList<Contacts> getMatchingContacts(String text) {
+    public ArrayList<Contacts> getMatchingContacts(String text, int limit) {
         ArrayList<Contacts> list = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
 
@@ -1912,7 +1912,7 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
         return list;
     }
 
-    public ArrayList<Message> getMatchingChat(String text) {
+    public ArrayList<Message> getMatchingChat(String text, int limit) {
         ArrayList<Message> list = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
 
@@ -1935,8 +1935,9 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
 
         String sortOrder = MessagesEntry.COLUMN_SEND_TIMESTAMP + " DESC";
 
-        String selection = MessagesEntry.COLUMN_DATA_TEXT + " LIKE ? AND " + MessagesEntry.COLUMN_MIME_TYPE + " LIKE ?";
+        String selection = MessagesEntry.COLUMN_DATA_TEXT + " LIKE ? AND " + MessagesEntry.COLUMN_MIME_TYPE + " LIKE ? ";
         String[] selectionArgs = {"%" + text + "%", MIME_TYPE_TEXT};
+
 
         Cursor c = db.query(
                 MessagesEntry.TABLE_NAME,  // The table to query
@@ -1945,7 +1946,8 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
                 selectionArgs,                            // The values for the WHERE clause
                 null,                                     // don't group the rows
                 null,                                     // don't filter by row groups
-                sortOrder                                 // The sort order
+                sortOrder,                                 // The sort order
+                String.valueOf(limit)
         );
 
         if (c.moveToFirst()) {

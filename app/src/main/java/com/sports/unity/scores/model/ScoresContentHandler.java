@@ -60,7 +60,7 @@ public class ScoresContentHandler {
     private static final String URL_CREATE = "http://" + BuildConfig.XMPP_SERVER_API_BASE_URL + "/create?";
     private static final String URL_REQUEST_OTP = "http://" + BuildConfig.XMPP_SERVER_API_BASE_URL + "/create?";
     private static final String URL_NEAR_BY = "http://" + BuildConfig.XMPP_SERVER_API_BASE_URL + "/get_nearby_users?";
-    private static final String URL_GLOBAL_SEARCH = "http://52.78.56.248:5000/fav_anything?search=";
+    private static final String URL_GLOBAL_SEARCH = Constants.SEARCH_BASE_URL + "fav_anything?search=";
 
     private static final String URL_PARAMS_NEWS_IMAGE_DPI = "image_size";
     private static final String URL_PARAMS_NEWS_ID = "news_id";

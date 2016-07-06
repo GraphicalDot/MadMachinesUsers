@@ -15,6 +15,7 @@ public class Constants {
     public static final String SEARCH_BASE_URL = BuildConfig.SEARCH_BASE_URL;
     private static final String NEWS_BASE_URL = BuildConfig.NEWS_BASE_URL;
     public static final String FOOTBALL_PLAYER_BASE_URL = BuildConfig.PLAYER_PROFILE_BASE_URL;
+    public static final String GLOBAL_SEARCH_BASE_URL = BuildConfig.SEARCH_BASE_URL;
 
     public static final String URL_NEWS_CONTENT = Constants.NEWS_BASE_URL + "mixed?";
 

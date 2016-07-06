@@ -29,6 +29,7 @@
                 android:id="@+id/date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
                 android:text=""
                 android:textColor="@android:color/black"
                 android:textSize="@dimen/font_size_small_large" />
@@ -38,6 +39,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/date"
+                android:layout_centerInParent="true"
                 android:gravity="center_horizontal"
                 android:text=""
                 android:textColor="@color/score_light_grey"
@@ -48,7 +50,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/date"
-                android:layout_centerHorizontal="true"
+                android:layout_centerInParent="true"
                 android:paddingLeft="@dimen/horizontal_padding_very_very_small"
                 android:paddingRight="@dimen/horizontal_padding_very_very_small"
                 android:text=""
@@ -95,6 +97,7 @@
             android:id="@+id/t1flag"
             android:layout_width="@dimen/flag_size_small"
             android:layout_height="@dimen/flag_size_small"
+            android:layout_centerInParent="true"
             android:layout_marginLeft="@dimen/activity_horizontal_margin"
             android:layout_toLeftOf="@+id/center_data" />
 
@@ -102,6 +105,7 @@
             android:id="@+id/t2flag"
             android:layout_width="@dimen/flag_size_small"
             android:layout_height="@dimen/flag_size_small"
+            android:layout_centerInParent="true"
             android:layout_marginRight="@dimen/activity_horizontal_margin"
             android:layout_toRightOf="@+id/center_data" />
 

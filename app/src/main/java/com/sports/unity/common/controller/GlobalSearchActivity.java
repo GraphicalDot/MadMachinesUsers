@@ -35,6 +35,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URL;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -51,15 +55,28 @@ public class GlobalSearchActivity extends CustomVolleyCallerActivity {
     private GlobalSearchListAdapter globalSearchListAdapter;
     private ArrayList<GlobalContentItemObject> content = new ArrayList<>();
     private String keyword = "";
+
+    private boolean isLocalDataToBeAdded = true;
+
     private static final String GLOBAL_SEARCH_TYPE = "&search_type=";
+
+
     public static final String TEAM_TYPE = "team";
     public static final String LEAGUE_TYPE = "league";
     public static final String PLAYER_TYPE = "player";
     public static final String NEWS_TYPE = "news";
     public static final String MATCH_TYPE = "match";
     public static final String ALL_TYPE = "all";
-    boolean localDataAdded = false;
     public static final String KEYWORD = "keyword";
+
+    public static final String TEAM_HEADER = "Teams";
+    public static final String LEAGUE_HEADER = "League";
+    public static final String PLAYER_HEADER = "Player Profile";
+    public static final String NEWS_HEADER = "News";
+    public static final String MATCH_HEADER = "Matches";
+    public static final String MESSAGES_HEADER = "Messages";
+    public static final String CONTACTS_HEADER = "Contacts";
+
 
     private int position = 0;
 
@@ -143,8 +160,12 @@ public class GlobalSearchActivity extends CustomVolleyCallerActivity {
                 if (actionId == EditorInfo.IME_ACTION_SEARCH) {
 
                     hideKeyboard();
-                    performSearch(v.getText().toString(), ALL_TYPE);
-
+                    try {
+                        String sEncoded = URLEncoder.encode(v.getText().toString().trim(), "UTF-8");
+                        performSearch(sEncoded, ALL_TYPE);
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    }
                     return true;
                 }
                 return false;
@@ -156,16 +177,19 @@ public class GlobalSearchActivity extends CustomVolleyCallerActivity {
 
     public void performSpecificSearch(String text, String type) {
         performSearch(text, type);
+        isLocalDataToBeAdded = false;
     }
 
     private void performSearch(String text, String type) {
         this.keyword = text;
+        isLocalDataToBeAdded = true;
         onComponentCreate();
         HashMap<String, String> parameters = new HashMap<>();
         parameters.put(Constants.GLOBAL_SEARCH_KEYWORD, text);
         parameters.put(Constants.GLOBAL_SEARCH_ENDPOINT, GLOBAL_SEARCH_TYPE);
         parameters.put(Constants.GLOBAL_SEARCH_TYPE, type);
         requestContent(ScoresContentHandler.CALL_NAME_GLOBAL_SEARCH, parameters, GLOBAL_SEARCH_REQUEST_TAG);
+        globalSearchRecyclerView.setVisibility(View.INVISIBLE);
     }
 
     private void hideKeyboard() {
@@ -192,6 +216,7 @@ public class GlobalSearchActivity extends CustomVolleyCallerActivity {
 
         @Override
         public void changeUI(String tag) {
+            globalSearchRecyclerView.setVisibility(View.VISIBLE);
             boolean success = GlobalSearchActivity.this.renderContent();
             if (!success) {
                 showErrorLayout();
@@ -220,32 +245,21 @@ public class GlobalSearchActivity extends CustomVolleyCallerActivity {
 
             content.clear();
 
-            localDataAdded = false;
-            
+            boolean localDataAdded = false;
+
             if (position == 0) {
 
-                if (matchesArray.length() > 0) {
-                    for (int i = 0; i < matchesArray.length(); i++) {
-                        if (i == 0) {
-                            content.add(new GlobalContentItemObject(GlobalSearchListAdapter.VIEW_TYPE_HEADER, "Matches"));
-                        }
-                        content.add(new GlobalContentItemObject(GlobalSearchListAdapter.VIEW_TYPE_MATCH, matchesArray.getJSONObject(i)));
-                    }
-                }
+                addToContent(matchesArray, MATCH_HEADER, GlobalSearchListAdapter.VIEW_TYPE_MATCH);
                 dataMap.remove(MATCH_TYPE);
+
             } else if (position == 1) {
 
-                if (newsArray.length() > 0) {
-                    for (int i = 0; i < newsArray.length(); i++) {
-                        if (i == 0) {
-                            content.add(new GlobalContentItemObject(GlobalSearchListAdapter.VIEW_TYPE_HEADER, "News"));
-                        }
-                        content.add(new GlobalContentItemObject(GlobalSearchListAdapter.VIEW_TYPE_NEWS, newsArray.getJSONObject(i)));
-                    }
-                }
+                addToContent(newsArray, NEWS_HEADER, GlobalSearchListAdapter.VIEW_TYPE_NEWS);
                 dataMap.remove(NEWS_TYPE);
+
             } else {
-                addContactsAndMessagesToMap();
+                addMessagesToMap(false);
+                addContactsToMap(false);
                 localDataAdded = true;
             }
 
@@ -254,66 +268,33 @@ public class GlobalSearchActivity extends CustomVolleyCallerActivity {
                 Map.Entry pair = (Map.Entry) it.next();
                 if (((String) pair.getKey()).equals(LEAGUE_TYPE)) {
 
-                    if (leagueArray.length() > 0) {
-                        for (int i = 0; i < leagueArray.length(); i++) {
-                            if (i == 0) {
-                                content.add(new GlobalContentItemObject(GlobalSearchListAdapter.VIEW_TYPE_HEADER, "League"));
-                            }
-                            content.add(new GlobalContentItemObject(GlobalSearchListAdapter.VIEW_TYPE_LEAGUE, leagueArray.getJSONObject(i)));
-                        }
-                    }
+                    addToContent(leagueArray, LEAGUE_HEADER, GlobalSearchListAdapter.VIEW_TYPE_LEAGUE);
                     it.remove();
 
                 } else if (((String) pair.getKey()).equals(TEAM_TYPE)) {
 
-                    if (teamsArray.length() > 0) {
-                        for (int i = 0; i < teamsArray.length(); i++) {
-                            if (i == 0) {
-                                content.add(new GlobalContentItemObject(GlobalSearchListAdapter.VIEW_TYPE_HEADER, "Teams"));
-                            }
-                            content.add(new GlobalContentItemObject(GlobalSearchListAdapter.VIEW_TYPE_TEAM, teamsArray.getJSONObject(i)));
-                        }
-                    }
+                    addToContent(teamsArray, TEAM_HEADER, GlobalSearchListAdapter.VIEW_TYPE_TEAM);
                     it.remove();
 
                 } else if (((String) pair.getKey()).equals(PLAYER_TYPE)) {
 
-                    if (playersArray.length() > 0) {
-                        for (int i = 0; i < playersArray.length(); i++) {
-                            if (i == 0) {
-                                content.add(new GlobalContentItemObject(GlobalSearchListAdapter.VIEW_TYPE_HEADER, "Player Profile"));
-                            }
-                            content.add(new GlobalContentItemObject(GlobalSearchListAdapter.VIEW_TYPE_PLAYER_PROFILE, playersArray.getJSONObject(i)));
-                        }
-                    }
+                    addToContent(playersArray, PLAYER_HEADER, GlobalSearchListAdapter.VIEW_TYPE_PLAYER_PROFILE);
                     it.remove();
 
                 } else if (((String) pair.getKey()).equals(MATCH_TYPE)) {
 
-                    if (matchesArray.length() > 0) {
-                        for (int i = 0; i < matchesArray.length(); i++) {
-                            if (i == 0) {
-                                content.add(new GlobalContentItemObject(GlobalSearchListAdapter.VIEW_TYPE_HEADER, "Matches"));
-                            }
-                            content.add(new GlobalContentItemObject(GlobalSearchListAdapter.VIEW_TYPE_MATCH, matchesArray.getJSONObject(i)));
-                        }
-                    }
+                    addToContent(matchesArray, MATCH_HEADER, GlobalSearchListAdapter.VIEW_TYPE_MATCH);
                     it.remove();
                 } else if (((String) pair.getKey()).equals(NEWS_TYPE)) {
-                    if (newsArray.length() > 0) {
-                        for (int i = 0; i < newsArray.length(); i++) {
-                            if (i == 0) {
-                                content.add(new GlobalContentItemObject(GlobalSearchListAdapter.VIEW_TYPE_HEADER, "News"));
-                            }
-                            content.add(new GlobalContentItemObject(GlobalSearchListAdapter.VIEW_TYPE_NEWS, newsArray.getJSONObject(i)));
-                        }
-                    }
+
+                    addToContent(newsArray, NEWS_HEADER, GlobalSearchListAdapter.VIEW_TYPE_NEWS);
                     it.remove();
                 }
             }
 
-            if (!localDataAdded) {
-                addContactsAndMessagesToMap();
+            if (!localDataAdded && isLocalDataToBeAdded) {
+                addMessagesToMap(false);
+                addContactsToMap(false);
             }
             success = true;
 
@@ -325,23 +306,56 @@ public class GlobalSearchActivity extends CustomVolleyCallerActivity {
         return success;
     }
 
-    private void addContactsAndMessagesToMap() {
-        ArrayList<Message> messages = SportsUnityDBHelper.getInstance(getApplicationContext()).getMatchingChat(keyword);
-        ArrayList<Contacts> contacts = SportsUnityDBHelper.getInstance(getApplicationContext()).getMatchingContacts(keyword);
+    private void addToContent(JSONArray array, String header, int viewType) throws JSONException {
+        if (array.length() > 0) {
+            for (int i = 0; i < array.length(); i++) {
+                if (i == 0) {
+                    content.add(new GlobalContentItemObject(GlobalSearchListAdapter.VIEW_TYPE_HEADER, header));
+                }
+                content.add(new GlobalContentItemObject(viewType, array.getJSONObject(i)));
+            }
+        }
+    }
+
+    public void addMessagesToMap(boolean shouldClearContent) {
+
+        int limit = 2;
+
+        if (shouldClearContent) {
+            content.clear();
+            limit = 1000;
+        }
+
+        ArrayList<Message> messages = SportsUnityDBHelper.getInstance(getApplicationContext()).getMatchingChat(keyword, limit);
         for (int i = 0; i < messages.size(); i++) {
             if (i == 0) {
-                content.add(new GlobalContentItemObject(GlobalSearchListAdapter.VIEW_TYPE_HEADER, "Messages"));
+                content.add(new GlobalContentItemObject(GlobalSearchListAdapter.VIEW_TYPE_HEADER, MESSAGES_HEADER));
             }
             content.add(new GlobalContentItemObject(GlobalSearchListAdapter.VIEW_TYPE_MESSAGE, messages.get(i)));
         }
+
+        if (shouldClearContent) {
+            globalSearchListAdapter.updateData(content, keyword);
+        }
+    }
+
+    public void addContactsToMap(boolean shouldClearContent) {
+        int limit = 2;
+        if (shouldClearContent) {
+            content.clear();
+            limit = 1000;
+        }
+        ArrayList<Contacts> contacts = SportsUnityDBHelper.getInstance(getApplicationContext()).getMatchingContacts(keyword, limit);
         for (int i = 0; i < contacts.size(); i++) {
             if (i == 0) {
-                content.add(new GlobalContentItemObject(GlobalSearchListAdapter.VIEW_TYPE_HEADER, "Contacts"));
+                content.add(new GlobalContentItemObject(GlobalSearchListAdapter.VIEW_TYPE_HEADER, CONTACTS_HEADER));
             }
             content.add(new GlobalContentItemObject(GlobalSearchListAdapter.VIEW_TYPE_CONTACT, contacts.get(i)));
         }
 
-
+        if (shouldClearContent) {
+            globalSearchListAdapter.updateData(content, keyword);
+        }
     }
 
     private boolean handleResponse(String response) {
