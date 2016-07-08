@@ -615,6 +615,11 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
             setMajorColor(bitmap);
 
         } else {
+            FrameLayout frameLayout = (FrameLayout) findViewById(R.id.profile_parent);
+            FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(screenWidth, screenWidth);
+            profileImage.setLayoutParams(params);
+            CollapsingToolbarLayout.LayoutParams params1 = new CollapsingToolbarLayout.LayoutParams(screenWidth, screenWidth);
+            frameLayout.setLayoutParams(params1);
             profileImage.setImageResource(R.drawable.ic_user);
         }
 
@@ -647,12 +652,13 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
                         UserProfileActivity.this.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-
-                                setProfileImage(bitmap, false);
-                                if (ownProfile) {
-                                    String jid = TinyDB.getInstance(UserProfileActivity.this).getString(TinyDB.KEY_USER_JID);
-                                    Contacts contacts = SportsUnityDBHelper.getInstance(UserProfileActivity.this).getContactByJid(jid);
-                                    SportsUnityDBHelper.getInstance(UserProfileActivity.this).updateContacts(jid, byteArray, contacts.status);
+                                if (saveProfile.getVisibility() != View.VISIBLE) {
+                                    setProfileImage(bitmap, false);
+                                    if (ownProfile) {
+                                        String jid = TinyDB.getInstance(UserProfileActivity.this).getString(TinyDB.KEY_USER_JID);
+                                        Contacts contacts = SportsUnityDBHelper.getInstance(UserProfileActivity.this).getContactByJid(jid);
+                                        SportsUnityDBHelper.getInstance(UserProfileActivity.this).updateContacts(jid, byteArray, contacts.status);
+                                    }
                                 }
                             }
                         });
@@ -664,7 +670,7 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
     }
 
     private void setMajorColor(final Bitmap bitmap) {
-        final FrameLayout frameLayout = (FrameLayout) findViewById(R.id.profile_parent);
+        FrameLayout frameLayout = (FrameLayout) findViewById(R.id.profile_parent);
         FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(screenWidth, screenWidth);
         profileImage.setLayoutParams(params);
         CollapsingToolbarLayout.LayoutParams params1 = new CollapsingToolbarLayout.LayoutParams(screenWidth, screenWidth);
@@ -696,6 +702,11 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
             Bitmap bitmap = BitmapFactory.decodeByteArray(imageArray, 0, imageArray.length);
             setMajorColor(bitmap);
         } else {
+            FrameLayout frameLayout = (FrameLayout) findViewById(R.id.profile_parent);
+            FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(screenWidth, screenWidth);
+            profileImage.setLayoutParams(params);
+            CollapsingToolbarLayout.LayoutParams params1 = new CollapsingToolbarLayout.LayoutParams(screenWidth, screenWidth);
+            frameLayout.setLayoutParams(params1);
             profileImage.setImageResource(R.drawable.ic_user);
         }
         String jid = getIntent().getStringExtra("jid");
@@ -977,7 +988,7 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
                     e.printStackTrace();
                 }
                 if (uri != null) {
-                    Glide.with(this).load(Uri.parse(uri)).placeholder(R.drawable.ic_no_img).into(iv);
+                    Glide.with(this).load(Uri.parse(uri)).placeholder(R.drawable.ic_no_img).dontAnimate().into(iv);
                 } else {
                     iv.setVisibility(View.VISIBLE);
                     iv.setImageResource(R.drawable.ic_no_img);
@@ -1020,7 +1031,7 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
                     e.printStackTrace();
                 }
                 if (uri != null) {
-                    Glide.with(this).load(Uri.parse(uri)).placeholder(R.drawable.ic_no_img).into(iv);
+                    Glide.with(this).load(Uri.parse(uri)).placeholder(R.drawable.ic_no_img).dontAnimate().into(iv);
                 } else {
                     iv.setVisibility(View.VISIBLE);
                     iv.setImageResource(R.drawable.ic_no_img);
