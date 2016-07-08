@@ -76,6 +76,7 @@ public class GlobalSearchActivity extends CustomVolleyCallerActivity {
     public static final String MATCH_HEADER = "Matches";
     public static final String MESSAGES_HEADER = "Messages";
     public static final String CONTACTS_HEADER = "Contacts";
+    public static final String EMPTY_HEADER_SHOW_ALL = "";
 
 
     private int position = 0;

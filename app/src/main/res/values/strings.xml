@@ -277,6 +277,7 @@ message to verify your mobile number.</string>
     <!--Sending invite related-->
     <string name="download_sports_unity">Check out Sports Unity for your smartphone. Download it from http://www.sportsunity.co</string>
     <string name="search_title">Search</string>
+    <string name="filter_title">Filter</string>
     <string name="summary">Summary</string>
     <string name="commentary">Commentary</string>
     <string name="scorecard">Scorecard</string>

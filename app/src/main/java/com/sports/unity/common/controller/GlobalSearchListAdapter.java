@@ -2,16 +2,12 @@ package com.sports.unity.common.controller;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
-import android.text.Html;
 import android.text.SpannableStringBuilder;
-import android.text.style.BackgroundColorSpan;
 import android.text.style.ForegroundColorSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -22,6 +18,7 @@ import com.bumptech.glide.Glide;
 import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.R;
 import com.sports.unity.common.model.FavouriteItem;
+import com.sports.unity.common.model.FavouriteItemWrapper;
 import com.sports.unity.common.model.GlobalContentItemObject;
 import com.sports.unity.common.model.TinyDB;
 import com.sports.unity.messages.controller.activity.ChatScreenActivity;
@@ -46,7 +43,6 @@ import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.TimeZone;
@@ -220,8 +216,12 @@ public class GlobalSearchListAdapter extends RecyclerView.Adapter {
 
         holder1.view.setTag(position);
         holder1.view.setOnClickListener(onClickListener);
+        holder1.favoriateTag.setVisibility(View.GONE);
+        ArrayList<FavouriteItem> favouriateTeams = FavouriteItemWrapper.getInstance(context).getAllTeams();
 
         try {
+            String homeTeam = matchObject.getString("home_team");
+            String awayTeam = matchObject.getString("away_team");
             if (matchObject.getString("sport_type").equals("cricket")) {
 
                 holder1.t1overs.setVisibility(View.VISIBLE);
@@ -256,6 +256,12 @@ public class GlobalSearchListAdapter extends RecyclerView.Adapter {
                     holder1.matchDay.setText("v/s");
                 }
                 holder1.matchName.setText(matchObject.getString("match_number"));
+                for (FavouriteItem favItem : favouriateTeams) {
+                    if (favItem.getName().equals(homeTeam) || favItem.getName().equals(awayTeam)) {
+                        holder1.favoriateTag.setVisibility(View.VISIBLE);
+                        break;
+                    }
+                }
             } else {
                 holder1.t1overs.setVisibility(View.GONE);
                 holder1.t2overs.setVisibility(View.GONE);
@@ -295,7 +301,12 @@ public class GlobalSearchListAdapter extends RecyclerView.Adapter {
                         holder1.matchProgress.setProgress(progress);
                     }
                 }
-
+                for (FavouriteItem favItem : favouriateTeams) {
+                    if (favItem.getName().equals(homeTeam) || favItem.getName().equals(awayTeam)) {
+                        holder1.favoriateTag.setVisibility(View.VISIBLE);
+                        break;
+                    }
+                }
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -418,15 +429,17 @@ public class GlobalSearchListAdapter extends RecyclerView.Adapter {
                 case VIEW_TYPE_CONTACT:
                     Contacts contact = (Contacts) globalContentItemObject.getObject();
                     if (contact.isRegistered()) {
-                        openChatScreen(contact);
+                        openChatScreen(contact, false);
                     } else {
                         Toast.makeText(context, "This user is not registered", Toast.LENGTH_SHORT).show();
                     }
                     break;
                 case VIEW_TYPE_MESSAGE:
+                    SportsUnityDBHelper sportsUnityDBHelper = SportsUnityDBHelper.getInstance(context);
                     Message message = (Message) globalContentItemObject.getObject();
-                    Contacts c = SportsUnityDBHelper.getInstance(context).getContactByJid(message.number);
-                    openChatScreen(c);
+                    Contacts c = sportsUnityDBHelper.getContact(message.contactID);
+                    boolean isGroupChat = sportsUnityDBHelper.isGroupEntry(c.id);
+                    openChatScreen(c, isGroupChat);
                     break;
                 case VIEW_TYPE_NEWS:
                     JSONObject jsonObject = (JSONObject) globalContentItemObject.getObject();
@@ -492,7 +505,7 @@ public class GlobalSearchListAdapter extends RecyclerView.Adapter {
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-                    leagueItem.setFilterType(Constants.FILTER_TYPE_TEAM);
+                    leagueItem.setFilterType(Constants.FILTER_TYPE_LEAGUE);
                     Intent leagueIntent = new Intent(context, TeamLeagueDetails.class);
                     leagueIntent.putExtra(Constants.INTENT_TEAM_LEAGUE_DETAIL_EXTRA, leagueItem.getJsonObject().toString());
                     if (sportType.equals("cricket")) {
@@ -573,12 +586,12 @@ public class GlobalSearchListAdapter extends RecyclerView.Adapter {
         }
     };
 
-    private void openChatScreen(Contacts contact) {
+    private void openChatScreen(Contacts contact, boolean isGroupChat) {
         byte[] userPicture = contact.image;
         boolean blockStatus = SportsUnityDBHelper.getInstance(context).isChatBlocked(contact.id);
 
         Intent chatScreenIntent = ChatScreenActivity.createChatScreenIntent(context,
-                false,
+                isGroupChat,
                 contact.jid,
                 contact.getName(),
                 contact.id,
