@@ -300,8 +300,8 @@ public class CompletedFootballMatchLineUpFragment extends BasicVolleyRequestResp
             completeFootballLineUpDTO.setPlayerPostionNumberSecond(teamSecondObject.getString("jersey_number"));
             //getMatchEventsSecond(matchEventsArray, teamSecondObject.getString("name"), completeFootballLineUpDTO);
 
-            completeFootballLineUpDTO.setEnterExitImageSecond(getOnOffPlayer(substitutionsArray, teamSecondObject.getString("name")));
-            String playerOnName = getOnOffPlayer(substitutionsArray, teamSecondObject.getString("name"));
+            completeFootballLineUpDTO.setEnterExitImageSecond(getOnOffPlayer(substitutionsArray, teamSecondObject.getString("player_id")));
+            String playerOnName = getOnOffPlayer(substitutionsArray, teamSecondObject.getString("player_id"));
             if (playerOnName != null) {
                 completeFootballLineUpDTO.setEnterExitImageSecond("OFF");
                 completeFootballLineUpDTO.setOffEnterExitImageSecond("ON");
@@ -316,7 +316,7 @@ public class CompletedFootballMatchLineUpFragment extends BasicVolleyRequestResp
             completeFootballLineUpDTO.setPlayerPostionNumber(teamFirstObject.getString("jersey_number"));
 //        getMatchEventsFirst(matchEventsArray, teamFirstObject.getString("name"), completeFootballLineUpDTO);
 
-            String playerOnName = getOnOffPlayer(substitutionsArray, teamFirstObject.getString("name"));
+            String playerOnName = getOnOffPlayer(substitutionsArray, teamFirstObject.getString("player_id"));
             if (playerOnName != null) {
                 completeFootballLineUpDTO.setEnterExitImage("OFF");
                 completeFootballLineUpDTO.setOffEnterExitImage("ON");
@@ -331,8 +331,8 @@ public class CompletedFootballMatchLineUpFragment extends BasicVolleyRequestResp
             completeFootballLineUpDTO.setPlayerPostionNumberSecond(teamSecondObject.getString("jersey_number"));
             //getMatchEventsSecond(matchEventsArray, teamSecondObject.getString("player_name"), completeFootballLineUpDTO);
 
-            completeFootballLineUpDTO.setEnterExitImageSecond(getOnOffPlayer(substitutionsArray, teamSecondObject.getString("player_name")));
-            String playerOnName = getOnOffPlayer(substitutionsArray, teamSecondObject.getString("player_name"));
+            completeFootballLineUpDTO.setEnterExitImageSecond(getOnOffPlayer(substitutionsArray, teamSecondObject.getString("player_id")));
+            String playerOnName = getOnOffPlayer(substitutionsArray, teamSecondObject.getString("player_id"));
             if (playerOnName != null) {
                 completeFootballLineUpDTO.setEnterExitImage("OFF");
                 completeFootballLineUpDTO.setOffEnterExitImage("ON");
@@ -345,9 +345,9 @@ public class CompletedFootballMatchLineUpFragment extends BasicVolleyRequestResp
         if (teamFirstObject != null) {
             completeFootballLineUpDTO.setPlayerName(teamFirstObject.getString("player_name"));
             completeFootballLineUpDTO.setPlayerPostionNumber(teamFirstObject.getString("jersey_number"));
-            completeFootballLineUpDTO.setEnterExitImage(getOnOffPlayer(substitutionsArray, teamFirstObject.getString("player_name")));
+            completeFootballLineUpDTO.setEnterExitImage(getOnOffPlayer(substitutionsArray, teamFirstObject.getString("player_id")));
             //getMatchEventsFirst(matchEventsArray, teamFirstObject.getString("player_name"), completeFootballLineUpDTO);
-            String playerOnName = getOnOffPlayer(substitutionsArray, teamFirstObject.getString("player_name"));
+            String playerOnName = getOnOffPlayer(substitutionsArray, teamFirstObject.getString("player_id"));
             if (playerOnName != null) {
                 completeFootballLineUpDTO.setEnterExitImage("OFF");
                 completeFootballLineUpDTO.setOffEnterExitImage("ON");
@@ -356,13 +356,13 @@ public class CompletedFootballMatchLineUpFragment extends BasicVolleyRequestResp
         }
     }
 
-    private String getOnOffPlayer(JSONArray substitutionsArray, String playerName) {
+    private String getOnOffPlayer(JSONArray substitutionsArray, String playerOnID) {
         String playerOn = null;
         try {
             for (int i = 0; i < substitutionsArray.length(); i++) {
                 JSONObject substitutesObject = substitutionsArray.getJSONObject(i);
-                if (!substitutesObject.isNull("player_off")) {
-                    if (playerName.equals(substitutesObject.getString("player_off"))) {
+                if (!substitutesObject.isNull("player_off_id")) {
+                    if (playerOnID.equals(substitutesObject.getString("player_off_id"))) {
                         if (!substitutesObject.isNull("player_on")) {
                             playerOn = substitutesObject.getString("player_on");
                         }

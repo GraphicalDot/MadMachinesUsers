@@ -404,7 +404,7 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
                             .setDismissText("NEXT")
                             .setContentHeadingText("See Nearby Fans")
                             .setContentText("Connect to fans around you")
-                            .setDelay(500) // optional but starting animations immediately in onCreate can make them choppy
+                            .setDelay(100) // optional but starting animations immediately in onCreate can make them choppy
                             .singleUse(SHOWCASE_ID) // provide a unique ID used to ensure it is only shown once
                             .show();
 
@@ -414,6 +414,13 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
                 if (fabMenu != null) {
                     fabMenu.hideMenuButton(true);
                 }
+            }
+            if (position == 0) {
+                CommonUtil.sendAnalyticsData(getApplication(), "ScoresScreen");
+            } else if (position == 1) {
+                CommonUtil.sendAnalyticsData(getApplication(), "NewsScreen");
+            } else if (position == 2) {
+                CommonUtil.sendAnalyticsData(getApplication(), "ChatScreen");
             }
         }
 

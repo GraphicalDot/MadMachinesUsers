@@ -2,6 +2,7 @@ package com.sports.unity.messages.controller.activity;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -14,6 +15,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.sports.unity.CropImageFragment;
 import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.R;
 import com.sports.unity.common.controller.CustomAppCompatActivity;
@@ -36,6 +38,9 @@ public class GroupDetailActivity extends CustomAppCompatActivity {
     private byte[] groupImage;
 
     private boolean isGroupEditing = false;
+    public static final String CROP_FRAGMENT_TAG = "crop_fragment_tag";
+    private Fragment resultFragment;
+    private Fragment currentFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,12 +63,42 @@ public class GroupDetailActivity extends CustomAppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        List<Fragment> fragmentList = getSupportFragmentManager().getFragments();
-        if( fragmentList.size() == 1 ) {
+        /*List<Fragment> fragmentList = getSupportFragmentManager().getFragments();
+        if (fragmentList.size() == 2) {
+            Fragment fragment = fragmentList.get(1);
+            if(fragmentList.get(0) instanceof ContactsFragment){
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, resultFragment).commit();
+            } else if (fragment instanceof CropImageFragment) {
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, resultFragment).commit();
+            } else if (fragment instanceof GroupInfoFragment) {
+                boolean success = ((GroupInfoFragment) fragment).onBackPressed();
+                if (success) {
+                    //nothing
+                } else {
+                    super.onBackPressed();
+                }
+            } else if (fragment == null) {
+                fragment = fragmentList.get(0);
+                if (fragment instanceof CropImageFragment) {
+                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, resultFragment).commit();
+                } else if (fragment instanceof GroupInfoFragment) {
+                    boolean success = ((GroupInfoFragment) fragment).onBackPressed();
+                    if (success) {
+                        //nothing
+                    } else {
+                        super.onBackPressed();
+                    }
+                } else {
+                    super.onBackPressed();
+                }
+            } else {
+                super.onBackPressed();
+            }
+        } else if (fragmentList.size() == 1) {
             Fragment fragment = fragmentList.get(0);
             if (fragment instanceof GroupInfoFragment) {
                 boolean success = ((GroupInfoFragment) fragment).onBackPressed();
-                if( success ){
+                if (success) {
                     //nothing
                 } else {
                     super.onBackPressed();
@@ -73,14 +108,33 @@ public class GroupDetailActivity extends CustomAppCompatActivity {
             }
         } else {
             super.onBackPressed();
+        }*/
+
+        if (currentFragment instanceof CropImageFragment) {
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, resultFragment).commit();
+            currentFragment = resultFragment;
+        } else if (currentFragment instanceof GroupInfoFragment) {
+            boolean success = ((GroupInfoFragment) currentFragment).onBackPressed();
+            if (success) {
+                //nothing
+            } else {
+                super.onBackPressed();
+            }
+        } else if (currentFragment instanceof ContactsFragment) {
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, resultFragment).commit();
+            currentFragment = resultFragment;
+        } else {
+            finish();
         }
     }
+
 
     private void addGroupCreateFragment() {
         GroupCreateFragment groupCreateFragment = new GroupCreateFragment();
 
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.fragment_container, groupCreateFragment).commit();
+        currentFragment=groupCreateFragment;
     }
 
     private void addGroupInfoFragment() {
@@ -93,12 +147,12 @@ public class GroupDetailActivity extends CustomAppCompatActivity {
 
         GroupInfoFragment groupInfoFragment = new GroupInfoFragment();
         groupInfoFragment.setArguments(bundle);
-
+        currentFragment=groupInfoFragment;
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.fragment_container, groupInfoFragment).commit();
     }
 
-    public void moveToMembersListFragment() {
+    public void moveToMembersListFragment(Fragment resultFragment) {
         Bundle bundle = new Bundle();
         bundle.putInt(Constants.INTENT_KEY_CONTACT_FRAGMENT_USAGE, ContactsFragment.USAGE_FOR_MEMBERS);
         bundle.putStringArrayList(Constants.INTENT_KEY_ADDED_MEMBERS, new ArrayList<String>());
@@ -110,13 +164,13 @@ public class GroupDetailActivity extends CustomAppCompatActivity {
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
         fragmentTransaction.replace(R.id.fragment_container, fragment, "as_member");
-        fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
-
+        currentFragment = fragment;
+        this.resultFragment = resultFragment;
         setToolBarForMembersList();
     }
 
-    public void moveToMembersListFragment(SportsUnityDBHelper.GroupParticipants groupParticipants) {
+    public void moveToMembersListFragment(SportsUnityDBHelper.GroupParticipants groupParticipants, Fragment resultFragment) {
         ArrayList<String> addedMembers = new ArrayList<>();
         for (Contacts contacts : groupParticipants.usersInGroup) {
             addedMembers.add(contacts.jid);
@@ -133,16 +187,54 @@ public class GroupDetailActivity extends CustomAppCompatActivity {
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
         fragmentTransaction.replace(R.id.fragment_container, fragment, "as_member");
-        fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
-
+        currentFragment = fragment;
+        this.resultFragment = resultFragment;
         setToolBarForMembersList();
+    }
+
+    public void initiateCrop(Bitmap bitmap, Fragment fragment) {
+        resultFragment = fragment;
+        CropImageFragment cropImageFragment = new CropImageFragment();
+        cropImageFragment.setProfileImage(bitmap);
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, cropImageFragment, CROP_FRAGMENT_TAG).commit();
+        setToolBarForCrop();
+        currentFragment = fragment;
+    }
+
+    public void cancelCrop() {
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, resultFragment).commit();
+    }
+
+    public void setProfileImage(Bitmap bitmap) {
+        if (resultFragment instanceof GroupCreateFragment) {
+            ((GroupCreateFragment) resultFragment).setImageBitmap(bitmap);
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, resultFragment).commit();
+        } else if (resultFragment instanceof GroupInfoFragment) {
+            ((GroupInfoFragment) resultFragment).setImageBitmap(bitmap);
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, resultFragment).commit();
+        }
     }
 
     public void setGroupDetails(String groupName, String groupDescription, byte[] groupImageArray) {
         this.groupName = groupName;
         this.groupDescription = groupDescription;
         this.groupImage = groupImageArray;
+    }
+
+
+    private void setToolBarForCrop() {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
+        setSupportActionBar(toolbar);
+
+//        ((ImageView) toolbar.findViewById(R.id.backarrow)).setImageResource(R.drawable.ic_menu_back);
+        toolbar.findViewById(R.id.backarrow).setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, resultFragment).commit();
+            }
+        });
     }
 
     private void setToolBarForMembersList() {

@@ -106,7 +106,6 @@ public class MatchListFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        CommonUtil.sendAnalyticsData(getActivity().getApplication(), "ScoresScreen");
         bundle = getArguments();
         if (bundle != null) {
             scoreDetailsId = bundle.getString(Constants.INTENT_KEY_ID);

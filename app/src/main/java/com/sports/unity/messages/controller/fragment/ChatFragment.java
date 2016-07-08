@@ -65,7 +65,6 @@ public class ChatFragment extends Fragment implements OnSearchViewQueryListener 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        CommonUtil.sendAnalyticsData(getActivity().getApplication(), "ChatScreen");
 
 
        mUrl=Uri.parse("android-app://co.sports.unity/mobileapp/sportsunity.co/chat");

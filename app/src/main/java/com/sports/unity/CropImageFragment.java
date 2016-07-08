@@ -15,6 +15,8 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 
 import com.sports.unity.common.controller.UserProfileActivity;
+import com.sports.unity.messages.controller.activity.GroupDetailActivity;
+import com.sports.unity.messages.controller.activity.GroupInfoFragment;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
 /**
@@ -27,6 +29,7 @@ public class CropImageFragment extends Fragment {
     private int screenHeight;
     private int screenWidth;
 
+    public static final String CROP_FRAGMENT_TAG = "crop_fragment_tag";
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -77,8 +80,11 @@ public class CropImageFragment extends Fragment {
     }
 
     private void cancelCropping() {
-        Fragment fragment = getActivity().getSupportFragmentManager().findFragmentByTag(ProfileCreationActivity.CROP_FRAGMENT_TAG);
+        Fragment fragment = getActivity().getSupportFragmentManager().findFragmentByTag(CropImageFragment.CROP_FRAGMENT_TAG);
         getActivity().getSupportFragmentManager().beginTransaction().remove(fragment).commit();
+        if(getActivity() instanceof GroupDetailActivity){
+            ((GroupDetailActivity)getActivity()).cancelCrop();
+        }
     }
 
     private void cropImageAndFinish() {
@@ -94,8 +100,10 @@ public class CropImageFragment extends Fragment {
             ((ProfileCreationActivity) getActivity()).setProfileImage(profileImage);
         } else if (getActivity() instanceof UserProfileActivity) {
             ((UserProfileActivity) getActivity()).setProfileImage(profileImage,true);
+        }else if(getActivity() instanceof GroupDetailActivity){
+            ((GroupDetailActivity) getActivity()).setProfileImage(profileImage);
         }
-        Fragment fragment = getActivity().getSupportFragmentManager().findFragmentByTag(ProfileCreationActivity.CROP_FRAGMENT_TAG);
+        Fragment fragment = getActivity().getSupportFragmentManager().findFragmentByTag(CropImageFragment.CROP_FRAGMENT_TAG);
         getActivity().getSupportFragmentManager().beginTransaction().remove(fragment).commit();
     }
 

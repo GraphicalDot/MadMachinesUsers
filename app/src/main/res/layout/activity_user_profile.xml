@@ -78,7 +78,6 @@
             android:orientation="vertical">
 
 
-
             <LinearLayout
                 android:id="@+id/profile_info"
                 android:layout_width="match_parent"
@@ -89,8 +88,8 @@
                     android:id="@+id/name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center"
                     android:backgroundTint="@color/gray3"
+                    android:gravity="center"
                     android:paddingBottom="@dimen/vertical_padding_very_small"
                     android:paddingLeft="@dimen/horizontal_padding_very_small"
                     android:paddingRight="@dimen/horizontal_padding_very_small"
@@ -102,9 +101,9 @@
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="0.5dp"
-                    android:background="@color/gray4"
                     android:layout_marginLeft="@dimen/activity_vertical_margin_small"
-                    android:layout_marginRight="@dimen/activity_vertical_margin_small"/>
+                    android:layout_marginRight="@dimen/activity_vertical_margin_small"
+                    android:background="@color/gray4" />
 
 
                 <LinearLayout
@@ -185,8 +184,8 @@
                     android:layout_marginLeft="@dimen/profile_thumb_image_large"
                     android:layout_marginRight="@dimen/profile_thumb_image_large"
                     android:layout_marginTop="@dimen/horizontal_padding_very_small"
-                    android:stateListAnimator="@null"
                     android:background="@drawable/round_edge_blue_box"
+                    android:stateListAnimator="@null"
                     android:text="EDIT PROFILE"
                     android:textColor="@color/app_theme_blue"
                     android:visibility="gone" />
@@ -259,9 +258,12 @@
                     android:visibility="gone" />
 
                 <View
+
+                    android:id="@+id/seperator"
                     android:layout_width="match_parent"
                     android:layout_height="0.5dp"
-                    android:background="@color/gray4"/>
+                    android:background="@color/gray4"
+                    android:visibility="gone"/>
 
                 <LinearLayout
                     android:id="@+id/status"

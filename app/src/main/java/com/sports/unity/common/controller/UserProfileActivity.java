@@ -85,7 +85,6 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
     private static final String ADD_FRIEND = "ADD FRIEND";
     private static final String ACCEPT_REQUEST = "ACCEPT FRIEND REQUEST";
     private static final String REQUEST_SENT = "REQUEST SENT";
-    public static final String CROP_FRAGMENT_TAG = "crop_fragment_tag";
     private static final String LISTENER_KEY = "profile_listener_key";
 
     private static final int LOAD_IMAGE_GALLERY_CAMERA = 1;
@@ -340,8 +339,10 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
             // editImage.setVisibility(View.VISIBLE);
             //toolbarActionButton.setText(INFO_EDIT);
             editProfile.setVisibility(View.VISIBLE);
+            findViewById(R.id.seperator).setVisibility(View.VISIBLE);
         } else {
             editProfile.setVisibility(View.GONE);
+            findViewById(R.id.seperator).setVisibility(View.GONE);
             if (getIntent().getBooleanExtra("otherChat", false)) {
                 requestId = SportsUnityDBHelper.getInstance(getApplicationContext()).checkJidForPendingRequest(getIntent().getStringExtra("jid"));
                 if (requestId == Contacts.PENDING_REQUESTS_TO_PROCESS) {
@@ -417,11 +418,13 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
 
             Contacts contacts = new Contacts(nickname, jid, phoneNumber, byteArray, -1, status, Contacts.AVAILABLE_NOT);
             editProfile.setVisibility(View.VISIBLE);
+
+            findViewById(R.id.seperator).setVisibility(View.VISIBLE);
             //editProfile.setVisibility(View.VISIBLE);
             saveProfile.setVisibility(View.GONE);
             fbButton.setVisibility(View.GONE);
             editImage.setVisibility(View.GONE);
-
+            profileImage.setEnabled(false);
             int requestStatus = UserProfileHandler.getInstance().submitUserProfile(UserProfileActivity.this, contacts, LISTENER_KEY);
             if (requestStatus == UserProfileHandler.REQUEST_STATUS_FAILED) {
                 onUnSuccessfulVCardSubmit();
@@ -448,7 +451,7 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
         saveProfie.setVisibility(View.VISIBLE);
         editProfile.setVisibility(View.GONE);
         editImage.setVisibility(View.VISIBLE);
-
+        profileImage.setEnabled(true);
 
         // toolbarActionButton.setText(INFO_SAVE);
 
@@ -503,6 +506,7 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
     private void addListnerToEditImage() {
         ImageView ImageView = (ImageView) findViewById(R.id.edit_image);
         ImageView.setOnClickListener(profilePictureonOnClickListener);
+        profileImage.setOnClickListener(profilePictureonOnClickListener);
     }
 
     private void initView(boolean ownProfile) {
@@ -927,7 +931,7 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
     private void initiateCrop(Bitmap bitmap) {
         CropImageFragment cropImageFragment = new CropImageFragment();
         cropImageFragment.setProfileImage(bitmap);
-        getSupportFragmentManager().beginTransaction().add(R.id.crop_container, cropImageFragment, CROP_FRAGMENT_TAG).addToBackStack(CROP_FRAGMENT_TAG).commit();
+        getSupportFragmentManager().beginTransaction().add(R.id.crop_container, cropImageFragment, CropImageFragment.CROP_FRAGMENT_TAG).addToBackStack(CropImageFragment.CROP_FRAGMENT_TAG).commit();
     }
 
     private void setFavouriteProfile(ArrayList<FavouriteItem> savedList) {
@@ -1146,7 +1150,7 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
         saveProfile.setVisibility(View.GONE);
         editProfile.setVisibility(View.VISIBLE);
         editImage.setVisibility(View.GONE);
-
+        profileImage.setEnabled(false);
         //  profileImage.setBorderWidth(0);
         //  toolbarActionButton.setText(INFO_EDIT);
 

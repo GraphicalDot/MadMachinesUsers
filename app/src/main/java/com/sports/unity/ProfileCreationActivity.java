@@ -48,7 +48,6 @@ public class ProfileCreationActivity extends AppCompatActivity implements Activi
     private EditText nameText;
     private byte[] byteArray;
     private String userName;
-    public static final String CROP_FRAGMENT_TAG = "crop_fragment_tag";
     private View.OnClickListener continueButtonOnClickListener = new View.OnClickListener() {
 
         @Override
@@ -121,7 +120,7 @@ public class ProfileCreationActivity extends AppCompatActivity implements Activi
     private void initiateCrop(Bitmap bitmap) {
         CropImageFragment cropImageFragment = new CropImageFragment();
         cropImageFragment.setProfileImage(bitmap);
-        getSupportFragmentManager().beginTransaction().add(R.id.crop_container, cropImageFragment, CROP_FRAGMENT_TAG).addToBackStack(CROP_FRAGMENT_TAG).commit();
+        getSupportFragmentManager().beginTransaction().add(R.id.crop_container, cropImageFragment, CropImageFragment.CROP_FRAGMENT_TAG).addToBackStack(CropImageFragment.CROP_FRAGMENT_TAG).commit();
     }
 
     @Override

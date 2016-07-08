@@ -65,16 +65,17 @@ public class NewsFragment extends Fragment implements NewsContentHandler.Content
 
     private GoogleApiClient mClient;
     private Uri mUrl;
-    private String mTitle="Latest News";
-    private String mDescription="Curated and Compiled news from all major sport columns, just for your pocket.";
+    private String mTitle = "Latest News";
+    private String mDescription = "Curated and Compiled news from all major sport columns, just for your pocket.";
 
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        CommonUtil.sendAnalyticsData(getActivity().getApplication(), "NewsScreen");
 
-       mUrl=Uri.parse("android-app://co.sports.unity/mobileapp/sportsunity.co/news");
+
+        CommonUtil.sendAnalyticsData(getActivity().getApplication(), "NewsScreen");
+        mUrl = Uri.parse("android-app://co.sports.unity/mobileapp/sportsunity.co/news");
         mClient = CommonUtil.getAppIndexingClient(getActivity());
     }
 
