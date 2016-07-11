@@ -52,13 +52,13 @@
             android:inputType="number"
             android:maxLength="4"
             android:maxLines="1"
-            android:layout_marginLeft="@dimen/news_mini_image_width"
-            android:layout_marginRight="@dimen/news_mini_image_width"
+            android:layout_marginLeft="@dimen/Otp_edit_text_margin"
+            android:layout_marginRight="@dimen/Otp_edit_text_margin"
             android:layout_centerHorizontal="true"
             android:gravity="center"
             android:textColor="@android:color/white"
             android:textSize="@dimen/font_size_medium"
-            android:textCursorDrawable="@color/ColorPrimary"
+            android:textCursorDrawable="@null"
             />
 
 
@@ -66,8 +66,8 @@
             android:id="@+id/view"
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:layout_marginLeft="@dimen/news_mini_image_width"
-            android:layout_marginRight="@dimen/news_mini_image_width"
+            android:layout_marginLeft="@dimen/Otp_edit_text_margin"
+            android:layout_marginRight="@dimen/Otp_edit_text_margin"
             android:background="@color/ColorPrimary"
             />
 
@@ -93,24 +93,25 @@
 
         <RelativeLayout
             android:id="@+id/sendOtpButton"
-            android:layout_width="fill_parent"
-            android:layout_height="@dimen/edit_view_height"
+            android:layout_width="match_parent"
             android:background="@drawable/ic_continue_button"
+            android:layout_height="@dimen/edit_view_height"
             android:layout_gravity="bottom"
-            android:scrollbars="vertical"
-            >
+            android:scrollbars="vertical">
 
             <ImageButton
                 android:id="@+id/editNumberButton"
                 android:layout_width="@dimen/edit_view_height"
                 android:layout_height="match_parent"
-                android:src="@drawable/ic_menu_back"
                 android:layout_centerHorizontal="true"
                 android:layout_alignParentLeft="true"
-                android:backgroundTint="@color/semi_transparent"
-                android:background="@color/app_theme_blue"/>
+                android:background="@color/semi_transparent"
+                android:src="@drawable/ic_menu_back"
+                android:paddingLeft="@dimen/font_size_very_very_small"
+                android:paddingRight="@dimen/font_size_very_very_small"
+                />
 
-            <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
+            <Button
                 android:id="@+id/enterOtp1"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -120,17 +121,16 @@
                 android:text="@string/otp_confirm"
                 android:textColor="@android:color/white"
                 android:textCursorDrawable="@null"
+                android:background="@android:color/transparent"
                 android:textSize="@dimen/font_size_medium"
                 />
 
         </RelativeLayout>
-
         <ProgressBar
             android:id="@+id/progressBar"
             style="@android:style/Widget.Holo.Light.ProgressBar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
             android:layout_gravity="center"
             android:visibility="gone"
             />

@@ -145,9 +145,9 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity {
         ProgressBar progressBar = (ProgressBar) findViewById(R.id.progressBar);
         progressBar.getIndeterminateDrawable().setColorFilter(getResources().getColor(R.color.gray1), android.graphics.PorterDuff.Mode.MULTIPLY);
 
+
         // LinearLayout editNumberLayout = (LinearLayout) findViewById(R.id.editNumberLayout);
         ImageButton ediImageButton = (ImageButton) findViewById(R.id.editNumberButton);
-        ediImageButton.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_WHITE, false));
         if (UserUtil.isFilterCompleted()) {
             // when user re-verify its account. Don't allow to change phone number.
             ediImageButton.setVisibility(View.GONE);
@@ -167,7 +167,7 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity {
         // TextView editNumberTextView = (TextView) findViewById(R.id.editNumber);
         // editNumberTextView.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoRegular());
 
-        final RelativeLayout sendOtpButton = (RelativeLayout) findViewById(com.sports.unity.R.id.sendOtpButton);
+        final Button sendOtpButton = (Button) findViewById(com.sports.unity.R.id.enterOtp1);
         //  sendOtpButton.setVisibility(View.INVISIBLE);
         sendOtpButton.setOnClickListener(sendButtonClickListener);
 
