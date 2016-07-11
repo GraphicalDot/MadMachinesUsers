@@ -185,8 +185,10 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
                         acceptBlockLayout.setVisibility(View.VISIBLE);
                         Toast.makeText(getApplicationContext(), "Friend request received", Toast.LENGTH_SHORT).show();
                     } else if (eventId == ActivityActionHandler.EVENT_FRIEND_REQUEST_ACCEPTED) {
+                        addFriends.setVisibility(View.GONE);
                         acceptBlockLayout.setVisibility(View.GONE);
                         Toast.makeText(getApplicationContext(), "You are now friends", Toast.LENGTH_SHORT).show();
+                        block.setVisibility(View.VISIBLE);
                     }
                 }
             });
