@@ -113,6 +113,7 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
     private Button addFriends;
     private Button accept;
     private Button block;
+    private Button blockUser;
     boolean blockStatus = false;
 
     private String jabberId = null;
@@ -224,10 +225,11 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
         jabberId = getIntent().getStringExtra("jid");
         if (jabberId == null) {
             jabberId = "ownProfile";
+        } else {
+            Contacts contact = SportsUnityDBHelper.getInstance(getApplicationContext()).getContactByJid(jabberId);
+            blockStatus = contact.blockStatus;
+            blockUnblockUserHelper = new BlockUnblockUserHelper(blockStatus, UserProfileActivity.this, null);
         }
-        Contacts contact = SportsUnityDBHelper.getInstance(getApplicationContext()).getContactByJid(jabberId);
-        blockStatus = contact.blockStatus;
-        blockUnblockUserHelper = new BlockUnblockUserHelper(blockStatus, UserProfileActivity.this, null);
 
         setToolbar(ownProfile);
         initView(ownProfile);
@@ -266,7 +268,7 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
         acceptBlockLayout = (LinearLayout) findViewById(R.id.accept_block_layout);
         ImageView editImage = (ImageView) findViewById(R.id.edit_image);
         Button editProfile = (Button) findViewById(R.id.edit_profile);
-        Button blockUser = (Button) findViewById(R.id.block_user);
+        blockUser = (Button) findViewById(R.id.block_user);
         accept = (Button) findViewById(R.id.accept);
         block = (Button) findViewById(R.id.block);
         addFriends = (Button) findViewById(R.id.add_friends);
@@ -349,8 +351,10 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
     protected void onResume() {
         super.onResume();
         UserProfileHandler.getInstance().addContentListener(LISTENER_KEY, this);
-        blockUnblockUserHelper.addBlockUnblockListener(UserProfileActivity.this);
         ActivityActionHandler.getInstance().addActionListener(ActivityActionHandler.USER_PROFILE_KEY, jabberId, activityActionListener);
+        if (!ownProfile) {
+            blockUnblockUserHelper.addBlockUnblockListener(UserProfileActivity.this);
+        }
     }
 
     @Override
@@ -363,7 +367,9 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
     protected void onStop() {
         super.onStop();
         ActivityActionHandler.getInstance().removeActionListener(ActivityActionHandler.USER_PROFILE_KEY, jabberId);
-        blockUnblockUserHelper.removeBlockUnblockListener();
+        if (!ownProfile) {
+            blockUnblockUserHelper.removeBlockUnblockListener();
+        }
     }
 
     private void onClickSaveButton() {
@@ -1174,16 +1180,27 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
     @Override
     public void onBlock(boolean success, String phoneNumber) {
         if (success) {
-            blockStatus = true;
-            block.setText("UNBLOCK");
+            if (acceptBlockLayout.getVisibility() == View.VISIBLE) {
+                accept.setVisibility(View.GONE);
+                blockUser.setText("UNBLOCK");
+            } else {
+                blockStatus = true;
+                block.setText("UNBLOCK");
+            }
+            Toast.makeText(getApplicationContext(), "This user has been blocked", Toast.LENGTH_SHORT).show();
         }
     }
 
     @Override
     public void onUnblock(boolean success) {
         if (success) {
-            blockStatus = false;
-            block.setText("BLOCK");
+            if (acceptBlockLayout.getVisibility() == View.VISIBLE) {
+                accept.setVisibility(View.VISIBLE);
+                blockUser.setText("BLOCK");
+            } else {
+                blockStatus = false;
+                block.setText("BLOCK");
+            }
         }
     }
 }
