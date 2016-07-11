@@ -35,7 +35,7 @@
                         android:layout_gravity="center"
                         android:layout_marginTop="@dimen/group_image_top_margin"
                         android:scaleType="fitXY"
-                        android:src="@drawable/ic_user" />
+                        android:src="@drawable/ic_group_big" />
 
                     <ImageView
                         android:id="@+id/edit_image"

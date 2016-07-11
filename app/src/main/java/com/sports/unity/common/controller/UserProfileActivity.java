@@ -585,7 +585,7 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
             profileImage.setLayoutParams(params);
             CollapsingToolbarLayout.LayoutParams params1 = new CollapsingToolbarLayout.LayoutParams(screenWidth, screenWidth);
             frameLayout.setLayoutParams(params1);
-            profileImage.setImageResource(R.drawable.ic_user);
+            profileImage.setImageResource(R.drawable.ic_user_big);
         }
 
         ArrayList<FavouriteItem> savedList = FavouriteItemWrapper.getInstance(this).getFavList();
@@ -672,7 +672,7 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
             profileImage.setLayoutParams(params);
             CollapsingToolbarLayout.LayoutParams params1 = new CollapsingToolbarLayout.LayoutParams(screenWidth, screenWidth);
             frameLayout.setLayoutParams(params1);
-            profileImage.setImageResource(R.drawable.ic_user);
+            profileImage.setImageResource(R.drawable.ic_user_big);
         }
         String jid = getIntent().getStringExtra("jid");
         progessBar.setVisibility(View.VISIBLE);
@@ -1151,7 +1151,7 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
         if (byteArray != null) {
             profileImage.setImageBitmap(BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length));
         } else {
-            profileImage.setImageResource(R.drawable.ic_user);
+            profileImage.setImageResource(R.drawable.ic_user_big);
         }
         setInitDataOwn();
     }

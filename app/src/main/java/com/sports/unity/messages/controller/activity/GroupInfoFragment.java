@@ -202,7 +202,7 @@ public class GroupInfoFragment extends Fragment implements ActivityCompat.OnRequ
         if (groupImage != null) {
             groupAvatar.setImageBitmap(BitmapFactory.decodeByteArray(groupImage, 0, groupImage.length));
         } else {
-            groupAvatar.setImageResource(R.drawable.ic_group);
+            groupAvatar.setImageResource(R.drawable.ic_group_big);
         }
         if (isEditing) {
             if (croppedBytes != null) {
@@ -378,7 +378,7 @@ public class GroupInfoFragment extends Fragment implements ActivityCompat.OnRequ
         if (this.groupImage != null) {
             groupAvatar.setImageBitmap(BitmapFactory.decodeByteArray(this.groupImage, 0, this.groupImage.length));
         } else {
-            groupAvatar.setImageResource(R.drawable.ic_group);
+            groupAvatar.setImageResource(R.drawable.ic_group_big);
         }
 
         disableViewForEditingGroupBasicInfo();
