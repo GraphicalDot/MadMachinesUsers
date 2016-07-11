@@ -395,8 +395,6 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
             int requestStatus = UserProfileHandler.getInstance().submitUserProfile(UserProfileActivity.this, contacts, LISTENER_KEY);
             if (requestStatus == UserProfileHandler.REQUEST_STATUS_FAILED) {
                 onUnSuccessfulVCardSubmit();
-
-
             }
         } else {
             if (TextUtils.isEmpty(name.getText().toString())) {
@@ -836,6 +834,7 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
         initViewUI();
         statusView.setVisibility(View.GONE);
         Toast.makeText(UserProfileActivity.this, R.string.message_submit_vcard_sucess, Toast.LENGTH_SHORT).show();
+        getIntent().putExtra("status", status.getText().toString());
     }
 
     private void initViewUI() {
