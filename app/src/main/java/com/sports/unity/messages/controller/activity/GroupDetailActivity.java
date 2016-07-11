@@ -134,7 +134,7 @@ public class GroupDetailActivity extends CustomAppCompatActivity {
 
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.fragment_container, groupCreateFragment).commit();
-        currentFragment=groupCreateFragment;
+        currentFragment = groupCreateFragment;
     }
 
     private void addGroupInfoFragment() {
@@ -147,7 +147,7 @@ public class GroupDetailActivity extends CustomAppCompatActivity {
 
         GroupInfoFragment groupInfoFragment = new GroupInfoFragment();
         groupInfoFragment.setArguments(bundle);
-        currentFragment=groupInfoFragment;
+        currentFragment = groupInfoFragment;
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.fragment_container, groupInfoFragment).commit();
     }
@@ -303,6 +303,7 @@ public class GroupDetailActivity extends CustomAppCompatActivity {
             progressDialog = new ProgressDialog(GroupDetailActivity.this);
             progressDialog.setMessage("creating group...");
             progressDialog.setIndeterminateDrawable(progressBar.getIndeterminateDrawable());
+            progressDialog.setCancelable(false);
             progressDialog.show();
         }
 
@@ -341,6 +342,7 @@ public class GroupDetailActivity extends CustomAppCompatActivity {
             progressDialog = new ProgressDialog(GroupDetailActivity.this);
             progressDialog.setMessage("updating members in group...");
             progressDialog.setIndeterminateDrawable(progressBar.getIndeterminateDrawable());
+            progressDialog.setCancelable(false);
             progressDialog.show();
         }
 
