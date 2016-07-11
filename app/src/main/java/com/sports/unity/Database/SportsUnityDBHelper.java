@@ -397,7 +397,8 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
                 ContactChatEntry.COLUMN_IMAGE,
                 ContactChatEntry.COLUMN_ID,
                 ContactChatEntry.COLUMN_STATUS,
-                ContactChatEntry.COLUMN_AVAILABLE_STATUS
+                ContactChatEntry.COLUMN_AVAILABLE_STATUS,
+                ContactChatEntry.COLUMN_BLOCK_USER
         };
         String selection = ContactChatEntry.COLUMN_JID + " LIKE ?";
         String[] selectionArgs = {jid};
@@ -405,7 +406,8 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
         Cursor c = db.query(ContactChatEntry.TABLE_NAME, projection, selection, selectionArgs, null, null, null);
         Contacts contacts = null;
         if (c.moveToFirst()) {
-            contacts = new Contacts(c.getString(0), c.getString(1), c.getString(2), c.getBlob(3), c.getInt(4), c.getString(5), c.getInt(6));
+            boolean blockStatus = c.getInt(7) == 1;
+            contacts = new Contacts(c.getString(0), c.getString(1), c.getString(2), c.getBlob(3), c.getInt(4), c.getString(5), c.getInt(6), blockStatus);
         }
         c.close();
 
@@ -1390,10 +1392,10 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
         }
     }
 
-    private void printContactsTable() {
+    public void printContactsTable() {
         SQLiteDatabase db = this.getReadableDatabase();
 
-        String query = "SELECT " + ContactChatEntry.COLUMN_ID + " , " + ContactChatEntry.COLUMN_PHONE_NUMBER + " , " + ContactChatEntry.COLUMN_NAME + " , " + ContactChatEntry.COLUMN_AVAILABLE_STATUS +
+        String query = "SELECT " + ContactChatEntry.COLUMN_ID + " , " + ContactChatEntry.COLUMN_JID + " , " + ContactChatEntry.COLUMN_NAME + " , " + ContactChatEntry.COLUMN_AVAILABLE_STATUS +
                 " FROM " + ContactChatEntry.TABLE_NAME;
         Cursor cursor = db.rawQuery(query, null);
         if (cursor.moveToFirst()) {

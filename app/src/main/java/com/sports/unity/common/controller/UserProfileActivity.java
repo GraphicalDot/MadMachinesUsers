@@ -21,18 +21,13 @@ import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.graphics.Palette;
-import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Base64;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.animation.LinearInterpolator;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -56,6 +51,7 @@ import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.common.model.PermissionUtil;
 import com.sports.unity.common.model.TinyDB;
 import com.sports.unity.common.model.UserProfileHandler;
+import com.sports.unity.messages.controller.BlockUnblockUserHelper;
 import com.sports.unity.messages.controller.activity.ChatScreenActivity;
 import com.sports.unity.messages.controller.model.Contacts;
 import com.sports.unity.messages.controller.model.PersonalMessaging;
@@ -78,12 +74,12 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class UserProfileActivity extends CustomAppCompatActivity implements UserProfileHandler.ContentListener {
+public class UserProfileActivity extends CustomAppCompatActivity implements UserProfileHandler.ContentListener, BlockUnblockUserHelper.BlockUnblockListener {
 
-    private static final String INFO_EDIT = "EDIT PROFILE";
-    private static final String INFO_SAVE = "SAVE PROFILE";
-    private static final String ADD_FRIEND = "ADD FRIEND";
-    private static final String ACCEPT_REQUEST = "ACCEPT FRIEND REQUEST";
+    //    private static final String INFO_EDIT = "EDIT PROFILE";
+//    private static final String INFO_SAVE = "SAVE PROFILE";
+//    private static final String ADD_FRIEND = "ADD FRIEND";
+//    private static final String ACCEPT_REQUEST = "ACCEPT FRIEND REQUEST";
     private static final String REQUEST_SENT = "REQUEST SENT";
     private static final String LISTENER_KEY = "profile_listener_key";
 
@@ -112,10 +108,12 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
     private ImageView editImage;
     private Button saveProfile;
 
+    private BlockUnblockUserHelper blockUnblockUserHelper;
     private LinearLayout acceptBlockLayout;
     private Button addFriends;
     private Button accept;
     private Button block;
+    boolean blockStatus = false;
 
     private String jabberId = null;
 
@@ -134,88 +132,41 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
 
     private int screenHeight;
     private int screenWidth;
-/*    private TextView.OnClickListener onClickListener = new View.OnClickListener() {
 
+
+    View.OnClickListener onClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if ( toolbarActionButton.getText().equals(ADD_FRIEND) {
-                onClickAddFriend();
-            } else if (toolbarActionButton.getText().equals(ACCEPT_REQUEST)) {
-                onClickAcceptFriend();
-            } else if (toolbarActionButton.getText().equals(REQUEST_SENT)) {
-                //do nothing as friend request has already been sent
-            } else {
-                if (toolbarActionButton.getText().equals(INFO_SAVE)) {
-                    onClickSaveButton();
-                } else {
+            int id = v.getId();
+            switch (id) {
+                case R.id.accept:
+                    onClickAcceptFriend();
+                    break;
+                case R.id.block:
+                case R.id.block_user:
+                    Contacts contact = SportsUnityDBHelper.getInstance(getApplicationContext()).getContactByJid(jabberId);
+                    blockUnblockUserHelper.onMenuItemSelected(UserProfileActivity.this, contact.id, contact.jid, null);
+                    break;
+                case R.id.add_friends:
+                    onClickAddFriend();
+                    break;
+                case R.id.edit_image:
                     onClickEditButton();
-                }
+                    break;
+                case R.id.save_profile:
+                    onClickSaveButton();
+                    break;
+                case R.id.edit_profile:
+                    onClickEditButton();
+                    break;
+                case R.id.edit_fav:
+                    onClickEditFavorites();
+                    break;
+                case R.id.list_item:
+                    onClickStatus(v);
+                    break;
             }
-        }
 
-    };
-    */
-
-    private View.OnClickListener acceptClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            onClickAcceptFriend();
-        }
-    };
-
-    private View.OnClickListener blockClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            //TODO
-        }
-    };
-
-    private View.OnClickListener addFriendsClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            onClickAddFriend();
-        }
-    };
-
-    private View.OnClickListener editImageClickListner = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            onClickEditButton();
-
-
-        }
-    };
-
-    private View.OnClickListener saveProfileClickListner = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            onClickSaveButton();
-
-
-        }
-    };
-
-    private View.OnClickListener editProfieClickListner = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            onClickEditButton();
-        }
-    };
-
-    private View.OnClickListener editFavoritesClickListener = new View.OnClickListener() {
-
-        @Override
-        public void onClick(View v) {
-            onClickEditFavorites();
-        }
-
-    };
-
-    private View.OnClickListener statusClickListener = new View.OnClickListener() {
-
-        @Override
-        public void onClick(View view) {
-            onClickStatus(view);
         }
     };
 
@@ -230,7 +181,6 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
                     if (eventId == ActivityActionHandler.EVENT_FRIEND_REQUEST_SENT) {
                         addFriends.setText(REQUEST_SENT);
                     } else if (eventId == ActivityActionHandler.EVENT_FRIEND_REQUEST_RECEIVED) {
-//                        toolbarActionButton.setText(ACCEPT_REQUEST);
                         acceptBlockLayout.setVisibility(View.VISIBLE);
                         Toast.makeText(getApplicationContext(), "Friend request received", Toast.LENGTH_SHORT).show();
                     } else if (eventId == ActivityActionHandler.EVENT_FRIEND_REQUEST_ACCEPTED) {
@@ -275,6 +225,9 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
         if (jabberId == null) {
             jabberId = "ownProfile";
         }
+        Contacts contact = SportsUnityDBHelper.getInstance(getApplicationContext()).getContactByJid(jabberId);
+        blockStatus = contact.blockStatus;
+        blockUnblockUserHelper = new BlockUnblockUserHelper(blockStatus, UserProfileActivity.this, null);
 
         setToolbar(ownProfile);
         initView(ownProfile);
@@ -313,6 +266,7 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
         acceptBlockLayout = (LinearLayout) findViewById(R.id.accept_block_layout);
         ImageView editImage = (ImageView) findViewById(R.id.edit_image);
         Button editProfile = (Button) findViewById(R.id.edit_profile);
+        Button blockUser = (Button) findViewById(R.id.block_user);
         accept = (Button) findViewById(R.id.accept);
         block = (Button) findViewById(R.id.block);
         addFriends = (Button) findViewById(R.id.add_friends);
@@ -321,13 +275,13 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
         editProfile.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoLight());
 
 
-        accept.setOnClickListener(acceptClickListener);
-        block.setOnClickListener(blockClickListener);
-        addFriends.setOnClickListener(addFriendsClickListener);
-        editImage.setOnClickListener(editImageClickListner);
-        saveProfile.setOnClickListener(saveProfileClickListner);
-        editProfile.setOnClickListener(editProfieClickListner);
-
+        accept.setOnClickListener(onClickListener);
+        block.setOnClickListener(onClickListener);
+        addFriends.setOnClickListener(onClickListener);
+        editImage.setOnClickListener(onClickListener);
+        saveProfile.setOnClickListener(onClickListener);
+        editProfile.setOnClickListener(onClickListener);
+        blockUser.setOnClickListener(onClickListener);
 
         //  LinearLayout clickAction = (LinearLayout) toolbar.findViewById(R.id.click_action);
         // clickAction.setOnClickListener(onClickListener);
@@ -346,19 +300,22 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
             if (getIntent().getBooleanExtra("otherChat", false)) {
                 requestId = SportsUnityDBHelper.getInstance(getApplicationContext()).checkJidForPendingRequest(getIntent().getStringExtra("jid"));
                 if (requestId == Contacts.PENDING_REQUESTS_TO_PROCESS) {
-                    //toolbarActionButton.setText(ACCEPT_REQUEST);
                     acceptBlockLayout.setVisibility(View.VISIBLE);
                 } else if (requestId == Contacts.DEFAULT_PENDNG_REQUEST_ID) {
                     addFriends.setVisibility(View.VISIBLE);
-                    // toolbarActionButton.setText(ADD_FRIEND);
                 } else if (requestId == Contacts.WAITING_FOR_REQUEST_ACCEPTANCE) {
-                    //  toolbarActionButton.setText(REQUEST_SENT);
                     addFriends.setVisibility(View.VISIBLE);
                     addFriends.setText("REQUEST SENT");
+                    addFriends.setClickable(false);
                 }
                 // toolbarActionButton.setBackground(getResources().getDrawable(R.drawable.round_edge_blue_box));
             } else {
-                // toolbarActionButton.setVisibility(View.GONE);
+                block.setVisibility(View.VISIBLE);
+                if (blockStatus) {
+                    block.setText("UNBLOCK");
+                } else {
+                    block.setText("BLOCK");
+                }
             }
         }
     }
@@ -392,6 +349,7 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
     protected void onResume() {
         super.onResume();
         UserProfileHandler.getInstance().addContentListener(LISTENER_KEY, this);
+        blockUnblockUserHelper.addBlockUnblockListener(UserProfileActivity.this);
         ActivityActionHandler.getInstance().addActionListener(ActivityActionHandler.USER_PROFILE_KEY, jabberId, activityActionListener);
     }
 
@@ -405,6 +363,7 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
     protected void onStop() {
         super.onStop();
         ActivityActionHandler.getInstance().removeActionListener(ActivityActionHandler.USER_PROFILE_KEY, jabberId);
+        blockUnblockUserHelper.removeBlockUnblockListener();
     }
 
     private void onClickSaveButton() {
@@ -489,7 +448,7 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
             textView.setText(statusValue[i]);
             textView.setTag(statusValue[i]);
             textView.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_WHITE, false));
-            textView.setOnClickListener(statusClickListener);
+            textView.setOnClickListener(onClickListener);
             statusList.addView(linearLayout);
         }
     }
@@ -626,7 +585,7 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
         ArrayList<FavouriteItem> savedList = FavouriteItemWrapper.getInstance(this).getFavList();
         setFavouriteProfile(savedList);
 
-        editFavourite.setOnClickListener(editFavoritesClickListener);
+        editFavourite.setOnClickListener(onClickListener);
     }
 
     private void loadImageFromServer(final boolean ownProfile) {
@@ -1212,4 +1171,19 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
         startActivity(intent);
     }
 
+    @Override
+    public void onBlock(boolean success, String phoneNumber) {
+        if (success) {
+            blockStatus = true;
+            block.setText("UNBLOCK");
+        }
+    }
+
+    @Override
+    public void onUnblock(boolean success) {
+        if (success) {
+            blockStatus = false;
+            block.setText("BLOCK");
+        }
+    }
 }

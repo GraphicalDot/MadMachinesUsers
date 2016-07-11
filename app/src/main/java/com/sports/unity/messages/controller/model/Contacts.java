@@ -36,6 +36,17 @@ public class Contacts {
         this.availableStatus = availableStatus;
     }
 
+    public Contacts(String name, String jid, String phoneNumber, byte[] userImage, int cId, String status, int availableStatus, boolean blockStatus) {
+        this.name = name;
+        this.jid = jid;
+        this.phoneNumber = phoneNumber;
+        this.image = userImage;
+        this.status = status;
+        this.id = cId;
+        this.availableStatus = availableStatus;
+        this.blockStatus = blockStatus;
+    }
+
     public Contacts(String name, String jid, String phoneNumber, byte[] userImage, int cId, String status, int availableStatus, int requestStatus, boolean blockStatus) {
         this.name = name;
         this.jid = jid;

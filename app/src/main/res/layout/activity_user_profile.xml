@@ -122,27 +122,31 @@
                         android:textColor="@color/gray1" />
 
                     <LinearLayout
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                        android:layout_marginRight="@dimen/activity_horizontal_margin"
                         android:layout_marginTop="@dimen/activity_vertical_margin_small"
                         android:orientation="horizontal">
 
                         <Button
                             android:id="@+id/accept"
-                            android:layout_width="wrap_content"
+                            android:layout_width="match_parent"
                             android:layout_height="@dimen/invite_button_height"
                             android:layout_gravity="center"
                             android:layout_marginRight="@dimen/activity_vertical_margin_small"
+                            android:layout_weight="1"
                             android:background="@drawable/round_edge_box_blue"
                             android:text="Accept"
                             android:textColor="@color/ColorPrimary" />
 
                         <Button
                             android:id="@+id/block_user"
-                            android:layout_width="wrap_content"
+                            android:layout_width="match_parent"
                             android:layout_height="@dimen/invite_button_height"
                             android:layout_gravity="center"
                             android:layout_marginLeft="@dimen/activity_vertical_margin_small"
+                            android:layout_weight="1"
                             android:background="@drawable/round_edge_gray_box"
                             android:text="Block"
                             android:textColor="@color/gray4" />
@@ -159,6 +163,7 @@
                     android:layout_marginRight="@dimen/profile_thumb_image_large"
                     android:layout_marginTop="@dimen/horizontal_padding_very_small"
                     android:background="@drawable/round_edge_box_blue"
+                    android:stateListAnimator="@null"
                     android:text="ADD FRIEND"
                     android:textColor="@color/ColorPrimary"
                     android:visibility="gone" />
@@ -172,6 +177,7 @@
                     android:layout_marginRight="@dimen/profile_thumb_image_large"
                     android:layout_marginTop="@dimen/horizontal_padding_very_small"
                     android:background="@drawable/round_edge_box_blue"
+                    android:stateListAnimator="@null"
                     android:text="BLOCK"
                     android:textColor="@color/ColorPrimary"
                     android:visibility="gone" />
@@ -263,7 +269,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="0.5dp"
                     android:background="@color/gray4"
-                    android:visibility="gone"/>
+                    android:visibility="gone" />
 
                 <LinearLayout
                     android:id="@+id/status"

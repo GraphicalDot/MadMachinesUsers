@@ -99,7 +99,9 @@ public class BlockUnblockUserHelper {
             }
             if (item != null) {
                 item.setTitle("Unblock User");
-                lastSeenText.setVisibility(View.GONE);
+                if (lastSeenText != null) {
+                    lastSeenText.setVisibility(View.GONE);
+                }
             }
         } else {
             if (null != blockUnblockListener) {
@@ -107,7 +109,9 @@ public class BlockUnblockUserHelper {
             }
             if (item != null) {
                 item.setTitle("Block User");
-                lastSeenText.setVisibility(View.VISIBLE);
+                if (lastSeenText != null) {
+                    lastSeenText.setVisibility(View.VISIBLE);
+                }
             }
         }
     }
