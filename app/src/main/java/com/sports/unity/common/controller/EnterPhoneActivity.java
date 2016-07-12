@@ -55,6 +55,14 @@ public class EnterPhoneActivity extends CustomAppCompatActivity implements Activ
     };
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        if (continueButton.getVisibility() == View.VISIBLE) {
+            continueButton.setPadding(0, 0, countryCodetext.getWidth(), 0);
+        }
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
@@ -107,6 +115,8 @@ public class EnterPhoneActivity extends CustomAppCompatActivity implements Activ
                     getCountry.setVisibility(View.GONE);
                     continueButton.setVisibility(View.VISIBLE);
                     countryCodetext.setVisibility(View.VISIBLE);
+
+                    continueButton.setPadding(0, 0, countryCodetext.getWidth(), 0);
 
                 } else if (text.length() == 0) {
 

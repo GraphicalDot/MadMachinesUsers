@@ -17,6 +17,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -152,7 +153,7 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity {
             // when user re-verify its account. Don't allow to change phone number.
             ediImageButton.setVisibility(View.GONE);
         } else {
-
+            //nothing
         }
         ediImageButton.setOnClickListener(new View.OnClickListener() {
 
@@ -164,17 +165,14 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity {
 
         });
 
-        // TextView editNumberTextView = (TextView) findViewById(R.id.editNumber);
-        // editNumberTextView.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoRegular());
 
         final Button sendOtpButton = (Button) findViewById(com.sports.unity.R.id.enterOtp1);
-        //  sendOtpButton.setVisibility(View.INVISIBLE);
         sendOtpButton.setOnClickListener(sendButtonClickListener);
 
         Button resendButton = (Button) findViewById(R.id.resend);
         resendButton.setOnClickListener(resendOtpButtonClickListener);
         resendButton.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoRegular());
-        resendButton.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_BLUE, false));
+//        resendButton.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_BLUE, false));
 
         ArrayList<String> countryDetails = CommonUtil.getCountryDetailsByCountryCode(EnterOtpActivity.this, UserUtil.getCountryCode());
         String countryCode = countryDetails.get(0);
@@ -184,34 +182,19 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity {
         otpText.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoLight());
 
         otpEditText = (EditText) findViewById(com.sports.unity.R.id.enterOtp);
-     /*   otpEditText.addTextChangedListener(new TextWatcher() {
+        closeKeyboard();
+    }
 
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+    private void closeKeyboard() {
+        otpEditText.clearFocus();
+        this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+    }
 
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (s.length() == 4) {
-                    sendOtpButton.setVisibility(View.VISIBLE);
-                } else {
-                    sendOtpButton.setVisibility(View.INVISIBLE);
-                }
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-            }
-
-        });*/
-
-        /*
-         * to set initial focus to edit text view and open keyboard.
-         */
+    private void openKeyboard() {
         otpEditText.requestFocus();
-        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+//        this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+        InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
     }
 
     private String getPhoneNumberWithCountryCode() {
@@ -310,8 +293,7 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity {
         otpWaitingDialog.setCanceledOnTouchOutside(false);
 
 
-        CountDownTimer mCountDownTimer = new CountDownTimer(lennghtInMillis, 1000) {
-            private boolean warned = false;
+        new CountDownTimer(lennghtInMillis, 1000) {
 
             @Override
             public void onTick(long millisUntilFinished) {
@@ -322,8 +304,11 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity {
 
             @Override
             public void onFinish() {
-                otpWaitingDialog.dismiss();
+                if (otpWaitingDialog != null) {
+                    otpWaitingDialog.dismiss();
+                }
                 unRegisterSmsBroadcastReceiver();
+                openKeyboard();
             }
         }.start();
     }

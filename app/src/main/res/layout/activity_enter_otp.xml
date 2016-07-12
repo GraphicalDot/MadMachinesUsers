@@ -1,28 +1,32 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="com.sports.unity.common.controller.EnterOtpActivity"
     android:id="@+id/rootview"
-    >
-<FrameLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    >
-    <ImageView
+    tools:context="com.sports.unity.common.controller.EnterOtpActivity">
+
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:src="@drawable/splash_bg"
-        android:scaleType="centerCrop"
-        />
+        android:layout_height="match_parent">
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:src="@drawable/splash_bg" />
+        </ScrollView>
+
 
         <LinearLayout
             android:id="@+id/image_otp_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center"
-            android:orientation="vertical"
-            >
+            android:orientation="vertical">
 
             <ImageView
                 android:id="@+id/imageView"
@@ -30,63 +34,57 @@
                 android:layout_height="@dimen/profile_image_circle_radius"
                 android:src="@drawable/ic_ph_no_logo" />
 
-        <TextView
-            android:id="@+id/enterotpText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_marginLeft="@dimen/horizontal_padding_medium"
-            android:layout_marginRight="@dimen/horizontal_padding_medium"
-            android:gravity="center"
-            android:text="@string/otp_message_verification"
-            android:textColor="@android:color/white"
-            android:textSize="@dimen/font_size_small_xlarge" />
+            <TextView
+                android:id="@+id/enterotpText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/otp_message_verification"
+                android:textColor="@android:color/white"
+                android:textSize="@dimen/font_size_small_xlarge" />
 
-        <EditText
-            android:id="@+id/enterOtp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text=""
-            android:textColorHint="@color/ColorPrimary"
-            android:background="@android:color/transparent"
-            android:inputType="number"
-            android:maxLength="4"
-            android:maxLines="1"
-            android:layout_marginLeft="@dimen/Otp_edit_text_margin"
-            android:layout_marginRight="@dimen/Otp_edit_text_margin"
-            android:layout_centerHorizontal="true"
-            android:gravity="center"
-            android:textColor="@android:color/white"
-            android:textSize="@dimen/font_size_medium"
-            android:textCursorDrawable="@null"
-            />
+            <EditText
+                android:id="@+id/enterOtp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_marginLeft="@dimen/Otp_edit_text_margin"
+                android:layout_marginRight="@dimen/Otp_edit_text_margin"
+                android:background="@android:color/transparent"
+                android:gravity="center"
+                android:inputType="number"
+                android:maxLength="4"
+                android:maxLines="1"
+                android:text=""
+                android:textColor="@android:color/white"
+                android:textColorHint="@color/ColorPrimary"
+                android:textCursorDrawable="@null"
+                android:textSize="@dimen/font_size_medium" />
 
 
-        <View
-            android:id="@+id/view"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginLeft="@dimen/Otp_edit_text_margin"
-            android:layout_marginRight="@dimen/Otp_edit_text_margin"
-            android:background="@color/ColorPrimary"
-            />
+            <View
+                android:id="@+id/view"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginLeft="@dimen/Otp_edit_text_margin"
+                android:layout_marginRight="@dimen/Otp_edit_text_margin"
+                android:background="@color/ColorPrimary" />
 
-        <Button
-            android:id="@+id/resend"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="@dimen/activity_vertical_margin"
-            android:background="@android:color/transparent"
-            android:text="@string/btn_resend"
-            android:textColor="@color/ColorPrimary"
-            android:textSize="@dimen/font_size_small_medium"
-            />
+            <Button
+                android:id="@+id/resend"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:background="@android:color/transparent"
+                android:text="@string/btn_resend"
+                android:textColor="@color/ColorPrimary"
+                android:textSize="@dimen/font_size_small_medium" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/edit_view_height"
-                android:visibility="invisible"/>
+                android:visibility="invisible" />
 
         </LinearLayout>
 
@@ -94,22 +92,21 @@
         <RelativeLayout
             android:id="@+id/sendOtpButton"
             android:layout_width="match_parent"
-            android:background="@drawable/ic_continue_button"
             android:layout_height="@dimen/edit_view_height"
             android:layout_gravity="bottom"
+            android:background="@drawable/ic_continue_button"
             android:scrollbars="vertical">
 
             <ImageButton
                 android:id="@+id/editNumberButton"
                 android:layout_width="@dimen/edit_view_height"
                 android:layout_height="match_parent"
-                android:layout_centerHorizontal="true"
                 android:layout_alignParentLeft="true"
+                android:layout_centerHorizontal="true"
                 android:background="@color/semi_transparent"
-                android:src="@drawable/ic_menu_back"
                 android:paddingLeft="@dimen/font_size_very_very_small"
                 android:paddingRight="@dimen/font_size_very_very_small"
-                />
+                android:src="@drawable/ic_menu_back" />
 
             <Button
                 android:id="@+id/enterOtp1"
@@ -117,23 +114,23 @@
                 android:layout_height="match_parent"
                 android:layout_centerInParent="true"
                 android:layout_toRightOf="@+id/editNumberButton"
+                android:background="@android:color/transparent"
                 android:gravity="center"
+                android:paddingRight="@dimen/edit_view_height"
                 android:text="@string/otp_confirm"
                 android:textColor="@android:color/white"
                 android:textCursorDrawable="@null"
-                android:background="@android:color/transparent"
-                android:textSize="@dimen/font_size_medium"
-                />
+                android:textSize="@dimen/font_size_medium" />
 
         </RelativeLayout>
+
         <ProgressBar
             android:id="@+id/progressBar"
             style="@android:style/Widget.Holo.Light.ProgressBar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:visibility="gone"
-            />
+            android:visibility="gone" />
 
-</FrameLayout>
+    </FrameLayout>
 </LinearLayout>

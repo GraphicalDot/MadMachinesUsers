@@ -10,11 +10,17 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <ImageView
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scaleType="centerCrop"
-            android:src="@drawable/splash_bg" />
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:src="@drawable/splash_bg" />
+        </ScrollView>
+
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -34,6 +40,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
+                android:paddingBottom="@dimen/horizontal_padding_very_small"
                 android:text="@string/enter_phone_number_text"
                 android:textColor="@color/ColorPrimary"
                 android:textSize="@dimen/font_size_medium" />
@@ -75,6 +82,8 @@
                 android:layout_height="wrap_content"
                 android:clickable="true"
                 android:gravity="center"
+                android:paddingBottom="@dimen/vertical_padding_very_very_small"
+                android:paddingTop="@dimen/vertical_padding_very_very_small"
                 android:text="Privacy Policy"
                 android:textColor="@color/ColorPrimary"
                 android:textSize="@dimen/font_size_small_large" />
@@ -98,10 +107,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_alignParentLeft="true"
+                android:clickable="false"
                 android:gravity="center"
                 android:paddingLeft="@dimen/activity_vertical_margin"
                 android:text="INDIA"
-                android:clickable="false"
                 android:textColor="@android:color/white"
                 android:textSize="@dimen/font_size_medium"
 
@@ -154,9 +163,9 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
-                android:clickable="false"
                 android:layout_marginRight="@dimen/activity_horizontal_margin"
-                android:background="@drawable/next_vector_white" />
+                android:background="@drawable/next_vector_white"
+                android:clickable="false" />
         </RelativeLayout>
 
 
