@@ -681,6 +681,9 @@ public class GroupInfoFragment extends Fragment implements ActivityCompat.OnRequ
                     @Override
                     public void run() {
                         if (success) {
+                            EditText groupName = (EditText) getView().findViewById(R.id.group_name);
+                            String sName = groupName.getText().toString();
+                            getArguments().putString("name", sName);
                             disableViewForEditingGroupBasicInfo();
                         } else {
                             Toast.makeText(getActivity(), R.string.message_submit_failed, Toast.LENGTH_SHORT).show();
