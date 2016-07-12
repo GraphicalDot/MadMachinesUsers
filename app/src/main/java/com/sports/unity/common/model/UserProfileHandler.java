@@ -367,7 +367,7 @@ public class UserProfileHandler {
 
                         });
                 Bundle parameters = new Bundle();
-                parameters.putString("fields", "id,name,link,picture.type(large)");
+                parameters.putString("fields", "id,name,link,picture.width(720).height(720)");
                 request.setParameters(parameters);
                 request.executeAsync();
             }
