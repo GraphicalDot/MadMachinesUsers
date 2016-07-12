@@ -82,8 +82,8 @@ public class CropImageFragment extends Fragment {
     private void cancelCropping() {
         Fragment fragment = getActivity().getSupportFragmentManager().findFragmentByTag(CropImageFragment.CROP_FRAGMENT_TAG);
         getActivity().getSupportFragmentManager().beginTransaction().remove(fragment).commit();
-        if(getActivity() instanceof GroupDetailActivity){
-            ((GroupDetailActivity)getActivity()).cancelCrop();
+        if (getActivity() instanceof GroupDetailActivity) {
+            ((GroupDetailActivity) getActivity()).cancelCrop();
         }
     }
 
@@ -99,8 +99,8 @@ public class CropImageFragment extends Fragment {
         if (getActivity() instanceof ProfileCreationActivity) {
             ((ProfileCreationActivity) getActivity()).setProfileImage(profileImage);
         } else if (getActivity() instanceof UserProfileActivity) {
-            ((UserProfileActivity) getActivity()).setProfileImage(profileImage,true);
-        }else if(getActivity() instanceof GroupDetailActivity){
+            ((UserProfileActivity) getActivity()).setProfileImage(profileImage, true);
+        } else if (getActivity() instanceof GroupDetailActivity) {
             ((GroupDetailActivity) getActivity()).setProfileImage(profileImage);
         }
         Fragment fragment = getActivity().getSupportFragmentManager().findFragmentByTag(CropImageFragment.CROP_FRAGMENT_TAG);
@@ -126,6 +126,14 @@ public class CropImageFragment extends Fragment {
             matrix.postScale(sy, sy);
             profileImage = Bitmap.createBitmap(profileImage, 0, 0, imageWidth, imageHeight, matrix, false);
             FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, profileImage.getHeight());
+            params.gravity = Gravity.CENTER;
+            cropImageView.setLayoutParams(params);
+        } else {
+            sx = ((float) screenWidth) / imageWidth;
+            Matrix matrix = new Matrix();
+            matrix.postScale(sx, sx);
+            profileImage = Bitmap.createBitmap(profileImage, 0, 0, imageWidth, imageHeight, matrix, false);
+            FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(profileImage.getWidth(), ViewGroup.LayoutParams.WRAP_CONTENT);
             params.gravity = Gravity.CENTER;
             cropImageView.setLayoutParams(params);
         }
