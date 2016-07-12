@@ -108,7 +108,7 @@ public class EnterPhoneActivity extends CustomAppCompatActivity implements Activ
             public void afterTextChanged(Editable s) {
 
                 String text = s.toString();
-                if ((text.length() == 1)) {
+                if (text.length() > 0) {
 
                     countryName.setVisibility(View.GONE);
                     countryCode.setVisibility(View.GONE);
