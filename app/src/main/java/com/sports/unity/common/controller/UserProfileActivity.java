@@ -20,6 +20,7 @@ import android.os.Looper;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.CoordinatorLayout;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
@@ -908,7 +909,7 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
     private void initiateCrop(Bitmap bitmap) {
         CropImageFragment cropImageFragment = new CropImageFragment();
         cropImageFragment.setProfileImage(bitmap);
-        getSupportFragmentManager().beginTransaction().add(R.id.crop_container, cropImageFragment, CropImageFragment.CROP_FRAGMENT_TAG).addToBackStack(CropImageFragment.CROP_FRAGMENT_TAG).commit();
+        getSupportFragmentManager().beginTransaction().add(R.id.crop_container, cropImageFragment, CropImageFragment.CROP_FRAGMENT_TAG).commit();
     }
 
     private void setFavouriteProfile(ArrayList<FavouriteItem> savedList) {
@@ -1082,7 +1083,11 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
     }
 
     private void onBack() {
-        if (ownProfile) {
+        Fragment fragment = getSupportFragmentManager().findFragmentByTag(CropImageFragment.CROP_FRAGMENT_TAG);
+
+        if (fragment != null) {
+            getSupportFragmentManager().beginTransaction().remove(fragment).commit();
+        } else if (ownProfile) {
             if (editProfile.getVisibility() == View.GONE && progressBar.getVisibility() == View.GONE) {
                 AlertDialog.Builder build = new AlertDialog.Builder(UserProfileActivity.this);
                 build.setTitle("Discard Edits ? ");

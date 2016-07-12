@@ -1,6 +1,7 @@
 package com.sports.unity.messages.controller.activity;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
@@ -199,14 +200,16 @@ public class GroupDetailActivity extends CustomAppCompatActivity {
         cropImageFragment.setProfileImage(bitmap);
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, cropImageFragment, CROP_FRAGMENT_TAG).commit();
         setToolBarForCrop();
-        currentFragment = fragment;
+        currentFragment = cropImageFragment;
     }
 
     public void cancelCrop() {
+        currentFragment = resultFragment;
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, resultFragment).commit();
     }
 
     public void setProfileImage(Bitmap bitmap) {
+        currentFragment = resultFragment;
         if (resultFragment instanceof GroupCreateFragment) {
             ((GroupCreateFragment) resultFragment).setImageBitmap(bitmap);
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, resultFragment).commit();
@@ -253,7 +256,7 @@ public class GroupDetailActivity extends CustomAppCompatActivity {
         TextView title = (TextView) toolbar.findViewById(R.id.title);
         title.setText(R.string.group_title_add_members);
 
-        TextView actionView = (TextView) toolbar.findViewById(R.id.actionButton);
+        final TextView actionView = (TextView) toolbar.findViewById(R.id.actionButton);
         if (isGroupEditing) {
             actionView.setText(R.string.done);
         } else {
@@ -271,12 +274,12 @@ public class GroupDetailActivity extends CustomAppCompatActivity {
                 if (isGroupEditing) {
                     ArrayList<Contacts> selectedMembersList = fragment.getSelectedMembersList();
                     if (selectedMembersList.size() > 0) {
-                        new AddNewMembers(fragment).execute();
+                        new AddNewMembers(fragment, GroupDetailActivity.this).execute();
                     } else {
                         Toast.makeText(getApplicationContext(), "Select at least one member, to add in group.", Toast.LENGTH_SHORT).show();
                     }
                 } else {
-                    new createNewGroup(fragment).execute();
+                    new createNewGroup(fragment, GroupDetailActivity.this).execute();
                 }
 
             }
@@ -290,17 +293,19 @@ public class GroupDetailActivity extends CustomAppCompatActivity {
 
         private ProgressDialog progressDialog;
         private ContactsFragment contactsFragment;
+        private Context context;
 
-        public createNewGroup(ContactsFragment fragment) {
+        public createNewGroup(ContactsFragment fragment, Context context) {
+            this.context = context;
             contactsFragment = fragment;
         }
 
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            ProgressBar progressBar = new ProgressBar(GroupDetailActivity.this);
+            ProgressBar progressBar = new ProgressBar(context);
             progressBar.getIndeterminateDrawable().setColorFilter(getResources().getColor(R.color.app_theme_blue), android.graphics.PorterDuff.Mode.MULTIPLY);
-            progressDialog = new ProgressDialog(GroupDetailActivity.this);
+            progressDialog = new ProgressDialog(context);
             progressDialog.setMessage("creating group...");
             progressDialog.setIndeterminateDrawable(progressBar.getIndeterminateDrawable());
             progressDialog.setCancelable(false);
@@ -327,8 +332,10 @@ public class GroupDetailActivity extends CustomAppCompatActivity {
 
         private ProgressDialog progressDialog;
         private ContactsFragment contactsFragment;
+        private Context context;
 
-        public AddNewMembers(ContactsFragment fragment) {
+        public AddNewMembers(ContactsFragment fragment, Context context) {
+            this.context = context;
             contactsFragment = fragment;
         }
 
@@ -336,10 +343,10 @@ public class GroupDetailActivity extends CustomAppCompatActivity {
         protected void onPreExecute() {
             super.onPreExecute();
 
-            ProgressBar progressBar = new ProgressBar(GroupDetailActivity.this);
+            ProgressBar progressBar = new ProgressBar(context);
             progressBar.getIndeterminateDrawable().setColorFilter(getResources().getColor(R.color.app_theme_blue), android.graphics.PorterDuff.Mode.MULTIPLY);
 
-            progressDialog = new ProgressDialog(GroupDetailActivity.this);
+            progressDialog = new ProgressDialog(context);
             progressDialog.setMessage("updating members in group...");
             progressDialog.setIndeterminateDrawable(progressBar.getIndeterminateDrawable());
             progressDialog.setCancelable(false);

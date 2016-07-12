@@ -8,6 +8,7 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Looper;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.View;
@@ -16,6 +17,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
+
 import com.facebook.CallbackManager;
 import com.facebook.FacebookSdk;
 import com.facebook.login.widget.LoginButton;
@@ -120,7 +122,7 @@ public class ProfileCreationActivity extends AppCompatActivity implements Activi
     private void initiateCrop(Bitmap bitmap) {
         CropImageFragment cropImageFragment = new CropImageFragment();
         cropImageFragment.setProfileImage(bitmap);
-        getSupportFragmentManager().beginTransaction().add(R.id.crop_container, cropImageFragment, CropImageFragment.CROP_FRAGMENT_TAG).addToBackStack(CropImageFragment.CROP_FRAGMENT_TAG).commit();
+        getSupportFragmentManager().beginTransaction().add(R.id.crop_container, cropImageFragment, CropImageFragment.CROP_FRAGMENT_TAG).commit();
     }
 
     @Override
@@ -274,6 +276,17 @@ public class ProfileCreationActivity extends AppCompatActivity implements Activi
         }
 
         finish();
+    }
+
+    @Override
+    public void onBackPressed() {
+        Fragment fragment = getSupportFragmentManager().findFragmentByTag(CropImageFragment.CROP_FRAGMENT_TAG);
+
+        if (fragment != null) {
+            getSupportFragmentManager().beginTransaction().remove(fragment).commit();
+        } else {
+            super.onBackPressed();
+        }
     }
 
     @Override

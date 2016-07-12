@@ -153,6 +153,7 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
         lt.setStartDelay(LayoutTransition.APPEARING, 0);
         FrameLayout frameLayout = (FrameLayout) findViewById(R.id.childFragmentContainer);
         frameLayout.setLayoutTransition(lt);
+        onNewIntent(getIntent());
     }
 
 
@@ -289,6 +290,25 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
             if (drawer.isDrawerOpen(GravityCompat.START)) {
                 drawer.closeDrawer(GravityCompat.START);
             }
+        }
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        String action = intent.getAction();
+        String data = intent.getDataString();
+        int tabIndex = 0;
+        if (Intent.ACTION_VIEW.equals(action) && data != null) {
+            String urlData = data.substring(data.lastIndexOf("/") + 1);
+            if (urlData.equals("matches")) {
+                tabIndex = 0;
+            } else if (urlData.equals("news")) {
+                tabIndex = 1;
+            } else if (urlData.equals("chat")) {
+                tabIndex = 2;
+            }
+            pager.setCurrentItem(tabIndex);
         }
     }
 
