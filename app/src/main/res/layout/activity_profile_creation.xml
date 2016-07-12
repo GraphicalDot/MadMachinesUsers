@@ -10,11 +10,17 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scaleType="centerCrop"
-        android:src="@drawable/splash_bg" />
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:src="@drawable/splash_bg" />
+        </ScrollView>
+
 
         <LinearLayout
             android:id="@+id/centerContent"
@@ -57,8 +63,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
-                android:layout_marginLeft="@dimen/activity_vertical_margin_large"
-                android:layout_marginRight="@dimen/activity_vertical_margin_large"
+                android:layout_marginEnd="@dimen/horizontal_padding_large"
+                android:layout_marginStart="@dimen/horizontal_padding_large"
                 android:layout_marginTop="@dimen/activity_vertical_margin_small"
                 android:background="@android:color/transparent"
                 android:ems="10"
@@ -75,8 +81,8 @@
                 android:id="@+id/view"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:layout_marginLeft="@dimen/activity_vertical_margin_large"
-                android:layout_marginRight="@dimen/activity_vertical_margin_large"
+                android:layout_marginLeft="@dimen/horizontal_padding_large"
+                android:layout_marginRight="@dimen/horizontal_padding_large"
                 android:background="@color/ColorPrimary" />
 
             <ImageView
@@ -141,26 +147,26 @@
         </LinearLayout>
 
 
-    <RelativeLayout
-        android:id="@+id/continue_layout"
-        android:layout_width="fill_parent"
-        android:layout_height="@dimen/edit_view_height"
-        android:layout_gravity="bottom"
-        android:background="@drawable/ic_continue_button"
-        android:scrollbars="vertical">
-
-        <Button
-            android:id="@+id/continue_button"
+        <RelativeLayout
+            android:id="@+id/continue_layout"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
+            android:layout_height="@dimen/edit_view_height"
+            android:layout_gravity="bottom"
             android:background="@drawable/ic_continue_button"
-            android:text="@string/user_profile_continue"
-            android:textColor="@android:color/white"
-            android:textCursorDrawable="@null"
-            android:textSize="@dimen/font_size_small_large" />
+            android:scrollbars="vertical">
 
-    </RelativeLayout>
+            <Button
+                android:id="@+id/continue_button"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:background="@drawable/ic_continue_button"
+                android:text="@string/user_profile_continue"
+                android:textColor="@android:color/white"
+                android:textCursorDrawable="@null"
+                android:textSize="@dimen/font_size_small_large" />
+
+        </RelativeLayout>
 
         <ProgressBar
             android:id="@+id/progressBar"
@@ -168,13 +174,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:visibility="gone"
-             />
+            android:visibility="gone" />
 
         <FrameLayout
-        android:id="@+id/crop_container"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+            android:id="@+id/crop_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
 
     </FrameLayout>
 </LinearLayout>

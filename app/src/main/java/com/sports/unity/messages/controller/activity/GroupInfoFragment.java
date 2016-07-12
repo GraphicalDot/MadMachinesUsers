@@ -37,6 +37,7 @@ import android.widget.Toast;
 import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.R;
 import com.sports.unity.common.controller.MainActivity;
+import com.sports.unity.common.controller.UserProfileActivity;
 import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.common.model.PermissionUtil;
 import com.sports.unity.common.model.TinyDB;
@@ -507,7 +508,20 @@ public class GroupInfoFragment extends Fragment implements ActivityCompat.OnRequ
     }
 
     private void viewUserProfile(Contacts contacts) {
-        ChatScreenActivity.viewProfile(getActivity(), false, contacts.id, contacts.image, contacts.getName(), contacts.jid, contacts.status, false, contacts.availableStatus, blockStatus);
+        boolean isOwnProfile = false;
+        String jid = TinyDB.getInstance(getContext()).getString(TinyDB.KEY_USER_JID);
+        if (contacts.jid.equals(jid)) {
+            isOwnProfile = true;
+            Intent intent = new Intent(getContext(), UserProfileActivity.class);
+            intent.putExtra(Constants.IS_OWN_PROFILE, isOwnProfile);
+            intent.putExtra("name", contacts.getName());
+            intent.putExtra("profilePicture", contacts.image);
+            intent.putExtra("status", contacts.status);
+            startActivity(intent);
+        } else {
+            ChatScreenActivity.viewProfile(getActivity(), false, contacts.id, contacts.image, contacts.getName(), contacts.jid, contacts.status, false, contacts.availableStatus, blockStatus);
+        }
+
     }
 
     private void openChat(Contacts contacts) {
