@@ -7,6 +7,8 @@
     android:elevation="@dimen/toolbar_elevation"
     android:minHeight="?android:attr/actionBarSize"
     android:theme="@style/Base.ThemeOverlay.AppCompat.Dark"
+    app:contentInsetLeft="0dp"
+    app:contentInsetStart="0dp"
     app:layout_scrollFlags="scroll|enterAlways">
 
 
@@ -22,6 +24,7 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_centerVertical="true"
+            android:paddingLeft="@dimen/horizontal_padding_small"
             android:paddingRight="@dimen/horizontal_padding_small"
             android:scaleType="center"
             android:src="@drawable/ic_menu_back_blk" />

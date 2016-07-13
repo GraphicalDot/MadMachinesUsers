@@ -24,7 +24,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
@@ -33,7 +32,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.sports.unity.ChatScreenApplication;
 import com.sports.unity.Database.DBUtil;
 import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.R;
@@ -330,9 +328,11 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
     @Override
     protected void onResume() {
         super.onResume();
+
         populateMessagesOnScreen();
         clearUnreadCount();
 
+        checkAndUpdateBlockStatus();
         blockUnblockUserHelper.addBlockUnblockListener(ChatScreenActivity.this);
         ActivityActionHandler.getInstance().addActionListener(ActivityActionHandler.CHAT_SCREEN_KEY, jabberId, activityActionListener);
 //        GlobalEventHandler.getInstance().addGlobalEventListener(ActivityActionHandler.CHAT_SCREEN_KEY, this);
@@ -342,8 +342,67 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
         NotificationHandler.dismissNotification(getBaseContext());
         NotificationHandler.getInstance(getApplicationContext()).clearNotificationMessages(String.valueOf(chatID));
 
-        initAddBlockView();
+//        initAddBlockView();
     }
+
+    private void checkAndUpdateBlockStatus() {
+        Contacts contact = SportsUnityDBHelper.getInstance(getApplicationContext()).getContactByJid(jabberId);
+        blockStatus = SportsUnityDBHelper.getInstance(getApplicationContext()).isChatBlocked(contact.id);
+        if (blockStatus) {
+            if (isGroupChat) {
+                LinearLayout mediaButtonsLayout = (LinearLayout) findViewById(R.id.send_media_action_buttons);
+                mediaButtonsLayout.setVisibility(View.GONE);
+                mSend.setVisibility(View.GONE);
+                messageText.setVisibility(View.GONE);
+                TextView groupExitMessage = (TextView) findViewById(R.id.group_exit_text);
+                groupExitMessage.setVisibility(View.VISIBLE);
+            } else {
+                status.setVisibility(View.GONE);
+                LinearLayout messagecomposeLayout = (LinearLayout) findViewById(R.id.type_msg);
+                messagecomposeLayout.setClickable(true);
+                messagecomposeLayout.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        displayAlertToUnblockUser();
+                    }
+                });
+            }
+        } else {
+            status.setVisibility(View.VISIBLE);
+        }
+        if (blockUnblockUserHelper == null) {
+            blockUnblockUserHelper = new BlockUnblockUserHelper(blockStatus, this, status);
+        } else {
+            blockUnblockUserHelper.updateBlockStatus(blockStatus);
+        }
+        chatKeyboardHelper.disableOrEnableKeyboardAndMediaButtons(blockUnblockUserHelper.isBlockStatus(), this);
+        initAddBlockView();
+        invalidateOptionsMenu();
+//        disableChatIfUserBlocked();
+
+//        blockStatus = getIntent().getBooleanExtra("blockStatus", false);
+//        if (isGroupChat) {
+//            if (blockStatus) {
+//                LinearLayout mediaButtonsLayout = (LinearLayout) findViewById(R.id.send_media_action_buttons);
+//                mediaButtonsLayout.setVisibility(View.GONE);
+//                mSend.setVisibility(View.GONE);
+//                messageText.setVisibility(View.GONE);
+//                TextView groupExitMessage = (TextView) findViewById(R.id.group_exit_text);
+//                groupExitMessage.setVisibility(View.VISIBLE);
+//            } else {
+//                //do nothing
+//            }
+//            blockUnblockUserHelper = new BlockUnblockUserHelper(blockStatus, this, status);
+//        } else {
+//            if (blockStatus) {
+//                status.setVisibility(View.GONE);
+//            } else {
+//                status.setVisibility(View.VISIBLE);
+//            }
+//            blockUnblockUserHelper = new BlockUnblockUserHelper(blockStatus, this, status);
+//            disableChatIfUserBlocked();
+    }
+
 
     @Override
     protected void onStart() {
@@ -397,12 +456,13 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
         mSend.setTypeface(FontTypeface.getInstance(this).getRobotoCondensedRegular());
 
         friendRequestStatus = (TextView) findViewById(R.id.request_status);
+        addBlockLayout = (LinearLayout) findViewById(R.id.add_block_layout);
 
         getIntentExtras();
 
         boolean isPending = SportsUnityDBHelper.getInstance(this).isRequestPending(jabberId);
         initToolbar();
-        hideStatusIfUserBlocked();
+//        hideStatusIfUserBlocked();
         final Handler mHandler = new Handler();
 
         populateMessagesOnScreen();
@@ -415,7 +475,6 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
     }
 
     private void initAddBlockView() {
-        addBlockLayout = (LinearLayout) findViewById(R.id.add_block_layout);
         final TextView requestStatus = (TextView) findViewById(R.id.request_status);
         if ((availableStatus == Contacts.AVAILABLE_BY_OTHER_CONTACTS || availableStatus == Contacts.AVAILABLE_BY_PEOPLE_AROUND_ME) && !blockUnblockUserHelper.isBlockStatus()) {
             int requestId = sportsUnityDBHelper.checkJidForPendingRequest(jabberId);
@@ -625,23 +684,23 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
     }
 
     private void disableChatIfUserBlocked() {
-        if (blockUnblockUserHelper.isBlockStatus()) {
-            chatKeyboardHelper.disableOrEnableKeyboardAndMediaButtons(blockUnblockUserHelper.isBlockStatus(), this);
-        }
+//        if (blockUnblockUserHelper.isBlockStatus()) {
+//        }
+        chatKeyboardHelper.disableOrEnableKeyboardAndMediaButtons(blockUnblockUserHelper.isBlockStatus(), this);
 
-        LinearLayout messagecomposeLayout = (LinearLayout) findViewById(R.id.type_msg);
-        messagecomposeLayout.setClickable(true);
-        messagecomposeLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.i("layoutclicked", "true");
-                if (blockUnblockUserHelper.isBlockStatus()) {
-                    displayAlertToUnblockUser();
-                } else {
-                    //nothing
-                }
-            }
-        });
+//        LinearLayout messagecomposeLayout = (LinearLayout) findViewById(R.id.type_msg);
+//        messagecomposeLayout.setClickable(true);
+//        messagecomposeLayout.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Log.i("layoutclicked", "true");
+//                if (blockUnblockUserHelper.isBlockStatus()) {
+//                    displayAlertToUnblockUser();
+//                } else {
+//                    //nothing
+//                }
+//            }
+//        });
     }
 
     /**
@@ -1363,15 +1422,16 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
     @Override
     public void onBlock(boolean success, String phoneNumber) {
         if (success) {
-            findViewById(R.id.add_block_layout).setVisibility(View.GONE);
-            initAddBlockView();
+//            findViewById(R.id.add_block_layout).setVisibility(View.GONE);
+//            initAddBlockView();
+            checkAndUpdateBlockStatus();
         }
     }
 
     @Override
     public void onUnblock(boolean success) {
         if (success) {
-            initAddBlockView();
+            checkAndUpdateBlockStatus();
         }
     }
 }

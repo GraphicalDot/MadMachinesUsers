@@ -2,6 +2,7 @@ package com.sports.unity.messages.controller;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.support.v7.app.AlertDialog;
@@ -14,6 +15,7 @@ import android.widget.Toast;
 
 import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.R;
+import com.sports.unity.common.model.TinyDB;
 import com.sports.unity.messages.controller.model.Contacts;
 import com.sports.unity.messages.controller.model.PersonalMessaging;
 import com.sports.unity.messages.controller.viewhelper.ChatKeyboardHelper;
@@ -114,6 +116,10 @@ public class BlockUnblockUserHelper {
                 }
             }
         }
+    }
+
+    public void updateBlockStatus(boolean blockStatus) {
+        this.blockStatus = blockStatus;
     }
 
     private class BlockOrUnBlockUserAsyncTask extends AsyncTask<Void, Void, Void> {

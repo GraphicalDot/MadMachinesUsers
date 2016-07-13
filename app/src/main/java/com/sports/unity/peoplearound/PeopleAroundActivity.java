@@ -64,6 +64,7 @@ public class PeopleAroundActivity extends CustomAppCompatActivity implements Pla
 
     public static final int fetchDataCode = 001;
 
+    private int defaultRadius = 40000;
     private int radius = 1000;
     private int stepRange = 25;
 
@@ -228,6 +229,8 @@ public class PeopleAroundActivity extends CustomAppCompatActivity implements Pla
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_people_around);
+
+        radius = defaultRadius;
         CommonUtil.sendAnalyticsData(getApplication(), "PeopleAroundMeScreen");
         tinyDB = TinyDB.getInstance(getApplicationContext());
         initToolbar();
@@ -447,6 +450,8 @@ public class PeopleAroundActivity extends CustomAppCompatActivity implements Pla
         distanceText.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoCondensedBold());
         SeekBar seekDistance = (SeekBar) findViewById(R.id.distance_seekbar);
         seekDistance.setMax(100);
+        seekDistance.setProgress(100);
+        seekDistance.setThumb(getResources().getDrawable(R.drawable.ic_distance_slider_40));
         seekDistance.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
