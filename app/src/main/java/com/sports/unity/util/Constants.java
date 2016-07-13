@@ -15,6 +15,7 @@ public class Constants {
     public static final String SEARCH_BASE_URL = BuildConfig.SEARCH_BASE_URL;
     private static final String NEWS_BASE_URL = BuildConfig.NEWS_BASE_URL;
     public static final String FOOTBALL_PLAYER_BASE_URL = BuildConfig.PLAYER_PROFILE_BASE_URL;
+    public static final String GLOBAL_SEARCH_BASE_URL = BuildConfig.SEARCH_BASE_URL;
 
     public static final String URL_NEWS_CONTENT = Constants.NEWS_BASE_URL + "mixed?";
 
@@ -42,6 +43,7 @@ public class Constants {
     public static final String INTENT_KEY_FILENAME = "FILE_NAME";
     public static final String INTENT_KEY_MIMETYPE = "MIME_TYPE";
 
+    public static final String INTENT_KEY_GLOBAL_POSITION = "global_position";
 
     public static final String REQUEST_PARAMETER_KEY_PHONE_NUMBER = "phone_number";
     public static final String REQUEST_PARAMETER_KEY_AUTH_CODE = "auth_code";
@@ -75,6 +77,10 @@ public class Constants {
     public static final String FILTER_TYPE_PLAYER = "players";
     public static final String FILTER_TYPE_LEAGUE = "leagues";
     public static final String FILTER_TYPE_TEAM = "teams";
+
+    public static final String GLOBAL_SEARCH_KEYWORD = "global_search_keyword";
+    public static final String GLOBAL_SEARCH_ENDPOINT = "global_search_end_point";
+    public static final String GLOBAL_SEARCH_TYPE = "global_search_type";
 
     public static final String SPORTS_TYPE = "sports_type";
     public static final String SPORTS_TYPE_CRICKET = "cricket";
@@ -132,4 +138,6 @@ public class Constants {
     public static final String PARAM_PEOPLES = "peoples";
     public static final String FOOTBALL_TIMER = "%02d:%02d";
     public static final String APP_NOTIFICATION = "general";
+
+
 }

@@ -9,7 +9,7 @@
         android:color="@android:color/white"
         />
     <solid
-        android:color="@color/app_theme_blue"
+        android:color="@color/ColorPrimary"
         />
 
 </shape>

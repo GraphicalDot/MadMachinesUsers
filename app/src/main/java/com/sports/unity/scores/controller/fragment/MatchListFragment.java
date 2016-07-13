@@ -1,6 +1,7 @@
 package com.sports.unity.scores.controller.fragment;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -20,11 +21,13 @@ import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
-import android.widget.Switch;
 import android.widget.Toast;
 
+import com.google.android.gms.appindexing.Action;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.sports.unity.R;
 import com.sports.unity.common.controller.FilterActivity;
+import com.sports.unity.common.controller.GlobalSearchActivity;
 import com.sports.unity.common.controller.MainActivity;
 import com.sports.unity.common.model.DataChangeCounterHandler;
 import com.sports.unity.common.model.FavouriteItem;
@@ -85,6 +88,11 @@ public class MatchListFragment extends Fragment {
     private ArrayList<FavouriteItem> flagFavItem;
     private ArrayList<MatchListWrapperItem> dataItem = new ArrayList<MatchListWrapperItem>();
 
+    private GoogleApiClient mClient;
+    private Uri mUrl;
+    private String mTitle="Live Scores";
+    private String mDescription="Live minute by minute commentary and updated scores of all the matches happening, plus get notified for the ones you love most.";
+
     MatchListScrollListener matchListScrollListener = new MatchListScrollListener() {
         @Override
         public void scroll(int position) {
@@ -98,7 +106,6 @@ public class MatchListFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        CommonUtil.sendAnalyticsData(getActivity().getApplication(), "ScoresScreen");
         bundle = getArguments();
         if (bundle != null) {
             scoreDetailsId = bundle.getString(Constants.INTENT_KEY_ID);
@@ -106,6 +113,23 @@ public class MatchListFragment extends Fragment {
             favouriteItem = new FavouriteItem(scoreDetailsId);
             scoreDetailsId = favouriteItem.getId();
         }
+
+        mUrl=Uri.parse("android-app://co.sports.unity/mobileapp/sportsunity.co/matches");
+        mClient = CommonUtil.getAppIndexingClient(getActivity());
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        Action action = CommonUtil.getAction(mTitle, mDescription, mUrl);
+        CommonUtil.startAppIndexing(mClient, action);
+    }
+
+    @Override
+    public void onStop() {
+        Action action = CommonUtil.getAction(mTitle, mDescription, mUrl);
+        CommonUtil.stopAppIndexing(mClient, action);
+        super.onStop();
     }
 
     @Override
@@ -124,7 +148,6 @@ public class MatchListFragment extends Fragment {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.fragment_scores_menu, menu);
-        menu.findItem(R.id.action_search).setVisible(false);
 
         MenuItem item = menu.findItem(R.id.myswitch);
         item.setActionView(R.layout.switch_matchlist);
@@ -161,8 +184,9 @@ public class MatchListFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.action_search) {
-//            Intent intent = new Intent(getActivity(), NewsSearchActivity.class);
-//            startActivity(intent);
+            Intent intent = new Intent(getActivity(), GlobalSearchActivity.class);
+            intent.putExtra(Constants.INTENT_KEY_GLOBAL_POSITION, 0);
+            startActivity(intent);
             return true;
         }
 
@@ -216,7 +240,7 @@ public class MatchListFragment extends Fragment {
         String staffFavString = UserUtil.getStaffSelectedData(getActivity());
         ArrayList<FavouriteItem> favouriteItems = new ArrayList<FavouriteItem>();
         if (null != staffFavString && !TextUtils.isEmpty(staffFavString)) {
-            flagFavItem = FavouriteItemWrapper.getInstance(getActivity()).getFavListOfOthers(staffFavString);
+            flagFavItem = FavouriteItemWrapper.getInstance(getActivity()).getFavListForStaffContent(staffFavString);
             if (flagFavItem != null && flagFavItem.size() > 0) {
                 for (FavouriteItem f : flagFavItem) {
                     final String id = f.getId();

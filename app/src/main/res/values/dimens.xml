@@ -35,12 +35,18 @@
     <dimen name="sports_unity_logo_height">100dp</dimen>
     <dimen name="edit_view_height">45dp</dimen>
     <dimen name="profile_image_circle_radius">100dp</dimen>
+    <dimen name="profile_image_foreground_radius">98dp</dimen>
     <dimen name="round_edge_radius">3dp</dimen>
     <dimen name="menu_item_height">55dp</dimen>
     <dimen name="camera_button_size">70dp</dimen>
     <dimen name="record_button_size">10dp</dimen>
     <dimen name="stickers_size">70dp</dimen>
     <dimen name="facebook_logo_padding">24dp</dimen>
+    <dimen name="edit_profile_button_height">30dp</dimen>
+    <!-- ends -->
+
+    <!-- otp related -->
+    <dimen name="Otp_edit_text_margin">120dp</dimen>
     <!-- ends -->
 
     <!-- tour related -->
@@ -77,6 +83,8 @@
     <dimen name="keyboard_tab_height">35dp</dimen>
     <dimen name="invite_button_height">25dp</dimen>
     <!-- ends -->-5dp
+
+    <dimen name="user_profile_button_margin">70dp</dimen>
 
     <!-- filter related  -->
     <dimen name="filter_next_size">20sp</dimen>

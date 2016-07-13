@@ -1,5 +1,6 @@
 package com.sports.unity.news.controller.activity;
 
+import android.app.Activity;
 import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -22,6 +23,7 @@ import android.widget.Toast;
 
 import com.sports.unity.R;
 import com.sports.unity.common.controller.CustomAppCompatActivity;
+import com.sports.unity.common.controller.GlobalSearchActivity;
 import com.sports.unity.news.controller.fragment.NewsFragment;
 import com.sports.unity.news.model.NewsContentHandler;
 import com.sports.unity.util.CommonUtil;
@@ -31,6 +33,8 @@ public class NewsSearchActivity extends CustomAppCompatActivity {
     private Bundle searchFilterBundle;
 
     private static final String NEWS_FRAGMENT_TAG = "news_fragment_tag";
+
+    private EditText search;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +48,17 @@ public class NewsSearchActivity extends CustomAppCompatActivity {
     protected void onResume() {
         super.onResume();
         automaticSearch();
+        checkForGlobalSearchKeyword();
+    }
+
+    private void checkForGlobalSearchKeyword() {
+        String keyword = getIntent().getStringExtra(GlobalSearchActivity.KEYWORD);
+        if (keyword != null) {
+            search.setText(keyword);
+            performSearch(keyword);
+            search.clearFocus();
+            this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+        }
     }
 
     private void automaticSearch() {
@@ -57,7 +72,7 @@ public class NewsSearchActivity extends CustomAppCompatActivity {
 
     private void initView() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar_search);
-        final EditText search = (EditText) toolbar.findViewById(R.id.search_view);
+        search = (EditText) toolbar.findViewById(R.id.search_view);
         ImageView back = (ImageView) toolbar.findViewById(R.id.img_back);
         back.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_WHITE, true));
         final ImageView clear_search = (ImageView) toolbar.findViewById(R.id.search_clear);
@@ -101,11 +116,10 @@ public class NewsSearchActivity extends CustomAppCompatActivity {
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_SEARCH) {
 
-                    InputMethodManager inputManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                    inputManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+                    closeKeyboard();
 
                     if (CommonUtil.isInternetConnectionAvailable(NewsSearchActivity.this)) {
-                        performSearch(search.getText().toString());
+                        performSearch(search.getText().toString().trim());
                     } else {
                         Toast.makeText(NewsSearchActivity.this, "Check your internet connection", Toast.LENGTH_LONG).show();
                     }
@@ -130,6 +144,16 @@ public class NewsSearchActivity extends CustomAppCompatActivity {
             }
         });
 //        checkForFilteredSearch(search, clear_search);
+    }
+
+    private void closeKeyboard() {
+        View view = this.getCurrentFocus();
+        if (view != null) {
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
+//        InputMethodManager imm = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
+//        imm.toggleSoftInput(InputMethodManager.HIDE_NOT_ALWAYS, 0);
     }
 
     private void performSearch(String celebrity_name) {

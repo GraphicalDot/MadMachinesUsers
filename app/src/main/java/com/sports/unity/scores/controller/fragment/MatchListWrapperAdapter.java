@@ -1001,7 +1001,7 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
         String staffFavString = UserUtil.getStaffSelectedData(activity);
         final ArrayList<FavouriteItem> favouriteItems = new ArrayList<FavouriteItem>();
         if (null != staffFavString && !TextUtils.isEmpty(staffFavString)) {
-            flagFavItem = FavouriteItemWrapper.getInstance(activity).getFavListOfOthers(staffFavString);
+            flagFavItem = FavouriteItemWrapper.getInstance(activity).getFavListForStaffContent(staffFavString);
             if (flagFavItem != null && flagFavItem.size() > 0) {
                 for (FavouriteItem f : flagFavItem) {
                     final String id = f.getId();

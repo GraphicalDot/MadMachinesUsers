@@ -3,14 +3,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:focusableInTouchMode="true">
+    android:focusableInTouchMode="true"
+    android:orientation="vertical">
 
     <ScrollView
+        android:id="@+id/scroll_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scrollbars="none"
-        android:id="@+id/scroll_view">
+        android:scrollbars="none">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -21,17 +21,31 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/textColorPrimary"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:scrollbars="vertical">
 
-                <de.hdodenhof.circleimageview.CircleImageView
-                    android:id="@+id/group_image"
-                    android:layout_width="@dimen/profile_thumb_image_xlarge"
-                    android:layout_height="@dimen/profile_thumb_image_xlarge"
-                    android:layout_gravity="center"
-                    android:layout_marginTop="@dimen/group_image_top_margin"
-                    android:src="@drawable/ic_user"
-                    app:civ_border_color="@color/gray4"
-                    app:civ_border_width="@dimen/group_image_border" />
+                <FrameLayout
+                    android:id="@+id/group_info_container"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:id="@+id/group_image"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="@dimen/group_image_top_margin"
+                        android:scaleType="fitXY"
+                        android:src="@drawable/ic_group_big" />
+
+                    <ImageView
+                        android:id="@+id/edit_image"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="bottom|right"
+                        android:src="@drawable/ic_profile_edit"
+                        android:visibility="gone" />
+                </FrameLayout>
 
                 <EditText
                     android:id="@+id/group_name"
@@ -40,13 +54,13 @@
                     android:layout_marginLeft="@dimen/group_name_margin_horizontal"
                     android:layout_marginRight="@dimen/group_name_margin_horizontal"
                     android:layout_marginTop="@dimen/group_name_margin_top"
+                    android:ellipsize="end"
                     android:gravity="center"
                     android:padding="@dimen/group_name_padding"
                     android:singleLine="true"
-                    android:ellipsize="end"
                     android:text="IPL-T20"
-                    android:textSize="@dimen/font_size_large"
-                    android:textColor="@android:color/black" />
+                    android:textColor="@android:color/black"
+                    android:textSize="@dimen/font_size_large" />
 
                 <TextView
                     android:id="@+id/group_info"
@@ -58,8 +72,7 @@
                     android:textColor="@color/gray4"
                     android:textSize="@dimen/font_size_very_small"
                     android:textStyle="bold"
-                    android:visibility="gone"
-                    />
+                    android:visibility="gone" />
             </LinearLayout>
 
             <LinearLayout

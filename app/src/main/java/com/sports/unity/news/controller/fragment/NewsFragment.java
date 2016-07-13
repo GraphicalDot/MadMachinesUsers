@@ -3,6 +3,7 @@ package com.sports.unity.news.controller.fragment;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -23,8 +24,11 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.appindexing.Action;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.sports.unity.R;
 import com.sports.unity.common.controller.FilterActivity;
+import com.sports.unity.common.controller.GlobalSearchActivity;
 import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.common.model.TinyDB;
 import com.sports.unity.common.model.UserUtil;
@@ -59,11 +63,34 @@ public class NewsFragment extends Fragment implements NewsContentHandler.Content
     private ArrayList<String> sportSelected;
     private final String Showcase_News_Id = "news_showcase_id";
 
+    private GoogleApiClient mClient;
+    private Uri mUrl;
+    private String mTitle = "Latest News";
+    private String mDescription = "Curated and Compiled news from all major sport columns, just for your pocket.";
+
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
         CommonUtil.sendAnalyticsData(getActivity().getApplication(), "NewsScreen");
+        mUrl = Uri.parse("android-app://co.sports.unity/mobileapp/sportsunity.co/news");
+        mClient = CommonUtil.getAppIndexingClient(getActivity());
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        Action action = CommonUtil.getAction(mTitle, mDescription, mUrl);
+        CommonUtil.startAppIndexing(mClient, action);
+    }
+
+    @Override
+    public void onStop() {
+        Action action = CommonUtil.getAction(mTitle, mDescription, mUrl);
+        CommonUtil.stopAppIndexing(mClient, action);
+        super.onStop();
     }
 
     @Override
@@ -128,7 +155,8 @@ public class NewsFragment extends Fragment implements NewsContentHandler.Content
         int id = item.getItemId();
 
         if (id == R.id.action_search) {
-            Intent intent = new Intent(getActivity(), NewsSearchActivity.class);
+            Intent intent = new Intent(getActivity(), GlobalSearchActivity.class);
+            intent.putExtra(Constants.INTENT_KEY_GLOBAL_POSITION, 1);
             startActivity(intent);
             return true;
         }

@@ -28,6 +28,7 @@ import android.widget.Toast;
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
 import com.sports.unity.R;
+import com.sports.unity.common.controller.GlobalSearchActivity;
 import com.sports.unity.common.controller.MainActivity;
 import com.sports.unity.common.model.ContactsHandler;
 import com.sports.unity.common.model.FontTypeface;
@@ -66,7 +67,7 @@ public class MessagesFragment extends Fragment implements View.OnClickListener, 
     private View backgroundDimmer;
     private MenuItem syncProgress;
 
-    private SearchView searchView;
+//    private SearchView searchView;
 
     @Override
     public void onAttach(Activity activity) {
@@ -263,7 +264,6 @@ public class MessagesFragment extends Fragment implements View.OnClickListener, 
     }
 
 
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
@@ -276,7 +276,12 @@ public class MessagesFragment extends Fragment implements View.OnClickListener, 
             } else {
                 Toast.makeText(getActivity().getApplicationContext(), "Contact permission is denied by you.", Toast.LENGTH_SHORT).show();
             }
+        } else if (item.getItemId() == R.id.action_search) {
+            Intent intent = new Intent(getActivity(), GlobalSearchActivity.class);
+            intent.putExtra(Constants.INTENT_KEY_GLOBAL_POSITION, 2);
+            startActivity(intent);
         }
+
         return super.onOptionsItemSelected(item);
     }
 
@@ -285,42 +290,42 @@ public class MessagesFragment extends Fragment implements View.OnClickListener, 
         inflater.inflate(R.menu.fragment_messages_menu, menu);
         super.onCreateOptionsMenu(menu, inflater);
         syncProgress = menu.findItem(R.id.menu_progress);
-        searchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.action_search));
         if (ContactsHandler.getInstance().isInProcess()) {
             showSyncProgress();
         }
-        Activity act = getActivity();
-        if (act != null && act instanceof MainActivity) {
-            ((MainActivity) act).setSearchView(searchView, menu.findItem(R.id.action_search));
-        }
-        int searchImgId = android.support.v7.appcompat.R.id.search_button;
-        ImageView v = (ImageView) searchView.findViewById(searchImgId);
-        v.setImageResource(R.drawable.ic_menu_search);
-        searchView.setQueryHint("Search...");
-        updateSearchViewUI();
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                return false;
-            }
+//        searchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.action_search));
+//        Activity act = getActivity();
+//        if (act != null && act instanceof MainActivity) {
+//            ((MainActivity) act).setSearchView(searchView, menu.findItem(R.id.action_search));
 
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                if (mListener != null) {
-                    mListener.onSearchQuery(newText);
-                }
-                return true;
-            }
-        });
-        searchView.setOnQueryTextFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View view, boolean b) {
-                if (!b) {
-                    InputMethodManager mgr = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                    mgr.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, InputMethodManager.HIDE_NOT_ALWAYS);
-                }
-            }
-        });
+//        int searchImgId = android.support.v7.appcompat.R.id.search_button;
+//        ImageView v = (ImageView) searchView.findViewById(searchImgId);
+//        v.setImageResource(R.drawable.ic_menu_search);
+//        searchView.setQueryHint("Search...");
+//        updateSearchViewUI();
+//        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+//            @Override
+//            public boolean onQueryTextSubmit(String query) {
+//                return false;
+//            }
+//
+//            @Override
+//            public boolean onQueryTextChange(String newText) {
+//                if (mListener != null) {
+//                    mListener.onSearchQuery(newText);
+//                }
+//                return true;
+//            }
+//        });
+//        searchView.setOnQueryTextFocusChangeListener(new View.OnFocusChangeListener() {
+//            @Override
+//            public void onFocusChange(View view, boolean b) {
+//                if (!b) {
+//                    InputMethodManager mgr = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+//                    mgr.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, InputMethodManager.HIDE_NOT_ALWAYS);
+//                }
+//            }
+//        });
 
     }
 
@@ -346,40 +351,40 @@ public class MessagesFragment extends Fragment implements View.OnClickListener, 
         });
     }
 
-    private void updateSearchViewUI() {
-        try {
-            Field searchCloseButton = SearchView.class.getDeclaredField("mCloseButton");
-            searchCloseButton.setAccessible(true);
-            ImageView closeBtn = (ImageView) searchCloseButton.get(searchView);
-            closeBtn.setImageResource(R.drawable.ic_close_blk);
-            Field searchEditField = SearchView.class.getDeclaredField("mSearchSrcTextView");
-            searchEditField.setAccessible(true);
-            EditText editText = (EditText) searchEditField.get(searchView);
-            editText.setTextColor(getResources().getColor(R.color.gray1));
-            editText.setBackgroundColor(getResources().getColor(R.color.textColorPrimary));
-            editText.setHintTextColor(getResources().getColor(R.color.textColorPrimary));
-            this.searchView.setOnSearchClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    childStripLayout.setVisibility(View.GONE);
-                    ((MainActivity) getActivity()).enableSearch();
-                }
-            });
-            this.searchView.setOnCloseListener(new SearchView.OnCloseListener() {
-                @Override
-                public boolean onClose() {
-                    childStripLayout.setVisibility(View.VISIBLE);
-                    ((MainActivity) getActivity()).disableSearch();
-                    if (mListener != null) {
-                        mListener.onSearchQuery("");
-                    }
-                    return false;
-                }
-            });
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+//    private void updateSearchViewUI() {
+//        try {
+//            Field searchCloseButton = SearchView.class.getDeclaredField("mCloseButton");
+//            searchCloseButton.setAccessible(true);
+//            ImageView closeBtn = (ImageView) searchCloseButton.get(searchView);
+//            closeBtn.setImageResource(R.drawable.ic_close_blk);
+//            Field searchEditField = SearchView.class.getDeclaredField("mSearchSrcTextView");
+//            searchEditField.setAccessible(true);
+//            EditText editText = (EditText) searchEditField.get(searchView);
+//            editText.setTextColor(getResources().getColor(R.color.gray1));
+//            editText.setBackgroundColor(getResources().getColor(R.color.textColorPrimary));
+//            editText.setHintTextColor(getResources().getColor(R.color.textColorPrimary));
+//            this.searchView.setOnSearchClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    childStripLayout.setVisibility(View.GONE);
+//                    ((MainActivity) getActivity()).enableSearch();
+//                }
+//            });
+//            this.searchView.setOnCloseListener(new SearchView.OnCloseListener() {
+//                @Override
+//                public boolean onClose() {
+//                    childStripLayout.setVisibility(View.VISIBLE);
+//                    ((MainActivity) getActivity()).disableSearch();
+//                    if (mListener != null) {
+//                        mListener.onSearchQuery("");
+//                    }
+//                    return false;
+//                }
+//            });
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
 
     ActivityActionListener activityActionListener = new ActivityActionListener() {
         @Override

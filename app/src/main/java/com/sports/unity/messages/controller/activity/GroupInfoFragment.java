@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
@@ -17,12 +18,16 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Base64;
+import android.util.DisplayMetrics;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -32,6 +37,7 @@ import android.widget.Toast;
 import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.R;
 import com.sports.unity.common.controller.MainActivity;
+import com.sports.unity.common.controller.UserProfileActivity;
 import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.common.model.PermissionUtil;
 import com.sports.unity.common.model.TinyDB;
@@ -43,11 +49,10 @@ import com.sports.unity.util.AlertDialogUtil;
 import com.sports.unity.util.Constants;
 import com.sports.unity.util.ImageUtil;
 import com.sports.unity.util.NotificationHandler;
+import com.sports.unity.util.ThreadTask;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-
-import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
  * Created by Mad on 2/22/2016.
@@ -61,9 +66,9 @@ public class GroupInfoFragment extends Fragment implements ActivityCompat.OnRequ
     private int chatID;
     private String groupJID;
     private String name;
-    private byte[] byteArray;
+    private byte[] groupImage;
     private boolean blockStatus;
-
+    private boolean isEditing = false;
     private SportsUnityDBHelper.GroupParticipants groupParticipants = null;
     private boolean isAdmin = false;
 
@@ -73,11 +78,23 @@ public class GroupInfoFragment extends Fragment implements ActivityCompat.OnRequ
     private Drawable oldBackgroundForNameEditView = null;
     private ProgressDialog dialog = null;
 
+    private ImageView groupAvatar;
+    private byte[] croppedBytes;
+    private int screenWidth;
+    private ImageView editImage;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        DisplayMetrics displaymetrics = new DisplayMetrics();
+        getActivity().getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
+        screenWidth = displaymetrics.widthPixels;
+        getIntentExtras(getArguments());
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
-        getIntentExtras(getArguments());
 
         SportsUnityDBHelper sportsUnityDBHelper = SportsUnityDBHelper.getInstance(getContext());
         groupParticipants = sportsUnityDBHelper.getGroupParticipants(chatID);
@@ -85,8 +102,6 @@ public class GroupInfoFragment extends Fragment implements ActivityCompat.OnRequ
         isAdmin = groupParticipants.adminJids.contains(currentUserJid);
 
         View view = inflater.inflate(R.layout.group_info_activity, container, false);
-        initToolbar();
-        initViews(view);
 
 //        try {
 ////            PubSubMessaging.getInstance().getNodeConfig(groupJID);
@@ -97,6 +112,14 @@ public class GroupInfoFragment extends Fragment implements ActivityCompat.OnRequ
 //        }
 
         return view;
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        initViews(view);
+        initToolbar();
     }
 
     @Override
@@ -115,7 +138,7 @@ public class GroupInfoFragment extends Fragment implements ActivityCompat.OnRequ
 
     private void getIntentExtras(Bundle bundle) {
         name = bundle.getString("name");
-        byteArray = bundle.getByteArray("profilePicture");
+        groupImage = bundle.getByteArray("profilePicture");
         groupJID = bundle.getString("jid");
         chatID = bundle.getInt("chatID");
         blockStatus = bundle.getBoolean("blockStatus");
@@ -126,8 +149,14 @@ public class GroupInfoFragment extends Fragment implements ActivityCompat.OnRequ
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == GroupCreateFragment.LOAD_IMAGE_GALLERY_CAMERA && resultCode == Activity.RESULT_OK) {
-            ImageView imageView = (ImageView)getView().findViewById(R.id.group_image);
-            byteArray = ImageUtil.handleImageAndSetToView(data, imageView, ImageUtil.SMALL_THUMB_IMAGE_SIZE, ImageUtil.SMALL_THUMB_IMAGE_SIZE);
+            groupAvatar = (ImageView) getView().findViewById(R.id.group_image);
+            byte[] groupImage = ImageUtil.handleImageAndSetToView(data, groupAvatar, ImageUtil.FULL_IMAGE_SIZE, ImageUtil.FULL_IMAGE_SIZE);
+            Bitmap bitmap = BitmapFactory.decodeByteArray(groupImage, 0, groupImage.length);
+            ((GroupDetailActivity) getActivity()).initiateCrop(bitmap, GroupInfoFragment.this);
+            Toolbar toolbar = (Toolbar) getActivity().findViewById(R.id.tool_bar);
+            TextView toolbarEdit = (TextView) toolbar.findViewById(R.id.actionButton);
+            toolbarEdit.setVisibility(View.GONE);
+            isEditing = true;
         } else {
             //nothing
         }
@@ -138,7 +167,19 @@ public class GroupInfoFragment extends Fragment implements ActivityCompat.OnRequ
         TextView groupInfo = (TextView) view.findViewById(R.id.group_info);
         TextView groupCount = (TextView) view.findViewById(R.id.part_count);
         TextView delete = (TextView) view.findViewById(R.id.delete_group);
-
+        editImage = (ImageView) view.findViewById(R.id.edit_image);
+        editImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!PermissionUtil.getInstance().isRuntimePermissionRequired()) {
+                    GroupCreateFragment.openImagePicker(GroupInfoFragment.this);
+                } else {
+                    if (PermissionUtil.getInstance().requestPermission(getActivity(), new ArrayList<String>(Arrays.asList(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE)), getResources().getString(R.string.camera_and_external_storage_permission_message), Constants.REQUEST_CODE_CAMERA_EXTERNAL_STORAGE_PERMISSION)) {
+                        GroupCreateFragment.openImagePicker(GroupInfoFragment.this);
+                    }
+                }
+            }
+        });
         if (blockStatus) {
             delete.setText("DELETE GROUP");
         } else {
@@ -147,7 +188,7 @@ public class GroupInfoFragment extends Fragment implements ActivityCompat.OnRequ
 
         oldBackgroundForNameEditView = groupName.getBackground();
         groupName.setBackground(getResources().getDrawable(R.drawable.round_edge_black_box));
-        groupName.setEnabled(false);
+        groupName.setEnabled(isEditing);
 
         groupName.setTypeface(FontTypeface.getInstance(getActivity()).getRobotoCondensedBold());
         groupInfo.setTypeface(FontTypeface.getInstance(getActivity()).getRobotoRegular());
@@ -155,13 +196,22 @@ public class GroupInfoFragment extends Fragment implements ActivityCompat.OnRequ
 
         groupName.setText(name);
 
-        CircleImageView groupImage = (CircleImageView) view.findViewById(R.id.group_image);
-        if (byteArray != null) {
-            groupImage.setImageBitmap(BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length));
+        groupAvatar = (ImageView) view.findViewById(R.id.group_image);
+        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(screenWidth, screenWidth);
+        params.gravity = Gravity.CENTER;
+        groupAvatar.setLayoutParams(params);
+        if (groupImage != null) {
+            groupAvatar.setImageBitmap(BitmapFactory.decodeByteArray(groupImage, 0, groupImage.length));
         } else {
-            groupImage.setImageResource(R.drawable.ic_group);
+            groupAvatar.setImageResource(R.drawable.ic_group_big);
         }
-
+        if (isEditing) {
+            if (croppedBytes != null) {
+                groupAvatar.setImageBitmap(BitmapFactory.decodeByteArray(croppedBytes, 0, croppedBytes.length));
+            }
+        } else {
+            loadImageFromServer();
+        }
         String partCount = getResources().getString(R.string.participant_count);
         partCount = String.format(partCount, groupParticipants.usersInGroup.size());
         groupCount.setText(partCount);
@@ -173,16 +223,53 @@ public class GroupInfoFragment extends Fragment implements ActivityCompat.OnRequ
         delete.setOnClickListener(onExitAndDeleteListener);
     }
 
-    public boolean onBackPressed(){
+    private void loadImageFromServer() {
+        String jid = groupJID;
+        ThreadTask imageLoaderTask = new ThreadTask(jid) {
+            @Override
+            public Object process() {
+                String imageContent = UserProfileHandler.downloadDisplayPic(getActivity(), (String) (object), UserProfileHandler.IMAGE_LARGE);
+                return imageContent;
+            }
+
+            @Override
+            public void postAction(Object object) {
+                if (!TextUtils.isEmpty((String) object)) {
+                    croppedBytes = Base64.decode((String) object, Base64.DEFAULT);
+                    groupImage = Base64.decode((String) object, Base64.DEFAULT);
+                    if (croppedBytes.length > 0) {
+                        final Bitmap bitmap = BitmapFactory.decodeByteArray(croppedBytes, 0, croppedBytes.length);
+                        try {
+                            getActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    if (!isEditing) {
+                                        groupAvatar.setImageBitmap(bitmap);
+                                    }
+                                }
+                            });
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+        };
+        imageLoaderTask.start();
+    }
+
+    public boolean onBackPressed() {
         boolean success = false;
         int visibility = getView().findViewById(R.id.delete_group).getVisibility();
-        if( visibility == View.GONE ) {
+        if (visibility == View.GONE) {
             android.support.v7.app.AlertDialog.Builder build = new android.support.v7.app.AlertDialog.Builder(getActivity());
             build.setTitle("Discard Edits ? ");
             build.setMessage("If you cancel now, your edits will be discarded.");
             build.setPositiveButton("DISCARD", new DialogInterface.OnClickListener() {
 
                 public void onClick(DialogInterface dialog, int id) {
+                    isEditing = false;
+                    croppedBytes = null;
                     discardChanges();
                 }
 
@@ -228,8 +315,13 @@ public class GroupInfoFragment extends Fragment implements ActivityCompat.OnRequ
         });
 
         TextView toolbarEdit = (TextView) toolbar.findViewById(R.id.actionButton);
-        toolbarEdit.setText("Edit");
-        toolbarEdit.setTag(false);
+        toolbarEdit.setTag(isEditing);
+        if (!isEditing) {
+            toolbarEdit.setText("Edit");
+        } else {
+            toolbarEdit.setText("Done");
+            enableViewForEditingGroupBasicInfo(toolbarEdit);
+        }
         toolbarEdit.setTextColor(getResources().getColor(R.color.app_theme_blue));
         toolbarEdit.setTypeface(FontTypeface.getInstance(getActivity()).getRobotoCondensedBold());
         toolbarEdit.setVisibility(isAdmin ? View.VISIBLE : View.GONE);
@@ -243,6 +335,7 @@ public class GroupInfoFragment extends Fragment implements ActivityCompat.OnRequ
                     enableViewForEditingGroupBasicInfo(view);
                 } else {
                     view.setTag(false);
+                    isEditing = false;
                     doneEditing(view);
                 }
             }
@@ -274,25 +367,27 @@ public class GroupInfoFragment extends Fragment implements ActivityCompat.OnRequ
     }
 
     private void discardChanges() {
-        getIntentExtras(getArguments());
+        Bundle bundle = getArguments();
+        name = bundle.getString("name");
+        groupJID = bundle.getString("jid");
+        chatID = bundle.getInt("chatID");
+        blockStatus = bundle.getBoolean("blockStatus");
 
         EditText groupName = (EditText) getView().findViewById(R.id.group_name);
         groupName.setText(name);
 
-        CircleImageView groupImage = (CircleImageView) getView().findViewById(R.id.group_image);
-        if (byteArray != null) {
-            groupImage.setImageBitmap(BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length));
+        if (this.groupImage != null) {
+            groupAvatar.setImageBitmap(BitmapFactory.decodeByteArray(this.groupImage, 0, this.groupImage.length));
         } else {
-            groupImage.setImageResource(R.drawable.ic_group);
+            groupAvatar.setImageResource(R.drawable.ic_group_big);
         }
 
         disableViewForEditingGroupBasicInfo();
     }
 
-    private void enableViewForEditingGroupBasicInfo(View view){
-        TextView textView = (TextView)view;
+    private void enableViewForEditingGroupBasicInfo(View view) {
+        TextView textView = (TextView) view;
         textView.setText("Done");
-
         getView().findViewById(R.id.participants_list_layout).setVisibility(View.GONE);
         getView().findViewById(R.id.delete_group).setVisibility(View.GONE);
 
@@ -301,7 +396,7 @@ public class GroupInfoFragment extends Fragment implements ActivityCompat.OnRequ
         groupName.setBackground(oldBackgroundForNameEditView);
         groupName.getBackground().setColorFilter(getResources().getColor(R.color.app_theme_blue), PorterDuff.Mode.SRC_IN);
 
-        CircleImageView groupImage = (CircleImageView) getView().findViewById(R.id.group_image);
+        ImageView groupImage = (ImageView) getView().findViewById(R.id.group_image);
         groupImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -314,21 +409,19 @@ public class GroupInfoFragment extends Fragment implements ActivityCompat.OnRequ
                 }
             }
         });
-
-        groupImage.setBorderColor(getResources().getColor(R.color.app_theme_blue));
         groupImage.setEnabled(true);
-        groupImage.setBorderWidth(2);
+        editImage.setVisibility(View.VISIBLE);
     }
 
-    private void disableViewForEditingGroupBasicInfo(){
+    private void disableViewForEditingGroupBasicInfo() {
         Toolbar toolbar = (Toolbar) getActivity().findViewById(R.id.tool_bar);
         TextView toolbarEdit = (TextView) toolbar.findViewById(R.id.actionButton);
-
+        toolbarEdit.setTag(false);
         disableViewForEditingGroupBasicInfo(toolbarEdit);
     }
 
-    private void disableViewForEditingGroupBasicInfo(View view){
-        TextView textView = (TextView)view;
+    private void disableViewForEditingGroupBasicInfo(View view) {
+        TextView textView = (TextView) view;
         textView.setText("Edit");
 
         getView().findViewById(R.id.participants_list_layout).setVisibility(View.VISIBLE);
@@ -339,13 +432,13 @@ public class GroupInfoFragment extends Fragment implements ActivityCompat.OnRequ
         groupName.setBackground(getResources().getDrawable(R.drawable.round_edge_black_box));
         groupName.setTextColor(getResources().getColor(R.color.ColorPrimaryDark));
 
-        CircleImageView groupImage = (CircleImageView) getView().findViewById(R.id.group_image);
+        ImageView groupImage = (ImageView) getView().findViewById(R.id.group_image);
         groupImage.setOnClickListener(null);
         groupImage.setEnabled(false);
-        groupImage.setBorderWidth(0);
+        editImage.setVisibility(View.GONE);
     }
 
-    private void doneEditing(View view){
+    private void doneEditing(View view) {
         EditText groupName = (EditText) getView().findViewById(R.id.group_name);
         if (TextUtils.isEmpty(groupName.getText().toString())) {
             Toast.makeText(getActivity(), "Please enter group name.", Toast.LENGTH_SHORT).show();
@@ -353,10 +446,10 @@ public class GroupInfoFragment extends Fragment implements ActivityCompat.OnRequ
             showInDeterminateProgress("Updating group information.");
 
             String imageAsBase64 = null;
-            if( byteArray != null ) {
-                imageAsBase64 = Base64.encodeToString(byteArray, Base64.DEFAULT);
+            if (croppedBytes != null) {
+                imageAsBase64 = Base64.encodeToString(croppedBytes, Base64.DEFAULT);
             }
-            UserProfileHandler.getInstance().submitGroupInfo( getContext(), groupJID, groupName.getText().toString(), imageAsBase64, LISTENER_KEY);
+            UserProfileHandler.getInstance().submitGroupInfo(getContext(), groupJID, groupName.getText().toString(), imageAsBase64, LISTENER_KEY);
         }
     }
 
@@ -411,11 +504,24 @@ public class GroupInfoFragment extends Fragment implements ActivityCompat.OnRequ
 
     private void showAddMemberFragment() {
         GroupDetailActivity groupDetailActivity = ((GroupDetailActivity) getActivity());
-        groupDetailActivity.moveToMembersListFragment(groupParticipants);
+        groupDetailActivity.moveToMembersListFragment(groupParticipants, GroupInfoFragment.this);
     }
 
     private void viewUserProfile(Contacts contacts) {
-        ChatScreenActivity.viewProfile(getActivity(), false, contacts.id, contacts.image, contacts.getName(), contacts.jid, contacts.status, false, contacts.availableStatus, blockStatus);
+        boolean isOwnProfile = false;
+        String jid = TinyDB.getInstance(getContext()).getString(TinyDB.KEY_USER_JID);
+        if (contacts.jid.equals(jid)) {
+            isOwnProfile = true;
+            Intent intent = new Intent(getContext(), UserProfileActivity.class);
+            intent.putExtra(Constants.IS_OWN_PROFILE, isOwnProfile);
+            intent.putExtra("name", contacts.getName());
+            intent.putExtra("profilePicture", contacts.image);
+            intent.putExtra("status", contacts.status);
+            startActivity(intent);
+        } else {
+            ChatScreenActivity.viewProfile(getActivity(), false, contacts.id, contacts.image, contacts.getName(), contacts.jid, contacts.status, false, contacts.availableStatus, blockStatus);
+        }
+
     }
 
     private void openChat(Contacts contacts) {
@@ -475,7 +581,7 @@ public class GroupInfoFragment extends Fragment implements ActivityCompat.OnRequ
         String currentUserJID = TinyDB.getInstance(getContext()).getString(TinyDB.KEY_USER_JID);
 
         boolean success = PubSubMessaging.getInstance().exitGroup(currentUserJID + "@mm.io", groupJID);
-        if( success ) {
+        if (success) {
             PubSubMessaging.getInstance().sendIntimationAboutMemberRemoved(getContext(), currentUserJID, groupJID);
         }
         return success;
@@ -546,7 +652,7 @@ public class GroupInfoFragment extends Fragment implements ActivityCompat.OnRequ
             progressDialog.dismiss();
             if (success == true) {
                 SportsUnityDBHelper.getInstance(GroupInfoFragment.this.getActivity()).deleteGroupMember(chatID, contactId);
-                GroupParticipantsAdapter groupParticipantsAdapter = (GroupParticipantsAdapter)participantsList.getAdapter();
+                GroupParticipantsAdapter groupParticipantsAdapter = (GroupParticipantsAdapter) participantsList.getAdapter();
                 groupParticipantsAdapter.memberRemoved(jid);
             } else {
                 Toast.makeText(GroupInfoFragment.this.getActivity(), R.string.oops_try_again, Toast.LENGTH_SHORT).show();
@@ -568,13 +674,16 @@ public class GroupInfoFragment extends Fragment implements ActivityCompat.OnRequ
         @Override
         public void handleContent(String requestTag, Object content) {
             if (requestTag.equals(UserProfileHandler.SUBMIT_GROUP_INFO_REQUEST_TAG)) {
-                final Boolean success = (Boolean)content;
+                final Boolean success = (Boolean) content;
 
                 getActivity().runOnUiThread(new Runnable() {
 
                     @Override
                     public void run() {
-                        if( success ){
+                        if (success) {
+                            EditText groupName = (EditText) getView().findViewById(R.id.group_name);
+                            String sName = groupName.getText().toString();
+                            getArguments().putString("name", sName);
                             disableViewForEditingGroupBasicInfo();
                         } else {
                             Toast.makeText(getActivity(), R.string.message_submit_failed, Toast.LENGTH_SHORT).show();
@@ -591,4 +700,7 @@ public class GroupInfoFragment extends Fragment implements ActivityCompat.OnRequ
 
     }
 
+    public void setImageBitmap(Bitmap bitmap) {
+        croppedBytes = ImageUtil.getCompressedBytes(bitmap);
+    }
 }

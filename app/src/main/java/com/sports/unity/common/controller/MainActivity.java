@@ -62,6 +62,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import uk.co.deanwild.materialshowcaseview.MaterialShowcaseView;
 
 /**
  * Created by Edwin on 15/02/2015.
@@ -69,6 +70,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class MainActivity extends CustomAppCompatActivity implements ActivityCompat.OnRequestPermissionsResultCallback {
 
     private static final String projectToken = "077215613b5134abb421fd53879c42db";
+    private final String SHOWCASE_ID = "main_activity_showcase_id";
     private MixpanelAPI mixpanel = null;
 
     NavigationFragment navigationFragment;
@@ -98,6 +100,7 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
     private SharedPreferences preferences;
 
     private FloatingActionMenu fabMenu;
+    private FloatingActionMenu fakeabMenu;
     private View backgroundDimmer;
     private boolean isConnectionReplaced = false;
 
@@ -141,6 +144,7 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
         Intent intent = new Intent(this, RegistrationIntentService.class);
         startService(intent);
         fabMenu = (FloatingActionMenu) findViewById(R.id.fab_menu);
+        fakeabMenu = (FloatingActionMenu) findViewById(R.id.fake_fab_menu);
         backgroundDimmer = findViewById(R.id.background_dimmer);
         fabMenu.hideMenuButton(false);
         setFabMenuListeners(fabMenu);
@@ -149,6 +153,7 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
         lt.setStartDelay(LayoutTransition.APPEARING, 0);
         FrameLayout frameLayout = (FrameLayout) findViewById(R.id.childFragmentContainer);
         frameLayout.setLayoutTransition(lt);
+        onNewIntent(getIntent());
     }
 
 
@@ -289,6 +294,25 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
     }
 
     @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        String action = intent.getAction();
+        String data = intent.getDataString();
+        int tabIndex = 0;
+        if (Intent.ACTION_VIEW.equals(action) && data != null) {
+            String urlData = data.substring(data.lastIndexOf("/") + 1);
+            if (urlData.equals("matches")) {
+                tabIndex = 0;
+            } else if (urlData.equals("news")) {
+                tabIndex = 1;
+            } else if (urlData.equals("chat")) {
+                tabIndex = 2;
+            }
+            pager.setCurrentItem(tabIndex);
+        }
+    }
+
+    @Override
     protected void onStart() {
         super.onStart();
     }
@@ -352,7 +376,9 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
             @Override
             public void onDrawerSlide(View drawerView, float slideOffset) {
                 super.onDrawerSlide(drawerView, slideOffset);
-                navigationFragment.updatePendingFriendRequestCount(requestsCount);
+                if (navigationFragment != null) {
+                    navigationFragment.updatePendingFriendRequestCount(requestsCount);
+                }
             }
         };
 
@@ -393,12 +419,28 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
                 messagesFragmentInFront = true;
                 if (fabMenu != null) {
                     fabMenu.showMenuButton(true);
+                    new MaterialShowcaseView.Builder(MainActivity.this, false)
+                            .setTarget(fakeabMenu)
+                            .setDismissText("NEXT")
+                            .setContentHeadingText("See Nearby Fans")
+                            .setContentText("Connect to fans around you")
+                            .setDelay(100) // optional but starting animations immediately in onCreate can make them choppy
+                            .singleUse(SHOWCASE_ID) // provide a unique ID used to ensure it is only shown once
+                            .show();
+
                 }
             } else {
                 messagesFragmentInFront = false;
                 if (fabMenu != null) {
                     fabMenu.hideMenuButton(true);
                 }
+            }
+            if (position == 0) {
+                CommonUtil.sendAnalyticsData(getApplication(), "ScoresScreen");
+            } else if (position == 1) {
+                CommonUtil.sendAnalyticsData(getApplication(), "NewsScreen");
+            } else if (position == 2) {
+                CommonUtil.sendAnalyticsData(getApplication(), "ChatScreen");
             }
         }
 

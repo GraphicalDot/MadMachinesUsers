@@ -80,29 +80,29 @@ public class MaterialShowcaseView extends FrameLayout implements View.OnTouchLis
     private IDetachedListener mDetachedListener;
     private boolean isSmall = false;
 
-    public MaterialShowcaseView(Context context) {
+    public MaterialShowcaseView(Context context, boolean isSequence) {
         super(context);
-        init(context);
+        init(context, isSequence);
     }
 
     public MaterialShowcaseView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        init(context);
+        init(context, false);
     }
 
     public MaterialShowcaseView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        init(context);
+        init(context, false);
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     public MaterialShowcaseView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
-        init(context);
+        init(context, false);
     }
 
 
-    private void init(Context context) {
+    private void init(Context context, boolean isSequence) {
         setWillNotDraw(false);
 
         // create our animation factory
@@ -121,14 +121,23 @@ public class MaterialShowcaseView extends FrameLayout implements View.OnTouchLis
         setVisibility(INVISIBLE);
 
 
-        View contentView = LayoutInflater.from(getContext()).inflate(R.layout.showcase_content, this, true);
-        mContentBox = contentView.findViewById(R.id.content_box);
-        mContentTextView = (TextView) contentView.findViewById(R.id.tv_content);
-        mContentHeadingTextView = (TextView) contentView.findViewById(R.id.tv_heading);
-        mDismissButton = (TextView) contentView.findViewById(R.id.tv_dismiss);
-        mDismissAllShowcasePreviewButton = (TextView) contentView.findViewById(R.id.dismiss_info_overlay);
-        mDismissButton.setOnClickListener(this);
-        mDismissAllShowcasePreviewButton.setOnClickListener(this);
+        if (isSequence) {
+            View contentView = LayoutInflater.from(getContext()).inflate(R.layout.showcase_content, this, true);
+            mContentBox = contentView.findViewById(R.id.content_box);
+            mContentTextView = (TextView) contentView.findViewById(R.id.tv_content);
+            mContentHeadingTextView = (TextView) contentView.findViewById(R.id.tv_heading);
+            mDismissButton = (TextView) contentView.findViewById(R.id.tv_dismiss);
+            mDismissAllShowcasePreviewButton = (TextView) contentView.findViewById(R.id.dismiss_info_overlay);
+            mDismissAllShowcasePreviewButton.setVisibility(VISIBLE);
+            mDismissAllShowcasePreviewButton.setOnClickListener(this);
+            mDismissButton.setOnClickListener(this);
+        } else {
+            View contentView = LayoutInflater.from(getContext()).inflate(R.layout.single_content, this, true);
+            mContentBox = contentView.findViewById(R.id.content_box);
+            mContentTextView = (TextView) contentView.findViewById(R.id.tv_content);
+            mContentHeadingTextView = (TextView) contentView.findViewById(R.id.tv_heading);
+            mContentBox.setOnClickListener(this);
+        }
 
     }
 
@@ -521,10 +530,10 @@ public class MaterialShowcaseView extends FrameLayout implements View.OnTouchLis
 
         private final Activity activity;
 
-        public Builder(Activity activity) {
+        public Builder(Activity activity, boolean isSequence) {
             this.activity = activity;
 
-            showcaseView = new MaterialShowcaseView(activity);
+            showcaseView = new MaterialShowcaseView(activity, isSequence);
         }
 
         /**

@@ -17,10 +17,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -69,7 +72,11 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity {
 
         @Override
         public void onClick(View v) {
-            createUser();
+            if (!TextUtils.isEmpty(otpEditText.getText().toString())) {
+                createUser();
+            } else {
+                Toast.makeText(EnterOtpActivity.this, "Please enter otp", Toast.LENGTH_SHORT).show();
+            }
         }
 
     };
@@ -88,7 +95,7 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(com.sports.unity.R.layout.activity_enter_otp);
-        CommonUtil.sendAnalyticsData(getApplication(),"EnterOtpScreen");
+        CommonUtil.sendAnalyticsData(getApplication(), "EnterOtpScreen");
         initViews();
 
         {
@@ -139,34 +146,33 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity {
         ProgressBar progressBar = (ProgressBar) findViewById(R.id.progressBar);
         progressBar.getIndeterminateDrawable().setColorFilter(getResources().getColor(R.color.gray1), android.graphics.PorterDuff.Mode.MULTIPLY);
 
-        LinearLayout editNumberLayout = (LinearLayout) findViewById(R.id.editNumberLayout);
-        editNumberLayout.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_WHITE, false));
+
+        // LinearLayout editNumberLayout = (LinearLayout) findViewById(R.id.editNumberLayout);
+        ImageButton ediImageButton = (ImageButton) findViewById(R.id.editNumberButton);
         if (UserUtil.isFilterCompleted()) {
             // when user re-verify its account. Don't allow to change phone number.
-            editNumberLayout.setVisibility(View.GONE);
+            ediImageButton.setVisibility(View.GONE);
         } else {
-
+            //nothing
         }
-        editNumberLayout.setOnClickListener(new View.OnClickListener() {
+        ediImageButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
                 onBackPressed();
+
             }
 
         });
 
-        TextView editNumberTextView = (TextView) findViewById(R.id.editNumber);
-        editNumberTextView.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoRegular());
 
-        final Button sendOtpButton = (Button) findViewById(com.sports.unity.R.id.sendOtpButton);
-        sendOtpButton.setVisibility(View.INVISIBLE);
+        final Button sendOtpButton = (Button) findViewById(com.sports.unity.R.id.enterOtp1);
         sendOtpButton.setOnClickListener(sendButtonClickListener);
 
         Button resendButton = (Button) findViewById(R.id.resend);
         resendButton.setOnClickListener(resendOtpButtonClickListener);
         resendButton.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoRegular());
-        resendButton.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_BLUE, false));
+//        resendButton.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_BLUE, false));
 
         ArrayList<String> countryDetails = CommonUtil.getCountryDetailsByCountryCode(EnterOtpActivity.this, UserUtil.getCountryCode());
         String countryCode = countryDetails.get(0);
@@ -176,34 +182,19 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity {
         otpText.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoLight());
 
         otpEditText = (EditText) findViewById(com.sports.unity.R.id.enterOtp);
-        otpEditText.addTextChangedListener(new TextWatcher() {
+        closeKeyboard();
+    }
 
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+    private void closeKeyboard() {
+        otpEditText.clearFocus();
+        this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+    }
 
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (s.length() == 4) {
-                    sendOtpButton.setVisibility(View.VISIBLE);
-                } else {
-                    sendOtpButton.setVisibility(View.INVISIBLE);
-                }
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-            }
-
-        });
-
-        /*
-         * to set initial focus to edit text view and open keyboard.
-         */
+    private void openKeyboard() {
         otpEditText.requestFocus();
-        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+//        this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+        InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
     }
 
     private String getPhoneNumberWithCountryCode() {
@@ -302,8 +293,7 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity {
         otpWaitingDialog.setCanceledOnTouchOutside(false);
 
 
-        CountDownTimer mCountDownTimer = new CountDownTimer(lennghtInMillis, 1000) {
-            private boolean warned = false;
+        new CountDownTimer(lennghtInMillis, 1000) {
 
             @Override
             public void onTick(long millisUntilFinished) {
@@ -314,8 +304,11 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity {
 
             @Override
             public void onFinish() {
-                otpWaitingDialog.dismiss();
+                if (otpWaitingDialog != null) {
+                    otpWaitingDialog.dismiss();
+                }
                 unRegisterSmsBroadcastReceiver();
+                openKeyboard();
             }
         }.start();
     }
@@ -476,9 +469,15 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity {
                     UserUtil.setOtpSent(EnterOtpActivity.this, false);
                     UserUtil.setUserRegistered(EnterOtpActivity.this, true);
 
+                    if (!response.isNull("photo")) {
+                        String base64Image = response.getString("photo");
+                        if (!TextUtils.isEmpty(base64Image)) {
+                            TinyDB.getInstance(getApplicationContext()).putString(TinyDB.KEY_PHOTO, base64Image);
+                        }
+                    }
                     //To Update the user interest from server if exist.
 
-                    /*if (!response.isNull("interests")) {
+                    if (!response.isNull("interests")) {
                         String favString = response.getString("interests");
                         if (!TextUtils.isEmpty(favString)) {
 
@@ -504,7 +503,9 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity {
                             }
 
                         }
-                    }*/
+                    }
+
+
                     this.success = true;
                 } else {
                     this.success = false;

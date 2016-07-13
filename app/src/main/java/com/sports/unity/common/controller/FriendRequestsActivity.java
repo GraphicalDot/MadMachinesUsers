@@ -33,6 +33,7 @@ public class FriendRequestsActivity extends CustomAppCompatActivity implements B
     private ArrayList<Contacts> contactsWithPendingRequests = new ArrayList<>();
     private ListView listView;
 
+
     private ActivityActionListener activityActionListener = new ActivityActionListener() {
 
         @Override
@@ -79,6 +80,7 @@ public class FriendRequestsActivity extends CustomAppCompatActivity implements B
     protected void onResume() {
         super.onResume();
         ActivityActionHandler.getInstance().addActionListener(ActivityActionHandler.REQEUSTS_SCREEN_KEY, DUMMY_JABBER_ID, activityActionListener);
+        updateContent();
     }
 
     @Override
@@ -99,18 +101,14 @@ public class FriendRequestsActivity extends CustomAppCompatActivity implements B
     private void initList() {
         listView = (ListView) findViewById(R.id.pending_requests_list);
         FriendRequestsActivityAdapter friendRequestsActivityAdapter = new FriendRequestsActivityAdapter(this, R.layout.list_contacts_pending_requests_item, contactsWithPendingRequests);
-        listView.setAdapter(friendRequestsActivityAdapter);
-        listView.setEmptyView(findViewById(R.id.error_layout));
-        updateContent();
+        listView.setAdapter(friendRequestsActivityAdapter);        listView.setEmptyView(findViewById(R.id.error_layout));
+//        updateContent();
     }
 
     private void updateContent() {
+        contactsWithPendingRequests.clear();
         contactsWithPendingRequests = SportsUnityDBHelper.getInstance(getApplicationContext()).getPendingContacts();
-        if (contactsWithPendingRequests.size() > 0) {
-            if (listView != null) {
-                ((FriendRequestsActivityAdapter) listView.getAdapter()).updateList(contactsWithPendingRequests);
-            }
-        }
+        ((FriendRequestsActivityAdapter) listView.getAdapter()).updateList(contactsWithPendingRequests);
     }
 
     private void initView() {

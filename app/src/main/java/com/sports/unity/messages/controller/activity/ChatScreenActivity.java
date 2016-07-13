@@ -308,7 +308,6 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
 
     @Override
     protected void onDestroy() {
-        ChatScreenApplication.activityDestroyed();
         AudioRecordingHelper.cleanUp();
         super.onDestroy();
     }
@@ -317,7 +316,6 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
     protected void onPause() {
         super.onPause();
         blockUnblockUserHelper.removeBlockUnblockListener();
-        ChatScreenApplication.activityPaused();
         AudioRecordingHelper.getInstance(this).stopAndReleaseMediaPlayer();
     }
 
@@ -325,7 +323,6 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
     public void onStop() {
         super.onStop();
 
-        ChatScreenApplication.activityStopped();
         ActivityActionHandler.getInstance().removeActionListener(ActivityActionHandler.CHAT_SCREEN_KEY, jabberId);
         GlobalEventHandler.getInstance().removeGlobalEventListener(ActivityActionHandler.CHAT_SCREEN_KEY);
     }
@@ -339,7 +336,6 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
         blockUnblockUserHelper.addBlockUnblockListener(ChatScreenActivity.this);
         ActivityActionHandler.getInstance().addActionListener(ActivityActionHandler.CHAT_SCREEN_KEY, jabberId, activityActionListener);
 //        GlobalEventHandler.getInstance().addGlobalEventListener(ActivityActionHandler.CHAT_SCREEN_KEY, this);
-        ChatScreenApplication.activityResumed();
 
 //        XMPPConnectionUtil.getInstance().addConnectionListener(XMPP_CONNECTION_KEY, this);
 

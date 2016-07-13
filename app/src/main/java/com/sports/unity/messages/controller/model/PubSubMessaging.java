@@ -120,7 +120,7 @@ public class PubSubMessaging {
         return success;
     }
 
-    private boolean loadAndUpdateGroupTitle(Context context, int chatId, String groupJid){
+    private boolean loadAndUpdateGroupTitle(Context context, int chatId, String groupJid) {
         boolean success = false;
         try {
             ConfigureForm form = PubSubUtil.getNodeConfig(groupJid);
@@ -145,7 +145,7 @@ public class PubSubMessaging {
             PubSubUtil.sendNodeConfig(groupJid, form);
             success = UserProfileHandler.uploadDisplayPic(context, groupJid, groupImage);
 
-            if( success ) {
+            if (success) {
                 success = false;
                 sendIntimationAboutGroupInfoChanged(context, groupJid, groupTitle);
 
@@ -205,7 +205,7 @@ public class PubSubMessaging {
         ActivityActionHandler.getInstance().dispatchReceiptEvent(ActivityActionHandler.CHAT_SCREEN_KEY, receiptKind);
     }
 
-    public boolean resendMessage(Context context, com.sports.unity.messages.controller.model.Message messageObject){
+    public boolean resendMessage(Context context, com.sports.unity.messages.controller.model.Message messageObject) {
         boolean success = false;
         try {
             TinyDB tinyDB = TinyDB.getInstance(context);
@@ -218,9 +218,9 @@ public class PubSubMessaging {
             SimplePayload simplePayload = new SimplePayload("message", "pubsub:text:message", "<message xmlns='pubsub:text:message'>" + payLoad + "</message>");
             PayloadItem item = new PayloadItem(simplePayload);
 
-            if( XMPPClient.getInstance().isConnectionAuthenticated() ) {
+            if (XMPPClient.getInstance().isConnectionAuthenticated()) {
                 String stanzaId = null;
-                if( messageObject.messageStanzaId != null ) {
+                if (messageObject.messageStanzaId != null) {
                     stanzaId = messageObject.messageStanzaId;
                     PubSubUtil.publish(item, contacts.jid, stanzaId);
                 } else {
@@ -231,7 +231,7 @@ public class PubSubMessaging {
                 XMPPMessageQueueHelper.getInstance().enqueue(stanzaId);
                 success = true;
             }
-        }catch (Exception ex){
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
         return success;
@@ -250,7 +250,7 @@ public class PubSubMessaging {
             PayloadItem item = new PayloadItem(simplePayload);
 
             String stanzaId = null;
-            if( XMPPClient.getInstance().isConnectionAuthenticated() ) {
+            if (XMPPClient.getInstance().isConnectionAuthenticated()) {
                 stanzaId = publishItem(item, groupJid);
                 XMPPMessageQueueHelper.getInstance().enqueue(stanzaId);
             }
@@ -283,7 +283,7 @@ public class PubSubMessaging {
             PayloadItem item = new PayloadItem(simplePayload);
 
             String stanzaId = null;
-            if( XMPPClient.getInstance().isConnectionAuthenticated() ) {
+            if (XMPPClient.getInstance().isConnectionAuthenticated()) {
                 stanzaId = publishItem(item, groupJid);
                 XMPPMessageQueueHelper.getInstance().enqueue(stanzaId);
             }
@@ -308,7 +308,7 @@ public class PubSubMessaging {
             PayloadItem item = new PayloadItem(simplePayload);
 
             String stanzaId = null;
-            if( XMPPClient.getInstance().isConnectionAuthenticated() ) {
+            if (XMPPClient.getInstance().isConnectionAuthenticated()) {
                 stanzaId = publishItem(item, groupJid);
                 XMPPMessageQueueHelper.getInstance().enqueue(stanzaId);
             }
@@ -406,7 +406,7 @@ public class PubSubMessaging {
                     if (subscription.getState().equals(Subscription.State.subscribed)) {
                         handleGroupInvitation(context, subscription.getNode());
                         ContactsHandler.getInstance().addCallToUpdateRequiredContactChat(context);
-                    } else if( subscription.getState().equals(Subscription.State.none) ){
+                    } else if (subscription.getState().equals(Subscription.State.none)) {
                         handleGroupElimination(context, subscription.getNode());
                     }
                 } else {
@@ -468,14 +468,14 @@ public class PubSubMessaging {
         }
     }
 
-    public boolean loadGroupInfo(Context context, int chatId, String groupJid){
+    public boolean loadGroupInfo(Context context, int chatId, String groupJid) {
         boolean success = false;
-        success = loadAndUpdateGroupTitle( context, chatId, groupJid);
-        if( success ) {
+        success = loadAndUpdateGroupTitle(context, chatId, groupJid);
+        if (success) {
             success = loadAffiliations(context, chatId, groupJid);
-            if( success ){
-                String imageContent = UserProfileHandler.getInstance().downloadDisplayPic(context, groupJid);
-                if( imageContent == null ){
+            if (success) {
+                String imageContent = UserProfileHandler.getInstance().downloadDisplayPic(context, groupJid, UserProfileHandler.IMAGE_THUMNB);
+                if (imageContent == null) {
                     success = false;
                 } else {
                     byte[] groupImageBytes = null;
@@ -483,7 +483,7 @@ public class PubSubMessaging {
                         groupImageBytes = Base64.decode(imageContent, Base64.DEFAULT);
                     }
 
-                    if( imageContent.length() > 0 ){
+                    if (imageContent.length() > 0) {
                         SportsUnityDBHelper sportsUnityDBHelper = SportsUnityDBHelper.getInstance(context);
                         sportsUnityDBHelper.updateGroupInfo(groupJid, sportsUnityDBHelper.getUserNameByJid(groupJid), groupImageBytes);
                     }
@@ -539,7 +539,7 @@ public class PubSubMessaging {
             }
 
             success = true;
-        }catch (Exception ex){
+        } catch (Exception ex) {
             ex.printStackTrace();
             handleConnectionException(ex);
         }
@@ -570,7 +570,7 @@ public class PubSubMessaging {
         return success;
     }
 
-    public void handleCreationOfAlreadySubscribedGroup(Context context, String nodeId){
+    public void handleCreationOfAlreadySubscribedGroup(Context context, String nodeId) {
         handleGroupCreation(context, nodeId);
     }
 
@@ -581,7 +581,7 @@ public class PubSubMessaging {
 //        pubSubManager.getNode(nodeId);
 //    }
 
-    private void handleUserPubSubMessage(Context context, String from, String mimeType, String text, String time, String groupJID, String stanzaId){
+    private void handleUserPubSubMessage(Context context, String from, String mimeType, String text, String time, String groupJID, String stanzaId) {
         TinyDB tinyDB = TinyDB.getInstance(context);
         SportsUnityDBHelper sportsUnityDBHelper = SportsUnityDBHelper.getInstance(context);
 
@@ -617,15 +617,15 @@ public class PubSubMessaging {
         }
     }
 
-    private void handleGroupInvitation(Context context, String groupJID){
+    private void handleGroupInvitation(Context context, String groupJID) {
         handleGroupCreation(context, groupJID);
     }
 
-    private void handleGroupCreation(Context context, String nodeId){
+    private void handleGroupCreation(Context context, String nodeId) {
         SportsUnityDBHelper sportsUnityDBHelper = SportsUnityDBHelper.getInstance(context);
         String subject = nodeId.substring(nodeId.indexOf("%") + 1, nodeId.indexOf("%%"));
         int chatId = sportsUnityDBHelper.getChatEntryID(nodeId);
-        if( chatId == SportsUnityDBHelper.DEFAULT_ENTRY_ID ) {
+        if (chatId == SportsUnityDBHelper.DEFAULT_ENTRY_ID) {
             chatId = sportsUnityDBHelper.createGroupChatEntry(subject, null, nodeId);
             sportsUnityDBHelper.updateChatEntry(SportsUnityDBHelper.getDummyMessageRowId(), nodeId);
 
@@ -663,15 +663,15 @@ public class PubSubMessaging {
     private void handleMembersAdded(Context context, String groupJid) {
         SportsUnityDBHelper sportsUnityDBHelper = SportsUnityDBHelper.getInstance(context);
         int chatId = sportsUnityDBHelper.getChatEntryID(groupJid);
-        if( chatId != SportsUnityDBHelper.DEFAULT_ENTRY_ID ) {
+        if (chatId != SportsUnityDBHelper.DEFAULT_ENTRY_ID) {
             sportsUnityDBHelper.updateChatUpdateRequired(chatId, true);
         }
     }
 
-    private void handleGroupInfoChanged(Context context, String groupJid){
+    private void handleGroupInfoChanged(Context context, String groupJid) {
         SportsUnityDBHelper sportsUnityDBHelper = SportsUnityDBHelper.getInstance(context);
         int chatId = sportsUnityDBHelper.getChatEntryID(groupJid);
-        if( chatId != SportsUnityDBHelper.DEFAULT_ENTRY_ID ) {
+        if (chatId != SportsUnityDBHelper.DEFAULT_ENTRY_ID) {
             sportsUnityDBHelper.updateChatUpdateRequired(chatId, true);
         }
     }

@@ -4,13 +4,17 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Looper;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -46,7 +50,6 @@ public class ProfileCreationActivity extends AppCompatActivity implements Activi
     private EditText nameText;
     private byte[] byteArray;
     private String userName;
-
     private View.OnClickListener continueButtonOnClickListener = new View.OnClickListener() {
 
         @Override
@@ -56,7 +59,11 @@ public class ProfileCreationActivity extends AppCompatActivity implements Activi
 
                 userName = nameText.getText().toString();
 
-                int requestStatus = UserProfileHandler.getInstance().connectToXmppServer(ProfileCreationActivity.this, LISTENER_KEY);
+                String phoneNumber = TinyDB.getInstance(ProfileCreationActivity.this).getString(TinyDB.KEY_USERNAME);
+                String jid = TinyDB.getInstance(ProfileCreationActivity.this).getString(TinyDB.KEY_USER_JID);
+
+                Contacts contacts = new Contacts(userName, jid, phoneNumber, byteArray, -1, getResources().getString(R.string.default_status), Contacts.AVAILABLE_NOT);
+                UserProfileHandler.getInstance().submitUserProfile(ProfileCreationActivity.this, contacts, LISTENER_KEY);
             } else {
                 Toast.makeText(getApplicationContext(), "Please enter your name", Toast.LENGTH_SHORT).show();
             }
@@ -102,12 +109,20 @@ public class ProfileCreationActivity extends AppCompatActivity implements Activi
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == LOAD_IMAGE_GALLERY_CAMERA && resultCode == Activity.RESULT_OK) {
-            CircleImageView circleImageView = (CircleImageView) findViewById(R.id.profile_image);
+            ImageView ImageView = (ImageView) findViewById(R.id.profile_image);
 
-            byteArray = ImageUtil.handleImageAndSetToView(data, circleImageView, ImageUtil.SMALL_THUMB_IMAGE_SIZE, ImageUtil.SMALL_THUMB_IMAGE_SIZE);
+            byteArray = ImageUtil.handleImageAndSetToView(data, ImageView, ImageUtil.FULL_IMAGE_SIZE, ImageUtil.FULL_IMAGE_SIZE);
+            Bitmap bitmap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
+            initiateCrop(bitmap);
         } else {
             callbackManager.onActivityResult(requestCode, resultCode, data);
         }
+    }
+
+    private void initiateCrop(Bitmap bitmap) {
+        CropImageFragment cropImageFragment = new CropImageFragment();
+        cropImageFragment.setProfileImage(bitmap);
+        getSupportFragmentManager().beginTransaction().add(R.id.crop_container, cropImageFragment, CropImageFragment.CROP_FRAGMENT_TAG).commit();
     }
 
     @Override
@@ -125,6 +140,7 @@ public class ProfileCreationActivity extends AppCompatActivity implements Activi
         addFacebookCallback();
         addListenerToContinueButton();
         addListnerToProfilePicture();
+        handleAvatar();
 
         {
             if (!PermissionUtil.getInstance().isRuntimePermissionRequired()) {
@@ -143,13 +159,21 @@ public class ProfileCreationActivity extends AppCompatActivity implements Activi
 //        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
     }
 
+    private void handleAvatar() {
+        String base64Image = TinyDB.getInstance(this).getString(TinyDB.KEY_PHOTO);
+        if (!TextUtils.isEmpty(base64Image)) {
+            ImageView ImageView = (ImageView) findViewById(R.id.profile_image);
+            byteArray = ImageUtil.handleAvatarAndSetToView(base64Image, ImageView);
+        }
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
 
         UserProfileHandler.getInstance().addContentListener(LISTENER_KEY, this);
 
-        if(UserProfileHandler.getInstance().requestInProgress()){
+        if (UserProfileHandler.getInstance().requestInProgress()) {
             //nothing
         } else {
             afterAsyncCall();
@@ -164,8 +188,8 @@ public class ProfileCreationActivity extends AppCompatActivity implements Activi
     }
 
     private void addListnerToProfilePicture() {
-        CircleImageView circleImageView = (CircleImageView) findViewById(R.id.profile_image);
-        circleImageView.setOnClickListener(profilePictureonOnClickListener);
+        ImageView ImageView = (ImageView) findViewById(R.id.profile_image);
+        ImageView.setOnClickListener(profilePictureonOnClickListener);
     }
 
     private void addListenerToContinueButton() {
@@ -184,9 +208,9 @@ public class ProfileCreationActivity extends AppCompatActivity implements Activi
         UserProfileHandler.getInstance().setFacebookDetails(this, loginButton, LISTENER_KEY, callbackManager);
     }
 
-    private void setProfileImage(Bitmap image) {
-        CircleImageView circleImageView = (CircleImageView) findViewById(R.id.profile_image);
-        circleImageView.setImageBitmap(image);
+    public void setProfileImage(Bitmap image) {
+        ImageView ImageView = (ImageView) findViewById(R.id.profile_image);
+        ImageView.setImageBitmap(ImageUtil.getRoundedCornerBitmap(image, ImageView));
         byteArray = ImageUtil.getCompressedBytes(image);
     }
 
@@ -213,8 +237,8 @@ public class ProfileCreationActivity extends AppCompatActivity implements Activi
     private void beforeAsyncCall() {
         Button continueButton = (Button) findViewById(R.id.continue_button);
         continueButton.setClickable(false);
-        CircleImageView circleImageView = (CircleImageView) findViewById(R.id.profile_image);
-        circleImageView.setClickable(false);
+        ImageView ImageView = (ImageView) findViewById(R.id.profile_image);
+        ImageView.setClickable(false);
 
         LoginButton loginButton = (LoginButton) findViewById(R.id.login_button);
         loginButton.setVisibility(View.GONE);
@@ -225,8 +249,8 @@ public class ProfileCreationActivity extends AppCompatActivity implements Activi
     private void afterAsyncCall() {
         Button continueButton = (Button) findViewById(R.id.continue_button);
         continueButton.setClickable(true);
-        CircleImageView circleImageView = (CircleImageView) findViewById(R.id.profile_image);
-        circleImageView.setClickable(true);
+        ImageView ImageView = (ImageView) findViewById(R.id.profile_image);
+        ImageView.setClickable(true);
 
         LoginButton loginButton = (LoginButton) findViewById(R.id.login_button);
         loginButton.setVisibility(View.VISIBLE);
@@ -255,27 +279,19 @@ public class ProfileCreationActivity extends AppCompatActivity implements Activi
     }
 
     @Override
+    public void onBackPressed() {
+        Fragment fragment = getSupportFragmentManager().findFragmentByTag(CropImageFragment.CROP_FRAGMENT_TAG);
+
+        if (fragment != null) {
+            getSupportFragmentManager().beginTransaction().remove(fragment).commit();
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+    @Override
     public void handleContent(String requestTag, Object content) {
-
-        if (requestTag.equals(UserProfileHandler.CONNECT_XMPP_SERVER_TAG)) {
-            Boolean success = (Boolean) content;
-
-            if (success == true) {
-                String phoneNumber = TinyDB.getInstance(ProfileCreationActivity.this).getString(TinyDB.KEY_USERNAME);
-                String jid = TinyDB.getInstance(ProfileCreationActivity.this).getString(TinyDB.KEY_USER_JID);
-
-                Contacts contacts = new Contacts(userName, jid, phoneNumber, byteArray, -1, getResources().getString(R.string.default_status), Contacts.AVAILABLE_NOT);
-                UserProfileHandler.getInstance().submitUserProfile(ProfileCreationActivity.this, contacts, LISTENER_KEY);
-            } else {
-                ProfileCreationActivity.this.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        onUnSuccessfulLogin();
-                        afterAsyncCall();
-                    }
-                });
-            }
-        } else if (requestTag.equals(UserProfileHandler.FB_REQUEST_TAG) && content != null) {
+        if (requestTag.equals(UserProfileHandler.FB_REQUEST_TAG) && content != null) {
             final UserProfileHandler.ProfileDetail profileDetail = (UserProfileHandler.ProfileDetail) content;
 
             if (Looper.myLooper() == Looper.getMainLooper()) {
@@ -304,7 +320,7 @@ public class ProfileCreationActivity extends AppCompatActivity implements Activi
                 }
             });
 
-        } else if (requestTag.equals(UserProfileHandler.DOWNLOADING_FACEBOOK_IMAGE_TAG) ) {
+        } else if (requestTag.equals(UserProfileHandler.DOWNLOADING_FACEBOOK_IMAGE_TAG)) {
             beforeAsyncCall();
         }
     }
@@ -316,7 +332,7 @@ public class ProfileCreationActivity extends AppCompatActivity implements Activi
         nameText.setText(profileDetail.getName());
 
         if (profileDetail.getBitmap() != null) {
-            setProfileImage(profileDetail.getBitmap());
+            initiateCrop(profileDetail.getBitmap());
         } else {
             //nothing
         }

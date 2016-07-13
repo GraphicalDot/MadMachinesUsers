@@ -17,13 +17,19 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Looper;
+import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Base64;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -36,6 +42,7 @@ import com.bumptech.glide.Glide;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookSdk;
 import com.facebook.login.widget.LoginButton;
+import com.sports.unity.CropImageFragment;
 import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.R;
 import com.sports.unity.XMPPManager.XMPPClient;
@@ -45,6 +52,7 @@ import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.common.model.PermissionUtil;
 import com.sports.unity.common.model.TinyDB;
 import com.sports.unity.common.model.UserProfileHandler;
+import com.sports.unity.messages.controller.BlockUnblockUserHelper;
 import com.sports.unity.messages.controller.activity.ChatScreenActivity;
 import com.sports.unity.messages.controller.model.Contacts;
 import com.sports.unity.messages.controller.model.PersonalMessaging;
@@ -55,8 +63,10 @@ import com.sports.unity.util.ActivityActionListener;
 import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
 import com.sports.unity.util.ImageUtil;
+import com.sports.unity.util.ThreadTask;
+import com.sports.unity.util.UserCard;
 
-import org.jivesoftware.smackx.vcardtemp.packet.VCard;
+import org.json.JSONArray;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -65,16 +75,13 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import de.hdodenhof.circleimageview.CircleImageView;
+public class UserProfileActivity extends CustomAppCompatActivity implements UserProfileHandler.ContentListener, BlockUnblockUserHelper.BlockUnblockListener {
 
-public class UserProfileActivity extends CustomAppCompatActivity implements UserProfileHandler.ContentListener {
-
-    private static final String INFO_EDIT = "EDIT PROFILE";
-    private static final String INFO_SAVE = "SAVE PROFILE";
-    private static final String ADD_FRIEND = "ADD FRIEND";
-    private static final String ACCEPT_REQUEST = "ACCEPT FRIEND REQUEST";
+    //    private static final String INFO_EDIT = "EDIT PROFILE";
+//    private static final String INFO_SAVE = "SAVE PROFILE";
+//    private static final String ADD_FRIEND = "ADD FRIEND";
+//    private static final String ACCEPT_REQUEST = "ACCEPT FRIEND REQUEST";
     private static final String REQUEST_SENT = "REQUEST SENT";
-
     private static final String LISTENER_KEY = "profile_listener_key";
 
     private static final int LOAD_IMAGE_GALLERY_CAMERA = 1;
@@ -87,7 +94,7 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
     private TextView toolbarActionButton;
     private EditText name;
     private EditText status;
-    private CircleImageView profileImage;
+    private ImageView profileImage;
     private TextView editFavourite, statusTitle;
     private LinearLayout statusView;
     private LinearLayout statusList;
@@ -98,6 +105,17 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
     private ProgressBar progressBar;
     private TextView currentStatus;
     private boolean ownProfile;
+    private Button editProfile;
+    private ImageView editImage;
+    private Button saveProfile;
+
+    private BlockUnblockUserHelper blockUnblockUserHelper;
+    private LinearLayout acceptBlockLayout;
+    private Button addFriends;
+    private Button accept;
+    private Button block;
+    private Button blockUser;
+    boolean blockStatus = false;
 
     private String jabberId = null;
 
@@ -114,41 +132,43 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
     private Drawable oldBackgroundForStatusEditView = null;
 
 
-    private TextView.OnClickListener onClickListener = new View.OnClickListener() {
+    private int screenHeight;
+    private int screenWidth;
 
+
+    View.OnClickListener onClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (toolbarActionButton.getText().equals(ADD_FRIEND)) {
-                onClickAddFriend();
-            } else if (toolbarActionButton.getText().equals(ACCEPT_REQUEST)) {
-                onClickAcceptFriend();
-            } else if (toolbarActionButton.getText().equals(REQUEST_SENT)) {
-                //do nothing as friend request has already been sent
-            } else {
-                if (toolbarActionButton.getText().equals(INFO_SAVE)) {
-                    onClickSaveButton();
-                } else {
+            int id = v.getId();
+            switch (id) {
+                case R.id.accept:
+                    onClickAcceptFriend();
+                    break;
+                case R.id.block:
+                case R.id.block_user:
+                    Contacts contact = SportsUnityDBHelper.getInstance(getApplicationContext()).getContactByJid(jabberId);
+                    blockUnblockUserHelper.onMenuItemSelected(UserProfileActivity.this, contact.id, contact.jid, null);
+                    break;
+                case R.id.add_friends:
+                    onClickAddFriend();
+                    break;
+                case R.id.edit_image:
                     onClickEditButton();
-                }
+                    break;
+                case R.id.save_profile:
+                    onClickSaveButton();
+                    break;
+                case R.id.edit_profile:
+                    onClickEditButton();
+                    break;
+                case R.id.edit_fav:
+                    onClickEditFavorites();
+                    break;
+                case R.id.list_item:
+                    onClickStatus(v);
+                    break;
             }
-        }
 
-    };
-
-    private View.OnClickListener editFavoritesClickListener = new View.OnClickListener() {
-
-        @Override
-        public void onClick(View v) {
-            onClickEditFavorites();
-        }
-
-    };
-
-    private View.OnClickListener statusClickListener = new View.OnClickListener() {
-
-        @Override
-        public void onClick(View view) {
-            onClickStatus(view);
         }
     };
 
@@ -161,13 +181,15 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
                 public void run() {
                     requestId = SportsUnityDBHelper.getInstance(getApplicationContext()).checkJidForPendingRequest(getIntent().getStringExtra("jid"));
                     if (eventId == ActivityActionHandler.EVENT_FRIEND_REQUEST_SENT) {
-                        toolbarActionButton.setText(REQUEST_SENT);
+                        addFriends.setText(REQUEST_SENT);
                     } else if (eventId == ActivityActionHandler.EVENT_FRIEND_REQUEST_RECEIVED) {
-                        toolbarActionButton.setText(ACCEPT_REQUEST);
+                        acceptBlockLayout.setVisibility(View.VISIBLE);
                         Toast.makeText(getApplicationContext(), "Friend request received", Toast.LENGTH_SHORT).show();
                     } else if (eventId == ActivityActionHandler.EVENT_FRIEND_REQUEST_ACCEPTED) {
-                        toolbarActionButton.setVisibility(View.GONE);
+                        addFriends.setVisibility(View.GONE);
+                        acceptBlockLayout.setVisibility(View.GONE);
                         Toast.makeText(getApplicationContext(), "You are now friends", Toast.LENGTH_SHORT).show();
+                        block.setVisibility(View.VISIBLE);
                     }
                 }
             });
@@ -195,17 +217,25 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
 
         initFacebookLogin();
         setContentView(R.layout.activity_user_profile);
-
+        DisplayMetrics displaymetrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
+        screenHeight = displaymetrics.heightPixels;
+        screenWidth = displaymetrics.widthPixels;
         mInflater = LayoutInflater.from(this);
         ownProfile = getIntent().getBooleanExtra(Constants.IS_OWN_PROFILE, false);
-
-        setToolbar(ownProfile);
-        initView(ownProfile);
+        imageArray = byteArray = getIntent().getByteArrayExtra("profilePicture");
 
         jabberId = getIntent().getStringExtra("jid");
         if (jabberId == null) {
             jabberId = "ownProfile";
+        } else {
+            Contacts contact = SportsUnityDBHelper.getInstance(getApplicationContext()).getContactByJid(jabberId);
+            blockStatus = contact.blockStatus;
+            blockUnblockUserHelper = new BlockUnblockUserHelper(blockStatus, UserProfileActivity.this, null);
         }
+
+        setToolbar(ownProfile);
+        initView(ownProfile);
     }
 
     private void initFacebookLogin() {
@@ -225,47 +255,82 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
     }
 
     private void setToolbar(boolean ownProfile) {
+        // Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
-
-        LinearLayout clickAction = (LinearLayout) toolbar.findViewById(R.id.click_action);
-        clickAction.setOnClickListener(onClickListener);
-
-        toolbarActionButton = (TextView) toolbar.findViewById(R.id.toolbar_action_button);
-        toolbarActionButton.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoCondensedBold());
-
-        if (ownProfile) {
-            toolbarActionButton.setText(INFO_EDIT);
-        } else {
-            if (getIntent().getBooleanExtra("otherChat", false)) {
-                requestId = SportsUnityDBHelper.getInstance(getApplicationContext()).checkJidForPendingRequest(getIntent().getStringExtra("jid"));
-                if (requestId == Contacts.PENDING_REQUESTS_TO_PROCESS) {
-                    toolbarActionButton.setText(ACCEPT_REQUEST);
-                } else if (requestId == Contacts.DEFAULT_PENDNG_REQUEST_ID) {
-                    toolbarActionButton.setText(ADD_FRIEND);
-                } else if (requestId == Contacts.WAITING_FOR_REQUEST_ACCEPTANCE) {
-                    toolbarActionButton.setText(REQUEST_SENT);
-                }
-                toolbarActionButton.setBackground(getResources().getDrawable(R.drawable.round_edge_blue_box));
-            } else {
-                toolbarActionButton.setVisibility(View.GONE);
-            }
-        }
-
-        ImageView backButton = (ImageView) toolbar.findViewById(R.id.backarrow);
-        backButton.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_WHITE, true));
-        backButton.setOnClickListener(new View.OnClickListener() {
-
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_menu_back);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 onBack();
             }
         });
+        acceptBlockLayout = (LinearLayout) findViewById(R.id.accept_block_layout);
+        ImageView editImage = (ImageView) findViewById(R.id.edit_image);
+        Button editProfile = (Button) findViewById(R.id.edit_profile);
+        blockUser = (Button) findViewById(R.id.block_user);
+        accept = (Button) findViewById(R.id.accept);
+        block = (Button) findViewById(R.id.block);
+        addFriends = (Button) findViewById(R.id.add_friends);
+        Button saveProfile = (Button) findViewById(R.id.save_profile);
+
+        editProfile.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoLight());
+
+
+        accept.setOnClickListener(onClickListener);
+        block.setOnClickListener(onClickListener);
+        addFriends.setOnClickListener(onClickListener);
+        editImage.setOnClickListener(onClickListener);
+        saveProfile.setOnClickListener(onClickListener);
+        editProfile.setOnClickListener(onClickListener);
+        blockUser.setOnClickListener(onClickListener);
+
+        //  LinearLayout clickAction = (LinearLayout) toolbar.findViewById(R.id.click_action);
+        // clickAction.setOnClickListener(onClickListener);
+
+        // toolbarActionButton = (TextView) toolbar.findViewById(R.id.toolbar_action_button);
+        //  toolbarActionButton.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoCondensedBold());
+
+        if (ownProfile) {
+            // editImage.setVisibility(View.VISIBLE);
+            //toolbarActionButton.setText(INFO_EDIT);
+            editProfile.setVisibility(View.VISIBLE);
+            findViewById(R.id.seperator).setVisibility(View.VISIBLE);
+        } else {
+            editProfile.setVisibility(View.GONE);
+            findViewById(R.id.seperator).setVisibility(View.GONE);
+            if (getIntent().getBooleanExtra("otherChat", false)) {
+                requestId = SportsUnityDBHelper.getInstance(getApplicationContext()).checkJidForPendingRequest(getIntent().getStringExtra("jid"));
+                if (requestId == Contacts.PENDING_REQUESTS_TO_PROCESS) {
+                    acceptBlockLayout.setVisibility(View.VISIBLE);
+                } else if (requestId == Contacts.DEFAULT_PENDNG_REQUEST_ID) {
+                    addFriends.setVisibility(View.VISIBLE);
+                } else if (requestId == Contacts.WAITING_FOR_REQUEST_ACCEPTANCE) {
+                    addFriends.setVisibility(View.VISIBLE);
+                    addFriends.setText("REQUEST SENT");
+                    addFriends.setClickable(false);
+                }
+                // toolbarActionButton.setBackground(getResources().getDrawable(R.drawable.round_edge_blue_box));
+            } else {
+                block.setVisibility(View.VISIBLE);
+                if (blockStatus) {
+                    block.setText("UNBLOCK");
+                } else {
+                    block.setText("BLOCK");
+                }
+            }
+        }
     }
 
     private void onClickAcceptFriend() {
         if (XMPPClient.getInstance().isConnectionAuthenticated()) {
             boolean success = PersonalMessaging.getInstance(getApplicationContext()).acceptFriendRequest(getIntent().getStringExtra("jid"));
             if (success) {
+                accept.setText("Accepting...");
+                block.setVisibility(View.GONE);
                 Toast.makeText(getApplicationContext(), "Accepting...", Toast.LENGTH_SHORT).show();
             } else {
                 Toast.makeText(getApplicationContext(), R.string.conn_not_authenticated, Toast.LENGTH_SHORT).show();
@@ -277,6 +342,7 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
         if (XMPPClient.getInstance().isConnectionAuthenticated()) {
             boolean success = PersonalMessaging.getInstance(getApplicationContext()).sendFriendRequest(getIntent().getStringExtra("jid"));
             if (success) {
+                addFriends.setText("Sending request..");
                 Toast.makeText(getApplicationContext(), "Sending...", Toast.LENGTH_SHORT).show();
             }
         } else {
@@ -289,6 +355,9 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
         super.onResume();
         UserProfileHandler.getInstance().addContentListener(LISTENER_KEY, this);
         ActivityActionHandler.getInstance().addActionListener(ActivityActionHandler.USER_PROFILE_KEY, jabberId, activityActionListener);
+        if (!ownProfile) {
+            blockUnblockUserHelper.addBlockUnblockListener(UserProfileActivity.this);
+        }
     }
 
     @Override
@@ -301,6 +370,9 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
     protected void onStop() {
         super.onStop();
         ActivityActionHandler.getInstance().removeActionListener(ActivityActionHandler.USER_PROFILE_KEY, jabberId);
+        if (!ownProfile) {
+            blockUnblockUserHelper.removeBlockUnblockListener();
+        }
     }
 
     private void onClickSaveButton() {
@@ -313,6 +385,14 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
             String jid = TinyDB.getInstance(UserProfileActivity.this).getString(TinyDB.KEY_USER_JID);
 
             Contacts contacts = new Contacts(nickname, jid, phoneNumber, byteArray, -1, status, Contacts.AVAILABLE_NOT);
+            editProfile.setVisibility(View.VISIBLE);
+
+            findViewById(R.id.seperator).setVisibility(View.VISIBLE);
+            //editProfile.setVisibility(View.VISIBLE);
+            saveProfile.setVisibility(View.GONE);
+            fbButton.setVisibility(View.GONE);
+            editImage.setVisibility(View.GONE);
+            profileImage.setEnabled(false);
             int requestStatus = UserProfileHandler.getInstance().submitUserProfile(UserProfileActivity.this, contacts, LISTENER_KEY);
             if (requestStatus == UserProfileHandler.REQUEST_STATUS_FAILED) {
                 onUnSuccessfulVCardSubmit();
@@ -324,6 +404,7 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
                 Toast.makeText(this, "Please enter your status", Toast.LENGTH_SHORT).show();
             }
         }
+
     }
 
     private void onClickEditButton() {
@@ -331,8 +412,14 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
         statusView.setVisibility(View.VISIBLE);
 
         fbButton.setVisibility(View.VISIBLE);
+        Button saveProfie = (Button) findViewById(R.id.save_profile);
+        //  fbButton.setVisibility(View.VISIBLE);
+        saveProfie.setVisibility(View.VISIBLE);
+        editProfile.setVisibility(View.GONE);
+        editImage.setVisibility(View.VISIBLE);
+        profileImage.setEnabled(true);
 
-        toolbarActionButton.setText(INFO_SAVE);
+        // toolbarActionButton.setText(INFO_SAVE);
 
         name.setEnabled(true);
         name.setBackground(oldBackgroundForNameEditView);
@@ -348,10 +435,10 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
         status.setPadding(pL, pT, pR, pB);
         status.getBackground().setColorFilter(getResources().getColor(R.color.app_theme_blue), PorterDuff.Mode.SRC_IN);
 
-        profileImage.setBorderColor(getResources().getColor(R.color.app_theme_blue));
+        //  profileImage.setBorderColor(getResources().getColor(R.color.app_theme_blue));
         profileImage.setEnabled(true);
-        profileImage.setBorderWidth(2);
-        addListnerToProfilePicture();
+        //  profileImage.setBorderWidth(2);
+        addListnerToEditImage();
     }
 
     private void addStatusList() {
@@ -368,7 +455,7 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
             textView.setText(statusValue[i]);
             textView.setTag(statusValue[i]);
             textView.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_WHITE, false));
-            textView.setOnClickListener(statusClickListener);
+            textView.setOnClickListener(onClickListener);
             statusList.addView(linearLayout);
         }
     }
@@ -382,15 +469,23 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
         }
     }
 
-    private void addListnerToProfilePicture() {
-        CircleImageView circleImageView = (CircleImageView) findViewById(R.id.user_picture);
-        circleImageView.setOnClickListener(profilePictureonOnClickListener);
+    private void addListnerToEditImage() {
+        ImageView ImageView = (ImageView) findViewById(R.id.edit_image);
+        ImageView.setOnClickListener(profilePictureonOnClickListener);
+        profileImage.setOnClickListener(profilePictureonOnClickListener);
     }
 
     private void initView(boolean ownProfile) {
 
+        CollapsingToolbarLayout collapsingToolbar = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
+        //collapsingToolbar.setTitle(getIntent().getStringExtra("name"));
         favDetails = (LinearLayout) findViewById(R.id.favDetails);
+        editProfile = (Button) findViewById(R.id.edit_profile);
+        //editProfile.setVisibility(View.VISIBLE);
+        saveProfile = (Button) findViewById(R.id.save_profile);
+        editImage = (ImageView) findViewById(R.id.edit_image);
         fbButton = (FrameLayout) findViewById(R.id.faceBook_btn);
+
 
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
 //        progressBar.setVisibility(View.GONE);
@@ -400,7 +495,7 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
         name.setText(getIntent().getStringExtra("name"));
         name.setBackground(getResources().getDrawable(R.drawable.round_edge_black_box));
         name.setTextColor(getResources().getColor(R.color.ColorPrimaryDark));
-        name.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoCondensedBold());
+        name.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoLight());
         name.setEnabled(false);
         favDetails = (LinearLayout) findViewById(R.id.favDetails);
         status = (EditText) findViewById(R.id.your_status);
@@ -415,7 +510,7 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
         progressBar.setIndeterminate(true);
 
         currentStatus = (TextView) findViewById(R.id.current_status);
-        profileImage = (CircleImageView) findViewById(R.id.user_picture);
+        profileImage = (ImageView) findViewById(R.id.user_picture);
         profileImage.setEnabled(false);
 
         editFavourite = (TextView) findViewById(R.id.edit_fav);
@@ -433,6 +528,26 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
         } else {
             setInitDataOthers();
         }
+        if (byteArray != null) {
+            Bitmap bitmap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
+            setAppBarOffset(((int) (screenWidth / 2)));
+
+        }
+        loadImageFromServer(ownProfile);
+    }
+
+    private void setAppBarOffset(final int offsetPx) {
+        final AppBarLayout mAppBarLayout = (AppBarLayout) findViewById(R.id.app_bar);
+        final CoordinatorLayout mCoordinatorLayout = (CoordinatorLayout) findViewById(R.id.root_coordinator_layout);
+
+        mAppBarLayout.post(new Runnable() {
+            @Override
+            public void run() {
+                CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) mAppBarLayout.getLayoutParams();
+                AppBarLayout.Behavior behavior = (AppBarLayout.Behavior) params.getBehavior();
+                behavior.onNestedPreScroll(mCoordinatorLayout, mAppBarLayout, null, 0, offsetPx, new int[]{0, 0});
+            }
+        });
     }
 
     private void setcustomFont() {
@@ -458,19 +573,76 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
         addStatusList();
 
 
-        profileImage = (CircleImageView) findViewById(R.id.user_picture);
+        profileImage = (ImageView) findViewById(R.id.user_picture);
 
         byteArray = getIntent().getByteArrayExtra("profilePicture");
         if (byteArray != null) {
-            profileImage.setImageBitmap(BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length));
+            Bitmap bitmap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
+            setMajorColor(bitmap);
+
         } else {
-            profileImage.setImageResource(R.drawable.ic_user);
+            FrameLayout frameLayout = (FrameLayout) findViewById(R.id.profile_parent);
+            FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(screenWidth, screenWidth);
+            profileImage.setLayoutParams(params);
+            CollapsingToolbarLayout.LayoutParams params1 = new CollapsingToolbarLayout.LayoutParams(screenWidth, screenWidth);
+            frameLayout.setLayoutParams(params1);
+            profileImage.setImageResource(R.drawable.ic_user_big);
         }
 
         ArrayList<FavouriteItem> savedList = FavouriteItemWrapper.getInstance(this).getFavList();
         setFavouriteProfile(savedList);
 
-        editFavourite.setOnClickListener(editFavoritesClickListener);
+        editFavourite.setOnClickListener(onClickListener);
+    }
+
+    private void loadImageFromServer(final boolean ownProfile) {
+        String jid = null;
+        if (ownProfile) {
+            jid = TinyDB.getInstance(this).getString(TinyDB.KEY_USER_JID);
+        } else {
+            jid = jabberId;
+        }
+        ThreadTask imageLoaderTask = new ThreadTask(jid) {
+            @Override
+            public Object process() {
+                String imageContent = UserProfileHandler.downloadDisplayPic(UserProfileActivity.this, (String) (object), UserProfileHandler.IMAGE_LARGE);
+                return imageContent;
+            }
+
+            @Override
+            public void postAction(Object object) {
+                if (!TextUtils.isEmpty((String) object)) {
+                    byteArray = Base64.decode((String) object, Base64.DEFAULT);
+                    if (byteArray.length > 0) {
+                        final Bitmap bitmap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
+                        UserProfileActivity.this.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (saveProfile.getVisibility() != View.VISIBLE) {
+                                    setProfileImage(bitmap, false);
+                                    if (ownProfile) {
+                                        String jid = TinyDB.getInstance(UserProfileActivity.this).getString(TinyDB.KEY_USER_JID);
+                                        Contacts contacts = SportsUnityDBHelper.getInstance(UserProfileActivity.this).getContactByJid(jid);
+                                        SportsUnityDBHelper.getInstance(UserProfileActivity.this).updateContacts(jid, byteArray, contacts.status);
+                                    }
+                                }
+                            }
+                        });
+                    }
+                }
+            }
+        };
+        imageLoaderTask.start();
+    }
+
+    private void setMajorColor(final Bitmap bitmap) {
+        FrameLayout frameLayout = (FrameLayout) findViewById(R.id.profile_parent);
+        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(screenWidth, screenWidth);
+        profileImage.setLayoutParams(params);
+        CollapsingToolbarLayout.LayoutParams params1 = new CollapsingToolbarLayout.LayoutParams(screenWidth, screenWidth);
+        frameLayout.setLayoutParams(params1);
+        profileImage.setImageBitmap(bitmap);
+
     }
 
     private void onClickEditFavorites() {
@@ -490,12 +662,18 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
         statusView.setVisibility(View.GONE);
 
 
-        profileImage = (CircleImageView) findViewById(R.id.user_picture);
+        profileImage = (ImageView) findViewById(R.id.user_picture);
         byte[] imageArray = getIntent().getByteArrayExtra("profilePicture");
         if (imageArray != null) {
-            profileImage.setImageBitmap(BitmapFactory.decodeByteArray(imageArray, 0, imageArray.length));
+            Bitmap bitmap = BitmapFactory.decodeByteArray(imageArray, 0, imageArray.length);
+            setMajorColor(bitmap);
         } else {
-            profileImage.setImageResource(R.drawable.ic_user);
+            FrameLayout frameLayout = (FrameLayout) findViewById(R.id.profile_parent);
+            FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(screenWidth, screenWidth);
+            profileImage.setLayoutParams(params);
+            CollapsingToolbarLayout.LayoutParams params1 = new CollapsingToolbarLayout.LayoutParams(screenWidth, screenWidth);
+            frameLayout.setLayoutParams(params1);
+            profileImage.setImageResource(R.drawable.ic_user_big);
         }
         String jid = getIntent().getStringExtra("jid");
         progessBar.setVisibility(View.VISIBLE);
@@ -543,11 +721,11 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
                     }
                 });
             }
-        } else if (requestTag.equals(UserProfileHandler.LOAD_PROFILE_REQUEST_TAG) && content != null) {
+        } else if (requestTag.equals(UserProfileHandler.LOAD_PROFILE_REQUEST_TAG)) {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    VCard card = (VCard) content;
+                    UserCard card = (UserCard) content;
                     if (card != null) {
                         successfulVCardLoad(card);
                     } else {
@@ -576,23 +754,22 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
     private void setProfileDetail(UserProfileHandler.ProfileDetail profileDetail) {
         name = (EditText) findViewById(R.id.name);
         name.setText(profileDetail.getName());
-
+        CollapsingToolbarLayout collapsingToolbar = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
+        // collapsingToolbar.setTitle(profileDetail.getName());
         if (profileDetail.getBitmap() != null) {
-            setProfileImage(profileDetail.getBitmap());
+            initiateCrop(profileDetail.getBitmap());
         } else {
             //nothing
         }
     }
 
-    private void updateUserDetail(VCard card) {
-        //TODO
-
+    private void updateUserDetail(UserCard card) {
         try {
             int contactAvailableStatus = getIntent().getIntExtra(ChatScreenActivity.INTENT_KEY_CONTACT_AVAILABLE_STATUS, Contacts.AVAILABLE_BY_MY_CONTACTS);
 
-            String userStatus = card.getMiddleName();
-            imageArray = card.getAvatar();
-            String nickname = card.getNickName();
+            String userStatus = card.getStatus();
+            imageArray = card.getThumbnail();
+            String nickname = card.getName();
 
             if (imageArray != null) {
                 profileImage.setImageBitmap(BitmapFactory.decodeByteArray(imageArray, 0, imageArray.length));
@@ -602,6 +779,8 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
 
             if (contactAvailableStatus <= Contacts.AVAILABLE_BY_OTHER_CONTACTS) {
                 name.setText(nickname);
+                CollapsingToolbarLayout collapsingToolbar = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
+                //  collapsingToolbar.setTitle(nickname);
             } else {
                 //nothing
             }
@@ -609,7 +788,7 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
             status.setText(userStatus);
 
             {
-                String favorite = card.getField("fav_list");
+                JSONArray favorite = card.getInterest();
                 ArrayList<FavouriteItem> savedList = FavouriteItemWrapper.getInstance(this).getFavListOfOthers(favorite);
                 setFavouriteProfile(savedList);
             }
@@ -620,13 +799,23 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
 
     }
 
-    private void setProfileImage(Bitmap image) {
-        CircleImageView circleImageView = (CircleImageView) findViewById(R.id.user_picture);
-        circleImageView.setImageBitmap(image);
+    public void setProfileImage(Bitmap image, boolean expand) {
+        ImageView ImageView = (ImageView) findViewById(R.id.user_picture);
+        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(screenWidth, screenWidth);
+        ImageView.setLayoutParams(params);
+        ImageView.setImageBitmap(image);
+        FrameLayout frameLayout = (FrameLayout) findViewById(R.id.profile_parent);
+        CollapsingToolbarLayout.LayoutParams params1 = new CollapsingToolbarLayout.LayoutParams(screenWidth, screenWidth);
+        frameLayout.setLayoutParams(params1);
+        if (expand) {
+            AppBarLayout layout = (AppBarLayout) findViewById(R.id.app_bar);
+            layout.setExpanded(true);
+            layout.invalidate();
+        }
         byteArray = ImageUtil.getCompressedBytes(image);
     }
 
-    private void successfulVCardLoad(VCard vCard) {
+    private void successfulVCardLoad(UserCard vCard) {
         progressBar.setVisibility(View.GONE);
         updateUserDetail(vCard);
     }
@@ -646,19 +835,23 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
         initViewUI();
         statusView.setVisibility(View.GONE);
         Toast.makeText(UserProfileActivity.this, R.string.message_submit_vcard_sucess, Toast.LENGTH_SHORT).show();
+        getIntent().putExtra("status", status.getText().toString());
     }
 
     private void initViewUI() {
         favDetails.setVisibility(View.VISIBLE);
-        profileImage.setBorderWidth(0);
+        //  profileImage.setBorderWidth(0);
         profileImage.setEnabled(false);
         fbButton.setVisibility(View.GONE);
-        toolbarActionButton.setText(INFO_EDIT);
+//        toolbarActionButton.setText(INFO_EDIT);
         name.setEnabled(false);
         name.setBackground(getResources().getDrawable(R.drawable.round_edge_black_box));
         status.setEnabled(false);
         status.setBackground(new ColorDrawable(Color.TRANSPARENT));
         name.setTextColor(getResources().getColor(R.color.ColorPrimaryDark));
+
+        CollapsingToolbarLayout collapsingToolbar = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
+        //collapsingToolbar.setTitle(name.getText().toString());
         status.setTextColor(getResources().getColor(R.color.ColorPrimaryDark));
     }
 
@@ -701,14 +894,22 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == LOAD_IMAGE_GALLERY_CAMERA && resultCode == Activity.RESULT_OK) {
-            CircleImageView circleImageView = (CircleImageView) findViewById(R.id.user_picture);
-            byteArray = ImageUtil.handleImageAndSetToView(data, circleImageView, ImageUtil.SMALL_THUMB_IMAGE_SIZE, ImageUtil.SMALL_THUMB_IMAGE_SIZE);
+            ImageView imageView = (ImageView) findViewById(R.id.user_picture);
+            byteArray = ImageUtil.handleImageAndSetToView(data, imageView, ImageUtil.FULL_IMAGE_SIZE, ImageUtil.FULL_IMAGE_SIZE);
+            Bitmap bitmap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
+            initiateCrop(bitmap);
         } else if (requestCode == Constants.REQUEST_CODE_PROFILE && resultCode == Activity.RESULT_OK) {
             setFavouriteProfile(FavouriteItemWrapper.getInstance(this).getFavList());
         } else {
             callbackManager.onActivityResult(requestCode, resultCode, data);
         }
 
+    }
+
+    private void initiateCrop(Bitmap bitmap) {
+        CropImageFragment cropImageFragment = new CropImageFragment();
+        cropImageFragment.setProfileImage(bitmap);
+        getSupportFragmentManager().beginTransaction().add(R.id.crop_container, cropImageFragment, CropImageFragment.CROP_FRAGMENT_TAG).commit();
     }
 
     private void setFavouriteProfile(ArrayList<FavouriteItem> savedList) {
@@ -754,7 +955,7 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
                     e.printStackTrace();
                 }
                 if (uri != null) {
-                    Glide.with(this).load(Uri.parse(uri)).placeholder(R.drawable.ic_no_img).into(iv);
+                    Glide.with(this).load(Uri.parse(uri)).placeholder(R.drawable.ic_no_img).dontAnimate().into(iv);
                 } else {
                     iv.setVisibility(View.VISIBLE);
                     iv.setImageResource(R.drawable.ic_no_img);
@@ -797,7 +998,7 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
                     e.printStackTrace();
                 }
                 if (uri != null) {
-                    Glide.with(this).load(Uri.parse(uri)).placeholder(R.drawable.ic_no_img).into(iv);
+                    Glide.with(this).load(Uri.parse(uri)).placeholder(R.drawable.ic_no_img).dontAnimate().into(iv);
                 } else {
                     iv.setVisibility(View.VISIBLE);
                     iv.setImageResource(R.drawable.ic_no_img);
@@ -882,46 +1083,65 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
     }
 
     private void onBack() {
-        if (toolbarActionButton.getText().equals(INFO_SAVE) && progressBar.getVisibility() == View.GONE) {
-            AlertDialog.Builder build = new AlertDialog.Builder(UserProfileActivity.this);
-            build.setTitle("Discard Edits ? ");
-            build.setMessage("If you cancel now, your edits will be discarded.");
-            build.setPositiveButton("DISCARD", new DialogInterface.OnClickListener() {
+        Fragment fragment = getSupportFragmentManager().findFragmentByTag(CropImageFragment.CROP_FRAGMENT_TAG);
 
-                public void onClick(DialogInterface dialog, int id) {
-                    discardChanges();
-                }
+        if (fragment != null) {
+            getSupportFragmentManager().beginTransaction().remove(fragment).commit();
+        } else if (ownProfile) {
+            if (editProfile.getVisibility() == View.GONE && progressBar.getVisibility() == View.GONE) {
+                AlertDialog.Builder build = new AlertDialog.Builder(UserProfileActivity.this);
+                build.setTitle("Discard Edits ? ");
+                build.setMessage("If you cancel now, your edits will be discarded.");
+                build.setPositiveButton("DISCARD", new DialogInterface.OnClickListener() {
 
-            });
-            build.setNegativeButton("KEEP", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        discardChanges();
+                    }
 
-                public void onClick(DialogInterface dialog, int id) {
-                    //nothing
+                });
+                build.setNegativeButton("KEEP", new DialogInterface.OnClickListener() {
 
-                }
+                    public void onClick(DialogInterface dialog, int id) {
+                        //nothing
 
-            });
+                    }
 
-            AlertDialog dialog = build.create();
-            dialog.show();
+                });
+
+                AlertDialog dialog = build.create();
+                dialog.show();
+            } else {
+                finishActivity();
+            }
         } else {
-            Intent i = new Intent();
-            i.putExtra(ChatScreenActivity.INTENT_KEY_IMAGE, imageArray);
-            setResult(RESULT_OK, i);
-            finish();
+            finishActivity();
         }
+    }
+
+    private void finishActivity() {
+        Intent i = new Intent();
+        i.putExtra(ChatScreenActivity.INTENT_KEY_IMAGE, imageArray);
+        setResult(RESULT_OK, i);
+        finish();
     }
 
     private void discardChanges() {
         favDetails.setVisibility(View.VISIBLE);
         statusView.setVisibility(View.GONE);
         fbButton.setVisibility(View.GONE);
+        saveProfile.setVisibility(View.GONE);
+        editProfile.setVisibility(View.VISIBLE);
+        editImage.setVisibility(View.GONE);
+        profileImage.setEnabled(false);
+        //  profileImage.setBorderWidth(0);
+        //  toolbarActionButton.setText(INFO_EDIT);
 
-        profileImage.setBorderWidth(0);
-        toolbarActionButton.setText(INFO_EDIT);
 
         name.setEnabled(false);
         name.setText(getIntent().getStringExtra("name"));
+
+        CollapsingToolbarLayout collapsingToolbar = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
+        //collapsingToolbar.setTitle(getIntent().getStringExtra("name"));
         name.setTextColor(getResources().getColor(R.color.ColorPrimaryDark));
         name.setBackground(getResources().getDrawable(R.drawable.round_edge_black_box));
 
@@ -936,7 +1156,7 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
         if (byteArray != null) {
             profileImage.setImageBitmap(BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length));
         } else {
-            profileImage.setImageResource(R.drawable.ic_user);
+            profileImage.setImageResource(R.drawable.ic_user_big);
         }
         setInitDataOwn();
     }
@@ -963,4 +1183,30 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
         startActivity(intent);
     }
 
+    @Override
+    public void onBlock(boolean success, String phoneNumber) {
+        if (success) {
+            if (acceptBlockLayout.getVisibility() == View.VISIBLE) {
+                accept.setVisibility(View.GONE);
+                blockUser.setText("UNBLOCK");
+            } else {
+                blockStatus = true;
+                block.setText("UNBLOCK");
+            }
+            Toast.makeText(getApplicationContext(), "This user has been blocked", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public void onUnblock(boolean success) {
+        if (success) {
+            if (acceptBlockLayout.getVisibility() == View.VISIBLE) {
+                accept.setVisibility(View.VISIBLE);
+                blockUser.setText("BLOCK");
+            } else {
+                blockStatus = false;
+                block.setText("BLOCK");
+            }
+        }
+    }
 }

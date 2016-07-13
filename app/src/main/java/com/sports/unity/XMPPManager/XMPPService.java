@@ -28,6 +28,7 @@ import com.sports.unity.util.ActivityActionHandler;
 import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.GlobalEventHandler;
 import com.sports.unity.util.NotificationHandler;
+import com.sports.unity.util.UserCard;
 
 import org.jivesoftware.smack.ConnectionListener;
 import org.jivesoftware.smack.PacketListener;
@@ -45,7 +46,6 @@ import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import org.jivesoftware.smackx.receipts.DeliveryReceiptManager;
 import org.jivesoftware.smackx.receipts.ReceiptReceivedListener;
-import org.jivesoftware.smackx.vcardtemp.packet.VCard;
 
 public class XMPPService extends Service {
 
@@ -137,21 +137,25 @@ public class XMPPService extends Service {
         try {
             //TODO add contact in db first then try to load, and if not able to load vcard, atleast contact created for sure.
 
-            XMPPTCPConnection connection = XMPPClient.getInstance().getConnection();
-            VCard card = new VCard();
-            card.load(connection, jid + "@mm.io");
-            String status = card.getMiddleName();
-            byte[] image = card.getAvatar();
-            String nickname = card.getNickName();
+            UserCard card = new UserCard();
+            success = card.loadCard(context, jid, true, true, false, true, false);
 
-            if (nearByChat) {
-                SportsUnityDBHelper.getInstance(context).addToContacts(nickname, null, jid, ContactsHandler.getInstance().defaultStatus, null, Contacts.AVAILABLE_BY_PEOPLE_AROUND_ME);
-            } else {
-                SportsUnityDBHelper.getInstance(context).addToContacts(nickname, null, jid, ContactsHandler.getInstance().defaultStatus, null, Contacts.AVAILABLE_BY_OTHER_CONTACTS);
+            if( success ) {
+                success = false;
+
+                String status = card.getStatus();
+                byte[] image = card.getThumbnail();
+                String nickname = card.getName();
+
+                if (nearByChat) {
+                    SportsUnityDBHelper.getInstance(context).addToContacts(nickname, null, jid, ContactsHandler.getInstance().defaultStatus, null, Contacts.AVAILABLE_BY_PEOPLE_AROUND_ME);
+                } else {
+                    SportsUnityDBHelper.getInstance(context).addToContacts(nickname, null, jid, ContactsHandler.getInstance().defaultStatus, null, Contacts.AVAILABLE_BY_OTHER_CONTACTS);
+                }
+                SportsUnityDBHelper.getInstance(context).updateContacts(jid, image, status);
+
+                success = true;
             }
-            SportsUnityDBHelper.getInstance(context).updateContacts(jid, image, status);
-
-            success = true;
         } catch (Exception ex) {
             ex.printStackTrace();
         }

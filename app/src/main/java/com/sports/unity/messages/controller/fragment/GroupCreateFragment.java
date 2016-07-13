@@ -4,6 +4,8 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -20,6 +22,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.sports.unity.CropImageFragment;
 import com.sports.unity.R;
 import com.sports.unity.common.model.ContactsHandler;
 import com.sports.unity.common.model.FontTypeface;
@@ -52,7 +55,6 @@ public class GroupCreateFragment extends Fragment implements ActivityCompat.OnRe
 
         setToolBar();
         initView(view);
-
         return view;
     }
 
@@ -70,9 +72,11 @@ public class GroupCreateFragment extends Fragment implements ActivityCompat.OnRe
         });
 
         TextView title = (TextView) toolbar.findViewById(R.id.title);
+        title.setVisibility(View.VISIBLE);
         title.setText(R.string.group_title_create);
 
         TextView actionView = (TextView) toolbar.findViewById(R.id.actionButton);
+        actionView.setVisibility(View.VISIBLE);
         actionView.setText(R.string.next);
         actionView.setTypeface(FontTypeface.getInstance(getActivity()).getRobotoCondensedBold());
         actionView.setOnClickListener(new View.OnClickListener() {
@@ -90,6 +94,10 @@ public class GroupCreateFragment extends Fragment implements ActivityCompat.OnRe
     private void initView(View view) {
 
         groupAvatar = (CircleImageView) view.findViewById(R.id.group_image);
+        if (groupImage != null) {
+            Bitmap bitmap = BitmapFactory.decodeByteArray(groupImage, 0, groupImage.length);
+            groupAvatar.setImageBitmap(bitmap);
+        }
         groupAvatar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -110,10 +118,27 @@ public class GroupCreateFragment extends Fragment implements ActivityCompat.OnRe
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == LOAD_IMAGE_GALLERY_CAMERA && resultCode == Activity.RESULT_OK) {
-            groupImage = ImageUtil.handleImageAndSetToView(data, groupAvatar, ImageUtil.SMALL_THUMB_IMAGE_SIZE, ImageUtil.SMALL_THUMB_IMAGE_SIZE);
+            byte[] groupImage = ImageUtil.handleImageAndSetToView(data, groupAvatar, ImageUtil.FULL_IMAGE_SIZE, ImageUtil.FULL_IMAGE_SIZE);
+            Bitmap bitmap = BitmapFactory.decodeByteArray(groupImage, 0, groupImage.length);
+            ((GroupDetailActivity) getActivity()).initiateCrop(bitmap, GroupCreateFragment.this);
+            manageToolbarForCrop(true);
         } else {
             //nothing
         }
+    }
+
+    private void manageToolbarForCrop(boolean isEditing) {
+        Toolbar toolbar = (Toolbar) getActivity().findViewById(R.id.tool_bar);
+        TextView title = (TextView) toolbar.findViewById(R.id.title);
+        TextView actionView = (TextView) toolbar.findViewById(R.id.actionButton);
+        if (!isEditing) {
+            title.setVisibility(View.VISIBLE);
+            actionView.setVisibility(View.VISIBLE);
+        } else {
+            title.setVisibility(View.GONE);
+            actionView.setVisibility(View.GONE);
+        }
+
     }
 
     private void moveOn(View view) {
@@ -128,11 +153,11 @@ public class GroupCreateFragment extends Fragment implements ActivityCompat.OnRe
             GroupDetailActivity groupDetailActivity = ((GroupDetailActivity) getActivity());
             groupDetailActivity.setGroupDetails(groupName, "", groupImage);
 
-            groupDetailActivity.moveToMembersListFragment();
+            groupDetailActivity.moveToMembersListFragment(GroupCreateFragment.this);
         }
     }
 
-    public static void openImagePicker(Fragment fragment){
+    public static void openImagePicker(Fragment fragment) {
         View view = fragment.getActivity().getCurrentFocus();
         if (view != null) {
             InputMethodManager imm = (InputMethodManager) fragment.getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -164,4 +189,7 @@ public class GroupCreateFragment extends Fragment implements ActivityCompat.OnRe
         }
     }
 
+    public void setImageBitmap(Bitmap bitmap) {
+        groupImage = ImageUtil.getCompressedBytes(bitmap);
+    }
 }
