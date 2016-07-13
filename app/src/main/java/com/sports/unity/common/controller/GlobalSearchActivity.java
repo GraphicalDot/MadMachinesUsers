@@ -77,7 +77,9 @@ public class GlobalSearchActivity extends CustomVolleyCallerActivity {
     public static final String MESSAGES_HEADER = "Messages";
     public static final String CONTACTS_HEADER = "Contacts";
     public static final String EMPTY_HEADER_SHOW_ALL = "";
+    public static final String HEADER_SHOW_ALL = "Show All";
 
+    private boolean isSingleItemTypeSearch = false;
 
     private int position = 0;
 
@@ -161,6 +163,7 @@ public class GlobalSearchActivity extends CustomVolleyCallerActivity {
                 if (actionId == EditorInfo.IME_ACTION_SEARCH) {
 
                     hideKeyboard();
+                    isSingleItemTypeSearch = false;
                     try {
                         String sEncoded = URLEncoder.encode(v.getText().toString().trim(), "UTF-8");
                         performSearch(sEncoded, ALL_TYPE);
@@ -177,8 +180,10 @@ public class GlobalSearchActivity extends CustomVolleyCallerActivity {
     }
 
     public void performSpecificSearch(String text, String type) {
+        isSingleItemTypeSearch = true;
         performSearch(text, type);
         isLocalDataToBeAdded = false;
+        hideKeyboard();
     }
 
     private void performSearch(String text, String type) {
@@ -196,6 +201,10 @@ public class GlobalSearchActivity extends CustomVolleyCallerActivity {
     private void hideKeyboard() {
         InputMethodManager inputManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         inputManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+    }
+
+    public boolean isSpeceficItemSearchEnabled() {
+        return isSingleItemTypeSearch;
     }
 
 

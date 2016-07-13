@@ -32,7 +32,7 @@
             android:ellipsize="end"
             android:text="@string/username"
             android:textColor="@android:color/black"
-            android:textSize="@dimen/font_size_large" />
+            android:textSize="@dimen/font_size_small_xlarge" />
 
         <TextView
             android:id="@+id/status"
