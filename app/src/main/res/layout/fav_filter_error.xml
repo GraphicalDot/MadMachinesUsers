@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/oops"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="No Matches Happening \n           Right Now :("
+        android:textColor="@color/text_color"
+        android:textSize="@dimen/font_size_large"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/something_wrong"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginBottom="@dimen/activity_vertical_margin"
+        android:gravity="center_horizontal"
+        android:text="None of you favourite teams are playing right now\nor\nPlease go and select your favourite teams"
+        android:textColor="@color/gray2"
+        android:textSize="@dimen/font_size_small_medium" />
+
+</LinearLayout>
