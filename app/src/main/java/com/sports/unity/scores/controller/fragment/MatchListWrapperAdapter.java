@@ -1133,8 +1133,9 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
         int position = addBannerInMatchList();
         this.notifyDataSetChanged();
         listScrollListener.scroll(position);
-
+        listScrollListener.displayEmptyView(matchDay.size() == 0);
     }
+
 
     private int addBannerInMatchList() {
         int position = 0;

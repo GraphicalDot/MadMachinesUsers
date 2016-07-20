@@ -19,8 +19,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.appindexing.Action;
@@ -71,6 +73,8 @@ public class MatchListFragment extends Fragment {
     private MatchListWrapperAdapter matchListWrapperAdapter;
     private RecyclerView mWraperRecyclerView;
 
+    private LinearLayout emptyTextView;
+
     private ArrayList<JSONObject> matches = new ArrayList<>();
     private ScoresContentListener contentListener = new ScoresContentListener();
 
@@ -90,8 +94,8 @@ public class MatchListFragment extends Fragment {
 
     private GoogleApiClient mClient;
     private Uri mUrl;
-    private String mTitle="Live Scores";
-    private String mDescription="Live minute by minute commentary and updated scores of all the matches happening, plus get notified for the ones you love most.";
+    private String mTitle = "Live Scores";
+    private String mDescription = "Live minute by minute commentary and updated scores of all the matches happening, plus get notified for the ones you love most.";
 
     MatchListScrollListener matchListScrollListener = new MatchListScrollListener() {
         @Override
@@ -101,6 +105,19 @@ public class MatchListFragment extends Fragment {
                 manager.scrollToPosition(position);
             }
         }
+
+        @Override
+        public void displayEmptyView(boolean isEmpty) {
+            if (isEmpty) {
+                mWraperRecyclerView.setVisibility(View.GONE);
+                emptyTextView.setVisibility(View.VISIBLE);
+            } else {
+                mWraperRecyclerView.setVisibility(View.VISIBLE);
+                emptyTextView.setVisibility(View.GONE);
+            }
+        }
+
+
     };
 
     @Override
@@ -114,7 +131,7 @@ public class MatchListFragment extends Fragment {
             scoreDetailsId = favouriteItem.getId();
         }
 
-        mUrl=Uri.parse("android-app://co.sports.unity/mobileapp/sportsunity.co/matches");
+        mUrl = Uri.parse("android-app://co.sports.unity/mobileapp/sportsunity.co/matches");
         mClient = CommonUtil.getAppIndexingClient(getActivity());
     }
 
@@ -141,6 +158,7 @@ public class MatchListFragment extends Fragment {
             sportsSelectedNum = UserUtil.getScoreFilterSportsSelected().size();
             sportSelected = UserUtil.getScoreFilterSportsSelected();
         }
+        emptyTextView = (LinearLayout) view.findViewById(R.id.empty_matchlist_text);
         return view;
     }
 

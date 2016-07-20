@@ -1,31 +1,21 @@
 package com.sports.unity.scores;
 
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
-import android.preference.Preference;
 import android.preference.PreferenceManager;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.ShareCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.NotificationCompat;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.text.TextUtils;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.LinearInterpolator;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -34,8 +24,6 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.sports.unity.R;
-import com.sports.unity.XMPPManager.XMPPService;
-import com.sports.unity.common.controller.MainActivity;
 import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.common.model.FriendsWatchingHandler;
 import com.sports.unity.common.view.CustomVolleyCallerActivity;
@@ -45,10 +33,9 @@ import com.sports.unity.common.viewhelper.CustomComponentListener;
 import com.sports.unity.common.viewhelper.GenericFragmentViewPagerAdapter;
 import com.sports.unity.common.viewhelper.VolleyCallComponentHelper;
 import com.sports.unity.gcm.GCMConstants;
-import com.sports.unity.gcm.UnRegisterMatch;
+import com.sports.unity.scoredetails.cricketdetail.CricketLiveSummaryHelper;
 import com.sports.unity.scoredetails.cricketdetail.CricketScoreCardHelper;
 import com.sports.unity.scoredetails.cricketdetail.CricketSummaryHelper;
-import com.sports.unity.scoredetails.cricketdetail.CricketLiveSummaryHelper;
 import com.sports.unity.scoredetails.footballdetail.CompletedFootballMatchLineUpFragment;
 import com.sports.unity.scoredetails.footballdetail.CompletedFootballMatchStatFragment;
 import com.sports.unity.scoredetails.footballdetail.CompletedFootballMatchTimeLineFragment;
@@ -78,13 +65,11 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import static com.sports.unity.util.Constants.INTENT_KEY_DATE;
 import static com.sports.unity.util.Constants.INTENT_KEY_MATCH_NAME;
-import static com.sports.unity.util.Constants.INTENT_KEY_TOSS;
 import static com.sports.unity.util.Constants.INTENT_KEY_TYPE;
 
 public class ScoreDetailActivity extends CustomVolleyCallerActivity {
@@ -282,9 +267,11 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity {
                 }
                 if (!notification.isNull(GCMConstants.MATCH_ID)) {
                     matchId = notification.getString(GCMConstants.MATCH_ID);
+
                 }
                 if (!notification.isNull(GCMConstants.LEAGUE_SERIES_ID)) {
                     seriesId = notification.getString(GCMConstants.LEAGUE_SERIES_ID);
+
                 }
                 if (!notification.isNull(GCMConstants.MATCH_STATUS)) {
 

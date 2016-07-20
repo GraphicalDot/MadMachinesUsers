@@ -6,4 +6,6 @@ package com.sports.unity.scoredetails;
 public interface MatchListScrollListener {
 
     void scroll(int position);
+
+    void displayEmptyView(boolean isEmpty);
 }
