@@ -26,6 +26,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.sports.unity.R;
 import com.sports.unity.common.controller.FilterActivity;
 import com.sports.unity.common.controller.GlobalSearchActivity;
@@ -37,6 +38,7 @@ import com.sports.unity.news.controller.activity.NewsSearchActivity;
 import com.sports.unity.news.model.NewsContentHandler;
 import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
+import com.sports.unity.util.network.FirebaseUtil;
 
 import org.json.JSONObject;
 
@@ -149,12 +151,22 @@ public class NewsFragment extends Fragment implements NewsContentHandler.Content
         super.onCreateOptionsMenu(menu, inflater);
     }
 
+    private void logScreensToFireBase(String screen) {
+        //FIREBASE INTEGRATION
+        {
+            FirebaseAnalytics firebaseAnalytics = FirebaseUtil.getInstance(getActivity());
+            Bundle bundle = new Bundle();
+            FirebaseUtil.logEvent(firebaseAnalytics, bundle, screen);
+        }
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
         int id = item.getItemId();
 
         if (id == R.id.action_search) {
+            logScreensToFireBase(FirebaseUtil.Event.NEWS_SEARCH);
             Intent intent = new Intent(getActivity(), GlobalSearchActivity.class);
             intent.putExtra(Constants.INTENT_KEY_GLOBAL_POSITION, 1);
             startActivity(intent);
@@ -162,6 +174,7 @@ public class NewsFragment extends Fragment implements NewsContentHandler.Content
         }
 
         if (id == com.sports.unity.R.id.action_filter) {
+            logScreensToFireBase(FirebaseUtil.Event.NEWS_FILTER);
             Intent i = new Intent(getActivity(), FilterActivity.class);
             i.putExtra(Constants.KEY_ORIGIN_ACTIVITY, Constants.NEWS_ACTIVITY);
             startActivityForResult(i, Constants.REQUEST_CODE_NEWS);
@@ -178,7 +191,7 @@ public class NewsFragment extends Fragment implements NewsContentHandler.Content
                 item.setIcon(R.drawable.ic_thumb);
                 TinyDB.getInstance(getActivity()).putBoolean("check", true);
             }
-
+            logScreensToFireBase(FirebaseUtil.Event.NEWS_CARD);
             addOrUpdateAdapter();
             displayResult();
             return true;
@@ -365,6 +378,7 @@ public class NewsFragment extends Fragment implements NewsContentHandler.Content
 
     private void showErrorLayout(View view) {
         if (mAdapter.getNews().size() == 0) {
+            logScreensToFireBase(FirebaseUtil.Event.DATA_ERROR);
             ViewGroup errorLayout = (ViewGroup) view.findViewById(R.id.error);
             errorLayout.setVisibility(View.VISIBLE);
             CustomComponentListener.renderAppropriateErrorLayout(errorLayout);

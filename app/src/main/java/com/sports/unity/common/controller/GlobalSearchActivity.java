@@ -19,6 +19,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.R;
 import com.sports.unity.common.model.GlobalContentItemObject;
@@ -30,6 +31,7 @@ import com.sports.unity.messages.controller.model.Message;
 import com.sports.unity.scores.model.ScoresContentHandler;
 import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
+import com.sports.unity.util.network.FirebaseUtil;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -186,8 +188,20 @@ public class GlobalSearchActivity extends CustomVolleyCallerActivity {
         hideKeyboard();
     }
 
+    private void logScreensToFireBase(String screen, String text, String type) {
+        //FIREBASE INTEGRATION
+        {
+            FirebaseAnalytics firebaseAnalytics = FirebaseUtil.getInstance(GlobalSearchActivity.this);
+            Bundle bundle = new Bundle();
+            bundle.putString(FirebaseUtil.Param.GLOBAL_SEARCH_TEXT, FirebaseUtil.trimValue(text));
+            bundle.putString(FirebaseUtil.Param.GLOBAL_SEARCH_TYPE, FirebaseUtil.trimValue(type));
+            FirebaseUtil.logEvent(firebaseAnalytics, bundle, screen);
+        }
+    }
+
     private void performSearch(String text, String type) {
         this.keyword = text;
+        logScreensToFireBase(FirebaseUtil.Event.GLOBAL_SEARCH, text, type);
         isLocalDataToBeAdded = true;
         onComponentCreate();
         HashMap<String, String> parameters = new HashMap<>();

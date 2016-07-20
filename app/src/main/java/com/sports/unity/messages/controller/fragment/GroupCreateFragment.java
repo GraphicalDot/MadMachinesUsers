@@ -13,6 +13,8 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +24,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.sports.unity.CropImageFragment;
 import com.sports.unity.R;
 import com.sports.unity.common.model.ContactsHandler;
@@ -30,6 +33,7 @@ import com.sports.unity.common.model.PermissionUtil;
 import com.sports.unity.messages.controller.activity.GroupDetailActivity;
 import com.sports.unity.util.Constants;
 import com.sports.unity.util.ImageUtil;
+import com.sports.unity.util.network.FirebaseUtil;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -46,6 +50,7 @@ public class GroupCreateFragment extends Fragment implements ActivityCompat.OnRe
 
     private CircleImageView groupAvatar;
     private byte[] groupImage;
+    private boolean nameClick = false;
 
     @Nullable
     @Override
@@ -83,6 +88,7 @@ public class GroupCreateFragment extends Fragment implements ActivityCompat.OnRe
 
             @Override
             public void onClick(View view) {
+                logScreensToFireBase(FirebaseUtil.Event.GROUP_NEXT);
                 moveOn(view);
             }
         });
@@ -90,6 +96,14 @@ public class GroupCreateFragment extends Fragment implements ActivityCompat.OnRe
         ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayShowTitleEnabled(false);
     }
 
+    private void logScreensToFireBase(String screen) {
+        //FIREBASE INTEGRATION
+        {
+            FirebaseAnalytics firebaseAnalytics = FirebaseUtil.getInstance(getActivity());
+            Bundle bundle = new Bundle();
+            FirebaseUtil.logEvent(firebaseAnalytics, bundle, screen);
+        }
+    }
 
     private void initView(View view) {
 
@@ -101,6 +115,7 @@ public class GroupCreateFragment extends Fragment implements ActivityCompat.OnRe
         groupAvatar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                logScreensToFireBase(FirebaseUtil.Event.GROUP_IMAGE);
                 if (!PermissionUtil.getInstance().isRuntimePermissionRequired()) {
                     openImagePicker(GroupCreateFragment.this);
                 } else {
@@ -108,6 +123,26 @@ public class GroupCreateFragment extends Fragment implements ActivityCompat.OnRe
                         openImagePicker(GroupCreateFragment.this);
                     }
                 }
+            }
+        });
+        EditText groupNameEditText = (EditText) view.findViewById(R.id.groupName);
+        groupNameEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (!nameClick) {
+                    nameClick = true;
+                    logScreensToFireBase(FirebaseUtil.Event.GROUP_NAME);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
             }
         });
 

@@ -72,6 +72,10 @@ public class FavouriteContentHandler {
         return favouriteContentHandler;
     }
 
+    public void clearContent() {
+        favouriteContentHandler = null;
+    }
+
     private List<FavouriteItem> favCricketTeams;
     private List<FavouriteItem> favCricketPlayers;
 

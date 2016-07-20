@@ -17,6 +17,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.sports.unity.R;
 import com.sports.unity.common.controller.fragment.AdvancedFilterFragment;
 import com.sports.unity.common.model.ContactsHandler;
@@ -27,6 +28,7 @@ import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.common.model.UserUtil;
 import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
+import com.sports.unity.util.network.FirebaseUtil;
 
 import java.util.ArrayList;
 
@@ -64,6 +66,9 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
         isFirstInstall = !UserUtil.isFilterCompleted() && favList.size() == 0;
         sportsSelected = UserUtil.getSportsSelected();
         bundle = getIntent().getExtras();
+        if (isFirstInstall) {
+            FavouriteContentHandler.getInstance(AdvancedFilterActivity.this).clearContent();
+        }
         try {
             isResultRequired = getIntent().getExtras().getBoolean(Constants.RESULT_REQUIRED, false);
             isSingleUse = getIntent().getExtras().getBoolean(Constants.RESULT_SINGLE_USE, false);
@@ -90,7 +95,7 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
         skip.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                enableNotificationsWhenSettingUpFirstTime();
+                sendNextAnalytics(FirebaseUtil.Event.SKIP_CLICK_EVENT);
                 if (!UserUtil.isFilterCompleted()) {
                     FavouriteItemWrapper.getInstance(AdvancedFilterActivity.this).saveList(AdvancedFilterActivity.this, favList);
                     UserUtil.setFilterCompleted(AdvancedFilterActivity.this, true);
@@ -139,6 +144,7 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
             setResult(RESULT_OK, getIntent());
             finish();
         } else if (fragmentNum < sportsSelected.size()) {
+            sendNextAnalytics(FirebaseUtil.Event.NEXT_CLICK_EVENT);
             if (pager.getCurrentItem() < pager.getAdapter().getCount() - 1) {
                 pager.setCurrentItem(pager.getCurrentItem() + 1);
             } else {
@@ -149,6 +155,7 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
             }
         } else if (fragmentNum == sportsSelected.size()) {
 //            enableNotificationsWhenSettingUpFirstTime();
+            sendNextAnalytics(FirebaseUtil.Event.NEXT_CLICK_EVENT);
             if (pager.getCurrentItem() < pager.getAdapter().getCount() - 1) {
                 pager.setCurrentItem(pager.getCurrentItem() + 1);
             } else {
@@ -162,6 +169,31 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
             }
         }
         closeSearch();
+    }
+
+    private void sendNextAnalytics(String eventName) {
+        //FIREBASE INTEGRATION
+        {
+            FirebaseAnalytics firebaseAnalytics = FirebaseUtil.getInstance(this);
+            Bundle bundle = new Bundle();
+            bundle.putString(FirebaseUtil.Param.SPORTS_TYPE, titleText.getText().toString());
+            if (titleText.getText().toString().equalsIgnoreCase(Constants.GAME_KEY_CRICKET)) {
+                if (pager.getCurrentItem() == 0) {
+                    bundle.putString(FirebaseUtil.Param.FILTER_TYPE, FirebaseUtil.Param.TEAM);
+                } else if (pager.getCurrentItem() == 1) {
+                    bundle.putString(FirebaseUtil.Param.FILTER_TYPE, FirebaseUtil.Param.PLAYER);
+                }
+            } else if (titleText.getText().toString().equalsIgnoreCase(Constants.GAME_KEY_FOOTBALL)) {
+                if (pager.getCurrentItem() == 0) {
+                    bundle.putString(FirebaseUtil.Param.FILTER_TYPE, FirebaseUtil.Param.LEAGUE);
+                } else if (pager.getCurrentItem() == 1) {
+                    bundle.putString(FirebaseUtil.Param.FILTER_TYPE, FirebaseUtil.Param.TEAM);
+                } else if (pager.getCurrentItem() == 2) {
+                    bundle.putString(FirebaseUtil.Param.FILTER_TYPE, FirebaseUtil.Param.PLAYER);
+                }
+            }
+            FirebaseUtil.logEvent(firebaseAnalytics, bundle, eventName);
+        }
     }
 
     private void beforeExitingActivity() {

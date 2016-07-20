@@ -15,12 +15,14 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.sports.unity.R;
 import com.sports.unity.common.model.PermissionUtil;
 import com.sports.unity.common.model.TinyDB;
 import com.sports.unity.common.model.UserUtil;
 import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
+import com.sports.unity.util.network.FirebaseUtil;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -37,6 +39,7 @@ public class EnterPhoneActivity extends CustomAppCompatActivity implements Activ
     private EditText phoneNumberEditText;
 
     private RelativeLayout getCountryCode;
+
 
     private View.OnClickListener viewClickListener = new View.OnClickListener() {
 
@@ -65,8 +68,14 @@ public class EnterPhoneActivity extends CustomAppCompatActivity implements Activ
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_enter_phone);
+
+        //FIREBASE INTEGRATION
+        {
+            FirebaseAnalytics mFirebaseAnalytics = FirebaseUtil.getInstance(this);
+            Bundle bundle = new Bundle();
+            FirebaseUtil.logEvent(mFirebaseAnalytics, bundle, FirebaseUtil.Event.ENTER_PHONE_NUMBER);
+        }
         initView();
     }
 
@@ -196,6 +205,13 @@ public class EnterPhoneActivity extends CustomAppCompatActivity implements Activ
     }
 
     private void moveToNextActivity() {
+
+        //FIREBASE INTEGRATION
+        {
+            FirebaseAnalytics firebaseAnalytics = FirebaseUtil.getInstance(this);
+            Bundle bundle = new Bundle();
+            FirebaseUtil.logEvent(firebaseAnalytics, bundle, FirebaseUtil.Event.SUBMIT_PHONE_NUMBER);
+        }
         Intent intent = new Intent(EnterPhoneActivity.this, EnterOtpActivity.class);
         startActivity(intent);
 

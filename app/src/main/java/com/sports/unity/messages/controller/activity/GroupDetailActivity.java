@@ -16,6 +16,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.sports.unity.CropImageFragment;
 import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.R;
@@ -28,6 +29,7 @@ import com.sports.unity.messages.controller.model.Contacts;
 import com.sports.unity.messages.controller.model.PubSubMessaging;
 import com.sports.unity.util.Constants;
 import com.sports.unity.util.ImageUtil;
+import com.sports.unity.util.network.FirebaseUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -239,7 +241,14 @@ public class GroupDetailActivity extends CustomAppCompatActivity {
             }
         });
     }
-
+    private void logScreensToFireBase(String eventName) {
+        //FIREBASE INTEGRATION
+        {
+            FirebaseAnalytics firebaseAnalytics = FirebaseUtil.getInstance(GroupDetailActivity.this);
+            Bundle bundle = new Bundle();
+            FirebaseUtil.logEvent(firebaseAnalytics, bundle, eventName);
+        }
+    }
     private void setToolBarForMembersList() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
         setSupportActionBar(toolbar);
@@ -279,6 +288,7 @@ public class GroupDetailActivity extends CustomAppCompatActivity {
                         Toast.makeText(getApplicationContext(), "Select at least one member, to add in group.", Toast.LENGTH_SHORT).show();
                     }
                 } else {
+                    logScreensToFireBase(FirebaseUtil.Event.GROUP_FINALIZE_CREATE);
                     new createNewGroup(fragment, GroupDetailActivity.this).execute();
                 }
 

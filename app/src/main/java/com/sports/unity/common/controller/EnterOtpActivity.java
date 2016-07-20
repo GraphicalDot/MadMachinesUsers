@@ -27,6 +27,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.sports.unity.ProfileCreationActivity;
 import com.sports.unity.R;
 import com.sports.unity.XMPPManager.XMPPService;
@@ -44,6 +45,7 @@ import com.sports.unity.common.viewhelper.VolleyCallComponentHelper;
 import com.sports.unity.scores.model.ScoresContentHandler;
 import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
+import com.sports.unity.util.network.FirebaseUtil;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -74,6 +76,14 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity {
         public void onClick(View v) {
             if (!TextUtils.isEmpty(otpEditText.getText().toString())) {
                 createUser();
+
+                //FIREBASE INTEGRATION
+                {
+                    FirebaseAnalytics firebaseAnalytics = FirebaseUtil.getInstance(EnterOtpActivity.this);
+                    Bundle bundle = new Bundle();
+                    FirebaseUtil.logEvent(firebaseAnalytics, bundle, FirebaseUtil.Event.MANUAL_OTP);
+                }
+
             } else {
                 Toast.makeText(EnterOtpActivity.this, "Please enter otp", Toast.LENGTH_SHORT).show();
             }
@@ -334,6 +344,13 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity {
                                 String str = message.replaceAll("\\D+", "");
                                 otpEditText.setText(str);
                                 createUser();
+
+                                //FIREBASE INTEGRATION
+                                {
+                                    FirebaseAnalytics firebaseAnalytics = FirebaseUtil.getInstance(EnterOtpActivity.this);
+                                    Bundle mBundle = new Bundle();
+                                    FirebaseUtil.logEvent(firebaseAnalytics, mBundle, FirebaseUtil.Event.AUTO_OTP);
+                                }
                             }
                         } catch (Exception e) {
                             e.printStackTrace();

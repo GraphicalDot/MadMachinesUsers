@@ -32,6 +32,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.sports.unity.Database.DBUtil;
 import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.R;
@@ -61,6 +62,7 @@ import com.sports.unity.util.GlobalEventHandler;
 import com.sports.unity.util.ImageUtil;
 import com.sports.unity.util.NotificationHandler;
 import com.sports.unity.util.ThreadTask;
+import com.sports.unity.util.network.FirebaseUtil;
 
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPConnection;
@@ -439,12 +441,19 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
             chatScreenAdapter.filterSearchQuery("");
         }
     }
-
+    private void logScreensToFireBase(String screen) {
+        //FIREBASE INTEGRATION
+        {
+            FirebaseAnalytics firebaseAnalytics = FirebaseUtil.getInstance(ChatScreenActivity.this);
+            Bundle bundle = new Bundle();
+            FirebaseUtil.logEvent(firebaseAnalytics, bundle, screen);
+        }
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat_screen);
-
+        logScreensToFireBase(FirebaseUtil.Event.OPEN_SPECIFIC_CHAT);
         parentLayout = (ViewGroup) findViewById(R.id.chat_layout_root_view);
 
         chatKeyboardHelper = ChatKeyboardHelper.getInstance(true);
@@ -674,6 +683,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
         profile_link.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                logScreensToFireBase(FirebaseUtil.Event.CHAT_VIEW_PROFILE);
                 int contactStatus = ChatScreenActivity.this.getIntent().getIntExtra(INTENT_KEY_CONTACT_AVAILABLE_STATUS, Contacts.AVAILABLE_NOT);
                 String status = ChatScreenActivity.this.getIntent().getStringExtra(INTENT_KEY_USER_STATUS);
                 viewProfile(ChatScreenActivity.this, isGroupChat, chatID, userImageBytes, jabberName, jabberId, status, otherChat, contactStatus, blockStatus);
@@ -977,6 +987,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
     }
 
     public void openCamera(View view) {
+        logScreensToFireBase(FirebaseUtil.Event.CHAT_CAMERA);
         resetToolbar();
         if (!PermissionUtil.getInstance().isRuntimePermissionRequired()) {
             chatKeyboardHelper.tapOnTab(jabberName, view, this);
@@ -989,11 +1000,13 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
     }
 
     public void emojipopup(View view) {
+        logScreensToFireBase(FirebaseUtil.Event.CHAT_EMOJI);
         resetToolbar();
         chatKeyboardHelper.tapOnTab(jabberName, view, this);
     }
 
     public void galleryPopup(View view) {
+        logScreensToFireBase(FirebaseUtil.Event.CHAT_GALLERY);
         resetToolbar();
         if (!PermissionUtil.getInstance().isRuntimePermissionRequired()) {
             chatKeyboardHelper.tapOnTab(jabberName, view, this);
@@ -1006,6 +1019,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
     }
 
     public void voicePopup(View view) {
+        logScreensToFireBase(FirebaseUtil.Event.CHAT_VOICE);
         resetToolbar();
         if (!PermissionUtil.getInstance().isRuntimePermissionRequired()) {
             chatKeyboardHelper.tapOnTab(jabberName, view, this);
@@ -1248,6 +1262,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_view_contact) {
+            logScreensToFireBase(FirebaseUtil.Event.CHAT_VIEW_PROFILE);
             int contactStatus = ChatScreenActivity.this.getIntent().getIntExtra(INTENT_KEY_CONTACT_AVAILABLE_STATUS, Contacts.AVAILABLE_NOT);
             String status = ChatScreenActivity.this.getIntent().getStringExtra(INTENT_KEY_USER_STATUS);
             viewProfile(ChatScreenActivity.this, isGroupChat, chatID, userImageBytes, jabberName, jabberId, status, otherChat, contactStatus, blockStatus);

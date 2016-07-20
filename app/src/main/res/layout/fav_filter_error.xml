@@ -7,7 +7,7 @@
     android:orientation="vertical"
     android:paddingLeft="@dimen/horizontal_padding_medium"
     android:paddingRight="@dimen/horizontal_padding_medium"
-    android:visibility="visible">
+    android:visibility="gone">
 
     <TextView
         android:id="@+id/oops"

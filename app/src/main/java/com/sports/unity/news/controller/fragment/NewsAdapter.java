@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
+import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.view.LayoutInflater;
@@ -16,12 +17,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.sports.unity.R;
 import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.news.controller.activity.NewsDetailsActivity;
 import com.sports.unity.news.model.NewsJsonCaller;
 import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
+import com.sports.unity.util.network.FirebaseUtil;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -41,13 +44,13 @@ public class NewsAdapter extends BaseNewsAdapter {
     private NewsJsonCaller newsJsonCaller = new NewsJsonCaller();
 
     public NewsAdapter(ArrayList<JSONObject> news, Activity activity) {
-        super( news, activity);
+        super(news, activity);
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         // each data item is just a string in this case
         public TextView info;
-      //  public TextView type;
+        //  public TextView type;
         public TextView title;
         public TextView source;
         public TextView published;
@@ -83,7 +86,7 @@ public class NewsAdapter extends BaseNewsAdapter {
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
-        ViewHolder holder = (ViewHolder)viewHolder;
+        ViewHolder holder = (ViewHolder) viewHolder;
 
         newsJsonCaller.setJsonObject(news.get(position));
 
@@ -138,27 +141,37 @@ public class NewsAdapter extends BaseNewsAdapter {
 
                 @Override
                 public void onClick(View view) {
-                    int position = (Integer)view.getTag();
+                    int position = (Integer) view.getTag();
                     newsJsonCaller.setJsonObject(news.get(position));
 
                     try {
                         String newsLink = newsJsonCaller.getNewsLink();
                         String title = newsJsonCaller.getTitle();
                         String type = CommonUtil.capitalize(newsJsonCaller.getType());
-
+                        //FIREBASE INTEGRATION
+                        {
+                            FirebaseAnalytics firebaseAnalytics = FirebaseUtil.getInstance(activity);
+                            Bundle bundle = new Bundle();
+                            String name = title;
+                            String newsId = newsJsonCaller.getNewsId();
+                            bundle.putString(FirebaseUtil.Param.NAME, FirebaseUtil.trimValue(name));
+                            bundle.putString(FirebaseUtil.Param.ID, FirebaseUtil.trimValue(newsId));
+                            bundle.putString(FirebaseUtil.Param.SPORTS_TYPE, type);
+                            FirebaseUtil.logEvent(firebaseAnalytics, bundle, FirebaseUtil.Event.NEWS_DETAIL);
+                        }
                         Intent intent = new Intent(activity, NewsDetailsActivity.class);
                         intent.putExtra(Constants.INTENT_KEY_ID, newsJsonCaller.getNewsId());
                         intent.putExtra(Constants.INTENT_KEY_URL, newsLink);
                         intent.putExtra(Constants.INTENT_KEY_TITLE, title);
                         intent.putExtra(Constants.INTENT_KEY_TYPE, type);
                         activity.startActivity(intent);
-                    }catch (Exception ex){
+                    } catch (Exception ex) {
                         ex.printStackTrace();
                     }
                 }
 
             });
-        }catch (Exception ex){
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
     }

@@ -18,6 +18,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.sports.unity.R;
 import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.common.view.CustomVolleyCallerActivity;
@@ -28,6 +29,7 @@ import com.sports.unity.scores.model.ScoresContentHandler;
 import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
 import com.sports.unity.util.JsonObjectCaller;
+import com.sports.unity.util.network.FirebaseUtil;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -69,12 +71,12 @@ public class NewsDetailsActivity extends CustomVolleyCallerActivity {
     @Override
     public VolleyCallComponentHelper getVolleyCallComponentHelper() {
         ProgressBar progressBar = (ProgressBar) findViewById(R.id.progress);
-        ViewGroup errorLayout = (ViewGroup)findViewById(R.id.error);
-        VolleyCallComponentHelper volleyCallComponentHelper = new VolleyCallComponentHelper( REQUEST_LISTENER_KEY, new NewsDetailComponentListener(progressBar, errorLayout));
+        ViewGroup errorLayout = (ViewGroup) findViewById(R.id.error);
+        VolleyCallComponentHelper volleyCallComponentHelper = new VolleyCallComponentHelper(REQUEST_LISTENER_KEY, new NewsDetailComponentListener(progressBar, errorLayout));
         return volleyCallComponentHelper;
     }
 
-    private void initView(){
+    private void initView() {
         id = getIntent().getStringExtra(Constants.INTENT_KEY_ID);
         String title = getIntent().getStringExtra(Constants.INTENT_KEY_TITLE);
 
@@ -115,6 +117,19 @@ public class NewsDetailsActivity extends CustomVolleyCallerActivity {
         share.setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View v) {
+
+                //FIREBASE INTEGRATION
+                {
+                    FirebaseAnalytics firebaseAnalytics = FirebaseUtil.getInstance(NewsDetailsActivity.this);
+                    Bundle bundle = new Bundle();
+                    String name = title;
+                    String type = getIntent().getStringExtra(Constants.INTENT_KEY_TYPE);
+                    bundle.putString(FirebaseUtil.Param.NAME, FirebaseUtil.trimValue(name));
+                    bundle.putString(FirebaseUtil.Param.ID, FirebaseUtil.trimValue(id));
+                    bundle.putString(FirebaseUtil.Param.SPORTS_TYPE, type);
+                    FirebaseUtil.logEvent(firebaseAnalytics, bundle, FirebaseUtil.Event.NEWS_SHARE);
+                }
+
                 Intent sharingIntent = new Intent(Intent.ACTION_SEND);
                 sharingIntent.setType("text/plain");
                 sharingIntent.putExtra(Intent.EXTRA_SUBJECT, title);
@@ -125,26 +140,26 @@ public class NewsDetailsActivity extends CustomVolleyCallerActivity {
         });
     }
 
-    private boolean handleNewsDetailResponse(String response){
+    private boolean handleNewsDetailResponse(String response) {
         boolean success = false;
-        try{
+        try {
             JSONObject responseJson = new JSONObject(response);
-            if( responseJson.getBoolean("success") ){
+            if (responseJson.getBoolean("success")) {
                 newsJsonObject = responseJson.getJSONObject("result");
 
                 success = true;
             } else {
                 success = false;
             }
-        }catch (Exception ex){
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
         return success;
     }
 
-    private boolean renderResponse(){
+    private boolean renderResponse() {
         boolean success = false;
-        if( newsJsonObject != null ){
+        if (newsJsonObject != null) {
 
             TextView titleText = (TextView) findViewById(R.id.TitleText);
             TextView sportType = (TextView) findViewById(R.id.type);
@@ -166,7 +181,7 @@ public class NewsDetailsActivity extends CustomVolleyCallerActivity {
                 title = newsJsonCaller.getTitle();
                 shareContent = newsJsonCaller.getTitle() + "\n\n" + newsJsonCaller.getNewsLink();
 
-                infoData.setText( newsJsonCaller.getNews());
+                infoData.setText(newsJsonCaller.getNews());
 
                 titleText.setText(title);
                 sportType.setText(newsJsonCaller.getType());
@@ -205,8 +220,8 @@ public class NewsDetailsActivity extends CustomVolleyCallerActivity {
                 }
 
                 findViewById(R.id.news_layout).setVisibility(View.VISIBLE);
-                success  = true;
-            }catch (Exception ex){
+                success = true;
+            } catch (Exception ex) {
                 ex.printStackTrace();
             }
         } else {
@@ -227,8 +242,8 @@ public class NewsDetailsActivity extends CustomVolleyCallerActivity {
 
     private class NewsDetailComponentListener extends CustomComponentListener {
 
-        public NewsDetailComponentListener(ProgressBar progressBar, ViewGroup errorLayout){
-            super( NEWS_DETAIL_REQUEST_TAG, progressBar, errorLayout);
+        public NewsDetailComponentListener(ProgressBar progressBar, ViewGroup errorLayout) {
+            super(NEWS_DETAIL_REQUEST_TAG, progressBar, errorLayout);
         }
 
         @Override
@@ -252,7 +267,7 @@ public class NewsDetailsActivity extends CustomVolleyCallerActivity {
         @Override
         public void changeUI(String tag) {
             boolean success = renderResponse();
-            if( ! success ){
+            if (!success) {
                 showErrorLayout();
             } else {
                 share.setVisibility(View.VISIBLE);

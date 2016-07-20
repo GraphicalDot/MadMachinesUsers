@@ -22,10 +22,10 @@ public class ChatScreenApplication extends Application {
     public void onCreate() {
         super.onCreate();
 
-        if ( BuildConfig.DEBUG ) {
+        /*if ( BuildConfig.DEBUG ) {
             GoogleAnalytics.getInstance(this).setDryRun(true);
         }
-        getDefaultTracker();
+        getDefaultTracker();*/
     }
 
     /**
@@ -33,7 +33,7 @@ public class ChatScreenApplication extends Application {
      *
      * @return tracker
      */
-    synchronized public Tracker getDefaultTracker() {
+    /*synchronized public Tracker getDefaultTracker() {
         if (mTracker == null) {
             GoogleAnalytics analytics = GoogleAnalytics.getInstance(this);
             // To enable debug logging use: adb shell setprop log.tag.GAv4 DEBUG
@@ -46,9 +46,9 @@ public class ChatScreenApplication extends Application {
             }
         }
         return mTracker;
-    }
+    }*/
 
-    public void userLoginTrack(){
+    /*public void userLoginTrack(){
         TinyDB tinyDB = TinyDB.getInstance(this);
         getDefaultTracker().set("&uid", tinyDB.getString(TinyDB.KEY_USER_JID));
 
@@ -56,7 +56,7 @@ public class ChatScreenApplication extends Application {
                 .setCategory("UX")
                 .setAction("User Sign In")
                 .build());
-    }
+    }*/
 
     @Override
     protected void attachBaseContext(Context base) {

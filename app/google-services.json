@@ -1,55 +1,42 @@
 {
   "project_info": {
-    "project_id": "sportsunity-391f6",
-    "project_number": "441003196780",
-    "name": "SportsUnity"
+    "project_number": "507352111662",
+    "firebase_url": "https://test-1-19a0a.firebaseio.com",
+    "project_id": "test-1-19a0a",
+    "storage_bucket": "test-1-19a0a.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:441003196780:android:494402850e735f25",
-        "client_id": "android:co.sports.unity",
-        "client_type": 1,
+        "mobilesdk_app_id": "1:507352111662:android:494402850e735f25",
         "android_client_info": {
-          "package_name": "co.sports.unity",
-          "certificate_hash": []
+          "package_name": "co.sports.unity"
         }
       },
       "oauth_client": [
         {
-          "client_id": "441003196780-nmk1j6v46c75r06n69mcpmseml7dv0qi.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "co.sports.unity",
-            "certificate_hash": "7E362F2FE37F6CC7695E415FC7455B144A696DB3"
-          }
+          "client_id": "507352111662-smjctr3ffjn46atdkth8umu8a9u9dcsp.apps.googleusercontent.com",
+          "client_type": 3
         }
       ],
-      "api_key": [{ "current_key": "" }],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCZ9xW7qH8qcxeqGa2yaJfpClSmHYbWt6Y"
+        }
+      ],
       "services": {
         "analytics_service": {
-          "status": 2,
-          "analytics_property": {
-            "tracking_id": "UA-76020700-1"
-          }
-        },
-        "cloud_messaging_service": {
-          "status": 2,
-          "apns_config": []
+          "status": 1
         },
         "appinvite_service": {
           "status": 1,
           "other_platform_oauth_client": []
         },
-        "google_signin_service": {
-          "status": 1
-        },
         "ads_service": {
-          "status": 1
+          "status": 2
         }
       }
     }
   ],
-  "client_info": [],
-  "ARTIFACT_VERSION": "1"
+  "configuration_version": "1"
 }

@@ -10,7 +10,9 @@ import android.os.Looper;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -21,8 +23,7 @@ import android.widget.Toast;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookSdk;
 import com.facebook.login.widget.LoginButton;
-import com.google.android.gms.analytics.HitBuilders;
-import com.google.android.gms.analytics.Tracker;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.sports.unity.XMPPManager.XMPPService;
 import com.sports.unity.common.controller.MainActivity;
 import com.sports.unity.common.controller.SelectSportsActivity;
@@ -35,11 +36,10 @@ import com.sports.unity.messages.controller.model.Contacts;
 import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
 import com.sports.unity.util.ImageUtil;
+import com.sports.unity.util.network.FirebaseUtil;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-
-import de.hdodenhof.circleimageview.CircleImageView;
 
 public class ProfileCreationActivity extends AppCompatActivity implements ActivityCompat.OnRequestPermissionsResultCallback, UserProfileHandler.ContentListener {
 
@@ -87,6 +87,13 @@ public class ProfileCreationActivity extends AppCompatActivity implements Activi
     };
 
     public void handleAddPhotoClick() {
+        //FIREBASE INTEGRATION
+        {
+            FirebaseAnalytics mFirebaseAnalytics = FirebaseUtil.getInstance(ProfileCreationActivity.this);
+            Bundle bundle = new Bundle();
+            bundle.putBoolean(FirebaseUtil.Param.PROFILE_CREATION, true);
+            FirebaseUtil.logEvent(mFirebaseAnalytics, bundle, FirebaseUtil.Event.PROFILE_IMAGE);
+        }
         Intent galleryIntent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         galleryIntent.setType("image/*");
 
@@ -115,6 +122,7 @@ public class ProfileCreationActivity extends AppCompatActivity implements Activi
             Bitmap bitmap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
             initiateCrop(bitmap);
         } else {
+
             callbackManager.onActivityResult(requestCode, resultCode, data);
         }
     }
@@ -192,10 +200,40 @@ public class ProfileCreationActivity extends AppCompatActivity implements Activi
         ImageView.setOnClickListener(profilePictureonOnClickListener);
     }
 
+    private boolean nameClick = false;
+
     private void addListenerToContinueButton() {
         Button continueButton = (Button) findViewById(R.id.continue_button);
         nameText = (EditText) findViewById(R.id.nameView);
         continueButton.setOnClickListener(continueButtonOnClickListener);
+        nameText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (!nameClick) {
+                    logScreensToFireBase(FirebaseUtil.Event.PROFILE_NAME);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+    }
+
+    private void logScreensToFireBase(String screen) {
+        //FIREBASE INTEGRATION
+        {
+            FirebaseAnalytics firebaseAnalytics = FirebaseUtil.getInstance(ProfileCreationActivity.this);
+            Bundle bundle = new Bundle();
+            bundle.putBoolean(FirebaseUtil.Param.PROFILE_CREATION, true);
+            FirebaseUtil.logEvent(firebaseAnalytics, bundle, screen);
+        }
     }
 
     private void initFacebookLogin() {
@@ -204,6 +242,12 @@ public class ProfileCreationActivity extends AppCompatActivity implements Activi
 
     private void addFacebookCallback() {
         LoginButton loginButton = (LoginButton) findViewById(R.id.login_button);
+        loginButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                logScreensToFireBase(FirebaseUtil.Event.FB_LOGIN);
+            }
+        });
         callbackManager = CallbackManager.Factory.create();
         UserProfileHandler.getInstance().setFacebookDetails(this, loginButton, LISTENER_KEY, callbackManager);
     }
@@ -263,8 +307,8 @@ public class ProfileCreationActivity extends AppCompatActivity implements Activi
         ContactsHandler.getInstance().addCallToProcessPendingActions(this);
 
         {
-            ChatScreenApplication application = (ChatScreenApplication) getApplication();
-            application.userLoginTrack();
+            /*ChatScreenApplication application = (ChatScreenApplication) getApplication();
+            application.userLoginTrack();*/
         }
 
         if (UserUtil.isSportsSelected()) {

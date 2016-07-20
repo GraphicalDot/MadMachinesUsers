@@ -3,6 +3,7 @@ package com.sports.unity.common.controller.fragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,17 +12,17 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.sports.unity.R;
 import com.sports.unity.common.controller.AdvancedFilterActivity;
 import com.sports.unity.common.controller.FilterActivity;
-import com.sports.unity.common.controller.SelectSportsActivity;
 import com.sports.unity.common.controller.TeamLeagueDetails;
 import com.sports.unity.common.model.FavouriteItem;
 import com.sports.unity.common.model.FavouriteItemWrapper;
 import com.sports.unity.common.model.UserUtil;
 import com.sports.unity.util.Constants;
+import com.sports.unity.util.network.FirebaseUtil;
 
 import java.util.ArrayList;
 
@@ -42,6 +43,7 @@ public class FilterFragment extends Fragment implements FilterActivity.OnResultR
     private LinearLayout emptyLayout;
     private LinearLayout parentEmpty;
     private ImageView sepBottom;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -75,7 +77,7 @@ public class FilterFragment extends Fragment implements FilterActivity.OnResultR
         parentEmpty = (LinearLayout) view.findViewById(R.id.parent_empty);
         cricketLayout = (RelativeLayout) view.findViewById(R.id.cricket_layout);
         footballLayout = (RelativeLayout) view.findViewById(R.id.football_layout);
-        sepBottom= (ImageView) view.findViewById(R.id.sep_bottom);
+        sepBottom = (ImageView) view.findViewById(R.id.sep_bottom);
         mlistView.setEmptyView(emptyLayout);
         bundle = getArguments();
         filter = bundle.getString(Constants.SPORTS_FILTER_TYPE);
@@ -106,6 +108,17 @@ public class FilterFragment extends Fragment implements FilterActivity.OnResultR
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 FavouriteItem f = favList.get(position);
+                //FIREBASE INTEGRATION
+                {
+                    FirebaseAnalytics firebaseAnalytics = FirebaseUtil.getInstance(getActivity());
+                    Bundle bundle = new Bundle();
+                    String name = f.getName();
+                    bundle.putString(FirebaseUtil.Param.NAME, FirebaseUtil.trimValue(name));
+                    bundle.putString(FirebaseUtil.Param.ID, f.getId());
+                    bundle.putString(FirebaseUtil.Param.SPORTS_TYPE, f.getSportsType());
+                    bundle.putString(FirebaseUtil.Param.FILTER_TYPE, f.getFilterType());
+                    FirebaseUtil.logEvent(firebaseAnalytics, bundle, FirebaseUtil.Event.FILTER_FAV_DETAIL);
+                }
                 Intent intent = new Intent(getContext(), TeamLeagueDetails.class);
                 intent.putExtra(Constants.INTENT_TEAM_LEAGUE_DETAIL_EXTRA, f.getJsonObject().toString());
                 intent.putExtra(Constants.RESULT_REQUIRED, true);
@@ -115,6 +128,15 @@ public class FilterFragment extends Fragment implements FilterActivity.OnResultR
         editCricket.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Log.d("max", "edit click out cricket");
+                //FIREBASE INTEGRATION
+                {
+                    FirebaseAnalytics firebaseAnalytics = FirebaseUtil.getInstance(getActivity());
+                    Bundle bundle = new Bundle();
+                    bundle.putString(FirebaseUtil.Param.SPORTS_TYPE, Constants.SPORTS_TYPE_CRICKET);
+                    bundle.putString(FirebaseUtil.Param.FILTER_TYPE, filter);
+                    FirebaseUtil.logEvent(firebaseAnalytics, bundle, FirebaseUtil.Event.FILTER_EDIT_CLICK);
+                }
                 Intent intent = new Intent(new Intent(getActivity(), AdvancedFilterActivity.class));
                 intent.putExtra(Constants.SPORTS_TYPE, Constants.SPORTS_TYPE_CRICKET);
                 intent.putExtra(Constants.SPORTS_FILTER_TYPE, filter);
@@ -126,6 +148,14 @@ public class FilterFragment extends Fragment implements FilterActivity.OnResultR
         editFootball.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //FIREBASE INTEGRATION
+                {
+                    FirebaseAnalytics firebaseAnalytics = FirebaseUtil.getInstance(getActivity());
+                    Bundle bundle = new Bundle();
+                    bundle.putString(FirebaseUtil.Param.SPORTS_TYPE, Constants.SPORTS_TYPE_FOOTBALL);
+                    bundle.putString(FirebaseUtil.Param.FILTER_TYPE, filter);
+                    FirebaseUtil.logEvent(firebaseAnalytics, bundle, FirebaseUtil.Event.FILTER_EDIT_CLICK);
+                }
                 Intent intent = new Intent(new Intent(getActivity(), AdvancedFilterActivity.class));
                 intent.putExtra(Constants.SPORTS_TYPE, Constants.SPORTS_TYPE_FOOTBALL);
                 intent.putExtra(Constants.SPORTS_FILTER_TYPE, filter);

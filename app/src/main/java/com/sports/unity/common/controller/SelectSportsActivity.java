@@ -13,6 +13,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.sports.unity.BuildConfig;
 import com.sports.unity.R;
 import com.sports.unity.XMPPManager.XMPPClient;
@@ -23,6 +24,7 @@ import com.sports.unity.common.model.UserUtil;
 import com.sports.unity.messages.controller.model.Contacts;
 import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
+import com.sports.unity.util.network.FirebaseUtil;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -99,6 +101,17 @@ public class SelectSportsActivity extends CustomAppCompatActivity {
         public void onClick(View v) {
             ImageView view = (ImageView) v;
             if (v.getId() == R.id.cricket) {
+                //FIREBASE INTEGRATION
+                {
+                    FirebaseAnalytics firebaseAnalytics = FirebaseUtil.getInstance(SelectSportsActivity.this);
+                    Bundle bundle = new Bundle();
+                    if (sports.contains(Constants.GAME_KEY_CRICKET)) {
+                        bundle.putString(FirebaseUtil.Param.CRICKET, FirebaseUtil.Param.DESELECTED);
+                    } else {
+                        bundle.putString(FirebaseUtil.Param.CRICKET, FirebaseUtil.Param.SELECTED);
+                    }
+                    FirebaseUtil.logEvent(firebaseAnalytics, bundle, FirebaseUtil.Event.SPORTS_SELECTION);
+                }
                 if (sports.contains(Constants.GAME_KEY_CRICKET)) {
                     view.setImageResource(R.drawable.btn_cricket_disabled);
                     sports.remove(Constants.GAME_KEY_CRICKET);
@@ -107,6 +120,17 @@ public class SelectSportsActivity extends CustomAppCompatActivity {
                     sports.add(Constants.GAME_KEY_CRICKET);
                 }
             } else {
+                //FIREBASE INTEGRATION
+                {
+                    FirebaseAnalytics firebaseAnalytics = FirebaseUtil.getInstance(SelectSportsActivity.this);
+                    Bundle bundle = new Bundle();
+                    if (sports.contains(Constants.GAME_KEY_FOOTBALL)) {
+                        bundle.putString(FirebaseUtil.Param.FOOTBALL, FirebaseUtil.Param.DESELECTED);
+                    } else {
+                        bundle.putString(FirebaseUtil.Param.FOOTBALL, FirebaseUtil.Param.SELECTED);
+                    }
+                    FirebaseUtil.logEvent(firebaseAnalytics, bundle, FirebaseUtil.Event.SPORTS_SELECTION);
+                }
                 if (sports.contains(Constants.GAME_KEY_FOOTBALL)) {
                     view.setImageResource(R.drawable.btn_football_disabled);
                     sports.remove(Constants.GAME_KEY_FOOTBALL);
@@ -125,7 +149,7 @@ public class SelectSportsActivity extends CustomAppCompatActivity {
          */
         {
             Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
-            ImageView hamburgericon = (ImageView)toolbar.findViewById(R.id.hamburger_icon);
+            ImageView hamburgericon = (ImageView) toolbar.findViewById(R.id.hamburger_icon);
             hamburgericon.setVisibility(View.GONE);
             setSupportActionBar(toolbar);
             getSupportActionBar().setDisplayShowTitleEnabled(false);
@@ -133,9 +157,9 @@ public class SelectSportsActivity extends CustomAppCompatActivity {
             mTitle.setVisibility(View.GONE);
             TextView selectSports = (TextView) toolbar.findViewById(R.id.select_sports);
             selectSports.setVisibility(View.VISIBLE);
-           // mTitle.setText(R.string.select_your_favourite_sports);
-           // mTitle.setTypeface(FontTypeface.getInstance(this).getRobotoCondensedRegular());
-           // mTitle.setGravity(Gravity.CENTER);
+            // mTitle.setText(R.string.select_your_favourite_sports);
+            // mTitle.setTypeface(FontTypeface.getInstance(this).getRobotoCondensedRegular());
+            // mTitle.setGravity(Gravity.CENTER);
         }
 
 //        GridView gridview = (GridView) findViewById(R.id.gridview);
@@ -185,6 +209,18 @@ public class SelectSportsActivity extends CustomAppCompatActivity {
 
 
     private void moveOn() {
+        //FIREBASE INTEGRATION
+        {
+            FirebaseAnalytics firebaseAnalytics = FirebaseUtil.getInstance(this);
+            Bundle bundle = new Bundle();
+            if (sports.contains((Constants.GAME_KEY_CRICKET))) {
+                bundle.putString(FirebaseUtil.Param.CRICKET, FirebaseUtil.Param.SELECTED);
+            }
+            if (sports.contains(Constants.GAME_KEY_FOOTBALL)) {
+                bundle.putString(FirebaseUtil.Param.FOOTBALL, FirebaseUtil.Param.SELECTED);
+            }
+            FirebaseUtil.logEvent(firebaseAnalytics, bundle, FirebaseUtil.Event.SPORTS_COMPLETE);
+        }
         UserUtil.setSportsSelected(SelectSportsActivity.this, sports);
         UserUtil.setScoreFilterSportsSelected(SelectSportsActivity.this, new ArrayList<String>(sports));
         UserUtil.setNewsFilterSportsSelected(SelectSportsActivity.this, new ArrayList<String>(sports));
@@ -202,10 +238,10 @@ public class SelectSportsActivity extends CustomAppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        if(isResultRequired){
+        if (isResultRequired) {
             setResult(RESULT_CANCELED);
             finish();
-        }else{
+        } else {
             super.onBackPressed();
         }
 

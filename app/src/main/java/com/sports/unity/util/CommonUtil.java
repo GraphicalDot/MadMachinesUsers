@@ -401,9 +401,9 @@ public class CommonUtil {
 
 
     public static void sendAnalyticsData(Application application, String screenName) {
-        Tracker mTracker = ((ChatScreenApplication) application).getDefaultTracker();
+        /*Tracker mTracker = ((ChatScreenApplication) application).getDefaultTracker();
         mTracker.setScreenName(screenName);
-        mTracker.send(new HitBuilders.ScreenViewBuilder().build());
+        mTracker.send(new HitBuilders.ScreenViewBuilder().build());*/
     }
 
 

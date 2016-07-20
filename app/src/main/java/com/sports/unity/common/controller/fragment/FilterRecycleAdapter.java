@@ -2,6 +2,7 @@ package com.sports.unity.common.controller.fragment;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,14 +11,17 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.TextView;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.sports.unity.R;
 import com.sports.unity.common.controller.AdvancedFilterActivity;
 import com.sports.unity.common.model.FavouriteItem;
 import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.common.model.UserUtil;
+import com.sports.unity.messages.controller.model.User;
 import com.sports.unity.news.controller.activity.NewsSearchActivity;
 import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
+import com.sports.unity.util.network.FirebaseUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -75,6 +79,24 @@ public class FilterRecycleAdapter extends RecyclerView.Adapter<FilterRecycleAdap
             @Override
             public void onClick(View view) {
                 itemDataSet.remove(position);
+                if (!favouriteItem.isChecked()) {
+                    //FIREBASE INTEGRATION
+                    {
+                        FirebaseAnalytics firebaseAnalytics = FirebaseUtil.getInstance(activity);
+                        Bundle bundle = new Bundle();
+                        String name = favouriteItem.getName();
+                        bundle.putString(FirebaseUtil.Param.NAME, FirebaseUtil.trimValue(name));
+                        bundle.putString(FirebaseUtil.Param.ID, favouriteItem.getId());
+                        bundle.putString(FirebaseUtil.Param.SPORTS_TYPE, favouriteItem.getSportsType());
+                        bundle.putString(FirebaseUtil.Param.FILTER_TYPE, favouriteItem.getFilterType());
+                        if (!UserUtil.isFilterCompleted()) {
+                            bundle.putBoolean(FirebaseUtil.Param.PROFILE_CREATION, true);
+                        } else {
+                            bundle.putBoolean(FirebaseUtil.Param.PROFILE_CREATION, false);
+                        }
+                        FirebaseUtil.logEvent(firebaseAnalytics, bundle, FirebaseUtil.Event.FAV_SELECTION);
+                    }
+                }
                 favouriteItem.setChecked(!favouriteItem.isChecked());
                 itemDataSet.add(position, favouriteItem);
                 notifyDataSetChanged();

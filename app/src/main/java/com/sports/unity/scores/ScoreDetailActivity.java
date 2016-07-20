@@ -23,6 +23,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.sports.unity.R;
 import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.common.model.FriendsWatchingHandler;
@@ -52,6 +53,7 @@ import com.sports.unity.scores.viewhelper.MatchCommentaryHelper;
 import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
 import com.sports.unity.util.commons.DateUtil;
+import com.sports.unity.util.network.FirebaseUtil;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -118,6 +120,7 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity {
             });
         }
     };
+    private boolean trackEvents = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -352,6 +355,32 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity {
         });
     }
 
+    private void logScreensToFireBase(String screen, String type) {
+        //FIREBASE INTEGRATION
+        {
+            FirebaseAnalytics firebaseAnalytics = FirebaseUtil.getInstance(ScoreDetailActivity.this);
+            Bundle bundle = new Bundle();
+            bundle.putString(FirebaseUtil.Param.SPORTS_TYPE, type);
+            FirebaseUtil.logEvent(firebaseAnalytics, bundle, screen);
+        }
+    }
+
+    private ViewPager.OnPageChangeListener pageChangeListener = new ViewPager.OnPageChangeListener() {
+        @Override
+        public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+        }
+
+        @Override
+        public void onPageSelected(int position) {
+            handlePageChange(position);
+        }
+
+        @Override
+        public void onPageScrollStateChanged(int state) {
+
+        }
+    };
+
     private void initView() {
         try {
             int tab_index = 0;
@@ -370,7 +399,9 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity {
             mViewPager = (ViewPager) findViewById(R.id.pager);
             mViewPager.setAdapter(new GenericFragmentViewPagerAdapter(getSupportFragmentManager(), fragmentVolleyHelperList));
             mViewPager.setOffscreenPageLimit(3);
-
+            if (trackEvents) {
+                mViewPager.addOnPageChangeListener(pageChangeListener);
+            }
             SlidingTabLayout tabs = (SlidingTabLayout) findViewById(com.sports.unity.R.id.tabs);
             tabs.setDistributeEvenly(false);
             tabs.setTabTextColor(R.color.filter_tab_selector);
@@ -410,6 +441,7 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity {
             shareImage.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    logScreensToFireBase(FirebaseUtil.Event.SCORE_SHARE, sportsType);
                     shareScreenShot();
                 }
             });
@@ -422,6 +454,37 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity {
         } catch (Exception e) {
             Toast.makeText(this, "Error Occured", Toast.LENGTH_LONG);
             e.printStackTrace();
+        }
+    }
+
+    private void handlePageChange(int position) {
+        if (sportsType.equalsIgnoreCase(ScoresJsonParser.CRICKET)) {
+            switch (position) {
+                case 0:
+                    logScreensToFireBase(FirebaseUtil.Event.SCORE_SUMMARY, sportsType);
+                    break;
+                case 1:
+                    logScreensToFireBase(FirebaseUtil.Event.SCORE_COMMENTARY, sportsType);
+                    break;
+                case 2:
+                    logScreensToFireBase(FirebaseUtil.Event.SCORE_CARD, sportsType);
+                    break;
+            }
+        } else if (sportsType.equalsIgnoreCase(ScoresJsonParser.FOOTBALL)) {
+            switch (position) {
+                case 0:
+                    logScreensToFireBase(FirebaseUtil.Event.SCORE_COMMENTARY, sportsType);
+                    break;
+                case 1:
+                    logScreensToFireBase(FirebaseUtil.Event.SCORE_MATCH_STATS, sportsType);
+                    break;
+                case 2:
+                    logScreensToFireBase(FirebaseUtil.Event.SCORE_TIMELINE, sportsType);
+                    break;
+                case 3:
+                    logScreensToFireBase(FirebaseUtil.Event.SCORE_LINEUP, sportsType);
+                    break;
+            }
         }
     }
 
@@ -957,6 +1020,7 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity {
             ScoreDetailActivity.this.setTitle();
             ScoreDetailActivity.this.renderScores();
             shareImage.setVisibility(View.VISIBLE);
+            trackEvents = true;
             initView();
             if (!isMatchLive()) {
                 refreshImage.setVisibility(View.GONE);

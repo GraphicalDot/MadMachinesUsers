@@ -27,6 +27,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.sports.unity.R;
 import com.sports.unity.common.controller.FilterActivity;
 import com.sports.unity.common.controller.GlobalSearchActivity;
@@ -46,6 +47,7 @@ import com.sports.unity.scores.model.ScoresUtil;
 import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
 import com.sports.unity.util.commons.DateUtil;
+import com.sports.unity.util.network.FirebaseUtil;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -190,10 +192,20 @@ public class MatchListFragment extends Fragment {
                     sw.setThumbDrawable(getResources().getDrawable(R.drawable.ic_all_matches));
                     updateMatchList(isChecked);
                 }
+                logScreensToFireBase(FirebaseUtil.Event.GLOBAL_SCORE_FILTER);
             }
         });
     }
 
+
+    private void logScreensToFireBase(String eventName) {
+        //FIREBASE INTEGRATION
+        {
+            FirebaseAnalytics firebaseAnalytics = FirebaseUtil.getInstance(getActivity());
+            Bundle bundle = new Bundle();
+            FirebaseUtil.logEvent(firebaseAnalytics, bundle, eventName);
+        }
+    }
     private void updateMatchList(boolean isChecked) {
         matchListWrapperAdapter.updateMatches(isChecked);
     }
@@ -202,6 +214,7 @@ public class MatchListFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.action_search) {
+            logScreensToFireBase(FirebaseUtil.Event.SCORE_SEARCH);
             Intent intent = new Intent(getActivity(), GlobalSearchActivity.class);
             intent.putExtra(Constants.INTENT_KEY_GLOBAL_POSITION, 0);
             startActivity(intent);
@@ -209,6 +222,7 @@ public class MatchListFragment extends Fragment {
         }
 
         if (id == com.sports.unity.R.id.action_filter) {
+            logScreensToFireBase(FirebaseUtil.Event.SCORE_FILTER);
             Intent i = new Intent(getActivity(), FilterActivity.class);
             i.putExtra(Constants.KEY_ORIGIN_ACTIVITY, Constants.SCORE_ACTIVITY);
             startActivityForResult(i, Constants.REQUEST_CODE_SCORE);
@@ -638,6 +652,7 @@ public class MatchListFragment extends Fragment {
 
     private void showErrorLayout(View view) {
         if (matches.size() == 0) {
+            logScreensToFireBase(FirebaseUtil.Event.DATA_ERROR);
             ViewGroup errorLayout = (ViewGroup) view.findViewById(R.id.error);
             errorLayout.setVisibility(View.VISIBLE);
             CustomComponentListener.renderAppropriateErrorLayout(errorLayout);

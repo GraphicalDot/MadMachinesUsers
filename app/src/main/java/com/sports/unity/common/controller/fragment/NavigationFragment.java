@@ -19,6 +19,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.R;
 import com.sports.unity.common.controller.About;
@@ -37,6 +38,7 @@ import com.sports.unity.common.model.UserUtil;
 import com.sports.unity.scores.model.ScoresContentHandler;
 import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
+import com.sports.unity.util.network.FirebaseUtil;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -125,6 +127,7 @@ public class NavigationFragment extends Fragment implements ExpandableListView.O
         @Override
         public void onClick(View v) {
             if (v.getId() == R.id.settings) {
+                logScreensToFireBase(FirebaseUtil.Event.SETTINGS);
                 ((MainActivity) getActivity()).closeDrawer();
                 Intent intent = new Intent(getActivity(), SettingsActivity.class);
                 startActivity(intent);
@@ -138,6 +141,7 @@ public class NavigationFragment extends Fragment implements ExpandableListView.O
                 ((MainActivity) getActivity()).closeDrawer();
                 openAboutPage();
             } else if (v.getId() == R.id.friend_requests) {
+                logScreensToFireBase(FirebaseUtil.Event.FRIEND_REQUEST);
                 Intent intent = new Intent(getActivity(), FriendRequestsActivity.class);
                 startActivity(intent);
                 ((MainActivity) getActivity()).closeDrawer();
@@ -400,6 +404,20 @@ public class NavigationFragment extends Fragment implements ExpandableListView.O
     }
 
     private void onClickListnerForTeamAndLeague(FavouriteItem f, boolean isStaffPicked) {
+        //FIREBASE INTEGRATION
+        {
+            FirebaseAnalytics firebaseAnalytics = FirebaseUtil.getInstance(getActivity());
+            Bundle bundle = new Bundle();
+            bundle.putString(FirebaseUtil.Param.NAME, FirebaseUtil.trimValue(f.getName()));
+            bundle.putString(FirebaseUtil.Param.ID, FirebaseUtil.trimValue(f.getId()));
+            bundle.putString(FirebaseUtil.Param.SPORTS_TYPE, f.getSportsType());
+            bundle.putString(FirebaseUtil.Param.FILTER_TYPE, f.getFilterType());
+            if (!isStaffPicked) {
+                FirebaseUtil.logEvent(firebaseAnalytics, bundle, FirebaseUtil.Event.NAV_FAV_DETAIL);
+            } else {
+                FirebaseUtil.logEvent(firebaseAnalytics, bundle, FirebaseUtil.Event.STAFF_PICK_DETAIL);
+            }
+        }
         Intent intent = new Intent(getContext(), TeamLeagueDetails.class);
         intent.putExtra(Constants.INTENT_TEAM_LEAGUE_DETAIL_EXTRA, f.getJsonObject().toString());
         intent.putExtra(Constants.SPORTS_TYPE_STAFF, isStaffPicked);
@@ -430,6 +448,15 @@ public class NavigationFragment extends Fragment implements ExpandableListView.O
             sportsList.expandGroup(0);
             ((MainActivity) getActivity()).closeDrawer();
 
+        }
+    }
+
+    private void logScreensToFireBase(String screen) {
+        //FIREBASE INTEGRATION
+        {
+            FirebaseAnalytics firebaseAnalytics = FirebaseUtil.getInstance(getActivity());
+            Bundle bundle = new Bundle();
+            FirebaseUtil.logEvent(firebaseAnalytics, bundle, screen);
         }
     }
 
@@ -470,7 +497,7 @@ public class NavigationFragment extends Fragment implements ExpandableListView.O
                 }
                 break;
             case R.id.edit_sports:
-
+                logScreensToFireBase(FirebaseUtil.Event.EDIT_SPORTS);
                 Intent selectSports = new Intent(getActivity(), SelectSportsActivity.class);
                 selectSports.putExtra(Constants.RESULT_REQUIRED, true);
                 startActivityForResult(selectSports, Constants.REQUEST_CODE_EDIT_SPORT);
