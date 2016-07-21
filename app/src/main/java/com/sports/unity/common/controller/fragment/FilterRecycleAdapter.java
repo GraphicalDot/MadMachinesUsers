@@ -94,7 +94,7 @@ public class FilterRecycleAdapter extends RecyclerView.Adapter<FilterRecycleAdap
                         } else {
                             bundle.putBoolean(FirebaseUtil.Param.PROFILE_CREATION, false);
                         }
-                        FirebaseUtil.logEvent(firebaseAnalytics, bundle, FirebaseUtil.Event.FAV_SELECTION);
+                        FirebaseUtil.logEvent(firebaseAnalytics, bundle, FirebaseUtil.Event.FAV_SELECTION + "_" + favouriteItem.getSportsType().substring(0, 1) + "_" + favouriteItem.getFilterType());
                     }
                 }
                 favouriteItem.setChecked(!favouriteItem.isChecked());

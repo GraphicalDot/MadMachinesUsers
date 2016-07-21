@@ -22,7 +22,6 @@ import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.appindexing.Action;
@@ -192,7 +191,7 @@ public class MatchListFragment extends Fragment {
                     sw.setThumbDrawable(getResources().getDrawable(R.drawable.ic_all_matches));
                     updateMatchList(isChecked);
                 }
-                logScreensToFireBase(FirebaseUtil.Event.GLOBAL_SCORE_FILTER);
+                logScreensToFireBase(FirebaseUtil.Event.FAV_SCORE_FILTER);
             }
         });
     }

@@ -93,7 +93,7 @@ public class FilterAdapter extends BaseAdapter implements StickyListHeadersAdapt
                             bundle.putString(FirebaseUtil.Param.ID, FirebaseUtil.trimValue(playerId));
                             bundle.putString(FirebaseUtil.Param.SPORTS_TYPE, sportsType);
                             bundle.putString(FirebaseUtil.Param.FILTER_TYPE, filterType);
-                            FirebaseUtil.logEvent(firebaseAnalytics, bundle, FirebaseUtil.Event.FILTER_FAV_DETAIL);
+                            FirebaseUtil.logEvent(firebaseAnalytics, bundle, FirebaseUtil.Event.FILTER_FAV_DETAIL + "_" + sportsType.substring(0, 1) + "_" + filterType);
                         }
                         playerProfileDetails.playerProfile(playerName, playerId, sportsType, filterType);
                     }
@@ -130,7 +130,7 @@ public class FilterAdapter extends BaseAdapter implements StickyListHeadersAdapt
                         Bundle bundle = new Bundle();
                         bundle.putString(FirebaseUtil.Param.SPORTS_TYPE, Constants.SPORTS_TYPE_CRICKET);
                         bundle.putString(FirebaseUtil.Param.FILTER_TYPE, mData.get(0).getFilterType());
-                        FirebaseUtil.logEvent(firebaseAnalytics, bundle, FirebaseUtil.Event.FILTER_EDIT_CLICK);
+                        FirebaseUtil.logEvent(firebaseAnalytics, bundle, FirebaseUtil.Event.FILTER_EDIT_CLICK + "_" + "c" + "_" + mData.get(0).getFilterType());
                     }
                     Intent intent = new Intent(new Intent(context, AdvancedFilterActivity.class));
                     intent.putExtra(Constants.SPORTS_TYPE, Constants.SPORTS_TYPE_CRICKET);
@@ -152,7 +152,7 @@ public class FilterAdapter extends BaseAdapter implements StickyListHeadersAdapt
                         Bundle bundle = new Bundle();
                         bundle.putString(FirebaseUtil.Param.SPORTS_TYPE, Constants.SPORTS_TYPE_FOOTBALL);
                         bundle.putString(FirebaseUtil.Param.FILTER_TYPE, mData.get(0).getFilterType());
-                        FirebaseUtil.logEvent(firebaseAnalytics, bundle, FirebaseUtil.Event.FILTER_EDIT_CLICK);
+                        FirebaseUtil.logEvent(firebaseAnalytics, bundle, FirebaseUtil.Event.FILTER_EDIT_CLICK + "_" + "f" + "_" + mData.get(0).getFilterType());
                     }
                     Intent intent = new Intent(new Intent(context, AdvancedFilterActivity.class));
                     intent.putExtra(Constants.SPORTS_TYPE, Constants.SPORTS_TYPE_FOOTBALL);

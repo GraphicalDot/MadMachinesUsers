@@ -19,9 +19,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.appindexing.Action;
@@ -30,11 +28,9 @@ import com.google.firebase.analytics.FirebaseAnalytics;
 import com.sports.unity.R;
 import com.sports.unity.common.controller.FilterActivity;
 import com.sports.unity.common.controller.GlobalSearchActivity;
-import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.common.model.TinyDB;
 import com.sports.unity.common.model.UserUtil;
 import com.sports.unity.common.viewhelper.CustomComponentListener;
-import com.sports.unity.news.controller.activity.NewsSearchActivity;
 import com.sports.unity.news.model.NewsContentHandler;
 import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
@@ -191,7 +187,7 @@ public class NewsFragment extends Fragment implements NewsContentHandler.Content
                 item.setIcon(R.drawable.ic_thumb);
                 TinyDB.getInstance(getActivity()).putBoolean("check", true);
             }
-            logScreensToFireBase(FirebaseUtil.Event.NEWS_CARD);
+            logScreensToFireBase(FirebaseUtil.Event.NEWS_CARD_TYPE);
             addOrUpdateAdapter();
             displayResult();
             return true;

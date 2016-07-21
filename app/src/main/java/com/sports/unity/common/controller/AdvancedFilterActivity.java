@@ -179,20 +179,24 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
             bundle.putString(FirebaseUtil.Param.SPORTS_TYPE, titleText.getText().toString());
             if (titleText.getText().toString().equalsIgnoreCase(Constants.GAME_KEY_CRICKET)) {
                 if (pager.getCurrentItem() == 0) {
+                    FirebaseUtil.logEvent(firebaseAnalytics, bundle, eventName + "_" + "c" + "_" + FirebaseUtil.Param.TEAM);
                     bundle.putString(FirebaseUtil.Param.FILTER_TYPE, FirebaseUtil.Param.TEAM);
                 } else if (pager.getCurrentItem() == 1) {
+                    FirebaseUtil.logEvent(firebaseAnalytics, bundle, eventName + "_" + "c" + "_" + FirebaseUtil.Param.PLAYER);
                     bundle.putString(FirebaseUtil.Param.FILTER_TYPE, FirebaseUtil.Param.PLAYER);
                 }
             } else if (titleText.getText().toString().equalsIgnoreCase(Constants.GAME_KEY_FOOTBALL)) {
                 if (pager.getCurrentItem() == 0) {
+                    FirebaseUtil.logEvent(firebaseAnalytics, bundle, eventName + "_" + "f" + "_" + FirebaseUtil.Param.LEAGUE);
                     bundle.putString(FirebaseUtil.Param.FILTER_TYPE, FirebaseUtil.Param.LEAGUE);
                 } else if (pager.getCurrentItem() == 1) {
+                    FirebaseUtil.logEvent(firebaseAnalytics, bundle, eventName + "_" + "f" + "_" + FirebaseUtil.Param.TEAM);
                     bundle.putString(FirebaseUtil.Param.FILTER_TYPE, FirebaseUtil.Param.TEAM);
                 } else if (pager.getCurrentItem() == 2) {
+                    FirebaseUtil.logEvent(firebaseAnalytics, bundle, eventName + "_" + "f" + "_" + FirebaseUtil.Param.PLAYER);
                     bundle.putString(FirebaseUtil.Param.FILTER_TYPE, FirebaseUtil.Param.PLAYER);
                 }
             }
-            FirebaseUtil.logEvent(firebaseAnalytics, bundle, eventName);
         }
     }
 
