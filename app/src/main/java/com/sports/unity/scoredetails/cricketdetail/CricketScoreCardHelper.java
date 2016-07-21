@@ -22,6 +22,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -204,8 +206,11 @@ public class CricketScoreCardHelper extends BasicVolleyRequestResponseViewHelper
         listDataChild.clear();
         JSONObject scoreCard = dataObject.getJSONObject("scorecard");
         Iterator iterator = scoreCard.keys();
+        iterator = sortIterator(iterator);
 
         while (iterator.hasNext()) {
+
+            String iteratorKey = (String) iterator.next();
 
             JSONArray batting;
             JSONArray bowling;
@@ -213,10 +218,9 @@ public class CricketScoreCardHelper extends BasicVolleyRequestResponseViewHelper
 
             ArrayList<GlobalContentItemObject> finalListToDisplay = new ArrayList<>();
 
-            JSONObject jsonObject = (JSONObject) scoreCard.get(String.valueOf(iterator.next()));
+            JSONObject jsonObject = (JSONObject) scoreCard.get(iteratorKey);
 
             String header = jsonObject.keys().next();
-            Log.i("header", header);
 
             JSONObject innings = (JSONObject) jsonObject.get(header);
 
@@ -248,14 +252,37 @@ public class CricketScoreCardHelper extends BasicVolleyRequestResponseViewHelper
                 }
             }
 
-            listDataHeader.add(header);
-            listDataChild.put(header, finalListToDisplay);
+            String headerText;
+            if (dataObject.getString("match_name").contains("Test") || dataObject.getString("match_name").contains("TEST") || dataObject.getString("series_name").contains("TEST")) {
+                if (!innings.isNull("inning_name")) {
+                    headerText = innings.getString("inning_name");
+                } else {
+                    headerText = header;
+                }
+            } else {
+                if (!innings.isNull("long_name")) {
+                    headerText = innings.getString("long_name");
+                } else {
+                    headerText = innings.getString("short_name");
+                }
+            }
+            listDataHeader.add(headerText);
+            listDataChild.put(headerText, finalListToDisplay);
         }
 
         listAdapter.updateData(listDataHeader, listDataChild);
         listAdapter.notifyDataSetChanged();
         expListView.expandGroup(0);
 
+    }
+
+    private Iterator sortIterator(Iterator iterator) {
+        List<String> sortedList = new ArrayList<>();
+        while (iterator.hasNext()) {
+            sortedList.add((String) iterator.next());
+        }
+        Collections.sort(sortedList);
+        return sortedList.iterator();
     }
 
 
