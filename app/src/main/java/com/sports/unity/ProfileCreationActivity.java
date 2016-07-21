@@ -216,6 +216,7 @@ public class ProfileCreationActivity extends AppCompatActivity implements Activi
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (!nameClick) {
                     logScreensToFireBase(FirebaseUtil.Event.PROFILE_NAME);
+                    nameClick = true;
                 }
             }
 
@@ -226,13 +227,13 @@ public class ProfileCreationActivity extends AppCompatActivity implements Activi
         });
     }
 
-    private void logScreensToFireBase(String screen) {
+    private void logScreensToFireBase(String eventName) {
         //FIREBASE INTEGRATION
         {
             FirebaseAnalytics firebaseAnalytics = FirebaseUtil.getInstance(ProfileCreationActivity.this);
             Bundle bundle = new Bundle();
             bundle.putBoolean(FirebaseUtil.Param.PROFILE_CREATION, true);
-            FirebaseUtil.logEvent(firebaseAnalytics, bundle, screen);
+            FirebaseUtil.logEvent(firebaseAnalytics, bundle, eventName);
         }
     }
 

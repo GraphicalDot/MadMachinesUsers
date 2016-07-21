@@ -32,11 +32,13 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.sports.unity.BuildConfig;
 import com.sports.unity.R;
 import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.common.model.TinyDB;
 import com.sports.unity.util.CommonUtil;
+import com.sports.unity.util.network.FirebaseUtil;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -120,7 +122,7 @@ public class PromoActivity extends CustomAppCompatActivity {
             @Override
             public void onClick(View v) {
                 CommonUtil.openLinkOnBrowser(PromoActivity.this, getResources().getString(R.string.link_of_terms_of_use));
-               // showDetail();
+                // showDetail();
             }
         });
 
@@ -224,7 +226,17 @@ public class PromoActivity extends CustomAppCompatActivity {
         }
     };
 
+    private void logScreensToFireBase(String eventName) {
+        //FIREBASE INTEGRATION
+        {
+            FirebaseAnalytics firebaseAnalytics = FirebaseUtil.getInstance(PromoActivity.this);
+            Bundle bundle = new Bundle();
+            FirebaseUtil.logEvent(firebaseAnalytics, bundle, eventName);
+        }
+    }
+
     private void inviteFriends() {
+logScreensToFireBase(FirebaseUtil.Event.PROMO_INVITE);
         String invitationURL = TinyDB.getInstance(getApplicationContext()).getString(TinyDB.INVITE_URL);
         Intent sendIntent = new Intent();
         sendIntent.setAction(Intent.ACTION_SEND);

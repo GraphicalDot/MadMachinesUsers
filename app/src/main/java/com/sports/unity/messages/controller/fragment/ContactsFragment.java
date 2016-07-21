@@ -72,6 +72,7 @@ public class ContactsFragment extends Fragment implements OnSearchViewQueryListe
             Contacts c = contactListAdapter.getUsedContact().get(position);
 
             if (c.isRegistered()) {
+                logScreensToFireBase(FirebaseUtil.Event.CONTACT_SU);
                 String jid = c.jid;
                 String name = c.getName();
                 int contactId = c.id;
@@ -81,6 +82,7 @@ public class ContactsFragment extends Fragment implements OnSearchViewQueryListe
                 Intent chatScreenIntent = ChatScreenActivity.createChatScreenIntent(getContext(), false, jid, name, contactId, userPicture, blockStatus, c.isOthers(), c.availableStatus, c.status);
                 startActivity(chatScreenIntent);
             } else {
+                logScreensToFireBase(FirebaseUtil.Event.CONTACT_INVITE);
                 CommonUtil.openSMSIntent(c, getContext());
 //                Toast.makeText(getActivity().getApplicationContext(), "Invite to sports Unity!", Toast.LENGTH_SHORT).show();
             }
@@ -88,12 +90,12 @@ public class ContactsFragment extends Fragment implements OnSearchViewQueryListe
 
     };
 
-    private void logScreensToFireBase(String screen) {
+    private void logScreensToFireBase(String eventName) {
         //FIREBASE INTEGRATION
         {
             FirebaseAnalytics firebaseAnalytics = FirebaseUtil.getInstance(getActivity());
             Bundle bundle = new Bundle();
-            FirebaseUtil.logEvent(firebaseAnalytics, bundle, screen);
+            FirebaseUtil.logEvent(firebaseAnalytics, bundle, eventName);
         }
     }
 

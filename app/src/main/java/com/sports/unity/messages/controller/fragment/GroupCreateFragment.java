@@ -96,12 +96,12 @@ public class GroupCreateFragment extends Fragment implements ActivityCompat.OnRe
         ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayShowTitleEnabled(false);
     }
 
-    private void logScreensToFireBase(String screen) {
+    private void logScreensToFireBase(String eventName) {
         //FIREBASE INTEGRATION
         {
             FirebaseAnalytics firebaseAnalytics = FirebaseUtil.getInstance(getActivity());
             Bundle bundle = new Bundle();
-            FirebaseUtil.logEvent(firebaseAnalytics, bundle, screen);
+            FirebaseUtil.logEvent(firebaseAnalytics, bundle, eventName);
         }
     }
 

@@ -441,19 +441,20 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
             chatScreenAdapter.filterSearchQuery("");
         }
     }
-    private void logScreensToFireBase(String screen) {
+
+    private void logScreensToFireBase(String eventName) {
         //FIREBASE INTEGRATION
         {
             FirebaseAnalytics firebaseAnalytics = FirebaseUtil.getInstance(ChatScreenActivity.this);
             Bundle bundle = new Bundle();
-            FirebaseUtil.logEvent(firebaseAnalytics, bundle, screen);
+            FirebaseUtil.logEvent(firebaseAnalytics, bundle, eventName);
         }
     }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat_screen);
-        logScreensToFireBase(FirebaseUtil.Event.OPEN_SPECIFIC_CHAT);
         parentLayout = (ViewGroup) findViewById(R.id.chat_layout_root_view);
 
         chatKeyboardHelper = ChatKeyboardHelper.getInstance(true);
@@ -468,7 +469,11 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
         addBlockLayout = (LinearLayout) findViewById(R.id.add_block_layout);
 
         getIntentExtras();
-
+        if(!isGroupChat){
+            logScreensToFireBase(FirebaseUtil.Event.OPEN_SPECIFIC_CHAT);
+        }else{
+            logScreensToFireBase(FirebaseUtil.Event.OPEN_GROUP_CHAT);
+        }
         boolean isPending = SportsUnityDBHelper.getInstance(this).isRequestPending(jabberId);
         initToolbar();
 //        hideStatusIfUserBlocked();
@@ -683,7 +688,11 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
         profile_link.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                logScreensToFireBase(FirebaseUtil.Event.CHAT_VIEW_PROFILE);
+                if (isGroupChat) {
+                    logScreensToFireBase(FirebaseUtil.Event.GROUP_VIEW_PROFILE);
+                } else {
+                    logScreensToFireBase(FirebaseUtil.Event.CHAT_VIEW_PROFILE);
+                }
                 int contactStatus = ChatScreenActivity.this.getIntent().getIntExtra(INTENT_KEY_CONTACT_AVAILABLE_STATUS, Contacts.AVAILABLE_NOT);
                 String status = ChatScreenActivity.this.getIntent().getStringExtra(INTENT_KEY_USER_STATUS);
                 viewProfile(ChatScreenActivity.this, isGroupChat, chatID, userImageBytes, jabberName, jabberId, status, otherChat, contactStatus, blockStatus);
@@ -1262,12 +1271,19 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_view_contact) {
-            logScreensToFireBase(FirebaseUtil.Event.CHAT_VIEW_PROFILE);
+            if (isGroupChat) {
+                logScreensToFireBase(FirebaseUtil.Event.GROUP_VIEW_PROFILE);
+            } else {
+                logScreensToFireBase(FirebaseUtil.Event.CHAT_VIEW_PROFILE);
+            }
             int contactStatus = ChatScreenActivity.this.getIntent().getIntExtra(INTENT_KEY_CONTACT_AVAILABLE_STATUS, Contacts.AVAILABLE_NOT);
             String status = ChatScreenActivity.this.getIntent().getStringExtra(INTENT_KEY_USER_STATUS);
             viewProfile(ChatScreenActivity.this, isGroupChat, chatID, userImageBytes, jabberName, jabberId, status, otherChat, contactStatus, blockStatus);
             return true;
         } else if (id == R.id.action_block_user) {
+            if (!blockUnblockUserHelper.isBlockStatus()) {
+                logScreensToFireBase(FirebaseUtil.Event.BLOCK_USER);
+            }
             blockUnblockUserHelper.onMenuItemSelected(this, chatID, jabberId, menu);
         } else if (id == R.id.action_clear_chat) {
             showAlertDialogToClearChat();

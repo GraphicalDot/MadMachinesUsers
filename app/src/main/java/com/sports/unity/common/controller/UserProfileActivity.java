@@ -409,12 +409,12 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
 
     }
 
-    private void logScreensToFireBase(String screen) {
+    private void logScreensToFireBase(String eventName) {
         //FIREBASE INTEGRATION
         {
             FirebaseAnalytics firebaseAnalytics = FirebaseUtil.getInstance(UserProfileActivity.this);
             Bundle bundle = new Bundle();
-            FirebaseUtil.logEvent(firebaseAnalytics, bundle, screen);
+            FirebaseUtil.logEvent(firebaseAnalytics, bundle, eventName);
         }
     }
 

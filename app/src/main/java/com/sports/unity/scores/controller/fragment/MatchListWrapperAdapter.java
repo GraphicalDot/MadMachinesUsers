@@ -873,12 +873,12 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
         globalMatchList.addAll(dataItem);
     }
 
-    private void logScreensToFireBase(String screen) {
+    private void logScreensToFireBase(String eventName) {
         //FIREBASE INTEGRATION
         {
             FirebaseAnalytics firebaseAnalytics = FirebaseUtil.getInstance(activity);
             Bundle bundle = new Bundle();
-            FirebaseUtil.logEvent(firebaseAnalytics, bundle, screen);
+            FirebaseUtil.logEvent(firebaseAnalytics, bundle, eventName);
         }
     }
 
