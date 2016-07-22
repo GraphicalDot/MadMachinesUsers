@@ -15,7 +15,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:gravity="center"
-        android:text="No Matches Happening Right Now :("
+        android:text="@string/fav_filter_heading"
         android:textColor="@color/text_color"
         android:textSize="@dimen/font_size_xlarge"
         android:textStyle="bold" />
@@ -28,7 +28,7 @@
         android:layout_marginBottom="@dimen/activity_vertical_margin"
         android:gravity="center"
         android:paddingTop="@dimen/vertical_padding_very_small"
-        android:text="None of you favourite teams are playing right now or Please go and select your favourite teams"
+        android:text="@string/fav_filter_text"
         android:textColor="@color/gray2"
         android:textSize="@dimen/font_size_small_large" />
 
