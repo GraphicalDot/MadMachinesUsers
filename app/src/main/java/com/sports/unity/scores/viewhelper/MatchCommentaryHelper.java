@@ -135,20 +135,22 @@ public class MatchCommentaryHelper extends BasicVolleyRequestResponseViewHelper 
     }
 
     private void renderDisplay() {
-        if (response.size() > 0) {
-            commentaries.clear();
-            commentaries.addAll(response);
-            mAdapter.notifyDataSetChanged();
+        if (response != null) {
+            if (response.size() > 0) {
+                commentaries.clear();
+                commentaries.addAll(response);
+                mAdapter.notifyDataSetChanged();
 
-            response.clear();
-            response = null;
+                response.clear();
+                response = null;
 
-            tvEmptyView.setVisibility(View.GONE);
-        } else {
-            if( commentaries.size() > 0 ){
-                //nothing
+                tvEmptyView.setVisibility(View.GONE);
             } else {
-                tvEmptyView.setVisibility(View.VISIBLE);
+                if (commentaries.size() > 0) {
+                    //nothing
+                } else {
+                    tvEmptyView.setVisibility(View.VISIBLE);
+                }
             }
         }
     }

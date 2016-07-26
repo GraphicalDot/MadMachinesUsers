@@ -29,6 +29,7 @@ import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceAutocomplete;
 import com.google.android.gms.location.places.ui.PlaceSelectionListener;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.sports.unity.R;
 import com.sports.unity.common.controller.CustomAppCompatActivity;
 import com.sports.unity.common.controller.SettingsActivity;
@@ -42,6 +43,7 @@ import com.sports.unity.messages.controller.model.User;
 import com.sports.unity.scores.model.ScoresContentHandler;
 import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
+import com.sports.unity.util.network.FirebaseUtil;
 import com.sports.unity.util.network.LocManager;
 
 import org.json.JSONArray;
@@ -64,6 +66,7 @@ public class PeopleAroundActivity extends CustomAppCompatActivity implements Pla
 
     public static final int fetchDataCode = 001;
 
+    private int defaultRadius = 40000;
     private int radius = 1000;
     private int stepRange = 25;
 
@@ -97,6 +100,15 @@ public class PeopleAroundActivity extends CustomAppCompatActivity implements Pla
             }
         }
     };
+
+    private void logScreensToFireBase(String eventName) {
+        //FIREBASE INTEGRATION
+        {
+            FirebaseAnalytics firebaseAnalytics = FirebaseUtil.getInstance(PeopleAroundActivity.this);
+            Bundle bundle = new Bundle();
+            FirebaseUtil.logEvent(firebaseAnalytics, bundle, eventName);
+        }
+    }
 
     private void handleData(String content, int responseCode) {
         friends.clear();
@@ -228,6 +240,8 @@ public class PeopleAroundActivity extends CustomAppCompatActivity implements Pla
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_people_around);
+
+        radius = defaultRadius;
         CommonUtil.sendAnalyticsData(getApplication(), "PeopleAroundMeScreen");
         tinyDB = TinyDB.getInstance(getApplicationContext());
         initToolbar();
@@ -254,6 +268,32 @@ public class PeopleAroundActivity extends CustomAppCompatActivity implements Pla
 
         int position = getIntent().getIntExtra("tabPosition", 1);
         viewPager.setCurrentItem(position);
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                switch (position) {
+                    case 0:
+                        logScreensToFireBase(FirebaseUtil.Event.PAM_FRIENDS_TAB);
+                        break;
+                    case 1:
+                        logScreensToFireBase(FirebaseUtil.Event.PAM_SU_TAB);
+                        break;
+                    case 2:
+                        logScreensToFireBase(FirebaseUtil.Event.PAM_SIMILAR_TAB);
+                        break;
+                }
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
 
     }
 
@@ -447,6 +487,8 @@ public class PeopleAroundActivity extends CustomAppCompatActivity implements Pla
         distanceText.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoCondensedBold());
         SeekBar seekDistance = (SeekBar) findViewById(R.id.distance_seekbar);
         seekDistance.setMax(100);
+        seekDistance.setProgress(100);
+        seekDistance.setThumb(getResources().getDrawable(R.drawable.ic_distance_slider_40));
         seekDistance.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -460,6 +502,7 @@ public class PeopleAroundActivity extends CustomAppCompatActivity implements Pla
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
+                logScreensToFireBase(FirebaseUtil.Event.PAM_SLIDER);
                 int progress = seekBar.getProgress();
                 if (mLastKnownLocation == null) {
                     seekBar.setProgress(0);

@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.RecyclerView;
@@ -25,6 +26,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.sports.unity.R;
 import com.sports.unity.common.controller.fragment.StaffPagerAdapter;
 import com.sports.unity.common.model.FavouriteItem;
@@ -44,6 +46,7 @@ import com.sports.unity.scores.model.football.MatchJsonCaller;
 import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
 import com.sports.unity.util.commons.DateUtil;
+import com.sports.unity.util.network.FirebaseUtil;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -354,8 +357,8 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
                             holder.venue.setText(footballMatchJsonCaller.getStadium());
                             holder.date.setVisibility(View.GONE);
 
-                            Glide.with(activity).load(footballMatchJsonCaller.getHomeTeamFlag()).placeholder(R.drawable.ic_no_img).into(holder.t1flag);
-                            Glide.with(activity).load(footballMatchJsonCaller.getAwayTeamFlag()).placeholder(R.drawable.ic_no_img).into(holder.t2flag);
+                            Glide.with(activity).load(footballMatchJsonCaller.getHomeTeamFlag()).placeholder(R.drawable.ic_no_img).dontAnimate().into(holder.t1flag);
+                            Glide.with(activity).load(footballMatchJsonCaller.getAwayTeamFlag()).placeholder(R.drawable.ic_no_img).dontAnimate().into(holder.t2flag);
 
                             holder.team1.setTextColor(activity.getResources().getColor(R.color.ColorPrimaryDark));
                             holder.team2.setTextColor(activity.getResources().getColor(R.color.ColorPrimaryDark));
@@ -546,6 +549,14 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
 
     private void registerNotificationMatch(String key) {
         try {
+            //FIREBASE INTEGRATION
+            {
+                FirebaseAnalytics firebaseAnalytics = FirebaseUtil.getInstance(activity);
+                Bundle bundle = new Bundle();
+                bundle.putString(FirebaseUtil.Param.MATCH_ID, key);
+                bundle.putBoolean(FirebaseUtil.Param.ENABLED, true);
+                FirebaseUtil.logEvent(firebaseAnalytics, bundle, FirebaseUtil.Event.SCORE_NOTIFICATION);
+            }
             tempKey = key;
             tokenRegistrationHandler = TokenRegistrationHandler.getInstance(activity);
             tokenRegistrationHandler.addListener(MatchListWrapperAdapter.this);
@@ -558,6 +569,13 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
 
     private void removeMatchNotification(String key) {
         try {
+            {
+                FirebaseAnalytics firebaseAnalytics = FirebaseUtil.getInstance(activity);
+                Bundle bundle = new Bundle();
+                bundle.putString(FirebaseUtil.Param.MATCH_ID, key);
+                bundle.putBoolean(FirebaseUtil.Param.ENABLED, false);
+                FirebaseUtil.logEvent(firebaseAnalytics, bundle, FirebaseUtil.Event.SCORE_NOTIFICATION);
+            }
             tempKey = key;
             tokenRegistrationHandler = TokenRegistrationHandler.getInstance(activity);
             tokenRegistrationHandler.addListener(MatchListWrapperAdapter.this);
@@ -758,6 +776,11 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
             String seriesId = "";
             String leagueName = "";
             Intent intent = new Intent(activity, ScoreDetailActivity.class);
+
+            //FIREBASE INTEGRATION
+
+            FirebaseAnalytics firebaseAnalytics = FirebaseUtil.getInstance(activity);
+            Bundle bundle = new Bundle();
             if (type.equalsIgnoreCase(ScoresJsonParser.CRICKET)) {
                 cricketMatchJsonCaller.setJsonObject(matchJsonObject);
                 matchId = cricketMatchJsonCaller.getMatchId();
@@ -770,6 +793,8 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
                 date = DateUtil.getDateFromEpochTime(Long.valueOf(cricketMatchJsonCaller.getMatchDateTimeEpoch()) * 1000);
                 seriesId = cricketMatchJsonCaller.getSeriesId();
                 leagueName = cricketMatchJsonCaller.getSeriesName();
+                bundle.putString(FirebaseUtil.Param.SCORE_TEAM_1, FirebaseUtil.trimValue(cricketMatchJsonCaller.getTeam1()));
+                bundle.putString(FirebaseUtil.Param.SCORE_TEAM_2, FirebaseUtil.trimValue(cricketMatchJsonCaller.getTeam2()));
             } else if (type.equalsIgnoreCase(ScoresJsonParser.FOOTBALL)) {
                 footballMatchJsonCaller.setJsonObject(matchJsonObject);
                 matchId = String.valueOf(footballMatchJsonCaller.getMatchId());
@@ -783,8 +808,11 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
                 intent.putExtra(Constants.INTENT_KEY_LEAGUE_ID, footballMatchJsonCaller.getLeagueId());
                 intent.putExtra(Constants.INTENT_KEY_TEAM1_NAME, footballMatchJsonCaller.getHomeTeam());
                 intent.putExtra(Constants.INTENT_KEY_TEAM2_NAME, footballMatchJsonCaller.getAwayTeam());
-
+                bundle.putString(FirebaseUtil.Param.SCORE_TEAM_1, FirebaseUtil.trimValue(footballMatchJsonCaller.getHomeTeam()));
+                bundle.putString(FirebaseUtil.Param.SCORE_TEAM_2, FirebaseUtil.trimValue(footballMatchJsonCaller.getAwayTeam()));
             }
+            bundle.putString(FirebaseUtil.Param.SERIES_NAME, FirebaseUtil.trimValue(leagueName));
+            FirebaseUtil.logEvent(firebaseAnalytics, bundle, FirebaseUtil.Event.SCORE_DETAIL);
             intent.putExtra(Constants.INTENT_KEY_SERIES, seriesId);
             intent.putExtra(Constants.INTENT_KEY_TYPE, type);
             intent.putExtra(Constants.INTENT_KEY_ID, matchId);
@@ -845,13 +873,21 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
         globalMatchList.addAll(dataItem);
     }
 
+    private void logScreensToFireBase(String eventName) {
+        //FIREBASE INTEGRATION
+        {
+            FirebaseAnalytics firebaseAnalytics = FirebaseUtil.getInstance(activity);
+            Bundle bundle = new Bundle();
+            FirebaseUtil.logEvent(firebaseAnalytics, bundle, eventName);
+        }
+    }
 
     class OddsClickListener implements View.OnClickListener {
 
         @Override
         public void onClick(View v) {
             int position = (Integer) v.getTag();
-
+            logScreensToFireBase(FirebaseUtil.Event.SCORE_ODS);
             JSONObject jsonObject = matchDay.get(position).getJsonObject();
             matchJsonCaller.setJsonObject(jsonObject);
             LayoutInflater inflater = activity.getLayoutInflater();
@@ -902,8 +938,8 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
                 } else if (matchJsonCaller.getType().equals(ScoresJsonParser.FOOTBALL)) {
                     footballMatchJsonCaller.setJsonObject(jsonObject);
 
-                    Glide.with(activity).load(footballMatchJsonCaller.getHomeTeamFlag()).placeholder(R.drawable.ic_no_img).into(flag1);
-                    Glide.with(activity).load(footballMatchJsonCaller.getAwayTeamFlag()).placeholder(R.drawable.ic_no_img).into(flag2);
+                    Glide.with(activity).load(footballMatchJsonCaller.getHomeTeamFlag()).placeholder(R.drawable.ic_no_img).dontAnimate().into(flag1);
+                    Glide.with(activity).load(footballMatchJsonCaller.getAwayTeamFlag()).placeholder(R.drawable.ic_no_img).dontAnimate().into(flag2);
 
                     team1.setText(footballMatchJsonCaller.getHomeTeam());
                     team2.setText(footballMatchJsonCaller.getAwayTeam());
@@ -1133,8 +1169,9 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
         int position = addBannerInMatchList();
         this.notifyDataSetChanged();
         listScrollListener.scroll(position);
-
+        listScrollListener.displayEmptyView(matchDay.size() == 0);
     }
+
 
     private int addBannerInMatchList() {
         int position = 0;

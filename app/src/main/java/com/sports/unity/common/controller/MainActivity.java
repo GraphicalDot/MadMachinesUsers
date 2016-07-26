@@ -34,6 +34,7 @@ import android.widget.TextView;
 
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.R;
@@ -53,6 +54,7 @@ import com.sports.unity.messages.controller.model.Contacts;
 import com.sports.unity.peoplearound.PeopleAroundActivity;
 import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
+import com.sports.unity.util.network.FirebaseUtil;
 import com.sports.unity.util.network.LocManager;
 
 import org.json.JSONException;
@@ -109,7 +111,6 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
         super.onCreate(savedInstanceState);
         FavouriteItemWrapper.getInstance(this);
         setContentView(com.sports.unity.R.layout.activity_main);
-
         mixpanel = MixpanelAPI.getInstance(this, projectToken);
         sendMixpaneldata();
 
@@ -186,6 +187,7 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
                 if (fabMenu.isOpened()) {
                     //nothing
                 } else {
+                    logScreensToFireBase(FirebaseUtil.Event.OPEN_FAB_MENU);
                     backgroundDimmer.setVisibility(View.VISIBLE);
                 }
                 fabMenu.toggle(true);
@@ -209,11 +211,13 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
             public void onClick(View v) {
                 if (!PermissionUtil.getInstance().isRuntimePermissionRequired()) {
                     // Intent intent = new Intent(MainActivity.this, PeopleAroundMeMap.class);
+                    logScreensToFireBase(FirebaseUtil.Event.PEOPLE_AROUND_ME);
                     Intent intent = new Intent(MainActivity.this, PeopleAroundActivity.class);
                     startActivity(intent);
                 } else {
                     if (PermissionUtil.getInstance().requestPermission(MainActivity.this, new ArrayList<String>(Arrays.asList(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION)), getResources().getString(R.string.location_permission_message), Constants.REQUEST_CODE_LOCATION_PERMISSION)) {
                         // Intent intent = new Intent(MainActivity.this, PeopleAroundMeMap.class);
+                        logScreensToFireBase(FirebaseUtil.Event.PEOPLE_AROUND_ME);
                         Intent intent = new Intent(MainActivity.this, PeopleAroundActivity.class);
                         startActivity(intent);
                     }
@@ -225,6 +229,7 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
         createGroupFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                logScreensToFireBase(FirebaseUtil.Event.CREATE_GROUP);
                 Intent intent = new Intent(getApplicationContext(), GroupDetailActivity.class);
                 startActivity(intent);
             }
@@ -259,6 +264,7 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
         viewMyProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                logScreensToFireBase(FirebaseUtil.Event.VIEW_PROFILE);
                 Intent intent = new Intent(MainActivity.this, UserProfileActivity.class);
                 intent.putExtra(Constants.IS_OWN_PROFILE, true);
                 intent.putExtra("name", contact.getName());
@@ -426,6 +432,7 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
                             .setContentText("Connect to fans around you")
                             .setDelay(100) // optional but starting animations immediately in onCreate can make them choppy
                             .singleUse(SHOWCASE_ID) // provide a unique ID used to ensure it is only shown once
+                            .setDismissOnTouch(true)
                             .show();
 
                 }
@@ -436,10 +443,13 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
                 }
             }
             if (position == 0) {
+                logScreensToFireBase(FirebaseUtil.Event.SCORE_SCREEN);
                 CommonUtil.sendAnalyticsData(getApplication(), "ScoresScreen");
             } else if (position == 1) {
+                logScreensToFireBase(FirebaseUtil.Event.NEWS_SCREEN);
                 CommonUtil.sendAnalyticsData(getApplication(), "NewsScreen");
             } else if (position == 2) {
+                logScreensToFireBase(FirebaseUtil.Event.MESSAGES_SCREEN);
                 CommonUtil.sendAnalyticsData(getApplication(), "ChatScreen");
             }
         }
@@ -449,6 +459,15 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
 
         }
     };
+
+    private void logScreensToFireBase(String eventName) {
+        //FIREBASE INTEGRATION
+        {
+            FirebaseAnalytics firebaseAnalytics = FirebaseUtil.getInstance(MainActivity.this);
+            Bundle bundle = new Bundle();
+            FirebaseUtil.logEvent(firebaseAnalytics, bundle, eventName);
+        }
+    }
 
     private void setUnreadCountToNull() {
         if (unreadCount != null) {

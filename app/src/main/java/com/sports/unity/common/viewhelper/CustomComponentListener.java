@@ -1,6 +1,7 @@
 package com.sports.unity.common.viewhelper;
 
 import android.content.Context;
+import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,16 +9,24 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.sports.unity.R;
 import com.sports.unity.util.CommonUtil;
+import com.sports.unity.util.network.FirebaseUtil;
 
 /**
  * Created by amandeep on 27/4/16.
  */
 public abstract class CustomComponentListener {
 
-    public static void renderAppropriateErrorLayout(ViewGroup errorLayout){
-        if( CommonUtil.isInternetConnectionAvailable(errorLayout.getContext()) ){
+    public static void renderAppropriateErrorLayout(ViewGroup errorLayout) {
+        if (CommonUtil.isInternetConnectionAvailable(errorLayout.getContext())) {
+            //FIREBASE INTEGRATION
+            {
+                FirebaseAnalytics firebaseAnalytics = FirebaseUtil.getInstance(errorLayout.getContext());
+                Bundle bundle = new Bundle();
+                FirebaseUtil.logEvent(firebaseAnalytics, bundle, FirebaseUtil.Event.DATA_ERROR);
+            }
             {
                 View view = errorLayout.findViewById(R.id.data_error);
                 if (view != null) {
@@ -59,11 +68,11 @@ public abstract class CustomComponentListener {
 
     private int requestStatus = VolleyCallComponentHelper.REQUEST_STATUS_NONE;
 
-    public CustomComponentListener(String requestTag, ProgressBar progressBar, ViewGroup errorLayout){
+    public CustomComponentListener(String requestTag, ProgressBar progressBar, ViewGroup errorLayout) {
         this(requestTag, progressBar, errorLayout, null, null);
     }
 
-    public CustomComponentListener(String requestTag, ProgressBar progressBar, ViewGroup errorLayout, View contentLayout, SwipeRefreshLayout swipeRefreshLayout){
+    public CustomComponentListener(String requestTag, ProgressBar progressBar, ViewGroup errorLayout, View contentLayout, SwipeRefreshLayout swipeRefreshLayout) {
         this.progressBar = progressBar;
         this.errorLayout = errorLayout;
 
@@ -96,31 +105,31 @@ public abstract class CustomComponentListener {
         return requestStatus;
     }
 
-    protected void initErrorLayout(){
+    protected void initErrorLayout() {
         //nothing
     }
 
-    protected boolean isContentLayoutAvailable(){
+    protected boolean isContentLayoutAvailable() {
         return contentLayout != null && contentLayout.getVisibility() == View.VISIBLE;
     }
 
-    protected void initProgress(){
-        if(progressBar != null) {
+    protected void initProgress() {
+        if (progressBar != null) {
             progressBar.getIndeterminateDrawable().setColorFilter(progressBar.getResources().getColor(R.color.app_theme_blue), android.graphics.PorterDuff.Mode.MULTIPLY);
         }
     }
 
-    protected void showErrorLayout(){
+    protected void showErrorLayout() {
         requestStatus = VolleyCallComponentHelper.REQUEST_STATUS_FAILED;
-        if( ! isContentLayoutAvailable() ) {
+        if (!isContentLayoutAvailable()) {
             if (errorLayout != null) {
                 errorLayout.setVisibility(View.VISIBLE);
                 renderAppropriateErrorLayout(errorLayout);
             }
         } else {
-            if( errorLayout != null ) {
+            if (errorLayout != null) {
                 Context context = errorLayout.getContext();
-                if( CommonUtil.isInternetConnectionAvailable(errorLayout.getContext()) ) {
+                if (CommonUtil.isInternetConnectionAvailable(errorLayout.getContext())) {
                     Toast.makeText(context, R.string.oops_try_again, Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(context, R.string.common_message_internet_not_available, Toast.LENGTH_SHORT).show();
@@ -131,25 +140,25 @@ public abstract class CustomComponentListener {
         }
     }
 
-    protected void hideErrorLayout(){
-        if( errorLayout != null  ) {
+    protected void hideErrorLayout() {
+        if (errorLayout != null) {
             errorLayout.setVisibility(View.GONE);
         }
     }
 
-    protected void showProgress(){
-        if( swipeRefreshLayout != null ){
+    protected void showProgress() {
+        if (swipeRefreshLayout != null) {
             swipeRefreshLayout.setRefreshing(true);
         }
-        if( ! isContentLayoutAvailable() ) {
+        if (!isContentLayoutAvailable()) {
             if (progressBar != null) {
                 progressBar.setVisibility(View.VISIBLE);
             }
         }
     }
 
-    protected void hideProgress(){
-        if( swipeRefreshLayout != null ){
+    protected void hideProgress() {
+        if (swipeRefreshLayout != null) {
             swipeRefreshLayout.setRefreshing(false);
         }
         if (progressBar != null) {
@@ -158,6 +167,7 @@ public abstract class CustomComponentListener {
     }
 
     abstract public boolean handleContent(String tag, String content);
+
     abstract public void handleErrorContent(String tag);
 
     abstract public void changeUI(String tag);

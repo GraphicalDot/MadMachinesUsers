@@ -95,7 +95,9 @@
     <string name="please_enter_valid_10_digit_numbers">Please enter a valid 10 digit number</string>
     <string name="confirm">CONFIRM</string>
 
-    <string name="otp_message_verification">Enter the code we just sent you\n</string>
+    <string name="otp_heading">SMS Verification Pending</string>
+    <string name="otp_message_verification">Waiting to automatically detect \n the SMS sent to</string>
+    <string name="otp_time_text">Your SMS should arive within 60 second.</string>
     <string name="otp_message_sending">Sending...</string>
     <string name="otp_message_otp_sent">Otp sent.</string>
     <string name="otp_message_resending_failed">Failed in sending otp, please try again.</string>
@@ -120,6 +122,9 @@
     <string name="news">News</string>
     <string name="messages">Messages</string>
     <string name="title_activity_camera">CameraActivity</string>
+
+    <string name="fav_filter_heading">No Matches Happening Right Now :(</string>
+    <string name="fav_filter_text">None of your favourite teams are playing right now or Please go and select your favourite teams</string>
 
     <string name="send_to">Send to</string>
     <string name="title_activity_on_return">OnReturnActivity</string>
@@ -262,11 +267,11 @@ message to verify your mobile number.</string>
     <!--Share Feedback related-->
 
     <string-array name="receipients">
-        <item>feedback@sportsunity.co</item>
+        <item>info@sportsunity.co</item>
     </string-array>
 
     <string name="sportsunity.co">sportsunity.co</string>
-    <string name="email_subject">Feedback/Questions about Sports Unity</string>
+    <string name="email_subject">Android Feedback/Questions about Sports Unity</string>
 
     <!--About Screen related-->
     <string name="copyright_sportsunity">© COPYRIGHT SPORTSUNITY 2016</string>

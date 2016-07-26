@@ -6,7 +6,9 @@
     android:background="@color/app_theme_blue"
     android:elevation="@dimen/toolbar_elevation"
     android:minHeight="?android:attr/actionBarSize"
-    android:theme="@style/AppHomeTheme">
+    android:theme="@style/AppHomeTheme"
+    app:contentInsetLeft="0dp"
+    app:contentInsetStart="0dp">
 
     <FrameLayout
         android:id="@+id/hamburger_menu"
@@ -17,12 +19,12 @@
         <ImageView
             android:id="@+id/hamburger_icon"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_gravity="center"
+            android:paddingLeft="@dimen/horizontal_padding_small"
             android:paddingRight="@dimen/horizontal_padding_small"
             android:scaleType="center"
-            android:src="@drawable/ic_menu"
-            />
+            android:src="@drawable/ic_menu" />
 
         <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
             android:id="@+id/hamburger_unread"
@@ -61,8 +63,7 @@
         android:text="@string/app_name"
         android:textColor="@android:color/white"
         android:textSize="@dimen/font_size_medium"
-        app:showAsAction="always"
-        />
+        app:showAsAction="always" />
 
     <TextView
         android:id="@+id/select_sports"
@@ -72,7 +73,6 @@
         android:text="Select your favourite Sports"
         android:textColor="@android:color/white"
         android:textSize="@dimen/font_size_medium"
-        android:visibility="gone"
-       />
+        android:visibility="gone" />
 
 </android.support.v7.widget.Toolbar>

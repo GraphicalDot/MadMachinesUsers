@@ -27,6 +27,7 @@ import android.widget.Toast;
 
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.sports.unity.R;
 import com.sports.unity.common.controller.GlobalSearchActivity;
 import com.sports.unity.common.controller.MainActivity;
@@ -41,6 +42,7 @@ import com.sports.unity.util.ActivityActionHandler;
 import com.sports.unity.util.ActivityActionListener;
 import com.sports.unity.util.Constants;
 import com.sports.unity.util.NotificationHandler;
+import com.sports.unity.util.network.FirebaseUtil;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -194,7 +196,14 @@ public class MessagesFragment extends Fragment implements View.OnClickListener, 
         view.setFocusableInTouchMode(true);
         view.requestFocus();
     }
-
+    private void logScreensToFireBase(String eventName) {
+        //FIREBASE INTEGRATION
+        {
+            FirebaseAnalytics firebaseAnalytics = FirebaseUtil.getInstance(getActivity());
+            Bundle bundle = new Bundle();
+            FirebaseUtil.logEvent(firebaseAnalytics, bundle, eventName);
+        }
+    }
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -202,6 +211,7 @@ public class MessagesFragment extends Fragment implements View.OnClickListener, 
                 if (currentFragment instanceof ChatFragment) {
                     //do nothing
                 } else {
+                    logScreensToFireBase(FirebaseUtil.Event.CHAT_FRAG);
                     ChatFragment fragment = new ChatFragment();
                     currentFragment = fragment;
                     mListener = fragment;
@@ -221,6 +231,7 @@ public class MessagesFragment extends Fragment implements View.OnClickListener, 
                 if (currentFragment instanceof ContactsFragment) {
                     //do nothing
                 } else {
+                    logScreensToFireBase(FirebaseUtil.Event.CONTACT_FRAG);
                     Bundle bundle = new Bundle();
                     bundle.putInt(Constants.INTENT_KEY_CONTACT_FRAGMENT_USAGE, ContactsFragment.USAGE_FOR_CONTACTS);
 
@@ -245,6 +256,7 @@ public class MessagesFragment extends Fragment implements View.OnClickListener, 
                 if (currentFragment instanceof OthersFragment) {
                     //do nothing
                 } else {
+                    logScreensToFireBase(FirebaseUtil.Event.OTHER_FRAG);
                     OthersFragment fragment = new OthersFragment();
                     mListener = fragment;
                     currentFragment = fragment;

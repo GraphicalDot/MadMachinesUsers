@@ -42,6 +42,7 @@ import com.bumptech.glide.Glide;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookSdk;
 import com.facebook.login.widget.LoginButton;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.sports.unity.CropImageFragment;
 import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.R;
@@ -65,6 +66,7 @@ import com.sports.unity.util.Constants;
 import com.sports.unity.util.ImageUtil;
 import com.sports.unity.util.ThreadTask;
 import com.sports.unity.util.UserCard;
+import com.sports.unity.util.network.FirebaseUtil;
 
 import org.json.JSONArray;
 
@@ -407,7 +409,17 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
 
     }
 
+    private void logScreensToFireBase(String eventName) {
+        //FIREBASE INTEGRATION
+        {
+            FirebaseAnalytics firebaseAnalytics = FirebaseUtil.getInstance(UserProfileActivity.this);
+            Bundle bundle = new Bundle();
+            FirebaseUtil.logEvent(firebaseAnalytics, bundle, eventName);
+        }
+    }
+
     private void onClickEditButton() {
+        logScreensToFireBase(FirebaseUtil.Event.EDIT_PROFILE);
         favDetails.setVisibility(View.GONE);
         statusView.setVisibility(View.VISIBLE);
 
@@ -650,6 +662,7 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
     }
 
     private void moveToSelectSports() {
+        logScreensToFireBase(FirebaseUtil.Event.EDIT_FAVOURITE);
         Intent intent = new Intent(this, SelectSportsActivity.class);
         intent.putExtra(Constants.RESULT_REQUIRED, true);
         startActivityForResult(intent, Constants.REQUEST_CODE_PROFILE);
@@ -1178,6 +1191,17 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
     }
 
     private void teamAndLeagueDetails(String intentId, String jsonObject) {
+        //FIREBASE INTEGRATION
+        {
+            FirebaseAnalytics firebaseAnalytics = FirebaseUtil.getInstance(UserProfileActivity.this);
+            Bundle bundle = new Bundle();
+            FavouriteItem f = new FavouriteItem(jsonObject);
+            bundle.putString(FirebaseUtil.Param.NAME, FirebaseUtil.trimValue(f.getName()));
+            bundle.putString(FirebaseUtil.Param.ID, FirebaseUtil.trimValue(f.getId()));
+            bundle.putString(FirebaseUtil.Param.SPORTS_TYPE, f.getSportsType());
+            bundle.putString(FirebaseUtil.Param.FILTER_TYPE, f.getFilterType());
+            FirebaseUtil.logEvent(firebaseAnalytics, bundle, FirebaseUtil.Event.PROFILE_FAV_DETAIL+"_"+f.getSportsType().substring(0,1)+"_"+f.getFilterType());
+        }
         Intent intent = new Intent(this, TeamLeagueDetails.class);
         intent.putExtra(intentId, jsonObject);
         startActivity(intent);

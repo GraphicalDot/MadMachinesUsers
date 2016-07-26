@@ -368,8 +368,13 @@ public class GlobalSearchListAdapter extends RecyclerView.Adapter {
     }
 
     private void displayHeader(GlobalContentItemObject contentObject, ViewHolder holder1, int position) {
-        holder1.view.setTag(position);
-        holder1.view.setOnClickListener(onClickListener);
+        holder1.headerShowAll.setTag(position);
+        holder1.headerShowAll.setOnClickListener(onClickListener);
+        if (((GlobalSearchActivity) context).isSpeceficItemSearchEnabled()) {
+            holder1.headerShowAll.setText(GlobalSearchActivity.EMPTY_HEADER_SHOW_ALL);
+        } else {
+            holder1.headerShowAll.setText(GlobalSearchActivity.HEADER_SHOW_ALL);
+        }
         (holder1).headerCategory.setText((CharSequence) contentObject.getObject());
     }
 

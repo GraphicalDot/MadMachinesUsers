@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layout_inning"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/grayBorder"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="@dimen/horizontal_padding_very_very_small"
+        android:paddingLeft="@dimen/horizontal_padding_small"
+        android:paddingRight="@dimen/horizontal_padding_very_very_small"
+        android:paddingTop="@dimen/horizontal_padding_very_very_small">
+
+        <RelativeLayout
+            android:id="@+id/team1_scroll_details"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
+                android:id="@+id/innings"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="left"
+                android:text="Innings"
+                android:textColor="@color/news_static"
+                android:textSize="@dimen/font_size_small_large" />
+
+            <ImageView
+                android:id="@+id/iv_down"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="@dimen/activity_vertical_margin"
+                android:src="@drawable/ic_down_arrow_gray"
+                android:visibility="visible" />
+        </RelativeLayout>
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/gray4" />
+
+</LinearLayout>

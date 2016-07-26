@@ -3,6 +3,7 @@ package com.sports.unity.peoplearound.adapters;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +11,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.R;
 import com.sports.unity.common.model.ContactsHandler;
@@ -18,6 +20,7 @@ import com.sports.unity.messages.controller.model.Contacts;
 import com.sports.unity.messages.controller.model.User;
 import com.sports.unity.peoplearound.PeopleAroundActivity;
 import com.sports.unity.util.CommonUtil;
+import com.sports.unity.util.network.FirebaseUtil;
 
 import java.util.ArrayList;
 
@@ -125,8 +128,22 @@ public class PeopleAroundMeAdapter extends ArrayAdapter<User> {
     private void createContact(String jid, Context context, String name) {
         SportsUnityDBHelper.getInstance(context).addToContacts(name, null, jid, ContactsHandler.getInstance().defaultStatus, null, Contacts.AVAILABLE_BY_PEOPLE_AROUND_ME);
     }
-
+    private void logScreensToFireBase(String eventName) {
+        //FIREBASE INTEGRATION
+        {
+            FirebaseAnalytics firebaseAnalytics = FirebaseUtil.getInstance(context);
+            Bundle bundle = new Bundle();
+            FirebaseUtil.logEvent(firebaseAnalytics, bundle, eventName);
+        }
+    }
     private void moveToChatActivity(Contacts contact) {
+        if(TAG.equalsIgnoreCase(PeopleAroundActivity.FRIENDS_KEY)){
+            logScreensToFireBase(FirebaseUtil.Event.PAM_FRIEND_CHAT);
+        }else if(TAG.equalsIgnoreCase(PeopleAroundActivity.SPU_KEY)){
+            logScreensToFireBase(FirebaseUtil.Event.PAM_SU_CHAT);
+        }else if(TAG.equalsIgnoreCase(PeopleAroundActivity.SIMILAR_USERS_KEY)){
+            logScreensToFireBase(FirebaseUtil.Event.PAM_SIMILAR_CHAT);
+        }
         String name = contact.getName();
         int contactId = contact.id;
         byte[] userPicture = contact.image;

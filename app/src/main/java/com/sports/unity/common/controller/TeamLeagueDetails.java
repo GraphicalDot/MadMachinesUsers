@@ -18,6 +18,7 @@ import com.sports.unity.common.model.FavouriteItem;
 import com.sports.unity.common.model.FavouriteItemWrapper;
 import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.common.view.SlidingTabLayout;
+import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
 
 import java.util.ArrayList;
@@ -61,11 +62,9 @@ public class TeamLeagueDetails extends CustomAppCompatActivity {
     private void initToolbar() {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
-//        toolbar.setBackgroundColor(getResources().getColor(R.color.gray3));
 
         TextView title = (TextView) toolbar.findViewById(R.id.toolbar_filter);
         title.setTypeface(FontTypeface.getInstance(this).getRobotoRegular());
-//        title.setTextColor(getResources().getColor(R.color.ColorPrimaryDark));
         title.setText(name);
 
 
@@ -73,7 +72,7 @@ public class TeamLeagueDetails extends CustomAppCompatActivity {
         next.setVisibility(View.GONE);
 
         ImageView back = (ImageView) toolbar.findViewById(R.id.cancel);
-//        back.setImageResource(R.drawable.ic_menu_back_blk);
+        back.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_BLUE, true));
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

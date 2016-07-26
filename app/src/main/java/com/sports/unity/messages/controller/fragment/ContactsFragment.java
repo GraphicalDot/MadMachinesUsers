@@ -19,6 +19,7 @@ import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.R;
 import com.sports.unity.common.controller.MainActivity;
@@ -32,6 +33,7 @@ import com.sports.unity.messages.controller.model.ToolbarActionsForChatScreen;
 import com.sports.unity.messages.controller.viewhelper.OnSearchViewQueryListener;
 import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
+import com.sports.unity.util.network.FirebaseUtil;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -70,6 +72,7 @@ public class ContactsFragment extends Fragment implements OnSearchViewQueryListe
             Contacts c = contactListAdapter.getUsedContact().get(position);
 
             if (c.isRegistered()) {
+                logScreensToFireBase(FirebaseUtil.Event.CONTACT_SU);
                 String jid = c.jid;
                 String name = c.getName();
                 int contactId = c.id;
@@ -79,6 +82,7 @@ public class ContactsFragment extends Fragment implements OnSearchViewQueryListe
                 Intent chatScreenIntent = ChatScreenActivity.createChatScreenIntent(getContext(), false, jid, name, contactId, userPicture, blockStatus, c.isOthers(), c.availableStatus, c.status);
                 startActivity(chatScreenIntent);
             } else {
+                logScreensToFireBase(FirebaseUtil.Event.CONTACT_INVITE);
                 CommonUtil.openSMSIntent(c, getContext());
 //                Toast.makeText(getActivity().getApplicationContext(), "Invite to sports Unity!", Toast.LENGTH_SHORT).show();
             }
@@ -86,6 +90,14 @@ public class ContactsFragment extends Fragment implements OnSearchViewQueryListe
 
     };
 
+    private void logScreensToFireBase(String eventName) {
+        //FIREBASE INTEGRATION
+        {
+            FirebaseAnalytics firebaseAnalytics = FirebaseUtil.getInstance(getActivity());
+            Bundle bundle = new Bundle();
+            FirebaseUtil.logEvent(firebaseAnalytics, bundle, eventName);
+        }
+    }
 
     private AdapterView.OnItemClickListener memberItemListener = new AdapterView.OnItemClickListener() {
 
@@ -95,13 +107,16 @@ public class ContactsFragment extends Fragment implements OnSearchViewQueryListe
 //            EditText searchContacts = (EditText) view.findViewById(R.id.search_contacts_edittext);
 //            searchContacts.getBackground().setColorFilter(getResources().getColor(R.color.app_theme_blue), PorterDuff.Mode.SRC_IN);
 
-            Boolean isClickableFlag = (Boolean)view.getTag();
-            if( isClickableFlag == null || isClickableFlag == true ) {
+            Boolean isClickableFlag = (Boolean) view.getTag();
+            if (isClickableFlag == null || isClickableFlag == true) {
                 CheckBox checkBox = (CheckBox) view.findViewById(R.id.checkbox);
                 boolean flag = checkBox.isChecked();
 
                 ContactListAdapter contactListAdapter = (ContactListAdapter) contacts.getAdapter();
                 Contacts contacts = contactListAdapter.getUsedContact().get(position);
+                if (usageIn == USAGE_FOR_MEMBERS) {
+                    logScreensToFireBase(FirebaseUtil.Event.GROUP_ADD_MEMBER);
+                }
 
                 if (flag == false) {
                     checkBox.setChecked(true);
@@ -116,7 +131,7 @@ public class ContactsFragment extends Fragment implements OnSearchViewQueryListe
                 int count = contactListAdapter.getPreviouslySelectedMembersList().size() + selectedMembersList.size();
 
                 TextView textView = (TextView) titleLayout.findViewById(R.id.members_count);
-                textView.setText( count + "/50");
+                textView.setText(count + "/50");
 
                 contactListAdapter.refreshSelectedMembers(selectedMembersList);
             } else {
@@ -229,6 +244,8 @@ public class ContactsFragment extends Fragment implements OnSearchViewQueryListe
 //        });
     }
 
+    private boolean nameClicked = false;
+
     private void setContactList(View v) {
         boolean multipleSelection = false;
         int resource = 0;
@@ -261,6 +278,10 @@ public class ContactsFragment extends Fragment implements OnSearchViewQueryListe
 
                 @Override
                 public boolean onQueryTextChange(String newText) {
+                    if (!nameClicked) {
+                        logScreensToFireBase(FirebaseUtil.Event.GROUP_SEARCH_MEMBER);
+                        nameClicked = true;
+                    }
                     filterResults(newText);
                     return true;
                 }
@@ -360,7 +381,7 @@ public class ContactsFragment extends Fragment implements OnSearchViewQueryListe
             adapter.setPreviouslySelectedMembersList(previouslySelectedMembersList);
 
             TextView textView = (TextView) titleLayout.findViewById(R.id.members_count);
-            textView.setText(previouslySelectedMembersList.size()+ "/50");
+            textView.setText(previouslySelectedMembersList.size() + "/50");
         } else {
             //nothing
         }

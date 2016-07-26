@@ -1,10 +1,10 @@
 package com.sports.unity.common.controller.fragment;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.widget.BaseAdapter;
 
 import java.util.ArrayList;
-import java.util.TreeSet;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -12,17 +12,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.sports.unity.R;
 import com.sports.unity.common.controller.AdvancedFilterActivity;
 import com.sports.unity.common.controller.FilterActivity;
 import com.sports.unity.common.controller.PlayerProfileDetails;
 import com.sports.unity.common.model.FavouriteItem;
 import com.sports.unity.common.model.FontTypeface;
-import com.sports.unity.common.model.UserUtil;
 import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
+import com.sports.unity.util.network.FirebaseUtil;
 
 import se.emilsjolander.stickylistheaders.StickyListHeadersAdapter;
 
@@ -41,7 +41,7 @@ public class FilterAdapter extends BaseAdapter implements StickyListHeadersAdapt
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         mData = item;
         this.context = context;
-        if(context instanceof PlayerProfileDetails){
+        if (context instanceof PlayerProfileDetails) {
             playerProfileDetails = (PlayerProfileDetails) context;
         }
     }
@@ -79,12 +79,23 @@ public class FilterAdapter extends BaseAdapter implements StickyListHeadersAdapt
         holder.textView.setText(playerName);
         holder.textView.setTypeface(FontTypeface.getInstance(context).getRobotoRegular());
         holder.textView.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_WHITE, false));
-        if(Constants.FILTER_TYPE_PLAYER.equalsIgnoreCase(filterType)){
+        if (Constants.FILTER_TYPE_PLAYER.equalsIgnoreCase(filterType)) {
             holder.textView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if(playerProfileDetails != null){
-                        playerProfileDetails.playerProfile(playerName,playerId,sportsType,filterType);
+                    if (playerProfileDetails != null) {
+                        //FIREBASE INTEGRATION
+                        {
+                            FirebaseAnalytics firebaseAnalytics = FirebaseUtil.getInstance(context);
+                            Bundle bundle = new Bundle();
+                            String name = playerName;
+                            bundle.putString(FirebaseUtil.Param.NAME, FirebaseUtil.trimValue(name));
+                            bundle.putString(FirebaseUtil.Param.ID, FirebaseUtil.trimValue(playerId));
+                            bundle.putString(FirebaseUtil.Param.SPORTS_TYPE, sportsType);
+                            bundle.putString(FirebaseUtil.Param.FILTER_TYPE, filterType);
+                            FirebaseUtil.logEvent(firebaseAnalytics, bundle, FirebaseUtil.Event.FILTER_FAV_DETAIL + "_" + sportsType.substring(0, 1) + "_" + filterType);
+                        }
+                        playerProfileDetails.playerProfile(playerName, playerId, sportsType, filterType);
                     }
                 }
             });
@@ -102,7 +113,7 @@ public class FilterAdapter extends BaseAdapter implements StickyListHeadersAdapt
             convertView = mInflater.inflate(R.layout.filter_header, null);
             holder.textView = (TextView) convertView.findViewById(R.id.itemtext);
             holder.imageView = (ImageView) convertView.findViewById(R.id.flag);
-            holder.editSport= (TextView) convertView.findViewById(R.id.edit_sports);
+            holder.editSport = (TextView) convertView.findViewById(R.id.edit_sports);
             convertView.setTag(holder);
         } else {
             holder = (HeaderViewHolder) convertView.getTag();
@@ -113,20 +124,36 @@ public class FilterAdapter extends BaseAdapter implements StickyListHeadersAdapt
             holder.editSport.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent = new Intent(new Intent(context,AdvancedFilterActivity.class));
+                    //FIREBASE INTEGRATION
+                    {
+                        FirebaseAnalytics firebaseAnalytics = FirebaseUtil.getInstance(context);
+                        Bundle bundle = new Bundle();
+                        bundle.putString(FirebaseUtil.Param.SPORTS_TYPE, Constants.SPORTS_TYPE_CRICKET);
+                        bundle.putString(FirebaseUtil.Param.FILTER_TYPE, mData.get(0).getFilterType());
+                        FirebaseUtil.logEvent(firebaseAnalytics, bundle, FirebaseUtil.Event.FILTER_EDIT_CLICK + "_" + "c" + "_" + mData.get(0).getFilterType());
+                    }
+                    Intent intent = new Intent(new Intent(context, AdvancedFilterActivity.class));
                     intent.putExtra(Constants.SPORTS_TYPE, Constants.SPORTS_TYPE_CRICKET);
                     intent.putExtra(Constants.SPORTS_FILTER_TYPE, mData.get(0).getFilterType());
                     intent.putExtra(Constants.RESULT_REQUIRED, true);
                     intent.putExtra(Constants.RESULT_SINGLE_USE, true);
-                    ((FilterActivity)context).startActivityForResult(intent, Constants.REQUEST_CODE_ADD_SPORT);
+                    ((FilterActivity) context).startActivityForResult(intent, Constants.REQUEST_CODE_ADD_SPORT);
 
                 }
             });
         } else {
             headerText = "Football";
-            holder.imageView.setImageResource(R.drawable.ic_football);holder.editSport.setOnClickListener(new View.OnClickListener() {
+            holder.imageView.setImageResource(R.drawable.ic_football);
+            holder.editSport.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    {
+                        FirebaseAnalytics firebaseAnalytics = FirebaseUtil.getInstance(context);
+                        Bundle bundle = new Bundle();
+                        bundle.putString(FirebaseUtil.Param.SPORTS_TYPE, Constants.SPORTS_TYPE_FOOTBALL);
+                        bundle.putString(FirebaseUtil.Param.FILTER_TYPE, mData.get(0).getFilterType());
+                        FirebaseUtil.logEvent(firebaseAnalytics, bundle, FirebaseUtil.Event.FILTER_EDIT_CLICK + "_" + "f" + "_" + mData.get(0).getFilterType());
+                    }
                     Intent intent = new Intent(new Intent(context, AdvancedFilterActivity.class));
                     intent.putExtra(Constants.SPORTS_TYPE, Constants.SPORTS_TYPE_FOOTBALL);
                     intent.putExtra(Constants.SPORTS_FILTER_TYPE, mData.get(0).getFilterType());

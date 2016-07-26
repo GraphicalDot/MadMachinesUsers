@@ -19,12 +19,14 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.sports.unity.R;
 import com.sports.unity.common.controller.FilterActivity;
 import com.sports.unity.common.controller.GlobalSearchActivity;
@@ -44,6 +46,7 @@ import com.sports.unity.scores.model.ScoresUtil;
 import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
 import com.sports.unity.util.commons.DateUtil;
+import com.sports.unity.util.network.FirebaseUtil;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -71,6 +74,8 @@ public class MatchListFragment extends Fragment {
     private MatchListWrapperAdapter matchListWrapperAdapter;
     private RecyclerView mWraperRecyclerView;
 
+    private LinearLayout emptyTextView;
+
     private ArrayList<JSONObject> matches = new ArrayList<>();
     private ScoresContentListener contentListener = new ScoresContentListener();
 
@@ -90,8 +95,8 @@ public class MatchListFragment extends Fragment {
 
     private GoogleApiClient mClient;
     private Uri mUrl;
-    private String mTitle="Live Scores";
-    private String mDescription="Live minute by minute commentary and updated scores of all the matches happening, plus get notified for the ones you love most.";
+    private String mTitle = "Live Scores";
+    private String mDescription = "Live minute by minute commentary and updated scores of all the matches happening, plus get notified for the ones you love most.";
 
     MatchListScrollListener matchListScrollListener = new MatchListScrollListener() {
         @Override
@@ -101,6 +106,19 @@ public class MatchListFragment extends Fragment {
                 manager.scrollToPosition(position);
             }
         }
+
+        @Override
+        public void displayEmptyView(boolean isEmpty) {
+            if (isEmpty) {
+                mWraperRecyclerView.setVisibility(View.GONE);
+                emptyTextView.setVisibility(View.VISIBLE);
+            } else {
+                mWraperRecyclerView.setVisibility(View.VISIBLE);
+                emptyTextView.setVisibility(View.GONE);
+            }
+        }
+
+
     };
 
     @Override
@@ -114,7 +132,7 @@ public class MatchListFragment extends Fragment {
             scoreDetailsId = favouriteItem.getId();
         }
 
-        mUrl=Uri.parse("android-app://co.sports.unity/mobileapp/sportsunity.co/matches");
+        mUrl = Uri.parse("android-app://co.sports.unity/mobileapp/sportsunity.co/matches");
         mClient = CommonUtil.getAppIndexingClient(getActivity());
     }
 
@@ -141,6 +159,7 @@ public class MatchListFragment extends Fragment {
             sportsSelectedNum = UserUtil.getScoreFilterSportsSelected().size();
             sportSelected = UserUtil.getScoreFilterSportsSelected();
         }
+        emptyTextView = (LinearLayout) view.findViewById(R.id.empty_matchlist_text);
         return view;
     }
 
@@ -172,10 +191,20 @@ public class MatchListFragment extends Fragment {
                     sw.setThumbDrawable(getResources().getDrawable(R.drawable.ic_all_matches));
                     updateMatchList(isChecked);
                 }
+                logScreensToFireBase(FirebaseUtil.Event.FAV_SCORE_FILTER);
             }
         });
     }
 
+
+    private void logScreensToFireBase(String eventName) {
+        //FIREBASE INTEGRATION
+        {
+            FirebaseAnalytics firebaseAnalytics = FirebaseUtil.getInstance(getActivity());
+            Bundle bundle = new Bundle();
+            FirebaseUtil.logEvent(firebaseAnalytics, bundle, eventName);
+        }
+    }
     private void updateMatchList(boolean isChecked) {
         matchListWrapperAdapter.updateMatches(isChecked);
     }
@@ -184,6 +213,7 @@ public class MatchListFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.action_search) {
+            logScreensToFireBase(FirebaseUtil.Event.SCORE_SEARCH);
             Intent intent = new Intent(getActivity(), GlobalSearchActivity.class);
             intent.putExtra(Constants.INTENT_KEY_GLOBAL_POSITION, 0);
             startActivity(intent);
@@ -191,6 +221,7 @@ public class MatchListFragment extends Fragment {
         }
 
         if (id == com.sports.unity.R.id.action_filter) {
+            logScreensToFireBase(FirebaseUtil.Event.SCORE_FILTER);
             Intent i = new Intent(getActivity(), FilterActivity.class);
             i.putExtra(Constants.KEY_ORIGIN_ACTIVITY, Constants.SCORE_ACTIVITY);
             startActivityForResult(i, Constants.REQUEST_CODE_SCORE);
@@ -620,6 +651,7 @@ public class MatchListFragment extends Fragment {
 
     private void showErrorLayout(View view) {
         if (matches.size() == 0) {
+            logScreensToFireBase(FirebaseUtil.Event.DATA_ERROR);
             ViewGroup errorLayout = (ViewGroup) view.findViewById(R.id.error);
             errorLayout.setVisibility(View.VISIBLE);
             CustomComponentListener.renderAppropriateErrorLayout(errorLayout);
