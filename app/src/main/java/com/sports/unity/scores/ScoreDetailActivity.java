@@ -721,8 +721,8 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity {
                     widgetTeamSecond = widgetTeamsObject.getJSONArray("2");
                 }
 
-                String homeTeam = cricketMatchJsonCaller.getTeam1();
-                String awayTeam = cricketMatchJsonCaller.getTeam2();
+                String homeTeamShort = cricketMatchJsonCaller.getTeam1Short();
+                String awayTeamShort = cricketMatchJsonCaller.getTeam2Short();
                 Glide.with(this).load(cricketMatchJsonCaller.getTeam1Flag()).placeholder(R.drawable.ic_no_img).dontAnimate().into(flag1);
                 Glide.with(this).load(cricketMatchJsonCaller.getTeam2Flag()).placeholder(R.drawable.ic_no_img).dontAnimate().into(flag2);
 
@@ -769,8 +769,8 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity {
 
                     tvCurrentScore.setText(cricketMatchJsonCaller.getMatchResult());
                     tvCurrentScore.setText(DateUtil.getDayFromEpochTime((Long.valueOf(cricketMatchJsonCaller.getMatchDateTimeEpoch()) * 1000), this));
-                    team1Score.setText(cricketMatchJsonCaller.getTeam1());
-                    team2Score.setText(cricketMatchJsonCaller.getTeam2());
+                    team1Score.setText(awayTeamShort);
+                    team2Score.setText(homeTeamShort);
 
                 } else {
                     team1Name.setText(cricketMatchJsonCaller.getTeam1Short());
