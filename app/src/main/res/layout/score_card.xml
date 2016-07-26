@@ -95,16 +95,16 @@
 
         <ImageView
             android:id="@+id/t1flag"
-            android:layout_width="@dimen/flag_size_large"
-            android:layout_height="wrap_content"
+            android:layout_width="@dimen/flag_size_small"
+            android:layout_height="@dimen/flag_size_small"
             android:layout_centerInParent="true"
             android:layout_marginLeft="@dimen/activity_horizontal_margin"
             android:layout_toLeftOf="@+id/center_data" />
 
         <ImageView
             android:id="@+id/t2flag"
-            android:layout_width="@dimen/flag_size_large"
-            android:layout_height="wrap_content"
+            android:layout_width="@dimen/flag_size_small"
+            android:layout_height="@dimen/flag_size_small"
             android:layout_centerInParent="true"
             android:layout_marginRight="@dimen/activity_horizontal_margin"
             android:layout_toRightOf="@+id/center_data" />

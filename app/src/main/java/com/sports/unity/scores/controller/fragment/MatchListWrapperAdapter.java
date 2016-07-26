@@ -938,8 +938,8 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
                 } else if (matchJsonCaller.getType().equals(ScoresJsonParser.FOOTBALL)) {
                     footballMatchJsonCaller.setJsonObject(jsonObject);
 
-                    Glide.with(activity).load(footballMatchJsonCaller.getHomeTeamFlag()).placeholder(R.drawable.ic_no_img).into(flag1);
-                    Glide.with(activity).load(footballMatchJsonCaller.getAwayTeamFlag()).placeholder(R.drawable.ic_no_img).into(flag2);
+                    Glide.with(activity).load(footballMatchJsonCaller.getHomeTeamFlag()).placeholder(R.drawable.ic_no_img).dontAnimate().into(flag1);
+                    Glide.with(activity).load(footballMatchJsonCaller.getAwayTeamFlag()).placeholder(R.drawable.ic_no_img).dontAnimate().into(flag2);
 
                     team1.setText(footballMatchJsonCaller.getHomeTeam());
                     team2.setText(footballMatchJsonCaller.getAwayTeam());
