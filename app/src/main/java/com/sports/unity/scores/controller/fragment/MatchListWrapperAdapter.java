@@ -357,8 +357,8 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
                             holder.venue.setText(footballMatchJsonCaller.getStadium());
                             holder.date.setVisibility(View.GONE);
 
-                            Glide.with(activity).load(footballMatchJsonCaller.getHomeTeamFlag()).placeholder(R.drawable.ic_no_img).into(holder.t1flag);
-                            Glide.with(activity).load(footballMatchJsonCaller.getAwayTeamFlag()).placeholder(R.drawable.ic_no_img).into(holder.t2flag);
+                            Glide.with(activity).load(footballMatchJsonCaller.getHomeTeamFlag()).placeholder(R.drawable.ic_no_img).dontAnimate().into(holder.t1flag);
+                            Glide.with(activity).load(footballMatchJsonCaller.getAwayTeamFlag()).placeholder(R.drawable.ic_no_img).dontAnimate().into(holder.t2flag);
 
                             holder.team1.setTextColor(activity.getResources().getColor(R.color.ColorPrimaryDark));
                             holder.team2.setTextColor(activity.getResources().getColor(R.color.ColorPrimaryDark));
