@@ -339,7 +339,10 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity {
         }, Constants.SCORE_REFRESH_TIME_DURATION, Constants.SCORE_REFRESH_TIME_DURATION);
     }
 
+    private boolean isAutorefresh = false;
+
     private void autoRefreshCall() {
+        isAutorefresh = true;
         requestMatchScoreDetails();
 
         runOnUiThread(new Runnable() {
@@ -372,7 +375,11 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity {
 
         @Override
         public void onPageSelected(int position) {
-            handlePageChange(position);
+            if (!isAutorefresh) {
+                handlePageChange(position);
+            } else {
+                isAutorefresh = false;
+            }
         }
 
         @Override
@@ -966,6 +973,7 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity {
             ScoreDetailActivity.this.setTitle();
             ScoreDetailActivity.this.renderScores();
             shareImage.setVisibility(View.VISIBLE);
+            mViewPager.removeOnPageChangeListener(pageChangeListener);
             trackEvents = true;
             initView();
             if (!isMatchLive()) {

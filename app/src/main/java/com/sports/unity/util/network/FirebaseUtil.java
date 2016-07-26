@@ -92,7 +92,7 @@ public class FirebaseUtil {
 
         public static final String NEWS_SCREEN = "news_screen";
         public static final String SCORE_SCREEN = "score_screen";
-        public static final String CHAT_SCREEN = "chat_screen";
+        public static final String MESSAGES_SCREEN = "messages_screen";
 
         public static final String NEWS_DETAIL = "news_dtl";
         public static final String NEWS_SHARE = "news_share";

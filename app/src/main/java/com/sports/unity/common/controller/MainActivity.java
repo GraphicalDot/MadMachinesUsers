@@ -54,7 +54,6 @@ import com.sports.unity.messages.controller.model.Contacts;
 import com.sports.unity.peoplearound.PeopleAroundActivity;
 import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
-import com.sports.unity.util.SystemUiHider;
 import com.sports.unity.util.network.FirebaseUtil;
 import com.sports.unity.util.network.LocManager;
 
@@ -450,7 +449,7 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
                 logScreensToFireBase(FirebaseUtil.Event.NEWS_SCREEN);
                 CommonUtil.sendAnalyticsData(getApplication(), "NewsScreen");
             } else if (position == 2) {
-                logScreensToFireBase(FirebaseUtil.Event.CHAT_SCREEN);
+                logScreensToFireBase(FirebaseUtil.Event.MESSAGES_SCREEN);
                 CommonUtil.sendAnalyticsData(getApplication(), "ChatScreen");
             }
         }

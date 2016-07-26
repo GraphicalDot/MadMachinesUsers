@@ -1200,7 +1200,7 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
             bundle.putString(FirebaseUtil.Param.ID, FirebaseUtil.trimValue(f.getId()));
             bundle.putString(FirebaseUtil.Param.SPORTS_TYPE, f.getSportsType());
             bundle.putString(FirebaseUtil.Param.FILTER_TYPE, f.getFilterType());
-            FirebaseUtil.logEvent(firebaseAnalytics, bundle, FirebaseUtil.Event.PROFILE_FAV_DETAIL);
+            FirebaseUtil.logEvent(firebaseAnalytics, bundle, FirebaseUtil.Event.PROFILE_FAV_DETAIL+"_"+f.getSportsType().substring(0,1)+"_"+f.getFilterType());
         }
         Intent intent = new Intent(this, TeamLeagueDetails.class);
         intent.putExtra(intentId, jsonObject);

@@ -122,7 +122,7 @@
     <string name="news">News</string>
     <string name="messages">Messages</string>
     <string name="title_activity_camera">CameraActivity</string>
-    
+
     <string name="fav_filter_heading">No Matches Happening Right Now :(</string>
     <string name="fav_filter_text">None of your favourite teams are playing right now or Please go and select your favourite teams</string>
 
@@ -267,11 +267,11 @@ message to verify your mobile number.</string>
     <!--Share Feedback related-->
 
     <string-array name="receipients">
-        <item>feedback@sportsunity.co</item>
+        <item>info@sportsunity.co</item>
     </string-array>
 
     <string name="sportsunity.co">sportsunity.co</string>
-    <string name="email_subject">Feedback/Questions about Sports Unity</string>
+    <string name="email_subject">Android Feedback/Questions about Sports Unity</string>
 
     <!--About Screen related-->
     <string name="copyright_sportsunity">© COPYRIGHT SPORTSUNITY 2016</string>

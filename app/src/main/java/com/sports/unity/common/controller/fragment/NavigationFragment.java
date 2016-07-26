@@ -413,7 +413,7 @@ public class NavigationFragment extends Fragment implements ExpandableListView.O
             bundle.putString(FirebaseUtil.Param.SPORTS_TYPE, f.getSportsType());
             bundle.putString(FirebaseUtil.Param.FILTER_TYPE, f.getFilterType());
             if (!isStaffPicked) {
-                FirebaseUtil.logEvent(firebaseAnalytics, bundle, FirebaseUtil.Event.NAV_FAV_DETAIL);
+                FirebaseUtil.logEvent(firebaseAnalytics, bundle, FirebaseUtil.Event.NAV_FAV_DETAIL + "_" + f.getSportsType().substring(0, 1) + "_" + f.getFilterType());
             } else {
                 FirebaseUtil.logEvent(firebaseAnalytics, bundle, FirebaseUtil.Event.STAFF_PICK_DETAIL);
             }
