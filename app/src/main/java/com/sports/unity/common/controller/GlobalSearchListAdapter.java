@@ -19,6 +19,7 @@ import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.R;
 import com.sports.unity.common.model.FavouriteItem;
 import com.sports.unity.common.model.FavouriteItemWrapper;
+import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.common.model.GlobalContentItemObject;
 import com.sports.unity.common.model.TinyDB;
 import com.sports.unity.messages.controller.activity.ChatScreenActivity;
@@ -40,6 +41,7 @@ import org.joda.time.LocalDate;
 import org.joda.time.Minutes;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -229,6 +231,7 @@ public class GlobalSearchListAdapter extends RecyclerView.Adapter {
                 holder1.matchDay.setVisibility(View.VISIBLE);
                 holder1.matchName.setVisibility(View.VISIBLE);
                 holder1.score.setVisibility(View.GONE);
+                holder1.liveText.setVisibility(View.GONE);
 
                 holder1.matchProgress.setVisibility(View.GONE);
                 holder1.venue.setText(matchObject.getString("venue"));
@@ -253,7 +256,13 @@ public class GlobalSearchListAdapter extends RecyclerView.Adapter {
                     holder1.homeTeam.setText(hometeamScore);
                     Glide.with(context).load(homeTeamObject.getString("team_image")).placeholder(R.drawable.ic_blank_img).dontAnimate().into(holder1.homeTeamFlag);
                     holder1.t1overs.setText(homeTeamObject.getString("overs"));
-                    holder1.matchDay.setText("v/s");
+                    if (matchObject.getString("status").equalsIgnoreCase("L")) {
+                        holder1.matchDay.setVisibility(View.GONE);
+                        holder1.liveText.setVisibility(View.VISIBLE);
+                        holder1.liveText.setTypeface(FontTypeface.getInstance(context).getRobotoCondensedBold());
+                    } else {
+                        holder1.matchDay.setText("v/s");
+                    }
                 }
                 holder1.matchName.setText(matchObject.getString("match_number"));
                 for (FavouriteItem favItem : favouriateTeams) {
@@ -267,6 +276,7 @@ public class GlobalSearchListAdapter extends RecyclerView.Adapter {
                 holder1.t2overs.setVisibility(View.GONE);
                 holder1.matchDay.setVisibility(View.GONE);
                 holder1.matchName.setVisibility(View.GONE);
+                holder1.liveText.setVisibility(View.GONE);
 
                 holder1.awayTeam.setText(matchObject.getString("away_team"));
                 holder1.homeTeam.setText(matchObject.getString("home_team"));
@@ -672,6 +682,7 @@ public class GlobalSearchListAdapter extends RecyclerView.Adapter {
         public TextView date;
         public TextView t1overs;
         public TextView t2overs;
+        public TextView liveText;
         public ImageView homeTeamFlag;
         public ImageView awayTeamFlag;
         public ImageView favoriateTag;
@@ -702,6 +713,7 @@ public class GlobalSearchListAdapter extends RecyclerView.Adapter {
                 date = (TextView) itemView.findViewById(R.id.date);
                 t1overs = (TextView) itemView.findViewById(R.id.t1over);
                 t2overs = (TextView) itemView.findViewById(R.id.t2over);
+                liveText = (TextView) itemView.findViewById(R.id.liveText);
 
                 homeTeamFlag = (ImageView) itemView.findViewById(R.id.t1flag);
                 awayTeamFlag = (ImageView) itemView.findViewById(R.id.t2flag);
