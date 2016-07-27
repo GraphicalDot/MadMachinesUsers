@@ -702,8 +702,6 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity {
 
         if (sportsType.equals(ScoresJsonParser.CRICKET)) {
             cricketMatchJsonCaller.setJsonObject(matchScoreDetails);
-
-
             try {
                 matchStatus = cricketMatchJsonCaller.getStatus();
                 secondInningsteam1.setVisibility(View.GONE);
@@ -721,8 +719,8 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity {
                     widgetTeamSecond = widgetTeamsObject.getJSONArray("2");
                 }
 
-                String homeTeamShort = cricketMatchJsonCaller.getTeam1Short();
-                String awayTeamShort = cricketMatchJsonCaller.getTeam2Short();
+                String awayTeamShort = cricketMatchJsonCaller.getTeam1Short();
+                String homeTeamShort = cricketMatchJsonCaller.getTeam2Short();
                 Glide.with(this).load(cricketMatchJsonCaller.getTeam1Flag()).placeholder(R.drawable.ic_no_img).dontAnimate().into(flag1);
                 Glide.with(this).load(cricketMatchJsonCaller.getTeam2Flag()).placeholder(R.drawable.ic_no_img).dontAnimate().into(flag2);
 
