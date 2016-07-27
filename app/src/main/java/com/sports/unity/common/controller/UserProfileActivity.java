@@ -1176,6 +1176,17 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
 
     private void playerProfile(String playerName, String playerId, String sportsType) {
 
+//FIREBASE INTEGRATION
+        {
+            FirebaseAnalytics firebaseAnalytics = FirebaseUtil.getInstance(UserProfileActivity.this);
+            Bundle bundle = new Bundle();
+            bundle.putString(FirebaseUtil.Param.NAME, FirebaseUtil.trimValue(playerName));
+            bundle.putString(FirebaseUtil.Param.ID, FirebaseUtil.trimValue(playerId));
+            bundle.putString(FirebaseUtil.Param.SPORTS_TYPE, sportsType);
+            bundle.putString(FirebaseUtil.Param.FILTER_TYPE, Constants.FILTER_TYPE_PLAYER);
+            FirebaseUtil.logEvent(firebaseAnalytics, bundle, FirebaseUtil.Event.PROFILE_FAV_DETAIL + "_" + sportsType.substring(0, 1) + "_" + Constants.FILTER_TYPE_PLAYER);
+        }
+
         if (Constants.SPORTS_TYPE_FOOTBALL.equals(sportsType)) {
             Intent intent = new Intent(UserProfileActivity.this, PlayerProfileView.class);
             intent.putExtra(Constants.INTENT_KEY_ID, playerId);
@@ -1200,7 +1211,7 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
             bundle.putString(FirebaseUtil.Param.ID, FirebaseUtil.trimValue(f.getId()));
             bundle.putString(FirebaseUtil.Param.SPORTS_TYPE, f.getSportsType());
             bundle.putString(FirebaseUtil.Param.FILTER_TYPE, f.getFilterType());
-            FirebaseUtil.logEvent(firebaseAnalytics, bundle, FirebaseUtil.Event.PROFILE_FAV_DETAIL+"_"+f.getSportsType().substring(0,1)+"_"+f.getFilterType());
+            FirebaseUtil.logEvent(firebaseAnalytics, bundle, FirebaseUtil.Event.PROFILE_FAV_DETAIL + "_" + f.getSportsType().substring(0, 1) + "_" + f.getFilterType());
         }
         Intent intent = new Intent(this, TeamLeagueDetails.class);
         intent.putExtra(intentId, jsonObject);
