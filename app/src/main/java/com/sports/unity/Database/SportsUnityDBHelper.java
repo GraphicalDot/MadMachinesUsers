@@ -31,7 +31,7 @@ import static com.sports.unity.Database.SportsUnityContract.FriendRequestEntry;
  */
 public class SportsUnityDBHelper extends SQLiteOpenHelper {
 
-    public static final int DATABASE_VERSION = 5;
+    public static final int DATABASE_VERSION = 6;
     public static final String DATABASE_NAME = "spu.db";
 
     public static final int DEFAULT_ENTRY_ID = -1;
@@ -176,6 +176,9 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
                 clearFavourites();
             }
             case 5: {
+                clearFavourites();
+            }
+            case 6: {
 
             }
         }
