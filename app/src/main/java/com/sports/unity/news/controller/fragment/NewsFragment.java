@@ -135,15 +135,6 @@ public class NewsFragment extends Fragment implements NewsContentHandler.Content
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.fragment_news_menu, menu);
-
-        if ((TinyDB.getInstance(getActivity()).getBoolean("check", false))) {
-            menu.findItem(R.id.mini_cards).setChecked(true);
-            menu.findItem(R.id.mini_cards).setIcon(R.drawable.ic_thumb);
-        } else {
-            menu.findItem(R.id.mini_cards).setChecked(false);
-            menu.findItem(R.id.mini_cards).setIcon(R.drawable.ic_list);
-        }
-
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -176,23 +167,6 @@ public class NewsFragment extends Fragment implements NewsContentHandler.Content
             startActivityForResult(i, Constants.REQUEST_CODE_NEWS);
             return true;
         }
-
-        if (id == R.id.mini_cards) {
-            if (item.isChecked()) {
-                item.setChecked(false);
-                item.setIcon(R.drawable.ic_list);
-                TinyDB.getInstance(getActivity()).putBoolean("check", false);
-            } else {
-                item.setChecked(true);
-                item.setIcon(R.drawable.ic_thumb);
-                TinyDB.getInstance(getActivity()).putBoolean("check", true);
-            }
-            logScreensToFireBase(FirebaseUtil.Event.NEWS_CARD_TYPE);
-            addOrUpdateAdapter();
-            displayResult();
-            return true;
-        }
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -439,54 +413,27 @@ public class NewsFragment extends Fragment implements NewsContentHandler.Content
         boolean flag = TinyDB.getInstance(getActivity()).getBoolean("check", false);
 
         ArrayList list = null;
-        if (flag) {
-            if (mAdapter == null) {
+        if (mAdapter == null) {
+            Log.d("News Content", "creating mini adapter");
+            list = new ArrayList();
+            mAdapter = new NewsMinicardAdapter(list, getActivity());
+            mRecyclerView.setAdapter(mAdapter);
+
+            newsContentHandler.init(list, searchOn);
+        } else {
+            if (mAdapter instanceof NewsMinicardAdapter) {
+                Log.d("News Content", "no change in mini adapter");
+            }/* else {
                 Log.d("News Content", "creating mini adapter");
-                list = new ArrayList();
+
+                list = mAdapter.getNews();
+
                 mAdapter = new NewsMinicardAdapter(list, getActivity());
                 mRecyclerView.setAdapter(mAdapter);
 
-                newsContentHandler.init(list, searchOn);
-            } else {
-                if (mAdapter instanceof NewsMinicardAdapter) {
-                    Log.d("News Content", "no change in mini adapter");
-                } else {
-                    Log.d("News Content", "creating mini adapter");
-
-                    list = mAdapter.getNews();
-
-                    mAdapter = new NewsMinicardAdapter(list, getActivity());
-                    mRecyclerView.setAdapter(mAdapter);
-
-                }
-            }
-            mAdapter.notifyDataSetChanged();
-        } else {
-            if (mAdapter == null) {
-                Log.d("News Content", "creating news adapter");
-                list = new ArrayList();
-                mAdapter = new NewsAdapter(list, getActivity());
-                mRecyclerView.setAdapter(mAdapter);
-
-                newsContentHandler.init(list, searchOn);
-            } else {
-                if (mAdapter instanceof NewsAdapter) {
-                    Log.d("News Content", "no change in news adapter");
-                } else {
-                    Log.d("News Content", "creating news adapter");
-
-                    list = mAdapter.getNews();
-
-                    mAdapter = new NewsAdapter(list, getActivity());
-                    mRecyclerView.setAdapter(mAdapter);
-                }
-            }
-
-            list = mAdapter.getNews();
-            Log.d("News Content", "Update Adapter List Object ID " + list);
-
-            mAdapter.notifyDataSetChanged();
+            }*/
         }
+        mAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -531,7 +478,6 @@ public class NewsFragment extends Fragment implements NewsContentHandler.Content
                 if (activity != null) {
                     View menuButton = getActivity().findViewById(R.id.action_filter);
                     View menuButton1 = getActivity().findViewById(R.id.action_search);
-                    View menuButton2 = getActivity().findViewById(R.id.mini_cards);
                     if (menuButton != null) {
                         sequence.addSequenceItem(menuButton, getActivity().getResources().getString(R.string.showcase_filter_heading), getActivity().getResources().getString(R.string.showcase_filter_message), getActivity().getResources().getString(R.string.next_showcase_preview_text));
                         if (viewTreeObserver.isAlive())
@@ -539,11 +485,6 @@ public class NewsFragment extends Fragment implements NewsContentHandler.Content
                     }
                     if (menuButton1 != null) {
                         sequence.addSequenceItem(menuButton1, getActivity().getResources().getString(R.string.showcase_search_heading), getActivity().getResources().getString(R.string.showcase_search_message), getActivity().getResources().getString(R.string.next_showcase_preview_text));
-                        if (viewTreeObserver.isAlive())
-                            viewTreeObserver.removeOnGlobalLayoutListener(this);
-                    }
-                    if (menuButton2 != null) {
-                        sequence.addSequenceItem(menuButton2, getActivity().getResources().getString(R.string.showcase_mini_card_heading), getActivity().getResources().getString(R.string.showcase_mini_card_message), getActivity().getResources().getString(R.string.next_showcase_preview_text));
                         sequence.start();
                         if (viewTreeObserver.isAlive())
                             viewTreeObserver.removeOnGlobalLayoutListener(this);

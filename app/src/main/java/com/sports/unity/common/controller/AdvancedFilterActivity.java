@@ -55,7 +55,6 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
     public ViewPager pager;
     private boolean isSingleUse;
     private String sportsType;
-    public boolean isFirstInstall = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -63,12 +62,9 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
         setContentView(R.layout.advanced_filter_activity);
         searchRefreshListener = new ArrayList<onSearchListener>();
         favList = FavouriteItemWrapper.getInstance(this).getFavList();
-        isFirstInstall = !UserUtil.isFilterCompleted() && favList.size() == 0;
         sportsSelected = UserUtil.getSportsSelected();
         bundle = getIntent().getExtras();
-        if (isFirstInstall) {
-            FavouriteContentHandler.getInstance(AdvancedFilterActivity.this).clearContent();
-        }
+
         try {
             isResultRequired = getIntent().getExtras().getBoolean(Constants.RESULT_REQUIRED, false);
             isSingleUse = getIntent().getExtras().getBoolean(Constants.RESULT_SINGLE_USE, false);
@@ -96,12 +92,8 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
             @Override
             public void onClick(View view) {
                 sendNextAnalytics(FirebaseUtil.Event.SKIP_CLICK_EVENT);
-                if (!UserUtil.isFilterCompleted()) {
-                    FavouriteItemWrapper.getInstance(AdvancedFilterActivity.this).saveList(AdvancedFilterActivity.this, favList);
-                    UserUtil.setFilterCompleted(AdvancedFilterActivity.this, true);
-                } else {
-                    FavouriteContentHandler.getInstance(AdvancedFilterActivity.this).invalidate(AdvancedFilterActivity.this);
-                }
+                UserUtil.setFilterCompleted(AdvancedFilterActivity.this, true);
+                FavouriteContentHandler.getInstance(AdvancedFilterActivity.this).invalidate(AdvancedFilterActivity.this);
                 if (isResultRequired) {
                     setResult(RESULT_OK);
                     finish();
