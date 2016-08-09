@@ -17,6 +17,7 @@ import com.bumptech.glide.Glide;
 import com.sports.unity.R;
 import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.news.controller.activity.NewsDetailsActivity;
+import com.sports.unity.news.controller.activity.NewsDiscussActivity;
 import com.sports.unity.news.model.NewsJsonCaller;
 import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
@@ -39,7 +40,7 @@ public class NewsMinicardAdapter extends BaseNewsAdapter {
     private NewsJsonCaller newsJsonCaller = new NewsJsonCaller();
 
     public NewsMinicardAdapter(ArrayList<JSONObject> news, Activity activity) {
-        super( news, activity);
+        super(news, activity);
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
@@ -75,7 +76,7 @@ public class NewsMinicardAdapter extends BaseNewsAdapter {
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, final int position) {
-        NewsMinicardAdapter.ViewHolder holder = (NewsMinicardAdapter.ViewHolder)viewHolder;
+        NewsMinicardAdapter.ViewHolder holder = (NewsMinicardAdapter.ViewHolder) viewHolder;
 
         newsJsonCaller.setJsonObject(news.get(position));
 
@@ -138,10 +139,12 @@ public class NewsMinicardAdapter extends BaseNewsAdapter {
                     } catch (Exception ex) {
                         ex.printStackTrace();
                     }
+//                    Intent intent = new Intent(activity, NewsDiscussActivity.class);
+//                    activity.startActivity(intent);
                 }
 
             });
-        }catch (Exception ex){
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
 

@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:id="@+id/discuss_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:gravity="center"
+        android:paddingBottom="@dimen/horizontal_padding_very_small"
+        android:paddingTop="@dimen/horizontal_padding_very_small">
+
+        <LinearLayout
+            android:id="@+id/discuss_button_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/discuss_button_drawable"
+            android:orientation="horizontal"
+            android:paddingBottom="@dimen/horizontal_padding_very_small"
+            android:paddingLeft="@dimen/horizontal_padding_very_small"
+            android:paddingRight="@dimen/horizontal_padding_very_small"
+            android:paddingTop="@dimen/horizontal_padding_very_small">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_discuss" />
+
+            <View
+                android:layout_width="1dp"
+                android:layout_height="20dp"
+                android:layout_gravity="center"
+                android:layout_marginLeft="@dimen/horizontal_padding_very_very_small"
+                android:layout_marginRight="@dimen/horizontal_padding_very_very_small"
+                android:background="@android:color/white"></View>
+
+            <com.sports.unity.common.view.CustomRobotoRegularTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="Discuss(need engaging CTA)"
+                android:textColor="@android:color/white" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <android.support.design.widget.CoordinatorLayout
+        android:id="@+id/main_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/discuss_layout"
+        android:background="@android:color/white"
+        android:fitsSystemWindows="true">
+
+        <android.support.design.widget.AppBarLayout
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark">
+
+            <android.support.design.widget.CollapsingToolbarLayout
+                android:id="@+id/collapse_toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:fitsSystemWindows="true"
+                app:layout_scrollFlags="scroll|enterAlwaysCollapsed"
+                app:titleEnabled="false">
+
+                <ImageView
+                    android:id="@+id/slant_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="300dp"
+                    android:fitsSystemWindows="true"
+                    android:scaleType="centerCrop"
+                    app:layout_collapseMode="parallax" />
+
+                <include
+                    android:id="@+id/toolbar"
+                    layout="@layout/toolbar_news_discuss"
+                    android:layout_width="match_parent"
+                    android:layout_height="?attr/actionBarSize"
+                    app:layout_collapseMode="pin"></include>
+
+            </android.support.design.widget.CollapsingToolbarLayout>
+        </android.support.design.widget.AppBarLayout>
+
+        <android.support.v4.widget.NestedScrollView
+            android:id="@+id/nested_scroll_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fillViewport="true"
+            android:fitsSystemWindows="true"
+            app:behavior_overlapTop="64dp"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_above="@id/discuss_layout"
+                    android:orientation="vertical">
+
+                    <FrameLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <com.sports.unity.news.model.SlantView
+                            android:id="@+id/slant_view1"
+                            android:layout_width="match_parent"
+                            android:layout_height="64dp"
+                            android:layout_gravity="bottom" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="bottom"
+                            android:layout_marginBottom="@dimen/horizontal_padding_small"
+                            android:layout_marginLeft="@dimen/horizontal_padding_small"
+                            android:background="@drawable/discuss_button_drawable"
+                            android:paddingBottom="1dp"
+                            android:paddingLeft="@dimen/horizontal_padding_very_small"
+                            android:paddingRight="@dimen/horizontal_padding_very_small"
+                            android:paddingTop="1dp"
+                            android:text="SOCCER"
+                            android:textColor="@android:color/white"
+                            android:textSize="@dimen/font_size_very_small" />
+                    </FrameLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/horizontal_padding_small"
+                        android:layout_marginLeft="@dimen/horizontal_padding_small"
+                        android:orientation="horizontal"
+                        android:paddingTop="@dimen/horizontal_padding_very_very_small">
+
+                        <ImageView
+                            android:layout_width="15dp"
+                            android:layout_height="15dp"
+                            android:layout_marginRight="@dimen/horizontal_padding_very_very_small"
+                            android:src="@drawable/ic_source" />
+
+                        <com.sports.unity.common.view.CustomRobotoCondenseRegularTextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_marginRight="@dimen/horizontal_padding_very_small"
+                            android:text="SPORTSUNITY"
+                            android:textColor="@color/news_data"
+                            android:textSize="@dimen/font_size_very_small" />
+
+                        <ImageView
+                            android:layout_width="15dp"
+                            android:layout_height="15dp"
+                            android:layout_marginRight="@dimen/horizontal_padding_very_very_small"
+                            android:src="@drawable/ic_time" />
+
+                        <com.sports.unity.common.view.CustomRobotoCondenseRegularTextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:text="3 MIN AGO"
+                            android:textColor="@color/news_data"
+                            android:textSize="@dimen/font_size_very_small" />
+                    </LinearLayout>
+
+
+                    <com.sports.unity.common.view.CustomRobotoSlabRegularTextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/horizontal_padding_small"
+                        android:paddingLeft="@dimen/horizontal_padding_small"
+                        android:paddingRight="@dimen/horizontal_padding_small"
+                        android:text="Andre Gomes: Barcelona agree deal to sign Valencia midfielder"
+                        android:textSize="@dimen/font_size_large"
+                        android:textStyle="bold" />
+
+
+                    <com.sports.unity.common.view.CustomRobotoRegularTextView
+                        android:id="@+id/content"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:lineSpacingExtra="8dp"
+                        android:paddingLeft="@dimen/horizontal_padding_small"
+                        android:paddingRight="@dimen/horizontal_padding_small"
+                        android:text="Alastair Cook is confident England have the potential to return to the top of the world Test rankings - either next week or in two years ' time . Cook is unconcerned about the timing of England 's ascent , which could come quickly if they follow up Sunday 's victory over Pakistan at Edgbaston with another at The Oval . Of more interest to the captain is that his team showed him a new toughness to prevail by 141 runs in the third Test , despite appearing washed up after the first two days . England battled back from  ...Read More"
+                        android:textColor="@color/gray2" />
+
+                </LinearLayout>
+            </ScrollView>
+        </android.support.v4.widget.NestedScrollView>
+
+    </android.support.design.widget.CoordinatorLayout>
+</RelativeLayout>

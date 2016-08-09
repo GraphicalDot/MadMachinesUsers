@@ -56,7 +56,9 @@
     <!-- ends -->
 
     <!-- news related -->
+    <dimen name="news_slant_view_height">64dp</dimen>
     <dimen name="news_large_image_height">200dp</dimen>
+    <dimen name="news_xlarge_image_height">300dp</dimen>
     <dimen name="news_mini_image_width">120dp</dimen>
     <dimen name="news_mini_image_height">90dp</dimen>
 
