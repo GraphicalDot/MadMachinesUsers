@@ -62,11 +62,9 @@
             android:authorities="co.sports.unity.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true">
-
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/fileprovider" />
-
         </provider>
 
         <receiver android:name=".NetworkStateReceiver">
@@ -85,6 +83,7 @@
             android:permission="com.google.android.c2dm.permission.SEND">
             <intent-filter>
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+
                 <category android:name="com.example.gcm" />
             </intent-filter>
         </receiver>
@@ -334,12 +333,15 @@
         <activity
             android:name=".common.controller.SearchFavoriatesActivity"
             android:label="@string/title_activity_search_favoriates"
-            android:theme="@style/AppTheme"></activity>
+            android:theme="@style/AppTheme" />
         <activity
             android:name=".common.controller.GlobalSearchActivity"
             android:label="@string/title_activity_search_favoriates"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme"></activity>
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".news.controller.activity.NewsDiscussActivity"
+            android:screenOrientation="portrait"></activity>
     </application>
 
 </manifest>
