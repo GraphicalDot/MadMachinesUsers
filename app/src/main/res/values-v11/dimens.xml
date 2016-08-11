@@ -2,4 +2,5 @@
 <resources>
     <dimen name="recent_ball_radius">24dp</dimen>
     <dimen name="people_nearme_custom_location_height">60dp</dimen>
+
 </resources>

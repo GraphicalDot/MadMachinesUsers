@@ -147,4 +147,7 @@
     <dimen name="group_image_border">1dp</dimen>
     <!-- ends -->
 
+    <dimen name="pole_agree_button">230dp</dimen>
+    <dimen name="pole_waiting_image">200dp</dimen>
+    <dimen name="pole_waiting_image_margin">120dp</dimen>
 </resources>

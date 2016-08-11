@@ -140,4 +140,8 @@
     <dimen name="recent_ball_radius">24dp</dimen>
     <dimen name="people_nearme_custom_location_height">60dp</dimen>
 
+    <dimen name="pole_agree_button">230dp</dimen>
+    <dimen name="pole_waiting_image">200dp</dimen>
+    <dimen name="pole_waiting_image_margin">120dp</dimen>
+
 </resources>

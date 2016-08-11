@@ -146,4 +146,9 @@
     <dimen name="card_height">130dp</dimen>
     <!-- margin completed match  summery-->
     <dimen name="recent_card_height">75dp</dimen>
+
+    <dimen name="pole_agree_button">260dp</dimen>
+    <dimen name="pole_waiting_image">200dp</dimen>
+    <dimen name="pole_waiting_image_margin">60dp</dimen>
+
 </resources>
