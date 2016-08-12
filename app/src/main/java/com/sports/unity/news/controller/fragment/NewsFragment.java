@@ -47,7 +47,7 @@ public class NewsFragment extends Fragment implements NewsContentHandler.Content
 
     private NewsContentHandler newsContentHandler;
 
-    private BaseNewsAdapter mAdapter;
+    private NewsMinicardAdapter mAdapter;
     private LinearLayoutManager mLayoutManager;
 
     private RecyclerView mRecyclerView;
@@ -412,14 +412,16 @@ public class NewsFragment extends Fragment implements NewsContentHandler.Content
     private void addOrUpdateAdapter() {
         boolean flag = TinyDB.getInstance(getActivity()).getBoolean("check", false);
 
-        ArrayList list = null;
+        ArrayList newsList = null;
+        ArrayList curatedNewsList = null;
         if (mAdapter == null) {
             Log.d("News Content", "creating mini adapter");
-            list = new ArrayList();
-            mAdapter = new NewsMinicardAdapter(list, getActivity());
+            newsList = new ArrayList();
+            curatedNewsList=new ArrayList();
+            mAdapter = new NewsMinicardAdapter(newsList,curatedNewsList, getActivity());
             mRecyclerView.setAdapter(mAdapter);
 
-            newsContentHandler.init(list, searchOn);
+            newsContentHandler.init(newsList,curatedNewsList, searchOn);
         } else {
             if (mAdapter instanceof NewsMinicardAdapter) {
                 Log.d("News Content", "no change in mini adapter");
@@ -433,7 +435,7 @@ public class NewsFragment extends Fragment implements NewsContentHandler.Content
 
             }*/
         }
-        mAdapter.notifyDataSetChanged();
+        mAdapter.updateAdapter();
     }
 
     @Override

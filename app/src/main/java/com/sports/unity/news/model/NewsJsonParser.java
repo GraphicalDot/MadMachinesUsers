@@ -10,7 +10,7 @@ import java.util.ArrayList;
  */
 public class NewsJsonParser {
 
-    public static ArrayList<JSONObject> parseListOfNews(String jsonContent){
+    public static ArrayList<JSONObject> parseListOfNews(String jsonContent) {
         ArrayList<JSONObject> list = new ArrayList<>();
         try {
             JSONObject jsonObject = new JSONObject(jsonContent);
@@ -18,16 +18,41 @@ public class NewsJsonParser {
             String successMessage = jsonObject.getString("success");
             String errorMessage = jsonObject.getString("error");
 
-            if( successMessage.equalsIgnoreCase("true") ) {
+            if (successMessage.equalsIgnoreCase("true")) {
                 list = new ArrayList<>();
                 JSONArray array = (JSONArray) jsonObject.get("result");
-                for( int index=0; index < array.length(); index++){
-                    list.add( array.getJSONObject(index));
+                for (int index = 0; index < array.length(); index++) {
+                    list.add(array.getJSONObject(index));
                 }
             } else {
                 list.clear();
             }
-        }catch (Exception ex){
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            list.clear();
+        }
+
+        return list;
+    }
+
+    public static ArrayList<JSONObject> parseListOfCuratedNews(String jsonContent) {
+        ArrayList<JSONObject> list = new ArrayList<>();
+        try {
+            JSONObject jsonObject = new JSONObject(jsonContent);
+
+            String successMessage = jsonObject.getString("success");
+            String errorMessage = jsonObject.getString("error");
+
+            if (successMessage.equalsIgnoreCase("true")) {
+                list = new ArrayList<>();
+                JSONArray array = (JSONArray) jsonObject.get("curated");
+                for (int index = 0; index < array.length(); index++) {
+                    list.add(array.getJSONObject(index));
+                }
+            } else {
+                list.clear();
+            }
+        } catch (Exception ex) {
             ex.printStackTrace();
             list.clear();
         }

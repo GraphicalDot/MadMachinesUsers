@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.percent.PercentFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/curated_frame"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/vertical_padding_very_small">
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/curated_pager"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_aspectRatio="178%"
+        app:layout_widthPercent="100%" />
+
+    <com.sports.unity.common.view.SlidingTabLayout
+        android:id="@+id/tabs"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal|bottom"
+        android:layout_marginBottom="@dimen/vertical_padding_very_small"
+        android:layout_marginLeft="@dimen/horizontal_padding_small"
+        android:layout_marginRight="@dimen/horizontal_padding_small"
+        android:background="@color/white_semi_transparent" />
+</android.support.percent.PercentFrameLayout>

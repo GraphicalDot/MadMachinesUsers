@@ -79,6 +79,17 @@ public class NewsJsonCaller extends JsonObjectCaller{
         }
         return type;
     }
+    public String getCuratedType(){
+        String type=null;
+        if(!jsonObject.isNull("news_type")){
+            try {
+                type=jsonObject.getString("news_type");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        return type;
+    }
 
     public void setType(String type) throws JSONException {
         jsonObject.put( "type", type);

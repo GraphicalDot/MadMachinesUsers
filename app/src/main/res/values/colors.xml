@@ -55,6 +55,7 @@
     <color name="semi_transparent_white">#BF000000</color>
     <color name="semi_transparent">#44000000</color>
     <color name="red_semi_transparent">#55ff0000</color>
+    <color name="white_semi_transparent">#55ffffff</color>
     <color name="brick_red">#e86369</color>
 
     <color name="tab_seperator">#003e7a</color>
