@@ -8,6 +8,7 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -63,7 +64,6 @@ public class NewsMinicardAdapter extends RecyclerView.Adapter<NewsMinicardAdapte
         private ImageView fabIcon;
         private LinearLayout news_mini;
         private ViewPager curatedBannerPager;
-        private CuratedPagerAdapter curatedPagerAdapter;
         private SlidingTabLayout slidingTabLayout;
 
         public ViewHolder(View v, boolean isBanner) {
@@ -118,10 +118,16 @@ public class NewsMinicardAdapter extends RecyclerView.Adapter<NewsMinicardAdapte
 
     @Override
     public void onBindViewHolder(NewsMinicardAdapter.ViewHolder holder, final int position) {
-        if (position == 0) {
+        if (getItemViewType(position) == VIEW_TYPE_BANNER) {
             initCuratedNews(holder);
         } else {
-            newsJsonCaller.setJsonObject(newsList.get(position - 1));
+            int pos = 0;
+            if (curatedNewsList.isEmpty()) {
+                pos = position;
+            } else {
+                pos = position - 1;
+            }
+            newsJsonCaller.setJsonObject(newsList.get(pos));
             try {
                 holder.title.setText(newsJsonCaller.getTitle());
                 holder.type.setText(newsJsonCaller.getType());
@@ -159,7 +165,7 @@ public class NewsMinicardAdapter extends RecyclerView.Adapter<NewsMinicardAdapte
                     holder.imageView.setVisibility(View.GONE);
                 }
 
-                holder.news_mini.setTag(position - 1);
+                holder.news_mini.setTag(pos);
                 holder.news_mini.setOnClickListener(new View.OnClickListener() {
 
                     @Override
@@ -202,10 +208,16 @@ public class NewsMinicardAdapter extends RecyclerView.Adapter<NewsMinicardAdapte
     @Override
     public int getItemViewType(int position) {
         super.getItemViewType(position);
-        if (position == 0) {
+        if (position == 0 && !curatedNewsList.isEmpty()) {
             return VIEW_TYPE_BANNER;
         } else {
-            newsJsonCaller.setJsonObject(newsList.get(position - 1));
+            int pos = 0;
+            if (curatedNewsList.isEmpty()) {
+                pos = position;
+            } else {
+                pos = position - 1;
+            }
+            newsJsonCaller.setJsonObject(newsList.get(pos));
             String newsType = newsJsonCaller.getCuratedType();
             if (!TextUtils.isEmpty(newsType) && newsType.equalsIgnoreCase(CURATED_NEWS)) {
                 return VIEW_TYPE_CURATED_NEWS;

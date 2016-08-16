@@ -415,25 +415,14 @@ public class NewsFragment extends Fragment implements NewsContentHandler.Content
         ArrayList newsList = null;
         ArrayList curatedNewsList = null;
         if (mAdapter == null) {
-            Log.d("News Content", "creating mini adapter");
             newsList = new ArrayList();
-            curatedNewsList=new ArrayList();
-            mAdapter = new NewsMinicardAdapter(newsList,curatedNewsList, getActivity());
+            curatedNewsList = new ArrayList();
+            mAdapter = new NewsMinicardAdapter(newsList, curatedNewsList, getActivity());
             mRecyclerView.setAdapter(mAdapter);
 
-            newsContentHandler.init(newsList,curatedNewsList, searchOn);
+            newsContentHandler.init(newsList, curatedNewsList, searchOn);
         } else {
-            if (mAdapter instanceof NewsMinicardAdapter) {
-                Log.d("News Content", "no change in mini adapter");
-            }/* else {
-                Log.d("News Content", "creating mini adapter");
-
-                list = mAdapter.getNews();
-
-                mAdapter = new NewsMinicardAdapter(list, getActivity());
-                mRecyclerView.setAdapter(mAdapter);
-
-            }*/
+            //nothing
         }
         mAdapter.updateAdapter();
     }
