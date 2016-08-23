@@ -13,14 +13,14 @@
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/dot_pole"
-            android:src="@drawable/ic_menu_back"
             android:layout_marginLeft="@dimen/activity_vertical_margin_small"
             android:layout_marginTop="@dimen/activity_vertical_margin_small"
+            android:background="@drawable/dot_pole"
             android:paddingBottom="@dimen/horizontal_padding_very_very_small"
             android:paddingLeft="@dimen/horizontal_padding_very_very_small"
             android:paddingRight="@dimen/horizontal_padding_very_very_small"
-            android:paddingTop="@dimen/horizontal_padding_very_very_small" />
+            android:paddingTop="@dimen/horizontal_padding_very_very_small"
+            android:src="@drawable/ic_menu_back" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -32,38 +32,40 @@
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_masthead_poll"
                 android:layout_gravity="center"
                 android:paddingTop="@dimen/activity_horizontal_margin"
-                />
+                android:src="@drawable/ic_masthead_poll" />
 
             <com.sports.unity.common.view.CustomRobotoSlabRegularTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Suarez says there' 'no\ndebate, ' Messi is bette\n than Ronaldo"
                 android:layout_gravity="center"
                 android:gravity="center"
-                android:textStyle="bold"
+                android:text="Suarez says there' 'no\ndebate, ' Messi is bette\n than Ronaldo"
+                android:textColor="@android:color/white"
                 android:textSize="@dimen/font_size_xlarge"
-                android:textColor="@android:color/white"/>
+                android:textStyle="bold" />
 
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/activity_vertical_margin_large"
                 android:layout_marginBottom="@dimen/activity_vertical_margin_large"
                 android:layout_marginLeft="@dimen/activity_vertical_margin_large"
-                android:layout_marginRight="@dimen/activity_vertical_margin_large">
+                android:layout_marginRight="@dimen/activity_vertical_margin_large"
+                android:layout_marginTop="@dimen/activity_vertical_margin_large">
 
                 <LinearLayout
+                    android:id="@+id/agree_layout"
                     android:layout_width="@dimen/pole_agree_button"
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
-                    android:gravity="center"
                     android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                    android:paddingTop="@dimen/vertical_padding_very_very_small"
+                    android:background="@drawable/pole_select_background"
+                    android:gravity="center"
+                    android:onClick="onAgree"
                     android:paddingBottom="@dimen/vertical_padding_very_very_small"
-                    android:background="@drawable/pole_select_background">
+                    android:paddingTop="@dimen/vertical_padding_very_very_small">
+
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -73,48 +75,50 @@
                     <View
                         android:layout_width="1dp"
                         android:layout_height="25dp"
-                        android:background="@android:color/white"/>
+                        android:background="@android:color/white" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Agree"
-                        android:textStyle="bold"
                         android:paddingLeft="@dimen/horizontal_padding_very_very_small"
+                        android:text="Agree"
                         android:textColor="@android:color/white"
-                        android:textSize="@dimen/font_size_small_large" />
+                        android:textSize="@dimen/font_size_small_large"
+                        android:textStyle="bold" />
 
                 </LinearLayout>
 
                 <LinearLayout
+                    android:id="@+id/disagree_layout"
                     android:layout_width="@dimen/pole_agree_button"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
-                    android:gravity="center"
                     android:layout_marginRight="@dimen/activity_horizontal_margin"
-                    android:paddingTop="@dimen/vertical_padding_very_very_small"
+                    android:background="@drawable/pole_select_background"
+                    android:gravity="center"
+                    android:onClick="onDisagree"
                     android:paddingBottom="@dimen/vertical_padding_very_very_small"
-                    android:background="@drawable/pole_select_background">
+                    android:paddingTop="@dimen/vertical_padding_very_very_small">
 
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:src="@drawable/ic_disagree"
-                        android:paddingRight="@dimen/horizontal_padding_very_very_small" />
+                        android:paddingRight="@dimen/horizontal_padding_very_very_small"
+                        android:src="@drawable/ic_disagree" />
 
                     <View
                         android:layout_width="1dp"
                         android:layout_height="25dp"
-                        android:background="@android:color/white"/>
+                        android:background="@android:color/white" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Disagree"
-                        android:textStyle="bold"
                         android:paddingLeft="@dimen/horizontal_padding_very_very_small"
+                        android:text="Disagree"
                         android:textColor="@android:color/white"
-                        android:textSize="@dimen/font_size_small_large"/>
+                        android:textSize="@dimen/font_size_small_large"
+                        android:textStyle="bold" />
 
                 </LinearLayout>
 
@@ -128,41 +132,42 @@
         android:id="@+id/heading_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="@dimen/activity_vertical_margin_large"
         android:text="Need Heading Here"
-        android:textStyle="bold"
         android:textColor="@color/Very_dark_gray"
         android:textSize="@dimen/font_size_medium"
-        android:layout_gravity="center"
-        android:layout_marginTop="@dimen/activity_vertical_margin_large"/>
+        android:textStyle="bold" />
 
     <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
         android:id="@+id/tv_pole"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:textSize="@dimen/font_size_small_large"
         android:gravity="center"
-        android:textColor="@color/news_headline_mini"
         android:text="Two lione description\n Lorem ipsum dolor sit amet."
-        android:textStyle="italic"
-        />
+        android:textColor="@color/news_headline_mini"
+        android:textSize="@dimen/font_size_small_large"
+        android:textStyle="italic" />
 
     <com.sports.unity.common.view.CustomRobotoCondenseRegularTextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Mauris in irat justo. Nullam ac urna eu felis depibus condimentum"
-        android:textStyle="italic"
-        android:textSize="@dimen/font_size_small_large"
-        android:layout_marginTop="@dimen/activity_vertical_margin_small"
+        android:layout_centerInParent="true"
         android:layout_gravity="center"
-        android:textColor="@color/gray2"
+        android:layout_marginTop="@dimen/activity_vertical_margin_small"
         android:gravity="center"
-        android:layout_centerInParent="true"/>
+        android:text="Mauris in irat justo. Nullam ac urna eu felis depibus condimentum"
+        android:textColor="@color/gray2"
+        android:textSize="@dimen/font_size_small_large"
+        android:textStyle="italic" />
 
-    .<ImageView
+    .
+
+    <ImageView
         android:layout_width="@dimen/pole_waiting_image"
         android:layout_height="@dimen/pole_waiting_image"
-        android:src="@drawable/img_poll_waiting"
+        android:layout_gravity="center|bottom"
         android:layout_marginTop="@dimen/pole_waiting_image_margin"
-        android:layout_gravity="center|bottom"/>
+        android:src="@drawable/img_poll_waiting" />
 </LinearLayout>

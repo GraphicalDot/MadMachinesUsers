@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -72,6 +73,11 @@ public class NewsDiscussActivity extends CustomVolleyCallerActivity {
         newsAvatar = (ImageView) findViewById(R.id.slant_view);
         id = getIntent().getStringExtra(Constants.INTENT_KEY_ID);
         newsLayout = (RelativeLayout) findViewById(R.id.news_layout);
+    }
+
+    public void onPole(View view) {
+        Intent intent = new Intent(getApplicationContext(), PoleActivity.class);
+        startActivity(intent);
     }
 
     private void initToolbar() {
