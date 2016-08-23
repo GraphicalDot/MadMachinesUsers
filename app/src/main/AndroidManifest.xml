@@ -341,6 +341,9 @@
             android:theme="@style/AppTheme" />
         <activity
             android:name=".news.controller.activity.NewsDiscussActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".news.controller.activity.PoleActivity"
             android:screenOrientation="portrait"></activity>
     </application>
 
