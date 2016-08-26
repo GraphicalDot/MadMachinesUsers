@@ -77,6 +77,7 @@ public class NewsDiscussActivity extends CustomVolleyCallerActivity {
 
     public void onPole(View view) {
         Intent intent = new Intent(getApplicationContext(), PoleActivity.class);
+        intent.putExtra(Constants.INTENT_KEY_ID, "68");
         startActivity(intent);
     }
 

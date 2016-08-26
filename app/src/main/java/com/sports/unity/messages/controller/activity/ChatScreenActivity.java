@@ -349,7 +349,11 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
 
     private void checkAndUpdateBlockStatus() {
         Contacts contact = SportsUnityDBHelper.getInstance(getApplicationContext()).getContactByJid(jabberId);
-        blockStatus = SportsUnityDBHelper.getInstance(getApplicationContext()).isChatBlocked(contact.id);
+        try {
+            blockStatus = SportsUnityDBHelper.getInstance(getApplicationContext()).isChatBlocked(contact.id);
+        }catch (Exception e){
+
+        }
         if (blockStatus) {
             if (isGroupChat) {
                 LinearLayout mediaButtonsLayout = (LinearLayout) findViewById(R.id.send_media_action_buttons);
