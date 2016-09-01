@@ -12,27 +12,6 @@ public interface GCMConstants {
     public static final String BOTTOM_TEXT = "bt";
     public static final String LEAGUE_SERIES_ID = "l";
     public static final String MATCH_STATUS = "r";
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    public static final String ARTICLE_ID = "cn";
+    public static final int CURATED_EVENT = 9;
 }

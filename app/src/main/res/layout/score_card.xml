@@ -29,7 +29,6 @@
                 android:id="@+id/date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
                 android:text=""
                 android:textColor="@android:color/black"
                 android:textSize="@dimen/font_size_small_large" />
@@ -39,7 +38,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/date"
-                android:layout_centerInParent="true"
                 android:gravity="center_horizontal"
                 android:text=""
                 android:textColor="@color/score_light_grey"
@@ -50,10 +48,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/date"
-                android:layout_centerInParent="true"
+                android:layout_centerHorizontal="true"
                 android:paddingLeft="@dimen/horizontal_padding_very_very_small"
                 android:paddingRight="@dimen/horizontal_padding_very_very_small"
-                android:text=""
+                android:text="2:1"
                 android:textColor="@android:color/black"
                 android:textSize="@dimen/font_size_small_large" />
 
@@ -74,7 +72,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/team_score"
                 android:layout_centerHorizontal="true"
-                android:text=""
+                android:text="df"
                 android:textColor="@color/text_color"
                 android:textSize="@dimen/font_size_small_medium"
                 android:visibility="visible" />

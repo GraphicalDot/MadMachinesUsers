@@ -16,6 +16,7 @@ import com.sports.unity.R;
 import com.sports.unity.XMPPManager.XMPPService;
 import com.sports.unity.common.controller.MainActivity;
 import com.sports.unity.common.model.UserUtil;
+import com.sports.unity.news.controller.activity.NewsDiscussActivity;
 import com.sports.unity.scores.ScoreDetailActivity;
 import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
@@ -42,6 +43,7 @@ public class SUPushServiceListener extends GcmListenerService {
     private String title;
     private String content;
     private int event;
+    private String article_id;
 
     @Override
     public void onMessageReceived(String from, Bundle data) {
@@ -91,45 +93,56 @@ public class SUPushServiceListener extends GcmListenerService {
                 if (!notification.isNull(GCMConstants.EVENT_ID)) {
                     event = notification.getInt(GCMConstants.EVENT_ID);
                 }
+                if (!notification.isNull(GCMConstants.ARTICLE_ID)) {
+                    article_id = notification.getString(GCMConstants.ARTICLE_ID);
+                }
                 Intent i = null;
 
                 int drawableId = 0;
 
 
                 if (sportsType != null) {
-                    if (Constants.SPORTS_TYPE_CRICKET.equalsIgnoreCase(sportsType)) {
+                    if (event != GCMConstants.CURATED_EVENT) {
+                        if (Constants.SPORTS_TYPE_CRICKET.equalsIgnoreCase(sportsType)) {
 
-                        drawableId = getDrawableIconCricket(event);
-                        if (matchiId != null && seriesid != null && matchStatus != null && title != null && content != null && event != 0) {
-                            i = new Intent(this, ScoreDetailActivity.class);
-                            i.putExtra(INTENT_KEY_PUSH, true);
-                            i.putExtra(INTENT_KEY_TYPE, sportsType);
-                            i.putExtra(Constants.INTENT_KEY_ID, matchiId);
-                            i.putExtra(Constants.INTENT_KEY_SERIES, seriesid);
-                            i.putExtra(Constants.INTENT_KEY_MATCH_STATUS, matchStatus);
+                            drawableId = getDrawableIconCricket(event);
+                            if (matchiId != null && seriesid != null && matchStatus != null && title != null && content != null && event != 0) {
+                                i = new Intent(this, ScoreDetailActivity.class);
+                                i.putExtra(INTENT_KEY_PUSH, true);
+                                i.putExtra(INTENT_KEY_TYPE, sportsType);
+                                i.putExtra(Constants.INTENT_KEY_ID, matchiId);
+                                i.putExtra(Constants.INTENT_KEY_SERIES, seriesid);
+                                i.putExtra(Constants.INTENT_KEY_MATCH_STATUS, matchStatus);
+                            } else {
+                                i = new Intent(this, MainActivity.class);
+                            }
+
+
+                        } else if (Constants.SPORTS_TYPE_FOOTBALL.equalsIgnoreCase(sportsType)) {
+                            drawableId = getDrawableIconFootball(event);
+                            if (matchiId != null && seriesid != null && matchStatus != null && title != null && content != null && event != 0) {
+                                i = new Intent(this, ScoreDetailActivity.class);
+                                i.putExtra(INTENT_KEY_PUSH, true);
+                                i.putExtra(INTENT_KEY_TYPE, sportsType);
+                                i.putExtra(Constants.INTENT_KEY_ID, matchiId);
+                                i.putExtra(Constants.INTENT_KEY_LEAGUE_ID, seriesid);
+                                i.putExtra(Constants.INTENT_KEY_MATCH_STATUS, matchStatus);
+                                i.putExtra(Constants.INTENT_KEY_MATCH_LIVE, matchStatus.equalsIgnoreCase("L") ? true : false);
+                            } else {
+                                i = new Intent(this, MainActivity.class);
+                            }
                         } else {
-                            i = new Intent(this, MainActivity.class);
-                        }
-
-
-                    } else if (Constants.SPORTS_TYPE_FOOTBALL.equalsIgnoreCase(sportsType)) {
-                        drawableId = getDrawableIconFootball(event);
-                        if (matchiId != null && seriesid != null && matchStatus != null && title != null && content != null && event != 0) {
-                            i = new Intent(this, ScoreDetailActivity.class);
-                            i.putExtra(INTENT_KEY_PUSH, true);
-                            i.putExtra(INTENT_KEY_TYPE, sportsType);
-                            i.putExtra(Constants.INTENT_KEY_ID, matchiId);
-                            i.putExtra(Constants.INTENT_KEY_LEAGUE_ID, seriesid);
-                            i.putExtra(Constants.INTENT_KEY_MATCH_STATUS, matchStatus);
-                            i.putExtra(Constants.INTENT_KEY_MATCH_LIVE, matchStatus.equalsIgnoreCase("L") ? true : false);
-                        } else {
-                            i = new Intent(this, MainActivity.class);
+                            drawableId = 0;
                         }
                     } else {
-                        drawableId = 0;
+                        drawableId = getDrawableIconNews(event);
+                        i = new Intent(this, NewsDiscussActivity.class);
+                        i.putExtra(Constants.INTENT_KEY_ID, article_id);
+                        i.putExtra(Constants.INTENT_KEY_TITLE, title);
+                        i.putExtra(Constants.INTENT_KEY_TYPE, sportsType);
                     }
-                }
 
+                }
                 Intent muteIntent = new Intent(this, UnRegisterMatch.class);
                 muteIntent.putExtra(Constants.INTENT_KEY_ID, matchiId);
                 muteIntent.putExtra(Constants.INTENT_KEY_SERIES, seriesid);
@@ -149,7 +162,6 @@ public class SUPushServiceListener extends GcmListenerService {
                 NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this);
 
                 defaults = CommonUtil.getDefaults(getApplicationContext(), defaults, mBuilder);
-
                 mBuilder.setVisibility(Notification.VISIBILITY_PUBLIC)
                         .setSmallIcon(R.drawable.ic_stat_notification)
                         .setLargeIcon(largeIcon)
@@ -158,9 +170,11 @@ public class SUPushServiceListener extends GcmListenerService {
                         .setDefaults(defaults)
                         .setColor(getResources().getColor(R.color.app_theme_blue))
                         .setPriority(Notification.PRIORITY_HIGH)
-                        .setAutoCancel(true)
-                        .addAction(R.drawable.ic_share_white, getString(R.string.share), shareIntent)
-                        .addAction(R.drawable.ic_mute_notification, getString(R.string.mute_alerts), mpi);
+                        .setAutoCancel(true);
+                if (event != GCMConstants.CURATED_EVENT) {
+                    mBuilder.addAction(R.drawable.ic_share_white, getString(R.string.share), shareIntent)
+                            .addAction(R.drawable.ic_mute_notification, getString(R.string.mute_alerts), mpi);
+                }
                 //                TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
 //                stackBuilder.addParentStack(ScoreDetailActivity.class);
 //                stackBuilder.addNextIntent(i);
@@ -220,6 +234,11 @@ public class SUPushServiceListener extends GcmListenerService {
         return drawable;
     }
 
+    private int getDrawableIconNews(int event) {
+        int drawable = 0;
+        drawable = R.drawable.news_discuss_drawable;
+        return drawable;
+    }
 
     private int getDrawableIconCricket(int event) {
         int drawable = 0;
