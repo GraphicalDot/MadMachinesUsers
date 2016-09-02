@@ -39,22 +39,6 @@ public final class SportsUnityContract {
 //        public static final String COLUMN_PEOPLE_AROUND_ME = "people_around_me";
     }
 
-//    public static abstract class ChatEntry implements BaseColumns {
-//        public static final String TABLE_NAME = "chatEntryTable";
-//
-//        public static final String COLUMN_CHAT_ID = "chat_id";
-//        public static final String COLUMN_NAME = "chat_name";
-//        public static final String COLUMN_GROUP_SERVER_ID = "group_server_id";
-//        public static final String COLUMN_IMAGE = "chat_image";
-//        public static final String COLUMN_CONTACT_ID = "contact_id";
-//        public static final String COLUMN_LAST_MESSAGE_ID = "last_message";
-//        public static final String COLUMN_UNREAD_COUNT = "unread_count";
-//        public static final String COLUMN_MUTE_CONVERSATION = "mute_conversation";
-//        public static final String COLUMN_LAST_USED = "last_used";
-//        public static final String COLUMN_PEOPLE_AROUND_ME = "people_around_me";
-//
-//    }
-
     public static abstract class MessagesEntry implements BaseColumns {
         public static final String TABLE_NAME = "messagesTable";
 
@@ -109,6 +93,17 @@ public final class SportsUnityContract {
         public static final String COLUMN_PUBLISH_EPOCH = "publishEpoch";
         public static final String COLUMN_FABICON_URL = "fabicon_url";
 
+    }
+
+    public static abstract class NewsDiscussDetailsEntry implements BaseColumns {
+        public static final String TABLE_NAME = "newsDiscuss";
+
+        public static final String COLUMN_ID = "news_discuss_id";       // auto incremented
+        public static final String COLUMN_ARTICLE_ID = "articleId";
+        public static final String COLUMN_GROUP_JID = "groupJID";
+        public static final String COLUMN_ARTICLE_NAME = "articleName";
+        public static final String COLUMN_POLL_STATUS = "poll";
+        
     }
 
 }

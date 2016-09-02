@@ -1,5 +1,6 @@
 package com.sports.unity.news.controller.activity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -13,10 +14,13 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.R;
 import com.sports.unity.common.view.CustomVolleyCallerActivity;
 import com.sports.unity.common.viewhelper.CustomComponentListener;
 import com.sports.unity.common.viewhelper.VolleyCallComponentHelper;
+import com.sports.unity.messages.controller.activity.ChatScreenActivity;
+import com.sports.unity.messages.controller.model.Contacts;
 import com.sports.unity.news.model.NewsJsonCaller;
 import com.sports.unity.scores.model.ScoresContentHandler;
 import com.sports.unity.util.Constants;
@@ -76,9 +80,28 @@ public class NewsDiscussActivity extends CustomVolleyCallerActivity {
     }
 
     public void onPole(View view) {
+        int id = 165;
         Intent intent = new Intent(getApplicationContext(), PoleActivity.class);
-        intent.putExtra(Constants.INTENT_KEY_ID, "68");
-        startActivity(intent);
+        boolean articleExists = SportsUnityDBHelper.getInstance(getApplicationContext()).articleIdExistsOrNot(id);
+        if (articleExists) {
+            String groupJID = SportsUnityDBHelper.getInstance(getApplicationContext()).groupJIDExistsOrNot(id);
+            if (null == groupJID) {
+                boolean poll = SportsUnityDBHelper.getInstance(getApplicationContext()).getPoll(id);
+                intent.putExtra(Constants.INTENT_KEY_ID, id);
+                intent.putExtra(Constants.INTENT_POLL_PARRY, true);
+                intent.putExtra(Constants.INTENT_POLL_STATUS, poll);
+                startActivity(intent);
+            } else {
+                SportsUnityDBHelper sportsUnityDBHelper = SportsUnityDBHelper.getInstance(getApplicationContext());
+                Contacts contact = sportsUnityDBHelper.getContactByJid(groupJID);
+                Intent openChatScreen = ChatScreenActivity.createChatScreenIntent(getApplicationContext(), true, groupJID, contact.getName(), sportsUnityDBHelper.getChatEntryID(groupJID), contact.image, false, false, Contacts.AVAILABLE_BY_MY_CONTACTS, "");
+                startActivity(openChatScreen);
+
+            }
+        } else {
+            intent.putExtra(Constants.INTENT_KEY_ID, id);
+            startActivity(intent);
+        }
     }
 
     private void initToolbar() {

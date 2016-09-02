@@ -140,4 +140,6 @@ public class Constants {
     public static final String APP_NOTIFICATION = "general";
 
 
+    public static final String INTENT_POLL_PARRY = "poll_parry";
+    public static final String INTENT_POLL_STATUS = "poll_status";
 }

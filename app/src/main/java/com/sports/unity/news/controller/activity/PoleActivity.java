@@ -5,10 +5,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.sports.unity.BuildConfig;
+import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.R;
 import com.sports.unity.common.model.TinyDB;
 import com.sports.unity.util.CommonUtil;
@@ -27,14 +30,40 @@ public class PoleActivity extends AppCompatActivity {
 
     private static final String SUBMIT_POLL_ANSWER = "http://" + BuildConfig.XMPP_SERVER_API_BASE_URL + "/submit_poll_answer?";
     private String pollAnswer = null;
-    String article_id = null;
+    int article_id = 0;
     private ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pole);
-        article_id = getIntent().getStringExtra(Constants.INTENT_KEY_ID);
+        article_id = getIntent().getIntExtra(Constants.INTENT_KEY_ID, 0);
+        removePollIfAlreadyPolled();
+    }
+
+    private void removePollIfAlreadyPolled() {
+
+        LinearLayout agreeLayout = (LinearLayout) findViewById(R.id.agree_layout);
+        LinearLayout disagreeLayout = (LinearLayout) findViewById(R.id.disagree_layout);
+
+        TextView agree = (TextView) findViewById(R.id.agree);
+        TextView disagree = (TextView) findViewById(R.id.disagree);
+
+        View view = findViewById(R.id.seperator);
+
+        if (getIntent().getBooleanExtra(Constants.INTENT_POLL_PARRY, false)) {
+            view.setVisibility(View.GONE);
+            boolean poll = getIntent().getBooleanExtra(Constants.INTENT_POLL_STATUS, false);
+            if (poll) {
+                disagreeLayout.setVisibility(View.GONE);
+                agree.setClickable(false);
+                agree.setText("Agreed");
+            } else {
+                agreeLayout.setVisibility(View.GONE);
+                disagree.setClickable(false);
+                disagree.setText("Disagreed");
+            }
+        }
     }
 
     public void onAgree(View view) {
@@ -123,9 +152,10 @@ public class PoleActivity extends AppCompatActivity {
                     outputStream.write(chunk, 0, read);
                 }
 
-                Log.d("max","response code is"+httpURLConnection.getResponseCode()+"<<JsonContent>>"+jsonContent);
+                Log.d("max", "response code is" + httpURLConnection.getResponseCode() + "<<JsonContent>>" + jsonContent);
                 if (httpURLConnection.getResponseCode() == HttpURLConnection.HTTP_OK) {
                     success = true;
+                    SportsUnityDBHelper.getInstance(getApplicationContext()).insertPollinDatabase("articleName", 165, true);
                 } else {
                     //nothing
                 }
