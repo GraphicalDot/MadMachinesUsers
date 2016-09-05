@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -34,22 +35,53 @@ public class PoleActivity extends AppCompatActivity {
     private String pollAnswer = null;
     String article_id = null;
     private ProgressDialog progressDialog;
+    LinearLayout agreeLayout;
+    LinearLayout disagreeLayout;
+    ImageView backButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_poll);
+        setContentView(R.layout.activity_pole);
         article_id = getIntent().getStringExtra(Constants.INTENT_KEY_ID);
+        initView();
+    }
+
+    private void initView() {
+        backButton = (ImageView) findViewById(R.id.back_button);
+        agreeLayout = (LinearLayout) findViewById(R.id.agree_layout);
+        disagreeLayout = (LinearLayout) findViewById(R.id.disagree_layout);
+
+        backButton.setOnClickListener(onClickListener);
+        agreeLayout.setOnClickListener(onClickListener);
+        disagreeLayout.setOnClickListener(onClickListener);
+
         boolean pollStatus = getIntent().getBooleanExtra(Constants.INTENT_POLL_STATUS, false);
         if (getIntent().getBooleanExtra(Constants.INTENT_POLL_PARRY, false)) {
             AlreadyPolled(pollStatus);
         }
     }
 
-    private void AlreadyPolled(boolean pollStatus) {
+    View.OnClickListener onClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            int id = v.getId();
+            switch (id) {
+                case R.id.agree_layout:
+                    onAgree(v);
+                    break;
+                case R.id.disagree_layout:
+                    onDisagree(v);
+                    break;
+                case R.id.back_button:
+                    PoleActivity.this.finish();
+                    break;
+            }
+        }
+    };
 
-        LinearLayout agreeLayout = (LinearLayout) findViewById(R.id.agree_layout);
-        LinearLayout disagreeLayout = (LinearLayout) findViewById(R.id.disagree_layout);
+
+    private void AlreadyPolled(boolean pollStatus) {
 
         TextView agree = (TextView) findViewById(R.id.agree);
         TextView disagree = (TextView) findViewById(R.id.disagree);
@@ -60,11 +92,9 @@ public class PoleActivity extends AppCompatActivity {
 
         if (pollStatus) {
             disagreeLayout.setVisibility(View.GONE);
-            agree.setEnabled(false);
             agree.setText("Agreed");
         } else {
             agreeLayout.setVisibility(View.GONE);
-            disagree.setEnabled(false);
             disagree.setText("Disagreed");
         }
     }
@@ -75,21 +105,21 @@ public class PoleActivity extends AppCompatActivity {
     }
 
     public void onAgree(View view) {
-        //TODO
-        pollAnswer = POLL_AGREE;
-        showProgress();
-        submitPollAnswer();
+        if (pollAnswer == null) {
+            showProgress();
+            submitPollAnswer(POLL_AGREE);
+        }
     }
 
     public void onDisagree(View view) {
-        //TODO
-        pollAnswer = POLL_DISAGREE;
-        showProgress();
-        submitPollAnswer();
+        if (pollAnswer == null) {
+            showProgress();
+            submitPollAnswer(POLL_DISAGREE);
+        }
     }
 
 
-    private void submitPollAnswer() {
+    private void submitPollAnswer(final String poll) {
         ThreadTask pollSubmitTask = new ThreadTask(null) {
             @Override
             public Object process() {
@@ -104,6 +134,7 @@ public class PoleActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         if (success) {
+                            pollAnswer = poll;
                             changeUI(pollAnswer);
                             Toast.makeText(getApplicationContext(), "Sucesss", Toast.LENGTH_SHORT).show();
                         } else {

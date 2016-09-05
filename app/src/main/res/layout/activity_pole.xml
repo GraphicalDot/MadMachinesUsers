@@ -26,6 +26,7 @@
             android:background="@drawable/background">
 
             <ImageView
+                android:id="@+id/back_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/activity_vertical_margin_small"
@@ -78,7 +79,6 @@
                         android:layout_marginLeft="@dimen/activity_horizontal_margin"
                         android:background="@drawable/pole_select_background"
                         android:gravity="center"
-                        android:onClick="onAgree"
                         android:paddingBottom="@dimen/vertical_padding_very_very_small"
                         android:paddingTop="@dimen/vertical_padding_very_very_small">
 
@@ -118,7 +118,6 @@
                         android:layout_marginRight="@dimen/activity_horizontal_margin"
                         android:background="@drawable/pole_select_background"
                         android:gravity="center"
-                        android:onClick="onDisagree"
                         android:paddingBottom="@dimen/vertical_padding_very_very_small"
                         android:paddingTop="@dimen/vertical_padding_very_very_small">
 

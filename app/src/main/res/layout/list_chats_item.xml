@@ -1,19 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="horizontal"
     android:paddingBottom="@dimen/vertical_padding_very_very_small"
     android:paddingTop="@dimen/vertical_padding_very_very_small">
 
-    <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/user_pic"
-        android:layout_width="@dimen/profile_thumb_image_small"
-        android:layout_height="@dimen/profile_thumb_image_small"
+    <FrameLayout
+        android:id="@id/image_frame"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:layout_marginLeft="@dimen/horizontal_padding_small"
-        android:layout_marginRight="@dimen/horizontal_padding_very_very_small"
-        android:src="@drawable/ic_user" />
+        android:layout_marginRight="@dimen/horizontal_padding_very_very_small">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/user_pic"
+            android:layout_width="@dimen/profile_thumb_image_small"
+            android:layout_height="@dimen/profile_thumb_image_small"
+            android:layout_gravity="center_vertical"
+            android:src="@drawable/ic_user" />
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/discuss_indicator"
+            android:layout_width="@dimen/status_indicator_size"
+            android:layout_height="@dimen/status_indicator_size"
+            android:layout_gravity="bottom|right"
+            android:src="@drawable/ic_msg_list_discuss" />
+    </FrameLayout>
+
 
     <LinearLayout
         android:layout_width="wrap_content"
