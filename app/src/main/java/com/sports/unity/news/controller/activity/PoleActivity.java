@@ -27,21 +27,26 @@ import java.net.URL;
 
 public class PoleActivity extends AppCompatActivity {
 
+    public static final String POLL_AGREE = "y";
+    public static final String POLL_DISAGREE = "n";
 
     private static final String SUBMIT_POLL_ANSWER = "http://" + BuildConfig.XMPP_SERVER_API_BASE_URL + "/submit_poll_answer?";
     private String pollAnswer = null;
-    int article_id = 0;
+    String article_id = null;
     private ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_pole);
-        article_id = getIntent().getIntExtra(Constants.INTENT_KEY_ID, 0);
-        removePollIfAlreadyPolled();
+        setContentView(R.layout.activity_poll);
+        article_id = getIntent().getStringExtra(Constants.INTENT_KEY_ID);
+        boolean pollStatus = getIntent().getBooleanExtra(Constants.INTENT_POLL_STATUS, false);
+        if (getIntent().getBooleanExtra(Constants.INTENT_POLL_PARRY, false)) {
+            AlreadyPolled(pollStatus);
+        }
     }
 
-    private void removePollIfAlreadyPolled() {
+    private void AlreadyPolled(boolean pollStatus) {
 
         LinearLayout agreeLayout = (LinearLayout) findViewById(R.id.agree_layout);
         LinearLayout disagreeLayout = (LinearLayout) findViewById(R.id.disagree_layout);
@@ -51,33 +56,34 @@ public class PoleActivity extends AppCompatActivity {
 
         View view = findViewById(R.id.seperator);
 
-        if (getIntent().getBooleanExtra(Constants.INTENT_POLL_PARRY, false)) {
-            view.setVisibility(View.GONE);
-            boolean poll = getIntent().getBooleanExtra(Constants.INTENT_POLL_STATUS, false);
-            if (poll) {
-                disagreeLayout.setVisibility(View.GONE);
-                agree.setClickable(false);
-                agree.setText("Agreed");
-            } else {
-                agreeLayout.setVisibility(View.GONE);
-                disagree.setClickable(false);
-                disagree.setText("Disagreed");
-            }
+        view.setVisibility(View.GONE);
+
+        if (pollStatus) {
+            disagreeLayout.setVisibility(View.GONE);
+            agree.setEnabled(false);
+            agree.setText("Agreed");
+        } else {
+            agreeLayout.setVisibility(View.GONE);
+            disagree.setEnabled(false);
+            disagree.setText("Disagreed");
         }
+    }
+
+    private void changeUI(String pollAnswer) {
+        boolean pollStatus = pollAnswer.equals(POLL_AGREE) ? true : false;
+        AlreadyPolled(pollStatus);
     }
 
     public void onAgree(View view) {
         //TODO
-        pollAnswer = "y";
-        Log.d("max", "Sending agree");
+        pollAnswer = POLL_AGREE;
         showProgress();
         submitPollAnswer();
     }
 
     public void onDisagree(View view) {
         //TODO
-        Log.d("max", "Sending disagree");
-        pollAnswer = "n";
+        pollAnswer = POLL_DISAGREE;
         showProgress();
         submitPollAnswer();
     }
@@ -98,6 +104,7 @@ public class PoleActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         if (success) {
+                            changeUI(pollAnswer);
                             Toast.makeText(getApplicationContext(), "Sucesss", Toast.LENGTH_SHORT).show();
                         } else {
                             Toast.makeText(getApplicationContext(), "FAILED try again", Toast.LENGTH_SHORT).show();
@@ -155,7 +162,8 @@ public class PoleActivity extends AppCompatActivity {
                 Log.d("max", "response code is" + httpURLConnection.getResponseCode() + "<<JsonContent>>" + jsonContent);
                 if (httpURLConnection.getResponseCode() == HttpURLConnection.HTTP_OK) {
                     success = true;
-                    SportsUnityDBHelper.getInstance(getApplicationContext()).insertPollinDatabase("articleName", 165, true);
+                    boolean pollStatus = pollAnswer.equals(POLL_AGREE) ? true : false;
+                    SportsUnityDBHelper.getInstance(getApplicationContext()).insertPollinDatabase("articleName", article_id, pollStatus);
                 } else {
                     //nothing
                 }
@@ -189,4 +197,5 @@ public class PoleActivity extends AppCompatActivity {
             progressDialog.dismiss();
         }
     }
+
 }

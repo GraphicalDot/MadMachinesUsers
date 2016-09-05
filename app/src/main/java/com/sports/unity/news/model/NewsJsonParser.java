@@ -45,7 +45,7 @@ public class NewsJsonParser {
 
             if (successMessage.equalsIgnoreCase("true")) {
                 list = new ArrayList<>();
-                JSONArray array = (JSONArray) jsonObject.get("curated");
+                JSONArray array = (JSONArray) jsonObject.get("carousel");
                 for (int index = 0; index < array.length(); index++) {
                     list.add(array.getJSONObject(index));
                 }

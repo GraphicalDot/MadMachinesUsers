@@ -80,14 +80,17 @@ public class NewsDiscussActivity extends CustomVolleyCallerActivity {
     }
 
     public void onPole(View view) {
-        int id = 165;
+
+        //TODO
+        String id = "165"; //Temporary, must delete this line
+
         Intent intent = new Intent(getApplicationContext(), PoleActivity.class);
+        intent.putExtra(Constants.INTENT_KEY_ID, id);
         boolean articleExists = SportsUnityDBHelper.getInstance(getApplicationContext()).articleIdExistsOrNot(id);
         if (articleExists) {
             String groupJID = SportsUnityDBHelper.getInstance(getApplicationContext()).groupJIDExistsOrNot(id);
             if (null == groupJID) {
                 boolean poll = SportsUnityDBHelper.getInstance(getApplicationContext()).getPoll(id);
-                intent.putExtra(Constants.INTENT_KEY_ID, id);
                 intent.putExtra(Constants.INTENT_POLL_PARRY, true);
                 intent.putExtra(Constants.INTENT_POLL_STATUS, poll);
                 startActivity(intent);
@@ -99,7 +102,6 @@ public class NewsDiscussActivity extends CustomVolleyCallerActivity {
 
             }
         } else {
-            intent.putExtra(Constants.INTENT_KEY_ID, id);
             startActivity(intent);
         }
     }

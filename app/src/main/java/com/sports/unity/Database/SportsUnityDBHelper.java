@@ -1971,7 +1971,7 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
         return list;
     }
 
-    public boolean articleIdExistsOrNot(int articleID) {
+    public boolean articleIdExistsOrNot(String articleID) {
         SQLiteDatabase db = this.getReadableDatabase();
 
         String[] projection = {
@@ -1979,7 +1979,7 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
         };
 
         String selection = NewsDiscussDetailsEntry.COLUMN_ARTICLE_ID + " = ?";
-        String[] selectionArgs = {String.valueOf(articleID)};
+        String[] selectionArgs = {articleID};
 
 
         Cursor c = db.query(
@@ -1999,7 +1999,7 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
         }
     }
 
-    public String groupJIDExistsOrNot(int articleID) {
+    public String groupJIDExistsOrNot(String articleID) {
         SQLiteDatabase db = this.getReadableDatabase();
 
         String[] projection = {
@@ -2007,7 +2007,7 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
         };
 
         String selection = NewsDiscussDetailsEntry.COLUMN_ARTICLE_ID + " = ?";
-        String[] selectionArgs = {String.valueOf(articleID)};
+        String[] selectionArgs = {articleID};
 
 
         Cursor c = db.query(
@@ -2027,7 +2027,7 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
         }
     }
 
-    public void insertPollinDatabase(String articleName, int articleId, boolean poll_status) {
+    public void insertPollinDatabase(String articleName, String articleId, boolean poll_status) {
         SQLiteDatabase db = this.getReadableDatabase();
 
         ContentValues values = new ContentValues();
@@ -2038,7 +2038,7 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
         long newRowId = db.insert(NewsDiscussDetailsEntry.TABLE_NAME, null, values);
     }
 
-    public void updateGroupJIDInNewsDiscuss(int articleID, String groupJID) {
+    public void updateGroupJIDInNewsDiscuss(String articleID, String groupJID) {
         SQLiteDatabase db = this.getReadableDatabase();
 
         ContentValues values = new ContentValues();
@@ -2046,7 +2046,7 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
 
 
         String selection = NewsDiscussDetailsEntry.COLUMN_ARTICLE_ID + " LIKE ?";
-        String[] selectionArgs = {String.valueOf(articleID)};
+        String[] selectionArgs = {articleID};
 
         int count = db.update(
                 NewsDiscussDetailsEntry.TABLE_NAME,
@@ -2055,7 +2055,7 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
                 selectionArgs);
     }
 
-    public String getArticleNameThroughID(int articleId) {
+    public String getArticleNameThroughID(String articleId) {
         SQLiteDatabase db = this.getReadableDatabase();
 
         String[] projection = {
@@ -2064,7 +2064,7 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
 
 
         String selection = NewsDiscussDetailsEntry.COLUMN_ARTICLE_ID + " LIKE ?";
-        String[] selectionArgs = {String.valueOf(articleId)};
+        String[] selectionArgs = {articleId};
 
         Cursor c = db.query(
                 NewsDiscussDetailsEntry.TABLE_NAME,       // The table to query
@@ -2083,7 +2083,7 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
         return null;
     }
 
-    public boolean getPoll(int id) {
+    public boolean getPoll(String id) {
         SQLiteDatabase db = this.getReadableDatabase();
 
         String[] projection = {
@@ -2092,7 +2092,7 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
 
 
         String selection = NewsDiscussDetailsEntry.COLUMN_ARTICLE_ID + " LIKE ?";
-        String[] selectionArgs = {String.valueOf(id)};
+        String[] selectionArgs = {id};
 
         Cursor c = db.query(
                 NewsDiscussDetailsEntry.TABLE_NAME,       // The table to query

@@ -24,6 +24,7 @@ import com.sports.unity.common.model.UserUtil;
 import com.sports.unity.util.ActivityActionHandler;
 import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
+import com.sports.unity.util.SPORTSENUM;
 
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
@@ -637,7 +638,10 @@ public class PubSubMessaging {
     private void handleGroupCreation(Context context, String nodeId) {
         SportsUnityDBHelper sportsUnityDBHelper = SportsUnityDBHelper.getInstance(context);
         String subject = nodeId.substring(nodeId.indexOf("%") + 1, nodeId.indexOf("%%"));
-
+        if (nodeId.startsWith("DIS_")) {
+            sportsUnityDBHelper.updateGroupJIDInNewsDiscuss(subject, nodeId);
+            subject = sportsUnityDBHelper.getArticleNameThroughID(subject);
+        }
         int chatId = sportsUnityDBHelper.getChatEntryID(nodeId);
         if (chatId == SportsUnityDBHelper.DEFAULT_ENTRY_ID) {
             chatId = sportsUnityDBHelper.createGroupChatEntry(subject, null, nodeId);
@@ -649,7 +653,9 @@ public class PubSubMessaging {
 
             ActivityActionHandler.getInstance().dispatchCommonEvent(ActivityActionHandler.CHAT_LIST_KEY);
         }
-        displayNotificationForDiscuss(context, nodeId, subject);
+        if (nodeId.startsWith("DIS_")) {
+            displayNotificationForDiscuss(context, nodeId, subject);
+        }
     }
 
     private void handleGroupElimination(Context context, String groupJID) {
