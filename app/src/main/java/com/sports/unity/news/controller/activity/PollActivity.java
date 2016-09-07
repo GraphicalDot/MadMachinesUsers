@@ -93,9 +93,11 @@ public class PollActivity extends AppCompatActivity {
         view.setVisibility(View.GONE);
 
         if (pollStatus) {
+            pollAnswer=POLL_AGREE;
             disagreeLayout.setVisibility(View.GONE);
             agree.setText("Agreed");
         } else {
+            pollAnswer=POLL_DISAGREE;
             agreeLayout.setVisibility(View.GONE);
             disagree.setText("Disagreed");
         }
@@ -125,7 +127,7 @@ public class PollActivity extends AppCompatActivity {
         ThreadTask pollSubmitTask = new ThreadTask(null) {
             @Override
             public Object process() {
-                boolean success = sendPollAnswer();
+                boolean success = sendPollAnswer(poll);
                 return success;
             }
 
@@ -150,7 +152,7 @@ public class PollActivity extends AppCompatActivity {
         pollSubmitTask.start();
     }
 
-    private boolean sendPollAnswer() {
+    private boolean sendPollAnswer(String pollAnswer) {
         boolean success = false;
         String jsonContent = null;
         try {
