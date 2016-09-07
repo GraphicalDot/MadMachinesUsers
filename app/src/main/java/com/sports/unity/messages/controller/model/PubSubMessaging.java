@@ -638,7 +638,7 @@ public class PubSubMessaging {
     private void handleGroupCreation(Context context, String nodeId) {
         SportsUnityDBHelper sportsUnityDBHelper = SportsUnityDBHelper.getInstance(context);
         String subject = nodeId.substring(nodeId.indexOf("%") + 1, nodeId.indexOf("%%"));
-        if (nodeId.startsWith("DIS_")) {
+        if (nodeId.startsWith(Constants.DISCUSS_JID)) {
             sportsUnityDBHelper.updateGroupJIDInNewsDiscuss(subject, nodeId);
             subject = sportsUnityDBHelper.getArticleNameThroughID(subject);
         }
@@ -653,7 +653,7 @@ public class PubSubMessaging {
 
             ActivityActionHandler.getInstance().dispatchCommonEvent(ActivityActionHandler.CHAT_LIST_KEY);
         }
-        if (nodeId.startsWith("DIS_")) {
+        if (nodeId.startsWith(Constants.DISCUSS_JID)) {
             displayNotificationForDiscuss(context, nodeId, subject);
         }
     }

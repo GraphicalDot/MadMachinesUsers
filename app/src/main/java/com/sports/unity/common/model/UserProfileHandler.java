@@ -60,6 +60,8 @@ public class UserProfileHandler {
     public static final String LOAD_PROFILE_REQUEST_TAG = "load_profile_tag";
     public static final String SUBMIT_GROUP_INFO_REQUEST_TAG = "submit_group_info_tag";
 
+    public static final String SUBMIT_GROUP_LEAVING_REQUEST_TAG = "submit_group_leaving_tag";
+
     public static final String IMAGE_THUMNB = "S";
     public static final String IMAGE_LARGE = "L";
 
@@ -73,6 +75,8 @@ public class UserProfileHandler {
 
     private static final String SET_DISPLAY_PIC = "http://" + BuildConfig.XMPP_SERVER_API_BASE_URL + "/set_dp?";
     private static final String GET_DISPLAY_PIC = "http://" + BuildConfig.XMPP_SERVER_API_BASE_URL + "/get_dp?";
+
+    private static final String SUBMIT_LEAVING_GROUP = "http://" + BuildConfig.XMPP_SERVER_API_BASE_URL + "/exit_discussion?";
 
     private static UserProfileHandler USER_PROFILE_HANDLER;
 
@@ -249,6 +253,92 @@ public class UserProfileHandler {
             requestStatus = REQUEST_STATUS_ALREADY_EXIST;
         }
         return requestStatus;
+    }
+
+    public int submitGroupExit(Context context, String groupJid, String listenerKey) {
+        int requestStatus = REQUEST_STATUS_FAILED;
+        if (!requestInProcess_RequestTagAndListenerKey.containsKey(SUBMIT_GROUP_LEAVING_REQUEST_TAG)) {
+
+            requestInProcess_RequestTagAndListenerKey.put(SUBMIT_GROUP_LEAVING_REQUEST_TAG, listenerKey);
+            requestStatus = REQUEST_STATUS_QUEUED;
+
+            UserThreadTask userThreadTask = new UserThreadTask(context, SUBMIT_GROUP_LEAVING_REQUEST_TAG, groupJid) {
+
+                @Override
+                public Object process() {
+                    String groupJid = (String) object;
+                    boolean success = sendLeavingGroup(context, groupJid);
+                    return success;
+                }
+
+            };
+            userThreadTask.start();
+        } else {
+            requestStatus = REQUEST_STATUS_ALREADY_EXIST;
+        }
+        return requestStatus;
+    }
+
+    private boolean sendLeavingGroup(Context context, String groupJid) {
+        boolean success = false;
+        String jsonContent = null;
+        try {
+            String password = TinyDB.getInstance(context).getString(TinyDB.KEY_PASSWORD);
+            String userJID = TinyDB.getInstance(context).getString(TinyDB.KEY_USER_JID);
+            String articleId = SportsUnityDBHelper.getInstance(context).getArticleIDThroughJid(groupJid);
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("username", userJID);
+            jsonObject.put("password", password);
+            jsonObject.put("apk_version", CommonUtil.getBuildConfig());
+            jsonObject.put("udid", CommonUtil.getDeviceId(context));
+            jsonObject.put("discussion_id", groupJid);
+            jsonObject.put("article_id", articleId);
+
+            jsonContent = jsonObject.toString();
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
+        if (jsonContent != null) {
+            HttpURLConnection httpURLConnection = null;
+            ByteArrayInputStream byteArrayInputStream = null;
+            try {
+                URL sendInterests = new URL(SUBMIT_LEAVING_GROUP);
+                Log.d("max", "PollUrl>>" + sendInterests);
+                httpURLConnection = (HttpURLConnection) sendInterests.openConnection();
+                httpURLConnection.setConnectTimeout(Constants.CONNECTION_TIME_OUT);
+                httpURLConnection.setDoInput(false);
+                httpURLConnection.setRequestMethod("POST");
+
+                byteArrayInputStream = new ByteArrayInputStream(jsonContent.getBytes());
+                OutputStream outputStream = httpURLConnection.getOutputStream();
+
+                byte chunk[] = new byte[4096];
+                int read = 0;
+                while ((read = byteArrayInputStream.read(chunk)) != -1) {
+                    outputStream.write(chunk, 0, read);
+                }
+
+                Log.d("max", "response code is" + httpURLConnection.getResponseCode() + "<<JsonContent>>" + jsonContent);
+                if (httpURLConnection.getResponseCode() == HttpURLConnection.HTTP_OK) {
+                    success = true;
+                } else {
+                    //nothing
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                try {
+                    httpURLConnection.disconnect();
+                } catch (Exception ex) {
+                }
+            }
+        } else {
+            //nothing
+        }
+
+        return success;
     }
 
     public boolean submitUserFavorites(Context context) {

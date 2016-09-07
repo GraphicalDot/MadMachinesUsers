@@ -2055,6 +2055,41 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
                 selectionArgs);
     }
 
+    public void deleteDiscussionDetail(String jid) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String selection = NewsDiscussDetailsEntry.COLUMN_GROUP_JID + " LIKE ?";
+        String[] selectionArgs = {jid};
+        db.delete(NewsDiscussDetailsEntry.TABLE_NAME, selection, selectionArgs);
+    }
+
+    public String getArticleIDThroughJid(String jid) {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String[] projection = {
+                NewsDiscussDetailsEntry.COLUMN_ARTICLE_ID
+        };
+
+
+        String selection = NewsDiscussDetailsEntry.COLUMN_GROUP_JID + " LIKE ?";
+        String[] selectionArgs = {jid};
+
+        Cursor c = db.query(
+                NewsDiscussDetailsEntry.TABLE_NAME,       // The table to query
+                projection,                               // The columns to return
+                selection,                                // The columns for the WHERE clause
+                selectionArgs,                            // The values for the WHERE clause
+                null,                                     // don't group the rows
+                null,                                     // don't filter by row groups
+                null                                      // The sort order
+        );
+
+        if (c.moveToFirst()) {
+            return c.getString(0);
+        }
+
+        return null;
+    }
+
     public String getArticleNameThroughID(String articleId) {
         SQLiteDatabase db = this.getReadableDatabase();
 

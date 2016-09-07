@@ -427,4 +427,6 @@ message to verify your mobile number.</string>
     <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
     <string name="title_activity_pole">Pole</string>
+
+    <string name="message_exit_failed">Something went wrong, try again.</string>
 </resources>    

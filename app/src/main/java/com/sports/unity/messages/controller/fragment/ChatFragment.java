@@ -1,5 +1,6 @@
 package com.sports.unity.messages.controller.fragment;
 
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
@@ -13,7 +14,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -23,6 +26,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.R;
 import com.sports.unity.common.model.TinyDB;
+import com.sports.unity.common.model.UserProfileHandler;
 import com.sports.unity.messages.controller.activity.ChatScreenActivity;
 import com.sports.unity.messages.controller.activity.ForwardSelectedItems;
 import com.sports.unity.messages.controller.model.Chats;
@@ -59,15 +63,20 @@ public class ChatFragment extends Fragment implements OnSearchViewQueryListener 
 
     private GoogleApiClient mClient;
     private Uri mUrl;
-    private String mTitle="Chat With Your Friends";
-    private String mDescription="chat through the match and otherwise with your buddies.";
+    private String mTitle = "Chat With Your Friends";
+    private String mDescription = "chat through the match and otherwise with your buddies.";
+
+    private GroupExitContentListener groupExitContentListener = new GroupExitContentListener();
+    private static final String LISTENER_KEY = "group_exit_listener_key";
+    private ProgressDialog dialog = null;
+    private Chats chat = null;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
 
-       mUrl=Uri.parse("android-app://co.sports.unity/mobileapp/sportsunity.co/chat");
+        mUrl = Uri.parse("android-app://co.sports.unity/mobileapp/sportsunity.co/chat");
         mClient = CommonUtil.getAppIndexingClient(getActivity());
     }
 
@@ -82,7 +91,6 @@ public class ChatFragment extends Fragment implements OnSearchViewQueryListener 
 
         return view;
     }
-
 
     private AdapterView.OnItemLongClickListener openContactOptions = new AdapterView.OnItemLongClickListener() {
 
@@ -267,7 +275,7 @@ public class ChatFragment extends Fragment implements OnSearchViewQueryListener 
                     deleteSingleChat(chat);
                 } else {
                     if (chat.block) {
-                        deleteGroup(chat.id);
+                        deleteGroup(chat);
                     } else {
                         exitGroup(chat);
                     }
@@ -280,17 +288,26 @@ public class ChatFragment extends Fragment implements OnSearchViewQueryListener 
     }
 
     private void exitGroup(Chats chat) {
-        String currentUserJID = TinyDB.getInstance(getContext()).getString(TinyDB.KEY_USER_JID);
-        boolean success = PubSubMessaging.getInstance().exitGroup(currentUserJID + "@mm.io", chat.jid);
-        if (success) {
-            updateGroupStatusInDB(chat);
-            PubSubMessaging.getInstance().sendIntimationAboutMemberRemoved(getContext(), currentUserJID, chat.jid);
+        if (chat.jid.startsWith(Constants.DISCUSS_JID)) {
+            showInDeterminateProgress("Please wait...");
+            this.chat = chat;
+            UserProfileHandler.getInstance().submitGroupExit(getActivity(), chat.jid, LISTENER_KEY);
+        } else {
+            String currentUserJID = TinyDB.getInstance(getContext()).getString(TinyDB.KEY_USER_JID);
+            boolean success = PubSubMessaging.getInstance().exitGroup(currentUserJID + "@mm.io", chat.jid);
+            if (success) {
+                updateGroupStatusInDB(chat);
+                PubSubMessaging.getInstance().sendIntimationAboutMemberRemoved(getContext(), currentUserJID, chat.jid);
+            }
         }
     }
 
-    private void deleteGroup(int chatId) {
-        SportsUnityDBHelper.getInstance(getContext()).deleteGroup(chatId);
-        NotificationHandler.getInstance(getActivity().getApplicationContext()).clearNotificationMessages(String.valueOf(chatId));
+    private void deleteGroup(Chats chat) {
+        SportsUnityDBHelper.getInstance(getContext()).deleteGroup(chat.id);
+        NotificationHandler.getInstance(getActivity().getApplicationContext()).clearNotificationMessages(String.valueOf(chat.id));
+        if (chat.jid.startsWith(Constants.DISCUSS_JID)) {
+            SportsUnityDBHelper.getInstance(getContext()).deleteDiscussionDetail(chat.jid);
+        }
     }
 
     private void updateGroupStatusInDB(Chats chat) {
@@ -413,14 +430,14 @@ public class ChatFragment extends Fragment implements OnSearchViewQueryListener 
             isSearch = false;
         }
         ActivityActionHandler.getInstance().addActionListener(ActivityActionHandler.CHAT_LIST_KEY, activityActionListener);
-
+        UserProfileHandler.getInstance().addContentListener(LISTENER_KEY, groupExitContentListener);
         NotificationHandler.dismissNotification(getActivity());
     }
 
     @Override
     public void onPause() {
         super.onPause();
-
+        UserProfileHandler.getInstance().removeContentListener(LISTENER_KEY);
     }
 
     @Override
@@ -473,4 +490,50 @@ public class ChatFragment extends Fragment implements OnSearchViewQueryListener 
 //        filterResults(filterText);
     }
 
+    class GroupExitContentListener implements UserProfileHandler.ContentListener {
+
+        @Override
+        public void handleContent(String requestTag, Object content) {
+            if (requestTag.equals(UserProfileHandler.SUBMIT_GROUP_LEAVING_REQUEST_TAG)) {
+                final Boolean success = (Boolean) content;
+                getActivity().runOnUiThread(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        if (success) {
+                            String currentUserJID = TinyDB.getInstance(getContext()).getString(TinyDB.KEY_USER_JID);
+                            boolean success = PubSubMessaging.getInstance().exitGroup(currentUserJID + "@mm.io", chat.jid);
+                            if (success) {
+                                updateGroupStatusInDB(chat);
+                                PubSubMessaging.getInstance().sendIntimationAboutMemberRemoved(getContext(), currentUserJID, chat.jid);
+                            }
+                        } else {
+                            Toast.makeText(getActivity(), R.string.message_exit_failed, Toast.LENGTH_SHORT).show();
+                        }
+                        dismissInDeterminateProgress();
+                    }
+
+                });
+            } else {
+
+            }
+        }
+
+    }
+
+    private void showInDeterminateProgress(String message) {
+        ProgressBar progressBar = new ProgressBar(getActivity());
+        progressBar.getIndeterminateDrawable().setColorFilter(getResources().getColor(R.color.app_theme_blue), android.graphics.PorterDuff.Mode.MULTIPLY);
+
+        dialog = ProgressDialog.show(getActivity(), "", message, true);
+        dialog.setIndeterminateDrawable(progressBar.getIndeterminateDrawable());
+    }
+
+    private void dismissInDeterminateProgress() {
+        if (dialog != null) {
+            if (dialog.isShowing()) {
+                dialog.dismiss();
+            }
+        }
+    }
 }

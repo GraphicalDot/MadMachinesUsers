@@ -208,6 +208,8 @@
     <dimen name="progress_bar_width">30dp</dimen>
     <dimen name="progress_bar_height">3dp</dimen>
     <dimen name="status_indicator_size">15dp</dimen>
+    <dimen name="discuss_indicator_size">30dp</dimen>
+    <dimen name="profile_frame_size">55dp</dimen>
 
     <dimen name="pole_agree_button">130dp</dimen>
     <dimen name="pole_waiting_image">112dp</dimen>

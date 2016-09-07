@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.NotificationCompat;
 import android.util.Log;
@@ -175,12 +176,15 @@ public class SUPushServiceListener extends GcmListenerService {
                     mBuilder.addAction(R.drawable.ic_share_white, getString(R.string.share), shareIntent)
                             .addAction(R.drawable.ic_mute_notification, getString(R.string.mute_alerts), mpi);
                 }
-                //                TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
-//                stackBuilder.addParentStack(ScoreDetailActivity.class);
-//                stackBuilder.addNextIntent(i);
+                if (UserUtil.isNotificationAndSound()) {
+                    Uri uri = Uri.parse(UserUtil.getNotificationSoundURI());
+                    mBuilder.setSound(uri);
+                } else {
+                    //nothing
+                }
+
                 PendingIntent resultPendingIntent = XMPPService.getPendingIntentForScoreDetailActivity(getApplicationContext(), i);
                 mBuilder.setContentIntent(resultPendingIntent);
-                //mBuilder.setContent(contentView);
 
                 NotificationManager mNotificationManager =
                         (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);

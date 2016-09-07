@@ -563,14 +563,22 @@ public class GroupInfoFragment extends Fragment implements ActivityCompat.OnRequ
     };
 
     private void exitAndDeleteGroup() {
-        boolean success = exitGroup();
-        if (success) {
-            deleteGroup();
+        if (groupJID.startsWith(Constants.DISCUSS_JID)) {
+            showInDeterminateProgress("Please wait...");
+            UserProfileHandler.getInstance().submitGroupExit(getActivity(), groupJID, LISTENER_KEY);
+        } else {
+            boolean success = exitGroup();
+            if (success) {
+                deleteGroup();
+            }
         }
     }
 
     private void deleteGroup() {
         SportsUnityDBHelper.getInstance(getContext()).deleteGroup(chatID);
+        if (groupJID.startsWith(Constants.DISCUSS_JID)) {
+            SportsUnityDBHelper.getInstance(getContext()).deleteDiscussionDetail(groupJID);
+        }
         NotificationHandler.getInstance(getActivity().getApplicationContext()).clearNotificationMessages(String.valueOf(chatID));
         Intent I = new Intent(getActivity(), MainActivity.class);
         I.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
@@ -689,6 +697,24 @@ public class GroupInfoFragment extends Fragment implements ActivityCompat.OnRequ
                             Toast.makeText(getActivity(), R.string.message_submit_failed, Toast.LENGTH_SHORT).show();
                         }
 
+                        dismissInDeterminateProgress();
+                    }
+
+                });
+            } else if (requestTag.equals(UserProfileHandler.SUBMIT_GROUP_LEAVING_REQUEST_TAG)) {
+                final Boolean success = (Boolean) content;
+                getActivity().runOnUiThread(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        if (success) {
+                            boolean success = exitGroup();
+                            if (success) {
+                                deleteGroup();
+                            }
+                        } else {
+                            Toast.makeText(getActivity(), R.string.message_exit_failed, Toast.LENGTH_SHORT).show();
+                        }
                         dismissInDeterminateProgress();
                     }
 
