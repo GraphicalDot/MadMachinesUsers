@@ -143,5 +143,7 @@ public class Constants {
     public static final String INTENT_POLL_PARRY = "poll_parry";
     public static final String INTENT_POLL_STATUS = "poll_status";
 
-    public static final String DISCUSS_JID="DIS_";
+    public static final String DISCUSS_JID = "DIS_";
+
+    public static final String INTENT_KEY_NOTIFICATION = "type_notification";
 }

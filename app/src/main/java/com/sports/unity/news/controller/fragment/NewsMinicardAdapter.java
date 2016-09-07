@@ -2,6 +2,7 @@ package com.sports.unity.news.controller.fragment;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -14,6 +15,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.sports.unity.R;
 import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.common.view.SlidingTabLayout;
@@ -22,6 +24,7 @@ import com.sports.unity.news.controller.activity.NewsDiscussActivity;
 import com.sports.unity.news.model.NewsJsonCaller;
 import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
+import com.sports.unity.util.network.FirebaseUtil;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -182,6 +185,13 @@ public class NewsMinicardAdapter extends RecyclerView.Adapter<NewsMinicardAdapte
                             String newsType = newsJsonCaller.getCuratedType();
                             if (!TextUtils.isEmpty(newsType) && newsType.equalsIgnoreCase(CURATED_NEWS)) {
                                 intent = new Intent(activity, NewsDiscussActivity.class);
+                                //FIREBASE INTEGRATION
+                                {
+                                    FirebaseAnalytics firebaseAnalytics = FirebaseUtil.getInstance(activity);
+                                    Bundle bundle = new Bundle();
+                                    bundle.putString(FirebaseUtil.Param.ARTICLE_ID, newsJsonCaller.getNewsId());
+                                    FirebaseUtil.logEvent(firebaseAnalytics, bundle, FirebaseUtil.Event.CURATED_NEWS_CLICK);
+                                }
                             } else {
                                 intent = new Intent(activity, NewsDetailsActivity.class);
                             }

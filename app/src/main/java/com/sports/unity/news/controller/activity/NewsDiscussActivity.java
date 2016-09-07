@@ -1,6 +1,5 @@
 package com.sports.unity.news.controller.activity;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -8,12 +7,12 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.R;
 import com.sports.unity.common.view.CustomVolleyCallerActivity;
@@ -24,6 +23,7 @@ import com.sports.unity.messages.controller.model.Contacts;
 import com.sports.unity.news.model.NewsJsonCaller;
 import com.sports.unity.scores.model.ScoresContentHandler;
 import com.sports.unity.util.Constants;
+import com.sports.unity.util.network.FirebaseUtil;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -33,7 +33,6 @@ import org.joda.time.LocalDate;
 import org.joda.time.Minutes;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
 import java.util.HashMap;
 
@@ -77,6 +76,10 @@ public class NewsDiscussActivity extends CustomVolleyCallerActivity {
         newsAvatar = (ImageView) findViewById(R.id.slant_view);
         id = getIntent().getStringExtra(Constants.INTENT_KEY_ID);
         newsLayout = (RelativeLayout) findViewById(R.id.news_layout);
+        boolean isNotification = getIntent().getBooleanExtra(Constants.INTENT_KEY_NOTIFICATION, false);
+        if (isNotification) {
+            logFirebaseEvent(FirebaseUtil.Event.NEWS_NOTIFICATION_CLICK);
+        }
     }
 
     public void onPole(View view) {
@@ -84,7 +87,7 @@ public class NewsDiscussActivity extends CustomVolleyCallerActivity {
         //TODO
         String id = "165"; //Temporary, must delete this line
 
-        Intent intent = new Intent(getApplicationContext(), PoleActivity.class);
+        Intent intent = new Intent(getApplicationContext(), PollActivity.class);
         intent.putExtra(Constants.INTENT_KEY_ID, id);
         boolean articleExists = SportsUnityDBHelper.getInstance(getApplicationContext()).articleIdExistsOrNot(id);
         if (articleExists) {
@@ -102,8 +105,17 @@ public class NewsDiscussActivity extends CustomVolleyCallerActivity {
 
             }
         } else {
+            logFirebaseEvent(FirebaseUtil.Event.DISCUSS_CLICK);
             startActivity(intent);
         }
+    }
+
+    private void logFirebaseEvent(String eventName) {
+        //FIREBASE INTEGRATION
+        FirebaseAnalytics firebaseAnalytics = FirebaseUtil.getInstance(getApplicationContext());
+        Bundle bundle = new Bundle();
+        bundle.putString(FirebaseUtil.Param.ARTICLE_ID, id);
+        FirebaseUtil.logEvent(firebaseAnalytics, bundle, eventName);
     }
 
     private void initToolbar() {

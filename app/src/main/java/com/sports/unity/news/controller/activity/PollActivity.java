@@ -11,6 +11,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.sports.unity.BuildConfig;
 import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.R;
@@ -18,6 +19,7 @@ import com.sports.unity.common.model.TinyDB;
 import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
 import com.sports.unity.util.ThreadTask;
+import com.sports.unity.util.network.FirebaseUtil;
 
 import org.json.JSONObject;
 
@@ -26,7 +28,7 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-public class PoleActivity extends AppCompatActivity {
+public class PollActivity extends AppCompatActivity {
 
     public static final String POLL_AGREE = "y";
     public static final String POLL_DISAGREE = "n";
@@ -42,7 +44,7 @@ public class PoleActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_pole);
+        setContentView(R.layout.activity_poll);
         article_id = getIntent().getStringExtra(Constants.INTENT_KEY_ID);
         initView();
     }
@@ -74,7 +76,7 @@ public class PoleActivity extends AppCompatActivity {
                     onDisagree(v);
                     break;
                 case R.id.back_button:
-                    PoleActivity.this.finish();
+                    PollActivity.this.finish();
                     break;
             }
         }
@@ -153,14 +155,14 @@ public class PoleActivity extends AppCompatActivity {
         String jsonContent = null;
         try {
 
-            String password = TinyDB.getInstance(PoleActivity.this).getString(TinyDB.KEY_PASSWORD);
-            String userJID = TinyDB.getInstance(PoleActivity.this).getString(TinyDB.KEY_USER_JID);
+            String password = TinyDB.getInstance(PollActivity.this).getString(TinyDB.KEY_PASSWORD);
+            String userJID = TinyDB.getInstance(PollActivity.this).getString(TinyDB.KEY_USER_JID);
 
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("username", userJID);
             jsonObject.put("password", password);
             jsonObject.put("apk_version", CommonUtil.getBuildConfig());
-            jsonObject.put("udid", CommonUtil.getDeviceId(PoleActivity.this));
+            jsonObject.put("udid", CommonUtil.getDeviceId(PollActivity.this));
             jsonObject.put("poll_answer", pollAnswer);
             jsonObject.put("article_id", article_id);
 
@@ -194,6 +196,7 @@ public class PoleActivity extends AppCompatActivity {
                 if (httpURLConnection.getResponseCode() == HttpURLConnection.HTTP_OK) {
                     success = true;
                     boolean pollStatus = pollAnswer.equals(POLL_AGREE) ? true : false;
+                    logFireBaseEvent(pollStatus);
                     SportsUnityDBHelper.getInstance(getApplicationContext()).insertPollinDatabase("articleName", article_id, pollStatus);
                 } else {
                     //nothing
@@ -213,10 +216,21 @@ public class PoleActivity extends AppCompatActivity {
         return success;
     }
 
+    private void logFireBaseEvent(boolean pollStatus) {
+        //FIREBASE INTEGRATION
+        {
+            String firebaseEvent = pollStatus ? FirebaseUtil.Event.POLL_AGREE : FirebaseUtil.Event.POLL_DISAGREE;
+            FirebaseAnalytics firebaseAnalytics = FirebaseUtil.getInstance(getApplicationContext());
+            Bundle bundle = new Bundle();
+            bundle.putString(FirebaseUtil.Param.ARTICLE_ID, article_id);
+            FirebaseUtil.logEvent(firebaseAnalytics, bundle, firebaseEvent);
+        }
+    }
+
     private void showProgress() {
-        ProgressBar progressBar = new ProgressBar(PoleActivity.this);
+        ProgressBar progressBar = new ProgressBar(PollActivity.this);
         progressBar.getIndeterminateDrawable().setColorFilter(getResources().getColor(R.color.app_theme_blue), android.graphics.PorterDuff.Mode.MULTIPLY);
-        progressDialog = new ProgressDialog(PoleActivity.this);
+        progressDialog = new ProgressDialog(PollActivity.this);
         progressDialog.setMessage("creating group...");
         progressDialog.setIndeterminateDrawable(progressBar.getIndeterminateDrawable());
         progressDialog.setCancelable(false);

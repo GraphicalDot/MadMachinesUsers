@@ -141,6 +141,7 @@ public class SUPushServiceListener extends GcmListenerService {
                         i.putExtra(Constants.INTENT_KEY_ID, article_id);
                         i.putExtra(Constants.INTENT_KEY_TITLE, title);
                         i.putExtra(Constants.INTENT_KEY_TYPE, sportsType);
+                        i.putExtra(Constants.INTENT_KEY_NOTIFICATION, true);
                     }
 
                 }

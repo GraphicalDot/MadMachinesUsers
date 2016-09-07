@@ -343,7 +343,7 @@
             android:name=".news.controller.activity.NewsDiscussActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".news.controller.activity.PoleActivity"
+            android:name=".news.controller.activity.PollActivity"
             android:screenOrientation="portrait"></activity>
     </application>
 

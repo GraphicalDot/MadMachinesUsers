@@ -801,7 +801,7 @@ public class PubSubMessaging {
         builder.setDefaults(defaults);
         builder.setAutoCancel(true);
         int chatId = XMPPService.getChatIdOrCreateIfNotExist(context, true, groupJID, false);
-        PendingIntent pendingIntent = XMPPService.getPendingIntentForChatActivity(context, true, name, groupJID, chatId, null, false, Contacts.AVAILABLE_BY_MY_CONTACTS, null);
+        PendingIntent pendingIntent = XMPPService.getPendingIntentForNotificationChatActivity(context, true, name, groupJID, chatId, null, false, Contacts.AVAILABLE_BY_MY_CONTACTS, null);
         builder.setContentIntent(pendingIntent);
         if (UserUtil.isNotificationAndSound()) {
             Uri uri = Uri.parse(UserUtil.getNotificationSoundURI());

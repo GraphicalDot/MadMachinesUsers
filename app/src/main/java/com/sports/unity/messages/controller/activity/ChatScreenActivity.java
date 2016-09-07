@@ -900,6 +900,10 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
         } else {
             //nothing
         }
+        boolean isNotification = getIntent().getBooleanExtra(Constants.INTENT_KEY_NOTIFICATION, false);
+        if (isNotification) {
+            logScreensToFireBase(FirebaseUtil.Event.GROUP_NOTIFICATION_CLICK);
+        }
     }
 
     private void getLastSeen() throws SmackException.NotConnectedException {

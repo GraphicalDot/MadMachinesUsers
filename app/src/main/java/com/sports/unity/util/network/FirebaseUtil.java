@@ -61,6 +61,7 @@ public class FirebaseUtil {
         public static final String GLOBAL_SEARCH_TEXT = "global_search_text";
         public static final String GLOBAL_SEARCH_TYPE = "global_search_type";
 
+        public static final String ARTICLE_ID = "article_id";
 
     }
 
@@ -175,6 +176,17 @@ public class FirebaseUtil {
         public static final String PAM_SIMILAR_CHAT = "pam_similar_chat";
 
         public static final String DATA_ERROR = "data_error";
+
+        public static final String HERO_BANNER_CLICK = "hero_banner_click";
+        public static final String DISCUSS_CLICK = "discuss_click";
+
+        public static final String POLL_AGREE = "pole_agree";
+        public static final String POLL_DISAGREE = "pole_disagree";
+
+        public static final String CURATED_NEWS_CLICK = "curated_news_click";
+
+        public static final String GROUP_NOTIFICATION_CLICK = "group_note_click";
+        public static final String NEWS_NOTIFICATION_CLICK = "news_note_click";
     }
 
     /**

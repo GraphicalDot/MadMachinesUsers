@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.Bundle;
 import android.support.v4.view.PagerAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,12 +14,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.sports.unity.R;
 import com.sports.unity.news.controller.activity.NewsDetailsActivity;
 import com.sports.unity.news.controller.activity.NewsDiscussActivity;
 import com.sports.unity.news.model.NewsJsonCaller;
 import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
+import com.sports.unity.util.network.FirebaseUtil;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -88,6 +91,13 @@ public class CuratedPagerAdapter extends PagerAdapter {
             @Override
             public void onClick(View v) {
                 try {
+                    //FIREBASE INTEGRATION
+                    {
+                        FirebaseAnalytics firebaseAnalytics = FirebaseUtil.getInstance(context);
+                        Bundle bundle = new Bundle();
+                        bundle.putString(FirebaseUtil.Param.ARTICLE_ID, newsJsonCaller.getNewsId());
+                        FirebaseUtil.logEvent(firebaseAnalytics, bundle, FirebaseUtil.Event.HERO_BANNER_CLICK);
+                    }
                     int position = (Integer) v.getTag();
                     newsJsonCaller.setJsonObject(curatedNewsList.get(position));
                     String newsLink = newsJsonCaller.getNewsLink();
