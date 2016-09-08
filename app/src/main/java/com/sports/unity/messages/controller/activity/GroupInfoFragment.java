@@ -214,6 +214,10 @@ public class GroupInfoFragment extends Fragment implements ActivityCompat.OnRequ
         }
         String partCount = getResources().getString(R.string.participant_count);
         partCount = String.format(partCount, groupParticipants.usersInGroup.size());
+        if(groupJID.startsWith(Constants.DISCUSS_JID)){
+            partCount = getResources().getString(R.string.discuss_participant_count);
+            partCount = String.format(partCount, groupParticipants.usersInGroup.size()-1);
+        }
         groupCount.setText(partCount);
 
         participantsList = (ListView) view.findViewById(R.id.participants_list);

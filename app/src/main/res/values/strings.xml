@@ -360,6 +360,7 @@ message to verify your mobile number.</string>
     <string name="add_friends">Add Friends</string>
     <string name="add_msg">People you add will not see previous conversations</string>
     <string name="participant_count">%1$d OF 50</string>
+    <string name="discuss_participant_count">%1$d OF 8</string>
     <string name="umpires">Umpires</string>
     <string name="match_referee">Match Referee</string>
     <string name="ucoming_match_day_format">Starts in %s days</string>
