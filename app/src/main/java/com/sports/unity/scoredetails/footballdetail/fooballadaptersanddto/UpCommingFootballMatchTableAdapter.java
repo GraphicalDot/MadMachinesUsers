@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.analytics.ecommerce.Promotion;
 import com.sports.unity.R;
 import com.sports.unity.common.controller.TeamLeagueDetails;
 import com.sports.unity.common.model.FavouriteItem;
@@ -25,6 +26,9 @@ import java.util.Iterator;
  */
 public class UpCommingFootballMatchTableAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
+    private final static String COLOR_GREEN_QUALIFIER = "Promotion - Champions League (Group Stage)";
+    private final static String COLOR_GREEN_QUALIFIER_ALTERNATE = "Promotion - Champions League (Qualification)";
+    private final static String COLOR_YELLOW_QUALIFIER = "Promotion - Europa League (Group Stage)";
     private Context context;
     private String team1;
     private String team2;
@@ -108,15 +112,33 @@ public class UpCommingFootballMatchTableAdapter extends RecyclerView.Adapter<Rec
     private void displaySingleTableData(SingleTableViewHolder holder, int position) {
         UpCommngFootbalMatchTableDTO dto = getItemFromHashMap(position);
 
+        if (dto.getTvP().isEmpty()) {
+            holder.llLiveTeam.setVisibility(View.GONE);
+        } else {
+            holder.llLiveTeam.setVisibility(View.VISIBLE);
+        }
+
+
+        holder.tvSerialNumber.setText(dto.getRank());
+        holder.tvTeamName.setText(dto.getTvTeamName());
+        holder.tvP.setText(dto.getTvP().trim());
+        holder.tvW.setText(dto.getTvW().trim());
+        holder.tvD.setText(dto.getTvD().trim());
+        holder.tvL.setText(dto.getTvL().trim());
+        holder.tvDG.setText(dto.getTvDG().trim());
+        holder.tvPts.setText(dto.getTvPts().trim());
+        Glide.with(context).load(dto.getIvTeamProfileImage()).placeholder(R.drawable.ic_no_img).dontAnimate().into(holder.ivTeamProfileImage);
+
+        if (dto.getDescription().equals(COLOR_GREEN_QUALIFIER) || dto.getDescription().equals(COLOR_GREEN_QUALIFIER_ALTERNATE)) {
+            holder.llLiveTeam.setBackgroundColor(context.getResources().getColor(R.color.green));
+        } else if (dto.getDescription().equals(COLOR_YELLOW_QUALIFIER)) {
+            holder.llLiveTeam.setBackgroundColor(context.getResources().getColor(R.color.balls_color_boundary_no));
+        } else {
+            holder.llLiveTeam.setBackgroundColor(context.getResources().getColor(R.color.gray1));
+        }
+
 
         if (team1.equalsIgnoreCase(dto.getTvTeamName()) || team2.equalsIgnoreCase(dto.getTvTeamName())) {
-            holder.tvSerialNumber.setText(dto.getRank());
-            holder.tvTeamName.setText(dto.getTvTeamName());
-            holder.tvP.setText(dto.getTvP());
-            holder.tvW.setText(dto.getTvW());
-            holder.tvD.setText(dto.getTvD());
-            holder.tvL.setText(dto.getTvL());
-            holder.tvPts.setText(dto.getTvPts());
             holder.tvSerialNumber.setTextColor(context.getResources().getColor(R.color.app_theme_blue));
             holder.tvTeamName.setTextColor(context.getResources().getColor(R.color.app_theme_blue));
             holder.tvP.setTextColor(context.getResources().getColor(R.color.app_theme_blue));
@@ -124,17 +146,9 @@ public class UpCommingFootballMatchTableAdapter extends RecyclerView.Adapter<Rec
             holder.tvD.setTextColor(context.getResources().getColor(R.color.app_theme_blue));
             holder.tvL.setTextColor(context.getResources().getColor(R.color.app_theme_blue));
             holder.tvPts.setTextColor(context.getResources().getColor(R.color.app_theme_blue));
-            holder.llLiveTeam.setVisibility(View.VISIBLE);
-            Glide.with(context).load(dto.getIvTeamProfileImage()).placeholder(R.drawable.ic_no_img).dontAnimate().into(holder.ivTeamProfileImage);
+            holder.llLiveTeam.setBackgroundColor(context.getResources().getColor(R.color.app_theme_blue));
 
         } else {
-            holder.tvSerialNumber.setText(dto.getRank());
-            holder.tvTeamName.setText(dto.getTvTeamName());
-            holder.tvP.setText(dto.getTvP());
-            holder.tvW.setText(dto.getTvW());
-            holder.tvD.setText(dto.getTvD());
-            holder.tvL.setText(dto.getTvL());
-            holder.tvPts.setText(dto.getTvPts());
             holder.tvSerialNumber.setTextColor(context.getResources().getColor(R.color.news_static));
             holder.tvTeamName.setTextColor(context.getResources().getColor(R.color.news_static));
             holder.tvP.setTextColor(context.getResources().getColor(R.color.news_static));
@@ -142,20 +156,17 @@ public class UpCommingFootballMatchTableAdapter extends RecyclerView.Adapter<Rec
             holder.tvD.setTextColor(context.getResources().getColor(R.color.news_static));
             holder.tvL.setTextColor(context.getResources().getColor(R.color.news_static));
             holder.tvPts.setTextColor(context.getResources().getColor(R.color.news_static));
-            holder.llLiveTeam.setVisibility(View.INVISIBLE);
-            Glide.with(context).load(dto.getIvTeamProfileImage()).placeholder(R.drawable.ic_no_img).dontAnimate().into(holder.ivTeamProfileImage);
-
         }
 
         holder.mView.setTag(position);
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Integer position = (Integer)v.getTag();
-                if( position != null ) {
+                Integer position = (Integer) v.getTag();
+                if (position != null) {
                     UpCommngFootbalMatchTableDTO dto = getItemFromHashMap(position);
 
-                    if( dto.getViewType() == 0 ) {
+                    if (dto.getViewType() == 0) {
                         FavouriteItem f = new FavouriteItem();
                         f.setName(dto.getTvTeamName());
                         f.setId(dto.getTeamId());
@@ -183,6 +194,7 @@ public class UpCommingFootballMatchTableAdapter extends RecyclerView.Adapter<Rec
         private TextView tvW;
         private TextView tvD;
         private TextView tvL;
+        private TextView tvDG;
         private TextView tvPts;
         private View llLiveTeam;
 
@@ -196,6 +208,7 @@ public class UpCommingFootballMatchTableAdapter extends RecyclerView.Adapter<Rec
             tvW = (TextView) view.findViewById(R.id.tv_w);
             tvD = (TextView) view.findViewById(R.id.tv_d);
             tvL = (TextView) view.findViewById(R.id.tv_l);
+            tvDG = (TextView) view.findViewById(R.id.tv_gd);
             tvPts = (TextView) view.findViewById(R.id.tv_pts);
             llLiveTeam = view.findViewById(R.id.ll_live_team);
         }

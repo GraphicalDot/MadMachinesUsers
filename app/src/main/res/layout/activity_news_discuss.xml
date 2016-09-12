@@ -106,7 +106,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_above="@id/discuss_layout"
-                    android:minHeight="1000dp"
                     android:orientation="vertical">
 
                     <FrameLayout
@@ -196,7 +195,7 @@
                         android:lineSpacingExtra="8dp"
                         android:paddingLeft="@dimen/horizontal_padding_small"
                         android:paddingRight="@dimen/horizontal_padding_small"
-                        android:text="Alastair Cook is confident England have the potential to return to the top of the world Test rankings - either next week or in two years ' time . Cook is unconcerned about the timing of England 's ascent , which could come quickly if they follow up Sunday 's victory over Pakistan at Edgbaston with another at The Oval . Of more interest to the captain is that his team showed him a new toughness to prevail by 141 runs in the third Test , despite appearing washed up after the first two days . England battled back from  ...Read More"
+                        android:text=""
                         android:textColor="@color/gray2" />
 
                 </LinearLayout>
