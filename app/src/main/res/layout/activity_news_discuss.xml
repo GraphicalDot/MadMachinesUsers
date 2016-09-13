@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@android:color/white">
 
     <RelativeLayout
-        android:id="@+id/news_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -14,6 +13,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
+            android:background="@color/gray3"
             android:gravity="center"
             android:paddingBottom="@dimen/horizontal_padding_very_small"
             android:paddingTop="@dimen/horizontal_padding_very_small">
@@ -47,34 +47,25 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:text="Discuss(need engaging CTA)"
+                    android:text="Addicted To Discuss?"
                     android:textColor="@android:color/white" />
             </LinearLayout>
         </LinearLayout>
 
-        <android.support.design.widget.CoordinatorLayout
-            android:id="@+id/main_content"
+        <ScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_above="@id/discuss_layout"
-            android:background="@android:color/white"
-            android:fitsSystemWindows="true">
+            android:layout_above="@id/discuss_layout">
 
-            <android.support.design.widget.AppBarLayout
+            <LinearLayout
+                android:id="@+id/news_layout"
                 android:layout_width="match_parent"
-                android:layout_height="300dp"
-                android:fitsSystemWindows="true"
-                android:theme="@style/ThemeOverlay.AppCompat.Dark">
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
 
-                <android.support.design.widget.CollapsingToolbarLayout
-                    android:id="@+id/collapse_toolbar"
+                <FrameLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:fitsSystemWindows="true"
-                    app:expandedTitleMarginEnd="64dp"
-                    app:expandedTitleMarginStart="48dp"
-                    app:layout_scrollFlags="scroll|enterAlwaysCollapsed"
-                    app:titleEnabled="false">
+                    android:layout_height="wrap_content">
 
                     <ImageView
                         android:id="@+id/slant_view"
@@ -87,25 +78,15 @@
                         android:id="@+id/toolbar"
                         layout="@layout/toolbar_news_discuss"
                         android:layout_width="match_parent"
-                        android:layout_height="?attr/actionBarSize"
-                        app:layout_collapseMode="pin"></include>
+                        android:layout_height="?attr/actionBarSize"></include>
+                </FrameLayout>
 
-                </android.support.design.widget.CollapsingToolbarLayout>
-            </android.support.design.widget.AppBarLayout>
-
-            <android.support.v4.widget.NestedScrollView
-                android:id="@+id/nested_scroll_view"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:fillViewport="true"
-                android:fitsSystemWindows="true"
-                app:behavior_overlapTop="64dp"
-                app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_above="@id/discuss_layout"
+                    android:layout_below="@id/slant_view"
+                    android:layout_marginTop="-64dp"
                     android:orientation="vertical">
 
                     <FrameLayout
@@ -199,10 +180,8 @@
                         android:textColor="@color/gray2" />
 
                 </LinearLayout>
-
-            </android.support.v4.widget.NestedScrollView>
-
-        </android.support.design.widget.CoordinatorLayout>
+            </LinearLayout>
+        </ScrollView>
     </RelativeLayout>
 
     <include

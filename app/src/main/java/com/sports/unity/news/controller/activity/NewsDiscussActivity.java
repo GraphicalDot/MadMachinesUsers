@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -47,7 +48,7 @@ public class NewsDiscussActivity extends CustomVolleyCallerActivity {
 
     private String id = null;
     private JSONObject newsJsonObject = null;
-    private RelativeLayout newsLayout = null;
+    private LinearLayout newsLayout = null;
     private ImageView newsAvatar = null;
 
     private String shareContent = null;
@@ -81,7 +82,7 @@ public class NewsDiscussActivity extends CustomVolleyCallerActivity {
     private void initViews() {
         newsAvatar = (ImageView) findViewById(R.id.slant_view);
         id = getIntent().getStringExtra(Constants.INTENT_KEY_ID);
-        newsLayout = (RelativeLayout) findViewById(R.id.news_layout);
+        newsLayout = (LinearLayout) findViewById(R.id.news_layout);
         boolean isNotification = getIntent().getBooleanExtra(Constants.INTENT_KEY_NOTIFICATION, false);
         if (isNotification) {
             logFirebaseEvent(FirebaseUtil.Event.NEWS_NOTIFICATION_CLICK);
@@ -167,7 +168,7 @@ public class NewsDiscussActivity extends CustomVolleyCallerActivity {
             object.put(Constants.INTENT_KEY_TITLE, caller.getTitle());
             object.put(Constants.INTENT_KEY_TYPE, CommonUtil.capitalize(caller.getType()));
             object.put(Constants.INTENT_KEY_CURATED, true);
-            url = url+URLEncoder.encode(object.toString(), "UTF-8");
+            url = url + URLEncoder.encode(object.toString(), "UTF-8");
         } catch (Exception e) {
             e.printStackTrace();
         }
