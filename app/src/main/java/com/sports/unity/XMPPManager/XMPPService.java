@@ -479,7 +479,6 @@ public class XMPPService extends Service {
         @Override
         public void reconnectionFailed(Exception e) {
 
-            Log.d("max", "Type reconnection failed> " + e.getMessage());
             if (e.getMessage().equals("SASLError using SCRAM-SHA-1: bad-auth")) {
                 try {
                     ReconnectionManager reconnectionManager = ReconnectionManager.getInstanceFor(XMPPClient.getConnection());

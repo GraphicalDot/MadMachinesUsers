@@ -216,7 +216,6 @@ public class UpCommingFootballMatchSqadFragment extends BasicVolleyRequestRespon
 
             if (!response.isNull("data")) {
                 JSONObject dataObject;
-                Log.d("max", "rendering");
                 if (bundle == null) {
                     dataObject = response.getJSONObject("data");
                     teamFirstSquadArray = dataObject.getJSONArray("team_1_squad");
@@ -250,7 +249,6 @@ public class UpCommingFootballMatchSqadFragment extends BasicVolleyRequestRespon
                     UpCommingFootballMatchSquadDTO dto;
                     if (teamFirstSquadArray.length() > 0) {
 
-                        Log.d("max", "gettting team squad");
                         for (int i = 0; i < teamFirstSquadArray.length(); i++) {
                             JSONObject playerObject = teamFirstSquadArray.getJSONObject(i);
                             dto = new UpCommingFootballMatchSquadDTO();

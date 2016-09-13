@@ -24,6 +24,7 @@ import com.sports.unity.common.model.UserUtil;
 import com.sports.unity.util.ActivityActionHandler;
 import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
+import com.sports.unity.util.NotificationHandler;
 import com.sports.unity.util.SPORTSENUM;
 
 import org.jivesoftware.smack.SmackException;
@@ -788,13 +789,11 @@ public class PubSubMessaging {
     }
 
     private void displayNotificationForDiscuss(Context context, String groupJID, String name) {
-        int mNotificationId = 1;
-
         android.support.v7.app.NotificationCompat.Builder builder = new android.support.v7.app.NotificationCompat.Builder(context);
         builder.setColor(context.getResources().getColor(R.color.app_theme_blue));
         builder.setSmallIcon(R.drawable.ic_stat_notification);
         builder.setContentTitle("Join the discussion");
-        builder.setContentText("Discussion started join the discussion");
+        builder.setContentText(name);
         builder.setPriority(Notification.PRIORITY_HIGH);
         int defaults = 0;
         defaults = CommonUtil.getDefaults(context, defaults, builder);
@@ -813,7 +812,7 @@ public class PubSubMessaging {
         if (!UserUtil.isFilterCompleted()) {
             //do nothing
         } else {
-            notificationManager.notify(mNotificationId, builder.build());
+            notificationManager.notify(NotificationHandler.NOTIFICATION_ID, builder.build());
         }
 
     }

@@ -285,7 +285,7 @@ public class UserProfileHandler {
         try {
             String password = TinyDB.getInstance(context).getString(TinyDB.KEY_PASSWORD);
             String userJID = TinyDB.getInstance(context).getString(TinyDB.KEY_USER_JID);
-            String articleId = SportsUnityDBHelper.getInstance(context).getArticleIDThroughJid(groupJid);
+            String articleId = groupJid.substring(groupJid.indexOf("%") + 1, groupJid.indexOf("%%"));
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("username", userJID);
             jsonObject.put("password", password);
@@ -305,7 +305,6 @@ public class UserProfileHandler {
             ByteArrayInputStream byteArrayInputStream = null;
             try {
                 URL sendInterests = new URL(SUBMIT_LEAVING_GROUP);
-                Log.d("max", "PollUrl>>" + sendInterests);
                 httpURLConnection = (HttpURLConnection) sendInterests.openConnection();
                 httpURLConnection.setConnectTimeout(Constants.CONNECTION_TIME_OUT);
                 httpURLConnection.setDoInput(false);
@@ -320,7 +319,6 @@ public class UserProfileHandler {
                     outputStream.write(chunk, 0, read);
                 }
 
-                Log.d("max", "response code is" + httpURLConnection.getResponseCode() + "<<JsonContent>>" + jsonContent);
                 if (httpURLConnection.getResponseCode() == HttpURLConnection.HTTP_OK) {
                     success = true;
                 } else {

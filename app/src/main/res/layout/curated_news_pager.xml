@@ -21,5 +21,5 @@
         android:layout_marginBottom="@dimen/vertical_padding_very_small"
         android:layout_marginLeft="@dimen/horizontal_padding_small"
         android:layout_marginRight="@dimen/horizontal_padding_small"
-        android:background="@color/white_semi_transparent" />
+        android:background="@drawable/curated_slide_background" />
 </android.support.percent.PercentFrameLayout>

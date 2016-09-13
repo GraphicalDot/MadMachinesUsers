@@ -4,14 +4,14 @@ import com.sports.unity.util.JsonObjectCaller;
 
 import org.json.JSONException;
 
-public class NewsJsonCaller extends JsonObjectCaller{
+public class NewsJsonCaller extends JsonObjectCaller {
 
     public String getWebsite() throws JSONException {
         return jsonObject.getString("website");
     }
 
     public void setWebsite(String website) throws JSONException {
-        jsonObject.put( "website", website);
+        jsonObject.put("website", website);
     }
 
     public String getImage_link() throws JSONException {
@@ -19,7 +19,7 @@ public class NewsJsonCaller extends JsonObjectCaller{
     }
 
     public void setImage_Link(String imageLink) throws JSONException {
-        jsonObject.put( "image_link", imageLink);
+        jsonObject.put("image_link", imageLink);
     }
 
     public String getTitle() throws JSONException {
@@ -27,7 +27,7 @@ public class NewsJsonCaller extends JsonObjectCaller{
     }
 
     public void setTitle(String title) throws JSONException {
-        jsonObject.put( "title", title);
+        jsonObject.put("title", title);
     }
 
     public String getSummary() throws JSONException {
@@ -35,7 +35,7 @@ public class NewsJsonCaller extends JsonObjectCaller{
     }
 
     public void setSummary(String summary) throws JSONException {
-        jsonObject.put( "summary", summary);
+        jsonObject.put("summary", summary);
     }
 
     public String getNewsId() throws JSONException {
@@ -43,7 +43,7 @@ public class NewsJsonCaller extends JsonObjectCaller{
     }
 
     public void setNewsId(String newsId) throws JSONException {
-        jsonObject.put( "news_id", newsId);
+        jsonObject.put("news_id", newsId);
     }
 
     public String getNewsLink() throws JSONException {
@@ -51,7 +51,7 @@ public class NewsJsonCaller extends JsonObjectCaller{
     }
 
     public void setNewsLink(String newsLink) throws JSONException {
-        jsonObject.put( "news_link", newsLink);
+        jsonObject.put("news_link", newsLink);
     }
 
     public String getCustomSummary() throws JSONException {
@@ -59,7 +59,7 @@ public class NewsJsonCaller extends JsonObjectCaller{
     }
 
     public void setCustomSummary(String customSummary) throws JSONException {
-        jsonObject.put( "custom_summary", customSummary);
+        jsonObject.put("custom_summary", customSummary);
     }
 
     public String getPublished() throws JSONException {
@@ -67,23 +67,24 @@ public class NewsJsonCaller extends JsonObjectCaller{
     }
 
     public void setPublished(String published) throws JSONException {
-        jsonObject.put( "published", published);
+        jsonObject.put("published", published);
     }
 
     public String getType() throws JSONException {
-        String type=null;
-        if(!jsonObject.isNull("type")){
-            type=jsonObject.getString("type");
-        }else if(!jsonObject.isNull("sport_type")){
-            type=jsonObject.getString("sport_type");
+        String type = null;
+        if (!jsonObject.isNull("type")) {
+            type = jsonObject.getString("type");
+        } else if (!jsonObject.isNull("sport_type")) {
+            type = jsonObject.getString("sport_type");
         }
         return type;
     }
-    public String getCuratedType(){
-        String type=null;
-        if(!jsonObject.isNull("news_type")){
+
+    public String getCuratedType() {
+        String type = null;
+        if (!jsonObject.isNull("news_type")) {
             try {
-                type=jsonObject.getString("news_type");
+                type = jsonObject.getString("news_type");
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -92,7 +93,7 @@ public class NewsJsonCaller extends JsonObjectCaller{
     }
 
     public void setType(String type) throws JSONException {
-        jsonObject.put( "type", type);
+        jsonObject.put("type", type);
     }
 
     public Long getPublishEpoch() throws JSONException {
@@ -100,7 +101,7 @@ public class NewsJsonCaller extends JsonObjectCaller{
     }
 
     public void setPublishEpoch(Long publishEpoch) throws JSONException {
-        jsonObject.put( "publish_epoch", publishEpoch);
+        jsonObject.put("publish_epoch", publishEpoch);
     }
 
     public String getFabIcon_link() throws JSONException {
@@ -108,14 +109,14 @@ public class NewsJsonCaller extends JsonObjectCaller{
     }
 
     public void setFabIcon_Link(String imageLink) throws JSONException {
-        jsonObject.put( "favicon", imageLink);
+        jsonObject.put("favicon", imageLink);
     }
 
     public String getNews() throws JSONException {
-        return jsonObject.getString( "news");
+        return jsonObject.getString("news");
     }
 
-//    @Override
+    //    @Override
 //    public int compareTo(NewsJsonCaller news) {
 //        /* For Ascending order*/
 //        return (int)(news.publishEpoch-this.publishEpoch);
@@ -123,5 +124,27 @@ public class NewsJsonCaller extends JsonObjectCaller{
 //        /* For Descending order do like this */
 //        //return compareage-this.studentage;
 //    }
+    public String getPollQuestion() {
+        String question = null;
+        if (!jsonObject.isNull("question")) {
+            try {
+                question = jsonObject.getString("question");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        return question;
+    }
 
+    public String getDiscussGroupName() {
+        String groupName = null;
+        if (!jsonObject.isNull("group_name")) {
+            try {
+                groupName = jsonObject.getString("group_name");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        return groupName;
+    }
 }

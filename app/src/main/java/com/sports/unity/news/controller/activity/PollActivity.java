@@ -35,18 +35,27 @@ public class PollActivity extends AppCompatActivity {
 
     private static final String SUBMIT_POLL_ANSWER = "http://" + BuildConfig.XMPP_SERVER_API_BASE_URL + "/submit_poll_answer?";
     private String pollAnswer = null;
-    String article_id = null;
+    private String article_id = null;
     private ProgressDialog progressDialog;
-    LinearLayout agreeLayout;
-    LinearLayout disagreeLayout;
-    ImageView backButton;
+    private LinearLayout agreeLayout;
+    private LinearLayout disagreeLayout;
+    private ImageView backButton;
+
+    private String groupName = "SportsGroup";
+    private String pollQuestion = "What is your opinion?";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_poll);
-        article_id = getIntent().getStringExtra(Constants.INTENT_KEY_ID);
+        getIntentExtras();
         initView();
+    }
+
+    private void getIntentExtras() {
+        article_id = getIntent().getStringExtra(Constants.INTENT_KEY_ID);
+        pollQuestion = getIntent().getStringExtra(Constants.INTENT_POLL_QUESTION);
+        groupName = getIntent().getStringExtra(Constants.INTENT_GROUP_NAME);
     }
 
     private void initView() {
@@ -57,7 +66,8 @@ public class PollActivity extends AppCompatActivity {
         backButton.setOnClickListener(onClickListener);
         agreeLayout.setOnClickListener(onClickListener);
         disagreeLayout.setOnClickListener(onClickListener);
-
+        TextView pollView = (TextView) findViewById(R.id.poll_question);
+        pollView.setText(pollQuestion);
         boolean pollStatus = getIntent().getBooleanExtra(Constants.INTENT_POLL_STATUS, false);
         if (getIntent().getBooleanExtra(Constants.INTENT_POLL_PARRY, false)) {
             AlreadyPolled(pollStatus);
@@ -93,11 +103,11 @@ public class PollActivity extends AppCompatActivity {
         view.setVisibility(View.GONE);
 
         if (pollStatus) {
-            pollAnswer=POLL_AGREE;
+            pollAnswer = POLL_AGREE;
             disagreeLayout.setVisibility(View.GONE);
             agree.setText("Agreed");
         } else {
-            pollAnswer=POLL_DISAGREE;
+            pollAnswer = POLL_DISAGREE;
             agreeLayout.setVisibility(View.GONE);
             disagree.setText("Disagreed");
         }
@@ -167,6 +177,7 @@ public class PollActivity extends AppCompatActivity {
             jsonObject.put("udid", CommonUtil.getDeviceId(PollActivity.this));
             jsonObject.put("poll_answer", pollAnswer);
             jsonObject.put("article_id", article_id);
+            jsonObject.put("group_name", groupName);
 
             jsonContent = jsonObject.toString();
 
@@ -178,8 +189,8 @@ public class PollActivity extends AppCompatActivity {
             HttpURLConnection httpURLConnection = null;
             ByteArrayInputStream byteArrayInputStream = null;
             try {
+
                 URL sendInterests = new URL(SUBMIT_POLL_ANSWER);
-                Log.d("max", "PollUrl>>" + sendInterests);
                 httpURLConnection = (HttpURLConnection) sendInterests.openConnection();
                 httpURLConnection.setConnectTimeout(Constants.CONNECTION_TIME_OUT);
                 httpURLConnection.setDoInput(false);
@@ -193,13 +204,11 @@ public class PollActivity extends AppCompatActivity {
                 while ((read = byteArrayInputStream.read(chunk)) != -1) {
                     outputStream.write(chunk, 0, read);
                 }
-
-                Log.d("max", "response code is" + httpURLConnection.getResponseCode() + "<<JsonContent>>" + jsonContent);
                 if (httpURLConnection.getResponseCode() == HttpURLConnection.HTTP_OK) {
                     success = true;
                     boolean pollStatus = pollAnswer.equals(POLL_AGREE) ? true : false;
                     logFireBaseEvent(pollStatus);
-                    SportsUnityDBHelper.getInstance(getApplicationContext()).insertPollinDatabase("articleName", article_id, pollStatus);
+                    SportsUnityDBHelper.getInstance(getApplicationContext()).insertPollinDatabase(groupName, article_id, pollStatus);
                 } else {
                     //nothing
                 }

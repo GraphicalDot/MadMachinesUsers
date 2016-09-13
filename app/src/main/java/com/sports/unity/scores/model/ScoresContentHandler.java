@@ -376,7 +376,7 @@ public class ScoresContentHandler {
                 url = generateURL(URL_PARAMS_FOR_CRICKET_TEAM_FIXTURES + f.getId());
                 //url = generateURL(URL_PARAMS_FOR_CRICKET_TEAM_FIXTURES + 3);
             }
-            Log.d("max", "Score url is-" + url + "  <TYPE> " + f.getSportsType() + " <filter> " + f.getFilterType());
+            Log.i("scores", "Score url is-" + url + "  <TYPE> " + f.getSportsType() + " <filter> " + f.getFilterType());
             requestContent(requestTag, listenerKey, url);
         } else {
             //nothing
@@ -388,7 +388,7 @@ public class ScoresContentHandler {
             String url = generateURL(URL_PARAMS_FOR_STAFF_LEAGUE);
             requestContent(requestTag, listenerKey, url);
 
-            Log.d("navmax", "URL IS > " + url);
+            Log.i("staff_picked", "URL IS > " + url);
         }
     }
 

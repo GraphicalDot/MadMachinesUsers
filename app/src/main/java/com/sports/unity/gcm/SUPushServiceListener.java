@@ -21,6 +21,7 @@ import com.sports.unity.news.controller.activity.NewsDiscussActivity;
 import com.sports.unity.scores.ScoreDetailActivity;
 import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
+import com.sports.unity.util.NotificationHandler;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -173,9 +174,22 @@ public class SUPushServiceListener extends GcmListenerService {
                         .setColor(getResources().getColor(R.color.app_theme_blue))
                         .setPriority(Notification.PRIORITY_HIGH)
                         .setAutoCancel(true);
+                int mNotificationId = NotificationHandler.NOTIFICATION_ID;
                 if (event != GCMConstants.CURATED_EVENT) {
                     mBuilder.addAction(R.drawable.ic_share_white, getString(R.string.share), shareIntent)
                             .addAction(R.drawable.ic_mute_notification, getString(R.string.mute_alerts), mpi);
+                    if (sportsType.equalsIgnoreCase(Constants.SPORTS_TYPE_FOOTBALL)) {
+                        mNotificationId = UserUtil.getNotificationCount(getApplicationContext());
+                    } else if (sportsType.equalsIgnoreCase(Constants.SPORTS_TYPE_CRICKET)) {
+                        switch (event) {
+                            case 1:
+                            case 3:
+                            case 7:
+                            case 9:
+                                mNotificationId = UserUtil.getNotificationCount(getApplicationContext());
+                                break;
+                        }
+                    }
                 }
                 if (UserUtil.isNotificationAndSound()) {
                     Uri uri = Uri.parse(UserUtil.getNotificationSoundURI());
@@ -189,7 +203,7 @@ public class SUPushServiceListener extends GcmListenerService {
 
                 NotificationManager mNotificationManager =
                         (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-                mNotificationManager.notify(1, mBuilder.build());
+                mNotificationManager.notify(mNotificationId, mBuilder.build());
             }
         } catch (JSONException e) {
             e.printStackTrace();

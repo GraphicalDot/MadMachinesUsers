@@ -60,7 +60,8 @@
                     android:text="Suarez says there' 'no\ndebate, ' Messi is bette\n than Ronaldo"
                     android:textColor="@android:color/white"
                     android:textSize="@dimen/font_size_xlarge"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:id="@+id/poll_question"/>
 
                 <LinearLayout
                     android:layout_width="match_parent"

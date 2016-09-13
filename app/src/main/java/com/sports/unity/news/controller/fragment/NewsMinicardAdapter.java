@@ -239,7 +239,11 @@ public class NewsMinicardAdapter extends RecyclerView.Adapter<NewsMinicardAdapte
 
     @Override
     public int getItemCount() {
-        return newsList.size();
+        if (curatedNewsList.isEmpty()) {
+            return newsList.size();
+        } else {
+            return newsList.size() + 1;
+        }
     }
 
     public ArrayList<JSONObject> getNews() {

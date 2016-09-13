@@ -22,6 +22,7 @@ import com.sports.unity.messages.controller.activity.ChatScreenActivity;
 import com.sports.unity.messages.controller.model.Contacts;
 import com.sports.unity.news.model.NewsJsonCaller;
 import com.sports.unity.scores.model.ScoresContentHandler;
+import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
 import com.sports.unity.util.network.FirebaseUtil;
 
@@ -34,6 +35,9 @@ import org.joda.time.Minutes;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.HashMap;
 
 public class NewsDiscussActivity extends CustomVolleyCallerActivity {
@@ -50,6 +54,8 @@ public class NewsDiscussActivity extends CustomVolleyCallerActivity {
     private ImageView share = null;
 
     private String title = null;
+    private String pollQuestion = null;
+    private String groupName = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,11 +90,10 @@ public class NewsDiscussActivity extends CustomVolleyCallerActivity {
 
     public void onPole(View view) {
 
-        //TODO
-        String id = "165"; //Temporary, must delete this line
-
         Intent intent = new Intent(getApplicationContext(), PollActivity.class);
         intent.putExtra(Constants.INTENT_KEY_ID, id);
+        intent.putExtra(Constants.INTENT_POLL_QUESTION, pollQuestion);
+        intent.putExtra(Constants.INTENT_GROUP_NAME, groupName);
         boolean articleExists = SportsUnityDBHelper.getInstance(getApplicationContext()).articleIdExistsOrNot(id);
         if (articleExists) {
             String groupJID = SportsUnityDBHelper.getInstance(getApplicationContext()).groupJIDExistsOrNot(id);
@@ -154,6 +159,21 @@ public class NewsDiscussActivity extends CustomVolleyCallerActivity {
         requestContent(ScoresContentHandler.CALL_NAME_NEWS_DETAIL, parameters, NEWS_DETAIL_REQUEST_TAG);
     }
 
+    private String getNewsUrl(NewsJsonCaller caller) {
+        String url = getResources().getString(R.string.news_url);
+        JSONObject object = new JSONObject();
+        try {
+            object.put(Constants.INTENT_KEY_ID, caller.getNewsId());
+            object.put(Constants.INTENT_KEY_TITLE, caller.getTitle());
+            object.put(Constants.INTENT_KEY_TYPE, CommonUtil.capitalize(caller.getType()));
+            object.put(Constants.INTENT_KEY_CURATED, true);
+            url = url+URLEncoder.encode(object.toString(), "UTF-8");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return url;
+    }
+
     private boolean renderResponse() {
         boolean success = false;
         newsLayout.setVisibility(View.VISIBLE);
@@ -181,7 +201,9 @@ public class NewsDiscussActivity extends CustomVolleyCallerActivity {
                 newsTitle.setText(newsJsonCaller.getTitle());
                 sportsType.setText(newsJsonCaller.getType());
                 time.setText(getTime(newsJsonCaller.getPublishEpoch()));
-                shareContent = newsJsonCaller.getTitle() + "\n\n" + newsJsonCaller.getNewsLink();
+                shareContent = newsJsonCaller.getTitle() + "\n\n" + getNewsUrl(newsJsonCaller);
+                pollQuestion = newsJsonCaller.getPollQuestion();
+                groupName = newsJsonCaller.getDiscussGroupName();
                 content.setText(newsJsonCaller.getNews());
 
             } catch (JSONException e) {

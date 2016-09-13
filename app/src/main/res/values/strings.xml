@@ -430,4 +430,5 @@ message to verify your mobile number.</string>
     <string name="title_activity_pole">Pole</string>
 
     <string name="message_exit_failed">Something went wrong, try again.</string>
+    <string name="news_url">http://sportsunity.co/newsdetail/</string>
 </resources>    
