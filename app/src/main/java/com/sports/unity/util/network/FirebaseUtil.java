@@ -180,8 +180,8 @@ public class FirebaseUtil {
         public static final String HERO_BANNER_CLICK = "hero_banner_click";
         public static final String DISCUSS_CLICK = "discuss_click";
 
-        public static final String POLL_AGREE = "pole_agree";
-        public static final String POLL_DISAGREE = "pole_disagree";
+        public static final String POLL_AGREE = "poll_agree";
+        public static final String POLL_DISAGREE = "poll_disagree";
 
         public static final String CURATED_NEWS_CLICK = "curated_news_click";
 
