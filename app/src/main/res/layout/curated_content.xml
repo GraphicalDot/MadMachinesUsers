@@ -50,7 +50,7 @@
         android:paddingLeft="@dimen/horizontal_padding_small"
         android:paddingTop="@dimen/vertical_padding_very_small"
         android:scaleType="center"
-        android:src="@drawable/ic_no_img" />
+        android:src="@drawable/ic_su_news" />
 
     <LinearLayout
         android:layout_width="match_parent"

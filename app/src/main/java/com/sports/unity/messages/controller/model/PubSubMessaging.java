@@ -790,8 +790,8 @@ public class PubSubMessaging {
 
     private void displayNotificationForDiscuss(Context context, String groupJID, String name) {
         android.support.v7.app.NotificationCompat.Builder builder = new android.support.v7.app.NotificationCompat.Builder(context);
-        builder.setColor(context.getResources().getColor(R.color.app_theme_blue));
-        builder.setSmallIcon(R.drawable.ic_stat_notification);
+        builder.setColor(context.getResources().getColor(R.color.orange));
+        builder.setSmallIcon(R.drawable.ic_ngroup_crtd_maximus);
         builder.setContentTitle("Join the discussion");
         builder.setContentText(name);
         builder.setPriority(Notification.PRIORITY_HIGH);
