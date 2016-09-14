@@ -640,8 +640,14 @@ public class PubSubMessaging {
         SportsUnityDBHelper sportsUnityDBHelper = SportsUnityDBHelper.getInstance(context);
         String subject = nodeId.substring(nodeId.indexOf("%") + 1, nodeId.indexOf("%%"));
         if (nodeId.startsWith(Constants.DISCUSS_JID)) {
-            sportsUnityDBHelper.updateGroupJIDInNewsDiscuss(subject, nodeId);
-            subject = sportsUnityDBHelper.getArticleNameThroughID(subject);
+            boolean articleExists = SportsUnityDBHelper.getInstance(context).articleIdExistsOrNot(subject);
+            if (articleExists) {
+                sportsUnityDBHelper.updateGroupJIDInNewsDiscuss(subject, nodeId);
+                subject = sportsUnityDBHelper.getArticleNameThroughID(subject);
+            } else {
+                SportsUnityDBHelper.getInstance(context).insertPollinDatabase(subject, subject, true);
+                sportsUnityDBHelper.updateGroupJIDInNewsDiscuss(subject, nodeId);
+            }
         }
         int chatId = sportsUnityDBHelper.getChatEntryID(nodeId);
         if (chatId == SportsUnityDBHelper.DEFAULT_ENTRY_ID) {
