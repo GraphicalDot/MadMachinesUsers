@@ -9,6 +9,13 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <ImageView
+            android:id="@+id/slant_view"
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
+            android:fitsSystemWindows="true"
+            android:scaleType="centerCrop" />
+
         <LinearLayout
             android:id="@+id/discuss_layout"
             android:layout_width="match_parent"
@@ -69,7 +76,6 @@
                     android:layout_height="wrap_content">
 
                     <ImageView
-                        android:id="@+id/slant_view"
                         android:layout_width="match_parent"
                         android:layout_height="300dp"
                         android:fitsSystemWindows="true"
@@ -121,65 +127,72 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="@dimen/horizontal_padding_small"
-                        android:layout_marginLeft="@dimen/horizontal_padding_small"
-                        android:orientation="horizontal"
-                        android:paddingTop="@dimen/horizontal_padding_very_very_small">
+                        android:background="@android:color/white"
+                        android:orientation="vertical">
 
-                        <ImageView
-                            android:layout_width="15dp"
-                            android:layout_height="15dp"
-                            android:layout_marginRight="@dimen/horizontal_padding_very_very_small"
-                            android:src="@drawable/ic_source" />
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="@dimen/horizontal_padding_small"
+                            android:layout_marginLeft="@dimen/horizontal_padding_small"
+                            android:orientation="horizontal"
+                            android:paddingTop="@dimen/horizontal_padding_very_very_small">
 
-                        <com.sports.unity.common.view.CustomRobotoCondenseRegularTextView
+                            <ImageView
+                                android:layout_width="15dp"
+                                android:layout_height="15dp"
+                                android:layout_marginRight="@dimen/horizontal_padding_very_very_small"
+                                android:src="@drawable/ic_source" />
+
+                            <com.sports.unity.common.view.CustomRobotoCondenseRegularTextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:layout_marginRight="@dimen/horizontal_padding_very_small"
+                                android:text="SPORTSUNITY"
+                                android:textColor="@color/news_data"
+                                android:textSize="@dimen/font_size_very_small" />
+
+                            <ImageView
+                                android:layout_width="15dp"
+                                android:layout_height="15dp"
+                                android:layout_marginRight="@dimen/horizontal_padding_very_very_small"
+                                android:src="@drawable/ic_time" />
+
+                            <com.sports.unity.common.view.CustomRobotoCondenseRegularTextView
+                                android:id="@+id/time"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:text="3 MIN AGO"
+                                android:textColor="@color/news_data"
+                                android:textSize="@dimen/font_size_very_small" />
+                        </LinearLayout>
+
+
+                        <com.sports.unity.common.view.CustomRobotoSlabRegularTextView
+                            android:id="@+id/news_title"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="@dimen/horizontal_padding_small"
+                            android:background="@android:color/white"
+                            android:paddingLeft="@dimen/horizontal_padding_small"
+                            android:paddingRight="@dimen/horizontal_padding_small"
+                            android:text="Andre Gomes: Barcelona agree deal to sign Valencia midfielder"
+                            android:textSize="@dimen/font_size_large"
+                            android:textStyle="bold" />
+
+
+                        <com.sports.unity.common.view.CustomRobotoRegularTextView
+                            android:id="@+id/content"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:layout_marginRight="@dimen/horizontal_padding_very_small"
-                            android:text="SPORTSUNITY"
-                            android:textColor="@color/news_data"
-                            android:textSize="@dimen/font_size_very_small" />
-
-                        <ImageView
-                            android:layout_width="15dp"
-                            android:layout_height="15dp"
-                            android:layout_marginRight="@dimen/horizontal_padding_very_very_small"
-                            android:src="@drawable/ic_time" />
-
-                        <com.sports.unity.common.view.CustomRobotoCondenseRegularTextView
-                            android:id="@+id/time"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:text="3 MIN AGO"
-                            android:textColor="@color/news_data"
-                            android:textSize="@dimen/font_size_very_small" />
+                            android:lineSpacingExtra="8dp"
+                            android:paddingLeft="@dimen/horizontal_padding_small"
+                            android:paddingRight="@dimen/horizontal_padding_small"
+                            android:text=""
+                            android:textColor="@color/gray2" />
                     </LinearLayout>
-
-
-                    <com.sports.unity.common.view.CustomRobotoSlabRegularTextView
-                        android:id="@+id/news_title"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="@dimen/horizontal_padding_small"
-                        android:paddingLeft="@dimen/horizontal_padding_small"
-                        android:paddingRight="@dimen/horizontal_padding_small"
-                        android:text="Andre Gomes: Barcelona agree deal to sign Valencia midfielder"
-                        android:textSize="@dimen/font_size_large"
-                        android:textStyle="bold" />
-
-
-                    <com.sports.unity.common.view.CustomRobotoRegularTextView
-                        android:id="@+id/content"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:lineSpacingExtra="8dp"
-                        android:paddingLeft="@dimen/horizontal_padding_small"
-                        android:paddingRight="@dimen/horizontal_padding_small"
-                        android:text=""
-                        android:textColor="@color/gray2" />
-
                 </LinearLayout>
             </LinearLayout>
         </ScrollView>
