@@ -10,6 +10,8 @@
     <color name="grey_chat_bg">#ebebeb</color>
     <color name="horizontal_line_grey">#e5e5e5</color>
     <color name="accepted_friend_request">#ebf5ff</color>
+    <color name="color_msg_sent_time">#d5ebff</color>
+    <color name="msg_unread">#0d47a1</color>
 
     <color name="app_theme_blue">#004d99</color>
     <color name="app_theme_blue_translucent">#20004d99</color>
