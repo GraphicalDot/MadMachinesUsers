@@ -48,7 +48,7 @@ public class NewsDiscussActivity extends CustomVolleyCallerActivity {
 
     private String id = null;
     private JSONObject newsJsonObject = null;
-    private LinearLayout newsLayout = null;
+    private RelativeLayout newsLayout = null;
     private ImageView newsAvatar = null;
 
     private String shareContent = null;
@@ -82,7 +82,7 @@ public class NewsDiscussActivity extends CustomVolleyCallerActivity {
     private void initViews() {
         newsAvatar = (ImageView) findViewById(R.id.slant_view);
         id = getIntent().getStringExtra(Constants.INTENT_KEY_ID);
-        newsLayout = (LinearLayout) findViewById(R.id.news_layout);
+        newsLayout = (RelativeLayout) findViewById(R.id.root);
         boolean isNotification = getIntent().getBooleanExtra(Constants.INTENT_KEY_NOTIFICATION, false);
         if (isNotification) {
             logFirebaseEvent(FirebaseUtil.Event.NEWS_NOTIFICATION_CLICK);
