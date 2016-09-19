@@ -151,4 +151,5 @@
     <dimen name="pole_waiting_image">200dp</dimen>
     <dimen name="pole_waiting_image_margin">60dp</dimen>
 
+    <dimen name="news_card_discuss_size">60dp</dimen>
 </resources>

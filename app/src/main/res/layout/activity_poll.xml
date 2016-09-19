@@ -153,7 +153,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:text="You Are Not Late \n But You Need To Wait"
+                android:text="@string/poll_wiait_heading"
                 android:textColor="@color/Very_dark_gray"
                 android:textSize="@dimen/font_size_medium"
                 android:textStyle="bold" />
@@ -164,7 +164,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/horizontal_padding_very_small"
                 android:gravity="center"
-                android:text="We will notify you when there will be any challenger \n for you to discuss on the topic"
+                android:text="@string/poll_wait_content"
                 android:textColor="@color/gray2"
                 android:textSize="@dimen/font_size_small_large"
                 android:textStyle="italic" />

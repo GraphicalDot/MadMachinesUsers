@@ -388,7 +388,7 @@ message to verify your mobile number.</string>
     <string name="mute_alerts">MUTE ALERTS</string>
     <string name="share">SHARE</string>
     <string name="share_image">Share Score</string>
-    <string name="staff_picked">SportsUnity Staff Picked</string>
+    <string name="staff_picked">SportsUnity Picked</string>
     <string name="ipl">Nothing to show</string>
     <string name="group_exit_string">You can\'t send messages to this group because you are no longer a participant.</string>
     <plurals name="file_count">
@@ -431,4 +431,7 @@ message to verify your mobile number.</string>
 
     <string name="message_exit_failed">Something went wrong, try again.</string>
     <string name="news_url">http://sportsunity.co/sharednews/</string>
+    <string name="poll_wait_content">You will be notified when \n the discussion begins</string>
+    <string name="poll_wiait_heading">You Are Not Late \n But You Need To Wait</string>
+    <string name="discuss_this">Join the Action</string>
 </resources>    

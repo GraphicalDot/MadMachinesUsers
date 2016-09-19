@@ -230,11 +230,11 @@ public class PollActivity extends AppCompatActivity {
     private void logFireBaseEvent(boolean pollStatus) {
         //FIREBASE INTEGRATION
         {
-            String firebaseEvent = pollStatus ? FirebaseUtil.Event.POLL_AGREE : FirebaseUtil.Event.POLL_DISAGREE;
             FirebaseAnalytics firebaseAnalytics = FirebaseUtil.getInstance(getApplicationContext());
             Bundle bundle = new Bundle();
             bundle.putString(FirebaseUtil.Param.ARTICLE_ID, article_id);
-            FirebaseUtil.logEvent(firebaseAnalytics, bundle, firebaseEvent);
+            bundle.putBoolean(FirebaseUtil.Param.POLL_STATUS, pollStatus);
+            FirebaseUtil.logEvent(firebaseAnalytics, bundle, FirebaseUtil.Event.POLL_AGREE);
         }
     }
 

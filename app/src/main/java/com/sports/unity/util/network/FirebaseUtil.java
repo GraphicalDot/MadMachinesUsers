@@ -62,6 +62,7 @@ public class FirebaseUtil {
         public static final String GLOBAL_SEARCH_TYPE = "global_search_type";
 
         public static final String ARTICLE_ID = "article_id";
+        public static final String POLL_STATUS = "poll_status";
 
     }
 
@@ -99,7 +100,6 @@ public class FirebaseUtil {
         public static final String NEWS_SHARE = "news_share";
         public static final String NEWS_FILTER = "news_fltr";
         public static final String NEWS_SEARCH = "news_search";
-        public static final String NEWS_CARD_TYPE = "news_view_type";
 
         public static final String FILTER_FAV_DETAIL = "fltr_fav_dtl";
         public static final String FILTER_EDIT_CLICK = "fltr_edit_clk";
@@ -181,12 +181,11 @@ public class FirebaseUtil {
         public static final String DISCUSS_CLICK = "discuss_click";
 
         public static final String POLL_AGREE = "poll_agree";
-        public static final String POLL_DISAGREE = "poll_disagree";
 
         public static final String CURATED_NEWS_CLICK = "curated_news_click";
 
-        public static final String GROUP_NOTIFICATION_CLICK = "group_note_click";
-        public static final String NEWS_NOTIFICATION_CLICK = "news_note_click";
+        public static final String GROUP_NOTIFICATION_CLICK = "group_noti_click";
+        public static final String NEWS_NOTIFICATION_CLICK = "news_noti_click";
     }
 
     /**
