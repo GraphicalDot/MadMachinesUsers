@@ -5,6 +5,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -28,6 +30,8 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import static java.security.AccessController.getContext;
+
 public class PollActivity extends AppCompatActivity {
 
     public static final String POLL_AGREE = "y";
@@ -40,6 +44,8 @@ public class PollActivity extends AppCompatActivity {
     private LinearLayout agreeLayout;
     private LinearLayout disagreeLayout;
     private ImageView backButton;
+    private LinearLayout clockLayout;
+    private ImageView clockHand;
 
     private String groupName = "SportsGroup";
     private String pollQuestion = "What is your opinion?";
@@ -63,6 +69,8 @@ public class PollActivity extends AppCompatActivity {
         agreeLayout = (LinearLayout) findViewById(R.id.agree_layout);
         disagreeLayout = (LinearLayout) findViewById(R.id.disagree_layout);
 
+        clockHand = (ImageView) findViewById(R.id.clock_hand);
+        clockLayout = (LinearLayout) findViewById(R.id.clock_layout);
         backButton.setOnClickListener(onClickListener);
         agreeLayout.setOnClickListener(onClickListener);
         disagreeLayout.setOnClickListener(onClickListener);
@@ -116,6 +124,26 @@ public class PollActivity extends AppCompatActivity {
     private void changeUI(String pollAnswer) {
         boolean pollStatus = pollAnswer.equals(POLL_AGREE) ? true : false;
         AlreadyPolled(pollStatus);
+        clockLayout.setVisibility(View.VISIBLE);
+        Animation bottomUp = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.bottom_up);
+        clockLayout.startAnimation(bottomUp);
+        bottomUp.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                Animation rotateIndefinately = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.rotate_indefinately);
+                clockHand.startAnimation(rotateIndefinately);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
     }
 
     public void onAgree(View view) {
@@ -209,6 +237,7 @@ public class PollActivity extends AppCompatActivity {
                     boolean pollStatus = pollAnswer.equals(POLL_AGREE) ? true : false;
                     logFireBaseEvent(pollStatus);
                     SportsUnityDBHelper.getInstance(getApplicationContext()).insertPollinDatabase(groupName, article_id, pollStatus);
+                    clockLayout.setVisibility(View.VISIBLE);
                 } else {
                     //nothing
                 }
