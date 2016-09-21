@@ -14,6 +14,7 @@ import com.sports.unity.common.model.FavouriteItemWrapper;
 import com.sports.unity.messages.controller.model.Chats;
 import com.sports.unity.messages.controller.model.Contacts;
 import com.sports.unity.messages.controller.model.Message;
+import com.sports.unity.news.controller.activity.NewsDiscussActivity;
 import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
 
@@ -21,6 +22,7 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import static com.sports.unity.Database.SportsUnityContract.NewsDiscussDetailsEntry;
 import static com.sports.unity.Database.SportsUnityContract.ContactChatEntry;
 import static com.sports.unity.Database.SportsUnityContract.MessagesEntry;
 import static com.sports.unity.Database.SportsUnityContract.GroupUserEntry;
@@ -31,7 +33,7 @@ import static com.sports.unity.Database.SportsUnityContract.FriendRequestEntry;
  */
 public class SportsUnityDBHelper extends SQLiteOpenHelper {
 
-    public static final int DATABASE_VERSION = 5;
+    public static final int DATABASE_VERSION = 7;
     public static final String DATABASE_NAME = "spu.db";
 
     public static final int DEFAULT_ENTRY_ID = -1;
@@ -102,29 +104,23 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
             ");";
 
 
-//    private static final String CREATE_CHAT_TABLE = "CREATE TABLE IF NOT EXISTS " +
-//            ChatEntry.TABLE_NAME + "( " +
-//            ChatEntry.COLUMN_CHAT_ID + " " + "INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL " + COMMA_SEP +
-//            ChatEntry.COLUMN_NAME + " " + "VARCHAR " + COMMA_SEP +
-//            ChatEntry.COLUMN_IMAGE + " " + " BLOB " + COMMA_SEP +
-//            ChatEntry.COLUMN_GROUP_SERVER_ID + " " + " VARCHAR " + COMMA_SEP +
-//            ChatEntry.COLUMN_LAST_MESSAGE_ID + " INTEGER " + COMMA_SEP +
-//            ChatEntry.COLUMN_CONTACT_ID + " INTEGER " + COMMA_SEP +
-//            ChatEntry.COLUMN_MUTE_CONVERSATION + " boolean DEFAULT 0 " + COMMA_SEP +
-//            ChatEntry.COLUMN_UNREAD_COUNT + " boolean " + COMMA_SEP +
-//            ChatEntry.COLUMN_LAST_USED + " DATETIME DEFAULT CURRENT_TIMESTAMP " + COMMA_SEP +
-//            ChatEntry.COLUMN_PEOPLE_AROUND_ME + " boolean DEFAULT 0 " +
-//            ");";
-
     private static final String CREATE_GROUP_USER_TABLE = "CREATE TABLE IF NOT EXISTS " +
             GroupUserEntry.TABLE_NAME + "( " +
             GroupUserEntry.COLUMN_CHAT_ID + " INTEGER " + COMMA_SEP +
             GroupUserEntry.COLUMN_ADMIN + " INTEGER " + COMMA_SEP +
             GroupUserEntry.COLUMN_CONTACT_ID + " " + " INTEGER );";
 
-    private static final String DROP_CONTACT_CHAT_TABLE = "DROP TABLE IF EXISTS " + ContactChatEntry.TABLE_NAME;
-    private static final String DROP_MESSAGE_TABLE = "DROP TABLE IF EXISTS " + MessagesEntry.TABLE_NAME;
-    private static final String DROP_GROUP_USER_TABLE = "DROP TABLE IF EXISTS " + GroupUserEntry.TABLE_NAME;
+    private static final String CREATE_NEWS_DISCUSS_DETAIL_TABLE = "CREATE TABLE IF NOT EXISTS " +
+            NewsDiscussDetailsEntry.TABLE_NAME + "( " +
+            NewsDiscussDetailsEntry.COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL " + COMMA_SEP +
+            NewsDiscussDetailsEntry.COLUMN_ARTICLE_ID + " VARCHAR " + COMMA_SEP +
+            NewsDiscussDetailsEntry.COLUMN_GROUP_JID + " VARCHAR " + COMMA_SEP +
+            NewsDiscussDetailsEntry.COLUMN_ARTICLE_NAME + " VARCHAR " + COMMA_SEP +
+            NewsDiscussDetailsEntry.COLUMN_POLL_STATUS + " boolean DEFAULT 0 );";
+
+//    private static final String DROP_CONTACT_CHAT_TABLE = "DROP TABLE IF EXISTS " + ContactChatEntry.TABLE_NAME;
+//    private static final String DROP_MESSAGE_TABLE = "DROP TABLE IF EXISTS " + MessagesEntry.TABLE_NAME;
+//    private static final String DROP_GROUP_USER_TABLE = "DROP TABLE IF EXISTS " + GroupUserEntry.TABLE_NAME;
 
     private static SportsUnityDBHelper SPORTS_UNITY_DB_HELPER = null;
 
@@ -139,9 +135,9 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
         return DUMMY_MESSAGE_ROW_ID;
     }
 
-    public static int getDummyContactRowId() {
-        return DUMMY_CONTACT_ROW_ID;
-    }
+//    public static int getDummyContactRowId() {
+//        return DUMMY_CONTACT_ROW_ID;
+//    }
 
     private ArrayList<Contacts> allContacts = null;
     private Context context = null;
@@ -157,6 +153,7 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
         db.execSQL(CREATE_MESSAGES_TABLE);
         db.execSQL(CREATE_GROUP_USER_TABLE);
         db.execSQL(CREATE_FRIEND_REQUESTS_TABLE);
+        db.execSQL(CREATE_NEWS_DISCUSS_DETAIL_TABLE);
     }
 
     @Override
@@ -176,8 +173,15 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
                 clearFavourites();
             }
             case 5: {
-
+                clearFavourites();
             }
+            case 6: {
+                db.execSQL(CREATE_NEWS_DISCUSS_DETAIL_TABLE);
+            }
+            case 7: {
+                //nothing
+            }
+
         }
 
 //        db.execSQL(DROP_CONTACT_CHAT_TABLE);
@@ -1965,6 +1969,182 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
             } while (c.moveToNext());
         }
         return list;
+    }
+
+    public boolean articleIdExistsOrNot(String articleID) {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String[] projection = {
+                NewsDiscussDetailsEntry.COLUMN_ARTICLE_ID
+        };
+
+        String selection = NewsDiscussDetailsEntry.COLUMN_ARTICLE_ID + " = ?";
+        String[] selectionArgs = {articleID};
+
+
+        Cursor c = db.query(
+                NewsDiscussDetailsEntry.TABLE_NAME,       // The table to query
+                projection,                               // The columns to return
+                selection,                                // The columns for the WHERE clause
+                selectionArgs,                            // The values for the WHERE clause
+                null,                                     // don't group the rows
+                null,                                     // don't filter by row groups
+                null                                      // The sort order
+        );
+
+        if (c.moveToFirst()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public String groupJIDExistsOrNot(String articleID) {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String[] projection = {
+                NewsDiscussDetailsEntry.COLUMN_GROUP_JID
+        };
+
+        String selection = NewsDiscussDetailsEntry.COLUMN_ARTICLE_ID + " = ?";
+        String[] selectionArgs = {articleID};
+
+
+        Cursor c = db.query(
+                NewsDiscussDetailsEntry.TABLE_NAME,       // The table to query
+                projection,                               // The columns to return
+                selection,                                // The columns for the WHERE clause
+                selectionArgs,                            // The values for the WHERE clause
+                null,                                     // don't group the rows
+                null,                                     // don't filter by row groups
+                null                                      // The sort order
+        );
+
+        if (c.moveToFirst()) {
+            return c.getString(0);
+        } else {
+            return null;
+        }
+    }
+
+    public void insertPollinDatabase(String articleName, String articleId, boolean poll_status) {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(NewsDiscussDetailsEntry.COLUMN_ARTICLE_ID, articleId);
+        values.put(NewsDiscussDetailsEntry.COLUMN_ARTICLE_NAME, articleName);
+        values.put(NewsDiscussDetailsEntry.COLUMN_POLL_STATUS, poll_status);
+
+        long newRowId = db.insert(NewsDiscussDetailsEntry.TABLE_NAME, null, values);
+    }
+
+    public void updateGroupJIDInNewsDiscuss(String articleID, String groupJID) {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(NewsDiscussDetailsEntry.COLUMN_GROUP_JID, groupJID);
+
+
+        String selection = NewsDiscussDetailsEntry.COLUMN_ARTICLE_ID + " LIKE ?";
+        String[] selectionArgs = {articleID};
+
+        int count = db.update(
+                NewsDiscussDetailsEntry.TABLE_NAME,
+                values,
+                selection,
+                selectionArgs);
+    }
+
+    public void deleteDiscussionDetail(String jid) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String selection = NewsDiscussDetailsEntry.COLUMN_GROUP_JID + " LIKE ?";
+        String[] selectionArgs = {jid};
+        db.delete(NewsDiscussDetailsEntry.TABLE_NAME, selection, selectionArgs);
+    }
+
+    public String getArticleIDThroughJid(String jid) {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String[] projection = {
+                NewsDiscussDetailsEntry.COLUMN_ARTICLE_ID
+        };
+
+
+        String selection = NewsDiscussDetailsEntry.COLUMN_GROUP_JID + " LIKE ?";
+        String[] selectionArgs = {jid};
+
+        Cursor c = db.query(
+                NewsDiscussDetailsEntry.TABLE_NAME,       // The table to query
+                projection,                               // The columns to return
+                selection,                                // The columns for the WHERE clause
+                selectionArgs,                            // The values for the WHERE clause
+                null,                                     // don't group the rows
+                null,                                     // don't filter by row groups
+                null                                      // The sort order
+        );
+
+        if (c.moveToFirst()) {
+            return c.getString(0);
+        }
+
+        return null;
+    }
+
+    public String getArticleNameThroughID(String articleId) {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String[] projection = {
+                NewsDiscussDetailsEntry.COLUMN_ARTICLE_NAME
+        };
+
+
+        String selection = NewsDiscussDetailsEntry.COLUMN_ARTICLE_ID + " LIKE ?";
+        String[] selectionArgs = {articleId};
+
+        Cursor c = db.query(
+                NewsDiscussDetailsEntry.TABLE_NAME,       // The table to query
+                projection,                               // The columns to return
+                selection,                                // The columns for the WHERE clause
+                selectionArgs,                            // The values for the WHERE clause
+                null,                                     // don't group the rows
+                null,                                     // don't filter by row groups
+                null                                      // The sort order
+        );
+
+        if (c.moveToFirst()) {
+            return c.getString(0);
+        }
+
+        return null;
+    }
+
+    public boolean getPoll(String id) {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String[] projection = {
+                NewsDiscussDetailsEntry.COLUMN_POLL_STATUS
+        };
+
+
+        String selection = NewsDiscussDetailsEntry.COLUMN_ARTICLE_ID + " LIKE ?";
+        String[] selectionArgs = {id};
+
+        Cursor c = db.query(
+                NewsDiscussDetailsEntry.TABLE_NAME,       // The table to query
+                projection,                               // The columns to return
+                selection,                                // The columns for the WHERE clause
+                selectionArgs,                            // The values for the WHERE clause
+                null,                                     // don't group the rows
+                null,                                     // don't filter by row groups
+                null                                      // The sort order
+        );
+
+        if (c.moveToFirst()) {
+            boolean poll = c.getInt(0) == 1;
+            return poll;
+        }
+
+        return false;
     }
 
     public static class GroupParticipants {

@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/news_mini"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/news_mini_image_height"
+    android:orientation="vertical">
+
+    <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/card_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginBottom="@dimen/vertical_padding_very_small"
+        android:background="@color/ColorPrimary">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+
+            <ImageView
+                android:id="@+id/img_url"
+                android:layout_width="@dimen/news_mini_image_width"
+                android:layout_height="match_parent"
+                android:layout_alignParentRight="true"
+                android:layout_gravity="center"
+                android:adjustViewBounds="true"
+                android:scaleType="centerCrop" />
+
+            <LinearLayout
+                android:id="@+id/bottom"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentLeft="true"
+                android:layout_marginRight="@dimen/news_mini_image_width"
+                android:background="@color/news_strip"
+                android:orientation="horizontal"
+                android:padding="@dimen/vertical_padding_very_very_small">
+
+                <ImageView
+                    android:id="@+id/fab_icon"
+                    android:layout_width="@dimen/news_fav_icon_large_width"
+                    android:layout_height="@dimen/news_fav_icon_height"
+                    android:layout_gravity="center"
+                    android:paddingLeft="@dimen/horizontal_padding_very_small"
+                    android:paddingRight="@dimen/horizontal_padding_very_small"
+                    android:scaleType="centerInside" />
+
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="fill_parent"
+                    android:background="@color/news_vertical_strip" />
+
+                <TextView
+                    android:id="@+id/published"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:paddingLeft="@dimen/horizontal_padding_very_small"
+                    android:text="published"
+                    android:textColor="@color/news_data"
+                    android:textSize="@dimen/font_size_very_small" />
+
+                <TextView
+                    android:id="@+id/type"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:gravity="right"
+                    android:paddingRight="@dimen/horizontal_padding_very_small"
+                    android:text="CRICKET"
+                    android:textAllCaps="true"
+                    android:textColor="@color/app_theme_blue"
+                    android:textSize="@dimen/font_size_very_small" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_above="@+id/bottom"
+                android:layout_marginRight="@dimen/news_mini_image_width"
+                android:gravity="center">
+
+                <com.sports.unity.common.view.CustomRobotoSlabBold
+                    android:id="@+id/TitleText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:maxLines="2"
+                    android:paddingLeft="@dimen/horizontal_padding_very_small"
+                    android:paddingRight="@dimen/horizontal_padding_very_small"
+                    android:text="This is my news article\nplease help :P"
+                    android:textColor="@color/orange"
+                    android:textSize="@dimen/font_size_small_large" />
+            </LinearLayout>
+
+            <ImageView
+                android:id="@+id/discuss"
+                android:layout_width="@dimen/news_card_discuss_size"
+                android:layout_height="@dimen/news_card_discuss_size"
+                android:layout_alignBottom="@+id/bottom"
+                android:layout_alignParentRight="true"
+                android:layout_marginBottom="@dimen/vertical_padding_very_small"
+                android:layout_marginRight="@dimen/horizontal_padding_very_very_small"
+                android:background="@drawable/news_discuss_drawable"
+                android:elevation="@dimen/toolbar_elevation"
+                android:padding="@dimen/horizontal_padding_very_small"
+                android:src="@drawable/ic_discuss" />
+        </RelativeLayout>
+
+    </android.support.v7.widget.CardView>
+
+</LinearLayout>

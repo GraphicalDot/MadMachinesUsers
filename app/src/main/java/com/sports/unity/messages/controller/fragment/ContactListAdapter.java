@@ -203,7 +203,7 @@ public class ContactListAdapter extends ArrayAdapter<Contacts> implements Sticky
                 holder.text.setPadding(DEFAULT_LEFT_PADDING, addedPadding, DEFAULT_RIGHT_PADDING, DEFAULT_BOTTOM_PADDING);
 //                holder.text.setLayoutParams(params);
                 holder.text.setTextColor(Color.BLACK);
-                headerText = "Invite People to Sports Unity";
+                headerText = "Invite People to SportsUnity";
             } else {
                 holder.text.setPadding(DEFAULT_LEFT_PADDING, DEFAULT_TOP_PADDING, DEFAULT_RIGHT_PADDING, DEFAULT_BOTTOM_PADDING);
 //                holder.text.setLayoutParams(params);

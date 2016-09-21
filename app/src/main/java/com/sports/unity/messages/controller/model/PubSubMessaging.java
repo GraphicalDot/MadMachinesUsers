@@ -1,9 +1,17 @@
 package com.sports.unity.messages.controller.model;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.net.Uri;
+import android.support.v4.app.NotificationCompat;
 import android.util.Base64;
+import android.util.Log;
+import android.widget.Toast;
 
 import com.sports.unity.Database.SportsUnityDBHelper;
+import com.sports.unity.R;
 import com.sports.unity.XMPPManager.PubSubExtension;
 import com.sports.unity.XMPPManager.PubSubUtil;
 import com.sports.unity.XMPPManager.SPUAffiliation;
@@ -12,9 +20,12 @@ import com.sports.unity.XMPPManager.XMPPService;
 import com.sports.unity.common.model.ContactsHandler;
 import com.sports.unity.common.model.TinyDB;
 import com.sports.unity.common.model.UserProfileHandler;
+import com.sports.unity.common.model.UserUtil;
 import com.sports.unity.util.ActivityActionHandler;
 import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
+import com.sports.unity.util.NotificationHandler;
+import com.sports.unity.util.SPORTSENUM;
 
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
@@ -63,6 +74,7 @@ public class PubSubMessaging {
     private static final String GROUP_MEMBER_REMOVED_MESSAGE_TYPE = "r";
     private static final String GROUP_MEMBER_ADDED_MESSAGE_TYPE = "a";
     private static final String GROUP_INFO_CHANGED = "c";
+    public static final String CURATED_ADMIN_JID = "admin";
 
     synchronized public static PubSubMessaging getInstance() {
         if (PUB_SUB_MESSAGING == null) {
@@ -510,8 +522,11 @@ public class PubSubMessaging {
                 int contactId = 0;
                 for (SPUAffiliation affiliation : spuAffiliationsList) {
                     jid = affiliation.getJid();
-                    jid = jid.substring(0, jid.indexOf("@mm.io"));
-
+                    if (jid.contains("@admin.mm.io")) {
+                        jid = jid.substring(0, jid.indexOf("@admin.mm.io"));
+                    } else {
+                        jid = jid.substring(0, jid.indexOf("@mm.io"));
+                    }
                     Contacts contacts = sportsUnityDBHelper.getContactByJid(jid);
                     if (contacts == null) {
                         contactId = sportsUnityDBHelper.addToContacts("Unknown", null, jid, "", null, Contacts.AVAILABLE_BY_OTHER_CONTACTS, true);
@@ -617,13 +632,23 @@ public class PubSubMessaging {
         }
     }
 
-    private void handleGroupInvitation(Context context, String groupJID) {
+    public void handleGroupInvitation(Context context, String groupJID) {
         handleGroupCreation(context, groupJID);
     }
 
     private void handleGroupCreation(Context context, String nodeId) {
         SportsUnityDBHelper sportsUnityDBHelper = SportsUnityDBHelper.getInstance(context);
         String subject = nodeId.substring(nodeId.indexOf("%") + 1, nodeId.indexOf("%%"));
+        if (nodeId.startsWith(Constants.DISCUSS_JID)) {
+            boolean articleExists = SportsUnityDBHelper.getInstance(context).articleIdExistsOrNot(subject);
+            if (articleExists) {
+                sportsUnityDBHelper.updateGroupJIDInNewsDiscuss(subject, nodeId);
+                subject = sportsUnityDBHelper.getArticleNameThroughID(subject);
+            } else {
+                SportsUnityDBHelper.getInstance(context).insertPollinDatabase(subject, subject, true);
+                sportsUnityDBHelper.updateGroupJIDInNewsDiscuss(subject, nodeId);
+            }
+        }
         int chatId = sportsUnityDBHelper.getChatEntryID(nodeId);
         if (chatId == SportsUnityDBHelper.DEFAULT_ENTRY_ID) {
             chatId = sportsUnityDBHelper.createGroupChatEntry(subject, null, nodeId);
@@ -634,6 +659,9 @@ public class PubSubMessaging {
             sportsUnityDBHelper.updateUserBlockStatus(chatId, false);
 
             ActivityActionHandler.getInstance().dispatchCommonEvent(ActivityActionHandler.CHAT_LIST_KEY);
+        }
+        if (nodeId.startsWith(Constants.DISCUSS_JID)) {
+            displayNotificationForDiscuss(context, nodeId, subject);
         }
     }
 
@@ -766,4 +794,32 @@ public class PubSubMessaging {
         return PubSubUtil.publish(item, groupJid);
     }
 
+    private void displayNotificationForDiscuss(Context context, String groupJID, String name) {
+        android.support.v7.app.NotificationCompat.Builder builder = new android.support.v7.app.NotificationCompat.Builder(context);
+        builder.setColor(context.getResources().getColor(R.color.orange));
+        builder.setSmallIcon(R.drawable.ic_ngroup_crtd_maximus);
+        builder.setContentTitle("Join the discussion");
+        builder.setContentText(name);
+        builder.setPriority(Notification.PRIORITY_HIGH);
+        int defaults = 0;
+        defaults = CommonUtil.getDefaults(context, defaults, builder);
+        builder.setDefaults(defaults);
+        builder.setAutoCancel(true);
+        int chatId = XMPPService.getChatIdOrCreateIfNotExist(context, true, groupJID, false);
+        PendingIntent pendingIntent = XMPPService.getPendingIntentForNotificationChatActivity(context, true, name, groupJID, chatId, null, false, Contacts.AVAILABLE_BY_MY_CONTACTS, null);
+        builder.setContentIntent(pendingIntent);
+        if (UserUtil.isNotificationAndSound()) {
+            Uri uri = Uri.parse(UserUtil.getNotificationSoundURI());
+            builder.setSound(uri);
+        } else {
+            //nothing
+        }
+        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        if (!UserUtil.isFilterCompleted()) {
+            //do nothing
+        } else {
+            notificationManager.notify(NotificationHandler.NOTIFICATION_ID, builder.build());
+        }
+
+    }
 }

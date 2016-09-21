@@ -70,7 +70,7 @@ public class ScoresContentHandler {
     private static final String URL_PARAMS_FOR_CRICKET_MATCH_DETAIL = "v1/get_match_widget?season_key=%s&match_id=";
     private static final String URL_PARAMS_FOR_CRICKET_COMMENTARY = "v1/get_match_commentary?season_key=%s&match_id=";
     private static final String URL_PARAMS_FOR_FOOTBALL_COMMENTARY = "get_football_commentary?match_id=";
-    private static final String URL_PARAMS_FOR_PLAYER_PROFILE_FOOTBALL = Constants.FOOTBALL_PLAYER_BASE_URL + "/get_football_player_profile?player_id=";
+    private static final String URL_PARAMS_FOR_PLAYER_PROFILE_FOOTBALL = Constants.FOOTBALL_PLAYER_BASE_URL + "get_football_player_stats?player_id=";
     private static final String URL_PARAMS_FOR_PLAYER_PROFILE_CRICKET = Constants.SCORE_BASE_URL + "v1/get_player_stats?player_id=";
     private static final String URL_PARAMS_FOR_LEAGUE_FIXTURES = "get_football_league_specific_fixtures?league_id=";
     private static final String URL_PARAMS_FOR_FOOTBALL_TEAM_FIXTURES = "get_football_team_fixtures?team_id=";
@@ -376,7 +376,7 @@ public class ScoresContentHandler {
                 url = generateURL(URL_PARAMS_FOR_CRICKET_TEAM_FIXTURES + f.getId());
                 //url = generateURL(URL_PARAMS_FOR_CRICKET_TEAM_FIXTURES + 3);
             }
-            Log.d("max", "Score url is-" + url + "  <TYPE> " + f.getSportsType() + " <filter> " + f.getFilterType());
+            Log.i("scores", "Score url is-" + url + "  <TYPE> " + f.getSportsType() + " <filter> " + f.getFilterType());
             requestContent(requestTag, listenerKey, url);
         } else {
             //nothing
@@ -388,7 +388,7 @@ public class ScoresContentHandler {
             String url = generateURL(URL_PARAMS_FOR_STAFF_LEAGUE);
             requestContent(requestTag, listenerKey, url);
 
-            Log.d("navmax", "URL IS > " + url);
+            Log.i("staff_picked", "URL IS > " + url);
         }
     }
 

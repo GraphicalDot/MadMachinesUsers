@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Sports Unity</string>
+    <string name="app_name">SportsUnity</string>
 
     <string name="facebook_app_id">192424827806141</string>
     <string name="link_of_terms_of_use">http://www.sportsunity.co/terms.html</string>
@@ -18,7 +18,7 @@
     <string name="search_dots">Search...</string>
 
     <string name="splashText">Messaging app for Sports lover</string>
-    <string name="welcome">Welcome to Sports Unity</string>
+    <string name="welcome">Welcome to SportsUnity</string>
     <string name="terms">By continuing, you accept the Terms of Use and Privacy Policy</string>
 
     <string name="dummy_button">Dummy Button</string>
@@ -36,10 +36,10 @@
     <string name="closeDrawer">closeDrawer</string>
     <string name="title_activity_create_group">CreateGroup</string>
     <string name="contacts_empty">Your contact list is empty, please add some contacts</string>
-    <string name="start_messaging">To start messaging contacts who have Sports Unity, tap on contacts and get started</string>
+    <string name="start_messaging">To start messaging contacts who have SportsUnity, tap on contacts and get started</string>
 
 
-    <string name="start_messaging_others">To start messaging contacts who have Sports Unity, people around me and get started</string>
+    <string name="start_messaging_others">To start messaging contacts who have SportsUnity, people around me and get started</string>
     <string name="btn_invite">INVITE</string>
     <string name="activeStatus">Active_status</string>
     <string name="username">name</string>
@@ -67,13 +67,13 @@
     <string name="title_activity_filter">FilterActivity</string>
     <string name="title_activity_tour">TourActivity</string>
 
-    <string name="tour_score_details">Get detailed analysis and overviews of all relevant matches from your favourite teams and competitions.</string>
-    <string name="tour_score_title">Score</string>
-    <string name="tour_news_details">Personalized sports news from thousands of sources.</string>
+    <string name="tour_score_details">Get all the live scores and updates of all your favourite teams and competitions.</string>
+    <string name="tour_score_title">Scores</string>
+    <string name="tour_news_details">Personalized sports news from hundreds of sources.</string>
     <string name="tour_news_title">News</string>
     <string name="published">published</string>
-    <string name="tour_people_details">Allows you to find people who love teams, players and leagues similar to the ones you appreciate.</string>
-    <string name="tour_people_title">People Around You</string>
+    <string name="tour_people_details">Let your voice be heard by fans all around the world on every sports news and events.</string>
+    <string name="tour_people_title">Connect With Fans</string>
     <string name="basketball">Basketball</string>
     <string name="cricket">Cricket</string>
     <string name="football">Football</string>
@@ -139,13 +139,13 @@
     <string name="group_title_add_members">Add Members</string>
     <string name="group_title_add_group_participanats">ADD GROUP PARTICIPANTS</string>
     <string name="enter_phone_number_text">Enter Your Phone Number</string>
-    <string name="enter_phone_number_text_details">Sports Unity will send a one time SMS
+    <string name="enter_phone_number_text_details">SportsUnity will send a one time SMS
 message to verify your mobile number.</string>
     <string name="chat_activity_username">chat_username</string>
     <string name="chat_activity_status">tap here for contact info</string>
     <string name="group_receive_name">Andrew Scott</string>
     <string name="chat_receive_time">9:00 am</string>
-    <string name="dummy_text_message">Hi There! i am using Sports Unity</string>
+    <string name="dummy_text_message">Hi There! i am using SportsUnity</string>
     <string name="chat_sent_time">2:39 PM</string>
     <string name="default_audio_duration">0:00</string>
     <string name="sent_an_image">Image</string>
@@ -216,7 +216,7 @@ message to verify your mobile number.</string>
     <string name="friends_only">Friends Only</string>
     <string name="show_location_to_friends">Show your location to your friends</string>
     <string name="show_to_all">Show to all</string>
-    <string name="show_location_to_spu_users">show your location to all Sports Unity users</string>
+    <string name="show_location_to_spu_users">show your location to all SportsUnity users</string>
     <string name="photos_and_media">Photos &amp; Media</string>
     <string name="save_photo">Save Photo</string>
     <string name="save_photos_to_gallery">Save incoming photos to your gallery</string>
@@ -271,7 +271,7 @@ message to verify your mobile number.</string>
     </string-array>
 
     <string name="sportsunity.co">sportsunity.co</string>
-    <string name="email_subject">Android Feedback/Questions about Sports Unity</string>
+    <string name="email_subject">Android Feedback/Questions about SportsUnity</string>
 
     <!--About Screen related-->
     <string name="copyright_sportsunity">© COPYRIGHT SPORTSUNITY 2016</string>
@@ -280,7 +280,7 @@ message to verify your mobile number.</string>
     <string name="app_version"> Version </string>
 
     <!--Sending invite related-->
-    <string name="download_sports_unity">Check out Sports Unity for your smartphone. Download it from http://www.sportsunity.co</string>
+    <string name="download_sports_unity">Check out SportsUnity for your smartphone. Download it from http://www.sportsunity.co</string>
     <string name="search_title">Search</string>
     <string name="filter_title">Filter</string>
     <string name="summary">Summary</string>
@@ -360,6 +360,7 @@ message to verify your mobile number.</string>
     <string name="add_friends">Add Friends</string>
     <string name="add_msg">People you add will not see previous conversations</string>
     <string name="participant_count">%1$d OF 50</string>
+    <string name="discuss_participant_count">%1$d OF 8</string>
     <string name="umpires">Umpires</string>
     <string name="match_referee">Match Referee</string>
     <string name="ucoming_match_day_format">Starts in %s days</string>
@@ -387,7 +388,7 @@ message to verify your mobile number.</string>
     <string name="mute_alerts">MUTE ALERTS</string>
     <string name="share">SHARE</string>
     <string name="share_image">Share Score</string>
-    <string name="staff_picked">Sports Unity Staff Picked</string>
+    <string name="staff_picked">SportsUnity Picked</string>
     <string name="ipl">Nothing to show</string>
     <string name="group_exit_string">You can\'t send messages to this group because you are no longer a participant.</string>
     <plurals name="file_count">
@@ -426,4 +427,12 @@ message to verify your mobile number.</string>
     <string name="title_activity_search_favoriates">SearchFavoriatesActivity</string>
     <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
+    <string name="title_activity_pole">Pole</string>
+
+    <string name="message_exit_failed">Sorry something went wrong. Please try again</string>
+    <string name="news_url">http://sportsunity.co/sharednews/</string>
+    <string name="poll_wait_content">You will be notified when \n the discussion begins</string>
+    <string name="poll_wiait_heading">You Are Not Late \n But You Need To Wait</string>
+    <string name="discuss_this">Join the Action</string>
+    <string name="no_internet">Please check internet connectivity</string>
 </resources>    

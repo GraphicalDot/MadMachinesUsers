@@ -54,8 +54,11 @@ public class ChatListAdapter extends ArrayAdapter<Chats> implements StickyListHe
         TextView name = (TextView) rowView.findViewById(R.id.contact_name);
         name.setTypeface(FontTypeface.getInstance(context.getApplicationContext()).getRobotoRegular());
 
+        ImageView discussIndicator = (ImageView) rowView.findViewById(R.id.discuss_indicator);
+
         ImageView userPic = (ImageView) rowView.findViewById(R.id.user_pic);
         if (!chats.isGroupChat) {
+            discussIndicator.setVisibility(View.GONE);
             if (chatArrayList.get(position).image != null) {
                 if (chatArrayList.get(position).image.length > 0) {
                     userPic.setImageBitmap(BitmapFactory.decodeByteArray(chatArrayList.get(position).image, 0, chatArrayList.get(position).image.length));
@@ -66,6 +69,11 @@ public class ChatListAdapter extends ArrayAdapter<Chats> implements StickyListHe
                 userPic.setImageResource(R.drawable.ic_user);
             }
         } else {
+            if (!chatArrayList.get(position).jid.startsWith("DIS_")) {
+                discussIndicator.setVisibility(View.GONE);
+            } else {
+                discussIndicator.setVisibility(View.VISIBLE);
+            }
             if (chatArrayList.get(position).image == null) {
                 userPic.setImageResource(R.drawable.ic_group);
             } else {

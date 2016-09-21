@@ -52,11 +52,13 @@
     <!-- tour related -->
     <dimen name="tour_screen_image">250dp</dimen>
     <dimen name="tour_screen_continue">50dp</dimen>
-    <dimen name="tour_screen_white_space">120dp</dimen>
+    <dimen name="tour_screen_white_space">90dp</dimen>
     <!-- ends -->
 
     <!-- news related -->
+    <dimen name="news_slant_view_height">64dp</dimen>
     <dimen name="news_large_image_height">200dp</dimen>
+    <dimen name="news_xlarge_image_height">300dp</dimen>
     <dimen name="news_mini_image_width">120dp</dimen>
     <dimen name="news_mini_image_height">90dp</dimen>
 
@@ -206,4 +208,12 @@
     <dimen name="progress_bar_width">30dp</dimen>
     <dimen name="progress_bar_height">3dp</dimen>
     <dimen name="status_indicator_size">15dp</dimen>
+    <dimen name="discuss_indicator_size">25dp</dimen>
+    <dimen name="profile_frame_size">55dp</dimen>
+
+    <dimen name="pole_agree_button">130dp</dimen>
+    <dimen name="pole_waiting_image">112dp</dimen>
+    <dimen name="pole_waiting_image_margin">18dp</dimen>
+
+    <dimen name="news_card_discuss_size">40dp</dimen>
 </resources>

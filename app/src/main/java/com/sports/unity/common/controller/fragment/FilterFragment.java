@@ -128,7 +128,6 @@ public class FilterFragment extends Fragment implements FilterActivity.OnResultR
         editCricket.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d("max", "edit click out cricket");
                 //FIREBASE INTEGRATION
                 {
                     FirebaseAnalytics firebaseAnalytics = FirebaseUtil.getInstance(getActivity());

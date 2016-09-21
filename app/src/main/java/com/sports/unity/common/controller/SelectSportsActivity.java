@@ -228,8 +228,15 @@ public class SelectSportsActivity extends CustomAppCompatActivity {
         intent.setClass(this, AdvancedFilterActivity.class);
         intent.putExtra(Constants.SPORTS_TYPE, UserUtil.getSportsSelected().get(0));
         if (!isResultRequired) {
-            startActivity(intent);
-            finish();
+            if (!UserUtil.isFilterCompleted()) {
+                UserUtil.setFilterCompleted(this, true);
+                Intent mainIntent = new Intent(this, MainActivity.class);
+                startActivity(mainIntent);
+                finish();
+            } else {
+                startActivity(intent);
+                finish();
+            }
         } else {
             startActivityForResult(intent, Constants.REQUEST_CODE_ADD_SPORT);
         }

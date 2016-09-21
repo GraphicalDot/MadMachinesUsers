@@ -6,6 +6,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.util.Xml;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,6 +21,7 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.sports.unity.R;
+import com.sports.unity.common.model.FavouriteItem;
 import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.common.view.CustomVolleyCallerActivity;
 import com.sports.unity.common.viewhelper.CustomComponentListener;
@@ -37,8 +39,12 @@ import org.joda.time.Days;
 import org.joda.time.Hours;
 import org.joda.time.LocalDate;
 import org.joda.time.Minutes;
+import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -62,10 +68,61 @@ public class NewsDetailsActivity extends CustomVolleyCallerActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_news_details);
-        initView();
+        onNewIntent(getIntent());
+    }
 
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        String action = intent.getAction();
+        String data = intent.getDataString();
+        if (Intent.ACTION_VIEW.equals(action) && data != null) {
+            decodeDataFromURL(data);
+        }
+        initView();
         onComponentCreate();
         requestNewsDetail();
+    }
+
+    private void decodeDataFromURL(String uri) {
+        String jsonString = uri.substring(uri.lastIndexOf("/") + 1);
+        String data = null;
+        String title = null;
+        String type = null;
+        String id = null;
+        boolean isCurated;
+        try {
+            data = URLDecoder.decode(jsonString, "UTF-8");
+            JSONObject object = new JSONObject(data);
+            title = object.getString(Constants.INTENT_KEY_TITLE);
+            type = object.getString(Constants.INTENT_KEY_TYPE);
+            id = object.getString(Constants.INTENT_KEY_ID);
+            isCurated = object.getBoolean(Constants.INTENT_KEY_CURATED);
+            if (isCurated) {
+                Intent intent = new Intent(this, NewsDiscussActivity.class);
+                intent.putExtra(Constants.INTENT_KEY_ID, id);
+                intent.putExtra(Constants.INTENT_KEY_TITLE, title);
+                intent.putExtra(Constants.INTENT_KEY_TYPE, type);
+                startActivity(intent);
+                finish();
+            } else {
+                getIntent().putExtra(Constants.INTENT_KEY_ID, id);
+                getIntent().putExtra(Constants.INTENT_KEY_TITLE, title);
+                getIntent().putExtra(Constants.INTENT_KEY_TYPE, type);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private boolean checkIfDeepLinked(Intent intent) {
+        boolean isDeepLinked = false;
+        try {
+            isDeepLinked = intent.getAction().equalsIgnoreCase(Intent.ACTION_VIEW);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return isDeepLinked;
     }
 
     @Override
@@ -157,6 +214,21 @@ public class NewsDetailsActivity extends CustomVolleyCallerActivity {
         return success;
     }
 
+    private String getNewsUrl(NewsJsonCaller caller) {
+        String url = getResources().getString(R.string.news_url);
+        JSONObject object = new JSONObject();
+        try {
+            object.put(Constants.INTENT_KEY_ID, caller.getNewsId());
+            object.put(Constants.INTENT_KEY_TITLE, caller.getTitle());
+            object.put(Constants.INTENT_KEY_TYPE, CommonUtil.capitalize(caller.getType()));
+            object.put(Constants.INTENT_KEY_CURATED, false);
+            url = url + URLEncoder.encode(object.toString(), "UTF-8");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return url;
+    }
+
     private boolean renderResponse() {
         boolean success = false;
         if (newsJsonObject != null) {
@@ -179,7 +251,7 @@ public class NewsDetailsActivity extends CustomVolleyCallerActivity {
 
             try {
                 title = newsJsonCaller.getTitle();
-                shareContent = newsJsonCaller.getTitle() + "\n\n" + newsJsonCaller.getNewsLink();
+                shareContent = newsJsonCaller.getTitle() + "\n\n" + getNewsUrl(newsJsonCaller);
 
                 infoData.setText(newsJsonCaller.getNews());
 

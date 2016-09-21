@@ -349,7 +349,11 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
 
     private void checkAndUpdateBlockStatus() {
         Contacts contact = SportsUnityDBHelper.getInstance(getApplicationContext()).getContactByJid(jabberId);
-        blockStatus = SportsUnityDBHelper.getInstance(getApplicationContext()).isChatBlocked(contact.id);
+        try {
+            blockStatus = SportsUnityDBHelper.getInstance(getApplicationContext()).isChatBlocked(contact.id);
+        } catch (Exception e) {
+
+        }
         if (blockStatus) {
             if (isGroupChat) {
                 LinearLayout mediaButtonsLayout = (LinearLayout) findViewById(R.id.send_media_action_buttons);
@@ -469,9 +473,9 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
         addBlockLayout = (LinearLayout) findViewById(R.id.add_block_layout);
 
         getIntentExtras();
-        if(!isGroupChat){
+        if (!isGroupChat) {
             logScreensToFireBase(FirebaseUtil.Event.OPEN_SPECIFIC_CHAT);
-        }else{
+        } else {
             logScreensToFireBase(FirebaseUtil.Event.OPEN_GROUP_CHAT);
         }
         boolean isPending = SportsUnityDBHelper.getInstance(this).isRequestPending(jabberId);
@@ -799,15 +803,21 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
         ArrayList<Contacts> users = participants.usersInGroup;
         if (users != null && users.size() > 1) {
             Contacts contacts = users.get(0);
-            s += contacts.getName();
-            for (int index = 1; index < users.size(); index++) {
-                s += ", ";
-                s += users.get(index).getName();
+            if (!contacts.jid.contains(PubSubMessaging.CURATED_ADMIN_JID)) {
+                s += contacts.getName();
             }
+            for (int index = 1; index < users.size(); index++) {
+                if (!users.get(index).jid.contains(PubSubMessaging.CURATED_ADMIN_JID)) {
+                    s += ", ";
+                    s += users.get(index).getName();
+                }
+            }
+        }
+        if (s.startsWith(",")) {
+            s = s.substring(1, s.length());
         }
         status.setText(s);
     }
-
 
     private void clearUnreadCount() {
         if (chatID != SportsUnityDBHelper.DEFAULT_ENTRY_ID) {
@@ -889,6 +899,10 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
             }
         } else {
             //nothing
+        }
+        boolean isNotification = getIntent().getBooleanExtra(Constants.INTENT_KEY_NOTIFICATION, false);
+        if (isNotification) {
+            logScreensToFireBase(FirebaseUtil.Event.GROUP_NOTIFICATION_CLICK);
         }
     }
 

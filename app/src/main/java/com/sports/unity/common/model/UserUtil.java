@@ -3,6 +3,7 @@ package com.sports.unity.common.model;
 import android.content.Context;
 import android.media.RingtoneManager;
 
+import com.sports.unity.messages.controller.model.Contacts;
 import com.sports.unity.util.CommonUtil;
 
 import java.util.ArrayList;
@@ -65,8 +66,24 @@ public class UserUtil {
     private static int PRIVACY_STATUS = EVERY_ONE;
     private static boolean READ_RECEIPTS = true;
 
+
+    public static int getNotificationCount(Context context) {
+        TinyDB tinyDB = TinyDB.getInstance(context);
+        int x = tinyDB.getInt("notification_count", 1);
+        x = x + 1;
+        setNotificationCount(context, x);
+        return x;
+    }
+
+    public static void setNotificationCount(Context context, int notificationCount) {
+        TinyDB tinyDB = TinyDB.getInstance(context);
+        tinyDB.putInt("notification_count", notificationCount);
+    }
+
+    private static int NOTIFICATION_COUNT = 0;
+
     public static void init(Context context) {
-        if( VALUES_LOADED_ONCE == false ) {
+        if (VALUES_LOADED_ONCE == false) {
             VALUES_LOADED_ONCE = true;
             TinyDB tinyDB = TinyDB.getInstance(context);
 

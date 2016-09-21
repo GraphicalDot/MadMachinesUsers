@@ -26,6 +26,7 @@ import com.sports.unity.messages.controller.model.PubSubMessaging;
 import com.sports.unity.messages.controller.model.XMPPMessageQueueHelper;
 import com.sports.unity.util.ActivityActionHandler;
 import com.sports.unity.util.CommonUtil;
+import com.sports.unity.util.Constants;
 import com.sports.unity.util.GlobalEventHandler;
 import com.sports.unity.util.NotificationHandler;
 import com.sports.unity.util.UserCard;
@@ -140,7 +141,7 @@ public class XMPPService extends Service {
             UserCard card = new UserCard();
             success = card.loadCard(context, jid, true, true, false, true, false);
 
-            if( success ) {
+            if (success) {
                 success = false;
 
                 String status = card.getStatus();
@@ -184,6 +185,17 @@ public class XMPPService extends Service {
     public static PendingIntent getPendingIntentForChatActivity(Context context, boolean isGroupChat, String name, String from, int chatId, byte[] contactImage, boolean isOtherChat, int availabilityStatus, String userStatus) {
         Intent notificationIntent = ChatScreenActivity.createChatScreenIntent(context, isGroupChat, from, name, chatId, contactImage, false, isOtherChat, availabilityStatus, userStatus);
 
+        Intent backIntent = new Intent(context, MainActivity.class);
+        backIntent.putExtra("tab_index", 2);
+        backIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
+        PendingIntent pendingIntent = PendingIntent.getActivities(context, NotificationHandler.NOTIFICATION_ID, new Intent[]{backIntent, notificationIntent}, PendingIntent.FLAG_UPDATE_CURRENT);
+        return pendingIntent;
+    }
+
+    public static PendingIntent getPendingIntentForNotificationChatActivity(Context context, boolean isGroupChat, String name, String from, int chatId, byte[] contactImage, boolean isOtherChat, int availabilityStatus, String userStatus) {
+        Intent notificationIntent = ChatScreenActivity.createChatScreenIntent(context, isGroupChat, from, name, chatId, contactImage, false, isOtherChat, availabilityStatus, userStatus);
+        notificationIntent.putExtra(Constants.INTENT_KEY_NOTIFICATION, true);
         Intent backIntent = new Intent(context, MainActivity.class);
         backIntent.putExtra("tab_index", 2);
         backIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -436,7 +448,7 @@ public class XMPPService extends Service {
         public void connectionClosedOnError(Exception e) {
             Log.i("connection", "closed on error");
 
-            if ( e.getMessage() != null && e.getMessage().contains("Replaced by new connection")) {
+            if (e.getMessage() != null && e.getMessage().contains("Replaced by new connection")) {
                 try {
                     ReconnectionManager reconnectionManager = ReconnectionManager.getInstanceFor(XMPPClient.getConnection());
                     reconnectionManager.disableAutomaticReconnection();
@@ -467,7 +479,6 @@ public class XMPPService extends Service {
         @Override
         public void reconnectionFailed(Exception e) {
 
-            Log.d("max", "Type reconnection failed> " + e.getMessage());
             if (e.getMessage().equals("SASLError using SCRAM-SHA-1: bad-auth")) {
                 try {
                     ReconnectionManager reconnectionManager = ReconnectionManager.getInstanceFor(XMPPClient.getConnection());

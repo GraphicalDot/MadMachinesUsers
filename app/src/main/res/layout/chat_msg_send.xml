@@ -112,7 +112,7 @@
             android:paddingLeft="@dimen/horizontal_padding_very_very_small"
             android:paddingRight="@dimen/horizontal_padding_very_very_small"
             android:text="@string/dummy_text_message"
-            android:textColor="@android:color/black"
+            android:textColor="@android:color/white"
             android:textColorLink="@color/app_theme_blue"
             android:textSize="@dimen/font_size_small_large" />
 
@@ -127,7 +127,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical|end"
                 android:text="@string/chat_sent_time"
-                android:textColor="@color/gray1"
+                android:textColor="@color/color_msg_sent_time"
                 android:textSize="@dimen/font_size_very_small" />
 
             <ImageView

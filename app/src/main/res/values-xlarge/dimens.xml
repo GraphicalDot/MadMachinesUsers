@@ -43,7 +43,7 @@
     <!-- tour related -->
     <dimen name="tour_screen_image">500dp</dimen>
     <dimen name="tour_screen_continue">50dp</dimen>
-    <dimen name="tour_screen_white_space">170dp</dimen>
+    <dimen name="tour_screen_white_space">130dp</dimen>
     <!-- ends -->
 
     <!-- news related -->
@@ -146,4 +146,10 @@
     <dimen name="card_height">130dp</dimen>
     <!-- margin completed match  summery-->
     <dimen name="recent_card_height">75dp</dimen>
+
+    <dimen name="pole_agree_button">260dp</dimen>
+    <dimen name="pole_waiting_image">200dp</dimen>
+    <dimen name="pole_waiting_image_margin">60dp</dimen>
+
+    <dimen name="news_card_discuss_size">60dp</dimen>
 </resources>

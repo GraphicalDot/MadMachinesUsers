@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.sports.unity.R;
 import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.messages.controller.model.Contacts;
+import com.sports.unity.messages.controller.model.PubSubMessaging;
 
 import java.util.ArrayList;
 
@@ -33,12 +34,24 @@ public class GroupParticipantsAdapter extends BaseAdapter {
         this.adminJIDs = adminJIDs;
         this.isAdmin = isAdmin;
 
-        if( isAdmin ){
+        if (isAdmin) {
             this.allMembers = new ArrayList<>();
             this.allMembers.add(new Contacts("", "", "", null, -1, null, 0));
             this.allMembers.addAll(allMembers);
         } else {
             this.allMembers = allMembers;
+        }
+        if (adminJIDs.contains(PubSubMessaging.CURATED_ADMIN_JID)) {
+            Contacts contacts = null;
+            for (Contacts c : allMembers) {
+                if (adminJIDs.contains(c.jid)) {
+                    contacts = c;
+                    break;
+                }
+            }
+            if(contacts!=null) {
+                allMembers.remove(contacts);
+            }
         }
     }
 
@@ -75,7 +88,7 @@ public class GroupParticipantsAdapter extends BaseAdapter {
         admin.setTypeface(FontTypeface.getInstance(context.getApplicationContext()).getRobotoRegular());
         userStatus.setTypeface(FontTypeface.getInstance(context.getApplicationContext()).getRobotoRegular());
 
-        if ( isAdmin && position == 0) {
+        if (isAdmin && position == 0) {
 
             userImage.setImageResource(R.drawable.ic_add_contact);
             userImage.setBorderColor(context.getResources().getColor(R.color.app_theme_blue));
@@ -96,7 +109,7 @@ public class GroupParticipantsAdapter extends BaseAdapter {
             userName.setText(c.getName());
             userStatus.setText(c.status);
 
-            if( adminJIDs.contains(c.jid) ) {
+            if (adminJIDs.contains(c.jid)) {
                 admin.setVisibility(View.VISIBLE);
             } else {
                 admin.setVisibility(View.GONE);
@@ -106,9 +119,9 @@ public class GroupParticipantsAdapter extends BaseAdapter {
         return convertView;
     }
 
-    public void memberRemoved(String memberRemoved){
-        for(Contacts contacts : allMembers){
-            if( memberRemoved.equals(contacts.jid) ){
+    public void memberRemoved(String memberRemoved) {
+        for (Contacts contacts : allMembers) {
+            if (memberRemoved.equals(contacts.jid)) {
                 allMembers.remove(contacts);
                 break;
             }

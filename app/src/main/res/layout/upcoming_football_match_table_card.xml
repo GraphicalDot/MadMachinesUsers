@@ -22,7 +22,9 @@
         <android.support.percent.PercentRelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="@dimen/horizontal_padding_very_small">
+            android:paddingBottom="@dimen/horizontal_padding_very_small"
+            android:paddingLeft="@dimen/horizontal_padding_very_small"
+            android:paddingTop="@dimen/horizontal_padding_very_small">
 
             <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
                 android:id="@+id/tv_serial_number"
@@ -54,7 +56,7 @@
                 android:text=""
                 android:textColor="@color/news_static"
                 android:textSize="@dimen/font_size_small_medium"
-                card_view:layout_widthPercent="33%" />
+                card_view:layout_widthPercent="35%" />
 
             <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
                 android:id="@+id/tv_p"
@@ -62,11 +64,11 @@
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_toRightOf="@id/tv_team_name"
-                android:gravity="right"
+                android:gravity="center"
                 android:text=""
                 android:textColor="@color/news_static"
                 android:textSize="@dimen/font_size_small_medium"
-                card_view:layout_widthPercent="7%" />
+                card_view:layout_widthPercent="8%" />
 
             <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
                 android:id="@+id/tv_w"
@@ -74,11 +76,11 @@
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_toRightOf="@id/tv_p"
-                android:gravity="right"
+                android:gravity="center"
                 android:text=""
                 android:textColor="@color/news_static"
                 android:textSize="@dimen/font_size_small_medium"
-                card_view:layout_widthPercent="12%" />
+                card_view:layout_widthPercent="8%" />
 
             <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
                 android:id="@+id/tv_d"
@@ -86,11 +88,11 @@
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_toRightOf="@id/tv_w"
-                android:gravity="right"
+                android:gravity="center"
                 android:text=""
                 android:textColor="@color/news_static"
                 android:textSize="@dimen/font_size_small_medium"
-                card_view:layout_widthPercent="10%" />
+                card_view:layout_widthPercent="8%" />
 
             <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
                 android:id="@+id/tv_l"
@@ -98,23 +100,35 @@
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_toRightOf="@id/tv_d"
-                android:gravity="right"
+                android:gravity="center"
                 android:text=""
                 android:textColor="@color/news_static"
                 android:textSize="@dimen/font_size_small_medium"
-                card_view:layout_widthPercent="10%" />
+                card_view:layout_widthPercent="8%" />
+
+            <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
+                android:id="@+id/tv_gd"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toRightOf="@id/tv_l"
+                android:gravity="center"
+                android:text=""
+                android:textColor="@color/news_static"
+                android:textSize="@dimen/font_size_small_medium"
+                card_view:layout_widthPercent="8%" />
 
             <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
                 android:id="@+id/tv_pts"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:layout_toRightOf="@id/tv_l"
-                android:gravity="right"
+                android:layout_toRightOf="@id/tv_gd"
+                android:gravity="center"
                 android:text=""
                 android:textColor="@color/news_static"
                 android:textSize="@dimen/font_size_small_medium"
-                card_view:layout_widthPercent="15%" />
+                card_view:layout_widthPercent="8%" />
         </android.support.percent.PercentRelativeLayout>
     </LinearLayout>
 

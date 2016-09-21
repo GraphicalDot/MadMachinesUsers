@@ -35,7 +35,6 @@ import com.sports.unity.common.model.ContactsHandler;
 import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.common.model.PermissionUtil;
 import com.sports.unity.messages.controller.activity.GroupDetailActivity;
-import com.sports.unity.messages.controller.activity.PeopleAroundMeMap;
 import com.sports.unity.messages.controller.viewhelper.OnSearchViewQueryListener;
 import com.sports.unity.peoplearound.PeopleAroundActivity;
 import com.sports.unity.util.ActivityActionHandler;

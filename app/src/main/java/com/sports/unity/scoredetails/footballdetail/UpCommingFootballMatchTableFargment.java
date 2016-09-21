@@ -233,6 +233,10 @@ public class UpCommingFootballMatchTableFargment extends BasicVolleyRequestRespo
                 upCommngFootbalMatchTableDTO.setTvPts(teamObject.getString("team_points"));
             if (!teamObject.isNull("position"))
                 upCommngFootbalMatchTableDTO.setRank(teamObject.getString("position"));
+            if (!teamObject.isNull("goal_diff"))
+                upCommngFootbalMatchTableDTO.setTvDG(teamObject.getString("goal_diff"));
+            if (!teamObject.isNull("description"))
+                upCommngFootbalMatchTableDTO.setDescription(teamObject.getString("description"));
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -249,7 +253,9 @@ public class UpCommingFootballMatchTableFargment extends BasicVolleyRequestRespo
         upCommngFootbalMatchTableDTO.setTvW("");
         upCommngFootbalMatchTableDTO.setTvD("");
         upCommngFootbalMatchTableDTO.setTvL("");
+        upCommngFootbalMatchTableDTO.setTvDG("");
         upCommngFootbalMatchTableDTO.setTvPts("");
+        upCommngFootbalMatchTableDTO.setDescription("");
         return upCommngFootbalMatchTableDTO;
     }
 

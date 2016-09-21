@@ -22,15 +22,19 @@ public class TourAdapter extends FragmentStatePagerAdapter {
 
         if (position == 0) // if the position is 0 we are returning the First tab
         {
-            Tour_News_Fragment news = new Tour_News_Fragment();
-            return news;
-        } else if (position == 1)            // As we are having 2 tabs if the position is now 0 it must be 1 so we are returning second tab
-        {
-            Tour_Score_Fragment score = new Tour_Score_Fragment();
-            return score;
-        } else {
             Tour_People_Fragment people = new Tour_People_Fragment();
             return people;
+
+        } else if (position == 1)            // As we are having 2 tabs if the position is now 0 it must be 1 so we are returning second tab
+        {
+            Tour_News_Fragment news = new Tour_News_Fragment();
+            return news;
+
+        } else {
+
+            Tour_Score_Fragment score = new Tour_Score_Fragment();
+            return score;
+
         }
 
     }

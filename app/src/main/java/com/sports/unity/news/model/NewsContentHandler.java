@@ -36,29 +36,29 @@ public class NewsContentHandler {
     private final static String BASE_URL = Constants.URL_NEWS_CONTENT + "skip=0&limit=10&image_size=";
     private final static String BASE_SUBSET_URL_UP = "&direction=up&timestamp=";
     private final static String BASE_SUBSET_URL_DOWN = "&direction=down&timestamp=";
-  //  private final static String BASE_URL_SEARCH = Constants.URL_NEWS_CONTENT + "image_size=hdpi&search=";
+    //  private final static String BASE_URL_SEARCH = Constants.URL_NEWS_CONTENT + "image_size=hdpi&search=";
     private final static String BASE_URL_SEARCH = Constants.URL_NEWS_CONTENT + "image_size=";
-    private final static String SUBSET_URL_SEARCH ="&search=";
+    private final static String SUBSET_URL_SEARCH = "&search=";
 
     private static final String REQUEST_CONTENT_TAG = "RequestContent";
     private static final String REQUEST_MORE_CONTENT_TAG = "RequestContentMore";
-
+    private final static String CURATED_NEWS = "&curated=true";
     private static HashMap<String, NewsContentHandler> MAP_OF_CONTENT_HANDLER = new HashMap<>();
 
     public static NewsContentHandler getInstance(Context context, String key) {
         NewsContentHandler newsContentHandler = null;
-        if( ! MAP_OF_CONTENT_HANDLER.containsKey(key) ) {
+        if (!MAP_OF_CONTENT_HANDLER.containsKey(key)) {
             newsContentHandler = new NewsContentHandler(context);
             MAP_OF_CONTENT_HANDLER.put(key, newsContentHandler);
         } else {
-            newsContentHandler =    MAP_OF_CONTENT_HANDLER.get(key);
+            newsContentHandler = MAP_OF_CONTENT_HANDLER.get(key);
         }
 
         return newsContentHandler;
     }
 
     public static void cleanObject() {
-        if( MAP_OF_CONTENT_HANDLER != null ){
+        if (MAP_OF_CONTENT_HANDLER != null) {
             MAP_OF_CONTENT_HANDLER.clear();
             MAP_OF_CONTENT_HANDLER = null;
         }
@@ -80,6 +80,7 @@ public class NewsContentHandler {
     private HashSet<String> requestInProcess = new HashSet<>();
 
     private ArrayList<JSONObject> filteredNewsArticle = null;
+    private ArrayList<JSONObject> curatedNewsArticle = null;
     private ArrayList<String> selectedSports = null;
 
     private Long timestampFirst;
@@ -90,7 +91,7 @@ public class NewsContentHandler {
     private String searchKeyword = null;
 
 
-    private NewsContentHandler(Context context ) {
+    private NewsContentHandler(Context context) {
         this.context = context;
     }
 
@@ -125,8 +126,9 @@ public class NewsContentHandler {
         }
     };
 
-    public void init(ArrayList<JSONObject> filteredNewsArticle, boolean searchOn) {
+    public void init(ArrayList<JSONObject> filteredNewsArticle, ArrayList<JSONObject> curatedNewsArticle, boolean searchOn) {
         this.filteredNewsArticle = filteredNewsArticle;
+        this.curatedNewsArticle = curatedNewsArticle;
 
         timestampFirst = null;
         timestampLast = null;
@@ -139,10 +141,10 @@ public class NewsContentHandler {
 
     public boolean refreshNews(boolean forceRefresh) {
         boolean success = false;
-        if(CommonUtil.isInternetConnectionAvailable(context)) {
+        if (CommonUtil.isInternetConnectionAvailable(context)) {
             success = true;
             requestContent();
-        } else if( ! forceRefresh ){
+        } else if (!forceRefresh) {
             getDataFromDb();
         }
         return success;
@@ -154,22 +156,22 @@ public class NewsContentHandler {
 
     public void selectedSportsChanged() {
         selectedSports = UserUtil.getNewsFilterSportsSelected();
-         if(selectedSports != null) {
-             StringBuilder stringBuilder = new StringBuilder();
-             for (int i = 0; i < selectedSports.size(); i++) {
-                 stringBuilder.append("&type_1=");
-                 stringBuilder.append(selectedSports.get(i));
-             }
+        if (selectedSports != null) {
+            StringBuilder stringBuilder = new StringBuilder();
+            for (int i = 0; i < selectedSports.size(); i++) {
+                stringBuilder.append("&type_1=");
+                stringBuilder.append(selectedSports.get(i));
+            }
 
-             subUrl_HavingSelectedSports = stringBuilder.toString();
-         } else {
-             Toast.makeText(context, R.string.select_atleast_one_sport_message,Toast.LENGTH_SHORT).show();
-         }
+            subUrl_HavingSelectedSports = stringBuilder.toString();
+        } else {
+            Toast.makeText(context, R.string.select_atleast_one_sport_message, Toast.LENGTH_SHORT).show();
+        }
         Log.i("News Content Handler", "Selected Sports Changed");
     }
 
     public void clearContent() {
-        Log.i("News Content Handler","Clear Content");
+        Log.i("News Content Handler", "Clear Content");
         timestampFirst = null;
         timestampLast = null;
         filteredNewsArticle.clear();
@@ -192,20 +194,20 @@ public class NewsContentHandler {
     }
 
     private void requestContent() {
-        if( ! requestInProcess.contains(REQUEST_CONTENT_TAG) ) {
+        if (!requestInProcess.contains(REQUEST_CONTENT_TAG)) {
             Log.i("News Content Handler", "Request Content");
 
             StringRequest stringRequest = null;
-           // RequestQueue queue = Volley.newRequestQueue(context);
+            // RequestQueue queue = Volley.newRequestQueue(context);
 
             String screen_type = getScreenSize(context);
-            String url = generateUrl(timestampFirst,screen_type);
+            String url = generateUrl(timestampFirst, screen_type);
 
-            if( url != null ) {
+            if (url != null) {
                 Log.i("filter", "type" + url);
 
                 stringRequest = new StringRequest(Request.Method.GET, url, responseListener_ForLoadContent, responseListener_ForLoadContent);
-                stringRequest.setRetryPolicy(new DefaultRetryPolicy( Constants.CONNECTION_READ_TIME_OUT, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+                stringRequest.setRetryPolicy(new DefaultRetryPolicy(Constants.CONNECTION_READ_TIME_OUT, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 
                 VolleyRequestHandler.getInstance().addToRequestQueue(stringRequest);
 
@@ -216,18 +218,18 @@ public class NewsContentHandler {
     }
 
     private void requestContentLoadMore() {
-        if( ! requestInProcess.contains(REQUEST_MORE_CONTENT_TAG) ) {
+        if (!requestInProcess.contains(REQUEST_MORE_CONTENT_TAG)) {
             Log.i("News Content Handler", "Request Load More Content");
 
-           // RequestQueue queue = Volley.newRequestQueue(context);
+            // RequestQueue queue = Volley.newRequestQueue(context);
 
             StringRequest stringRequest = null;
             String screen_type = getScreenSize(context);
             String url = generateUrlForLoadMore(timestampLast, screen_type);
 
-            if( url != null ) {
+            if (url != null) {
                 stringRequest = new StringRequest(Request.Method.GET, url, responseListener_ForLoadMoreContent, responseListener_ForLoadMoreContent);
-                stringRequest.setRetryPolicy(new DefaultRetryPolicy( Constants.CONNECTION_READ_TIME_OUT, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+                stringRequest.setRetryPolicy(new DefaultRetryPolicy(Constants.CONNECTION_READ_TIME_OUT, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 
                 VolleyRequestHandler.getInstance().addToRequestQueue(stringRequest);
 
@@ -237,55 +239,55 @@ public class NewsContentHandler {
         }
     }
 
-    public boolean isRequestInProgress(){
+    public boolean isRequestInProgress() {
         return requestInProcess.contains(REQUEST_CONTENT_TAG);
     }
 
     private void handleResponse(String response) {
         Log.i("News Content Handler", "Handle Response");
 
-        ArrayList<JSONObject> list = NewsJsonParser.parseListOfNews(response);
-
+        ArrayList<JSONObject> newsList = NewsJsonParser.parseListOfNews(response);
+        ArrayList<JSONObject> curatedNewsList = NewsJsonParser.parseListOfCuratedNews(response);
         JSONObject newsItem = null;
         NewsJsonCaller newsJsonCaller = new NewsJsonCaller();
-        for (int index = 0; index < list.size(); index++) {
-            newsItem = list.get(index);
+        for (int index = 0; index < newsList.size(); index++) {
+            newsItem = newsList.get(index);
             newsJsonCaller.setJsonObject(newsItem);
 
             String summary = null;
-            try{
+            try {
                 summary = newsJsonCaller.getSummary();
-            }catch (Exception ex){
+            } catch (Exception ex) {
                 ex.printStackTrace();
             }
 
-            if ( summary == null) {
-                list.remove(index);
+            if (summary == null) {
+                newsList.remove(index);
                 index--;
             }
         }
 
         Log.d("News Content Handler", "Response " + response);
-        Log.d("News Content Handler", "List Size " + list.size());
+        Log.d("News Content Handler", "List Size " + newsList.size());
 
-        if(!list.isEmpty()) {
-            try{
-                if( filteredNewsArticle.size() > 0 ) {
+        if (!newsList.isEmpty()) {
+            try {
+                if (filteredNewsArticle.size() > 0) {
                     newsJsonCaller.setJsonObject(filteredNewsArticle.get(0));
                     long currentLists_LatestEpoch = newsJsonCaller.getPublishEpoch();
 
-                    newsJsonCaller.setJsonObject(list.get(0));
+                    newsJsonCaller.setJsonObject(newsList.get(0));
                     long newLists_LatestEpoch = newsJsonCaller.getPublishEpoch();
 
-                    if( newLists_LatestEpoch >= currentLists_LatestEpoch) {
-                        filteredNewsArticle.addAll( 0, list); //add on top
+                    if (newLists_LatestEpoch >= currentLists_LatestEpoch) {
+                        filteredNewsArticle.addAll(0, newsList); //add on top
                         Log.i("News Content Handler", "Adding Content from Top");
                     } else {
-                        filteredNewsArticle.addAll(list); //add on bottom
+                        filteredNewsArticle.addAll(newsList); //add on bottom
                         Log.i("News Content Handler", "Adding Content from Bottom");
                     }
                 } else {
-                    filteredNewsArticle.addAll(list);
+                    filteredNewsArticle.addAll(newsList);
                 }
 
                 newsJsonCaller.setJsonObject(filteredNewsArticle.get(0));
@@ -293,15 +295,24 @@ public class NewsContentHandler {
 
                 newsJsonCaller.setJsonObject(filteredNewsArticle.get(filteredNewsArticle.size() - 1));
                 timestampLast = newsJsonCaller.getPublishEpoch();
-            }catch (Exception ex){
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
+        if (!curatedNewsList.isEmpty()) {
+            try {
+                curatedNewsArticle.clear();
+                curatedNewsArticle.addAll(curatedNewsList);
+
+            } catch (Exception ex) {
                 ex.printStackTrace();
             }
         }
 
-        if(!searchOn) {
+        if (!searchOn) {
             insertIntoDb();
         }
-        if(contentListener != null) {
+        if (contentListener != null) {
             contentListener.handleContent(1);
         }
     }
@@ -309,7 +320,7 @@ public class NewsContentHandler {
     private void handleErrorResponse(VolleyError volleyError) {
         Log.i("News Content Handler", "Error Response " + volleyError.getMessage());
 
-        if(contentListener != null) {
+        if (contentListener != null) {
             contentListener.handleContent(0);
         }
     }
@@ -317,10 +328,10 @@ public class NewsContentHandler {
     private void insertIntoDb() {
         Log.i("News Content Handler", "Insert Content To DB");
 
-        if(filteredNewsArticle.size() > DB_CONTENT_LIMIT) {
+        if (filteredNewsArticle.size() > DB_CONTENT_LIMIT) {
             ArrayList<JSONObject> newsListForInsert = new ArrayList<>();
-            for(int i = 0; i < DB_CONTENT_LIMIT; i++) {
-                if( ! filteredNewsArticle.isEmpty() ) {
+            for (int i = 0; i < DB_CONTENT_LIMIT; i++) {
+                if (!filteredNewsArticle.isEmpty()) {
                     newsListForInsert.add(filteredNewsArticle.get(i));
                 }
 
@@ -332,70 +343,70 @@ public class NewsContentHandler {
     }
 
     private void getDataFromDb() {
-        Log.i("News Content Handler","Fetch Data From DB");
+        Log.i("News Content Handler", "Fetch Data From DB");
 
         filteredNewsArticle.addAll(NewsDBHelper.getInstance(context).fetchNewsArticles());
 
         NewsJsonCaller newsJsonCaller = new NewsJsonCaller();
-        if( ! filteredNewsArticle.isEmpty() ) {
+        if (!filteredNewsArticle.isEmpty()) {
             try {
                 newsJsonCaller.setJsonObject(filteredNewsArticle.get(0));
                 timestampFirst = newsJsonCaller.getPublishEpoch();
 
                 newsJsonCaller.setJsonObject(filteredNewsArticle.get(filteredNewsArticle.size() - 1));
                 timestampLast = newsJsonCaller.getPublishEpoch();
-            }catch (Exception ex){
+            } catch (Exception ex) {
                 ex.printStackTrace();
             }
         }
 
-        if(contentListener != null) {
+        if (contentListener != null) {
             contentListener.handleContent(1);
         }
     }
 
     private String generateUrl(Long timestampFirst, String screen_type) {
         String url = null;
-            if (searchOn) {
-                Log.d("News Content Handler", "celebrity name : " + getSearchKeyword());
-                try {
-                    String encodedURL = URLEncoder.encode(getSearchKeyword(), "UTF-8");
-                    if (timestampFirst == null) {
-                        url = BASE_URL_SEARCH + screen_type + SUBSET_URL_SEARCH + encodedURL;
-
-                    } else {
-                        url = BASE_URL_SEARCH + screen_type + SUBSET_URL_SEARCH + encodedURL + BASE_SUBSET_URL_UP + timestampFirst;
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            } else {
+        if (searchOn) {
+            Log.d("News Content Handler", "celebrity name : " + getSearchKeyword());
+            try {
+                String encodedURL = URLEncoder.encode(getSearchKeyword(), "UTF-8");
                 if (timestampFirst == null) {
-                    url = BASE_URL + screen_type + subUrl_HavingSelectedSports;
+                    url = BASE_URL_SEARCH + screen_type + SUBSET_URL_SEARCH + encodedURL;
+
                 } else {
-                    url = BASE_URL + screen_type + subUrl_HavingSelectedSports + BASE_SUBSET_URL_UP + timestampFirst;
+                    url = BASE_URL_SEARCH + screen_type + SUBSET_URL_SEARCH + encodedURL + BASE_SUBSET_URL_UP + timestampFirst;
                 }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-        Log.d("News Content Handler","Refresh URL : " + url);
+        } else {
+            if (timestampFirst == null) {
+                url = BASE_URL + screen_type + subUrl_HavingSelectedSports + CURATED_NEWS;
+            } else {
+                url = BASE_URL + screen_type + subUrl_HavingSelectedSports + BASE_SUBSET_URL_UP + timestampFirst + CURATED_NEWS;
+            }
+        }
+        Log.d("News Content Handler", "Refresh URL : " + url);
         return url;
     }
 
     private String generateUrlForLoadMore(Long timestampLast, String screen_type) {
 
         String url = null;
-        if(searchOn) {
+        if (searchOn) {
             if (timestampLast != null) {
                 try {
                     String encodedURL = URLEncoder.encode(getSearchKeyword(), "UTF-8");
-                    url = BASE_URL_SEARCH + screen_type + SUBSET_URL_SEARCH +encodedURL+ BASE_SUBSET_URL_DOWN + timestampLast;
+                    url = BASE_URL_SEARCH + screen_type + SUBSET_URL_SEARCH + encodedURL + BASE_SUBSET_URL_DOWN + timestampLast;
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
 
             }
-        } else  {
+        } else {
             if (timestampLast != null) {
-                url = BASE_URL + screen_type + subUrl_HavingSelectedSports + BASE_SUBSET_URL_DOWN + timestampLast;
+                url = BASE_URL + screen_type + subUrl_HavingSelectedSports + BASE_SUBSET_URL_DOWN + timestampLast + CURATED_NEWS;
             }
         }
 
@@ -405,12 +416,12 @@ public class NewsContentHandler {
 
     public String getScreenSize(Context context) {
 
-        float density= context.getResources().getDisplayMetrics().density;
+        float density = context.getResources().getDisplayMetrics().density;
 
-        Log.i("density : ",""+density);
+        Log.i("density : ", "" + density);
         String screen_type = null;
 
-        if(density == 1.0) {
+        if (density == 1.0) {
             screen_type = "mdpi";
 
         } else if (density == 1.5) {

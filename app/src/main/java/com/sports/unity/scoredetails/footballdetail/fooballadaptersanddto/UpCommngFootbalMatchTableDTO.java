@@ -15,8 +15,10 @@ public class UpCommngFootbalMatchTableDTO  {
     private String tvW;
     private String tvD;
     private String tvL;
+    private String tvDG;
     private String tvPts;
     private String rank;
+    private String description;
 
     public void setViewType(int viewType) {
         this.viewType = viewType;
@@ -100,4 +102,19 @@ public class UpCommngFootbalMatchTableDTO  {
         this.rank = rank;
     }
 
+    public String getTvDG() {
+        return tvDG;
+    }
+
+    public void setTvDG(String tvDG) {
+        this.tvDG = tvDG;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
 }
