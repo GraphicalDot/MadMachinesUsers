@@ -216,7 +216,7 @@ public class GroupInfoFragment extends Fragment implements ActivityCompat.OnRequ
         partCount = String.format(partCount, groupParticipants.usersInGroup.size());
         if(groupJID.startsWith(Constants.DISCUSS_JID)){
             partCount = getResources().getString(R.string.discuss_participant_count);
-            partCount = String.format(partCount, groupParticipants.usersInGroup.size()-1);
+            partCount = (groupParticipants.usersInGroup.size()-1)+" Participants";
         }
         groupCount.setText(partCount);
 

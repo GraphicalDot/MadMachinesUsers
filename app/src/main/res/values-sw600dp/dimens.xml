@@ -49,7 +49,7 @@
     <!-- tour related -->
     <dimen name="tour_screen_image">400dp</dimen>
     <dimen name="tour_screen_continue">50dp</dimen>
-    <dimen name="tour_screen_white_space">140dp</dimen>
+    <dimen name="tour_screen_white_space">110dp</dimen>
     <!-- ends -->
 
     <!-- news related -->

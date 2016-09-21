@@ -16,6 +16,7 @@ import android.widget.Toast;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.sports.unity.BuildConfig;
 import com.sports.unity.Database.SportsUnityDBHelper;
+import com.sports.unity.NetworkStateReceiver;
 import com.sports.unity.R;
 import com.sports.unity.common.model.TinyDB;
 import com.sports.unity.util.CommonUtil;
@@ -119,11 +120,6 @@ public class PollActivity extends AppCompatActivity {
             agreeLayout.setVisibility(View.GONE);
             disagree.setText("Disagreed");
         }
-    }
-
-    private void changeUI(String pollAnswer) {
-        boolean pollStatus = pollAnswer.equals(POLL_AGREE) ? true : false;
-        AlreadyPolled(pollStatus);
         clockLayout.setVisibility(View.VISIBLE);
         Animation bottomUp = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.bottom_up);
         clockLayout.startAnimation(bottomUp);
@@ -146,20 +142,29 @@ public class PollActivity extends AppCompatActivity {
         });
     }
 
+    private void changeUI(String pollAnswer) {
+        boolean pollStatus = pollAnswer.equals(POLL_AGREE) ? true : false;
+        AlreadyPolled(pollStatus);
+    }
+
     public void onAgree(View view) {
-        if (pollAnswer == null) {
-            showProgress();
-            submitPollAnswer(POLL_AGREE);
-        }
+        submitPoll(POLL_AGREE);
     }
 
     public void onDisagree(View view) {
-        if (pollAnswer == null) {
-            showProgress();
-            submitPollAnswer(POLL_DISAGREE);
-        }
+        submitPoll(POLL_DISAGREE);
     }
 
+    private void submitPoll(String pollAnswer) {
+        if (this.pollAnswer == null) {
+            if (CommonUtil.isInternetConnectionAvailable(PollActivity.this)) {
+                showProgress();
+                submitPollAnswer(pollAnswer);
+            } else {
+                Toast.makeText(PollActivity.this, R.string.no_internet, Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
 
     private void submitPollAnswer(final String poll) {
         ThreadTask pollSubmitTask = new ThreadTask(null) {
@@ -178,9 +183,8 @@ public class PollActivity extends AppCompatActivity {
                         if (success) {
                             pollAnswer = poll;
                             changeUI(pollAnswer);
-                            Toast.makeText(getApplicationContext(), "Sucesss", Toast.LENGTH_SHORT).show();
                         } else {
-                            Toast.makeText(getApplicationContext(), "FAILED try again", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(), R.string.message_exit_failed, Toast.LENGTH_SHORT).show();
                         }
                         hideProgress();
                     }
@@ -237,7 +241,6 @@ public class PollActivity extends AppCompatActivity {
                     boolean pollStatus = pollAnswer.equals(POLL_AGREE) ? true : false;
                     logFireBaseEvent(pollStatus);
                     SportsUnityDBHelper.getInstance(getApplicationContext()).insertPollinDatabase(groupName, article_id, pollStatus);
-                    clockLayout.setVisibility(View.VISIBLE);
                 } else {
                     //nothing
                 }

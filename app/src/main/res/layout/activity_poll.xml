@@ -156,7 +156,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/activity_vertical_margin"
             android:gravity="center"
-            android:text="You will be notified\n when the discussion begins"
+            android:text="@string/poll_wait_content"
             android:textColor="@android:color/white"
             android:textSize="@dimen/font_size_medium" />
 

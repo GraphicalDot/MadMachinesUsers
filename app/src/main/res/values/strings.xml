@@ -67,13 +67,13 @@
     <string name="title_activity_filter">FilterActivity</string>
     <string name="title_activity_tour">TourActivity</string>
 
-    <string name="tour_score_details">Get detailed analysis and overviews of all relevant matches from your favourite teams and competitions.</string>
-    <string name="tour_score_title">Score</string>
-    <string name="tour_news_details">Personalized sports news from thousands of sources.</string>
+    <string name="tour_score_details">Get all the live scores and updates of all your favourite teams and competitions.</string>
+    <string name="tour_score_title">Scores</string>
+    <string name="tour_news_details">Personalized sports news from hundreds of sources.</string>
     <string name="tour_news_title">News</string>
     <string name="published">published</string>
-    <string name="tour_people_details">Allows you to find people who love teams, players and leagues similar to the ones you appreciate.</string>
-    <string name="tour_people_title">People Around You</string>
+    <string name="tour_people_details">Let your voice be heard by fans all around the world on every sports news and events.</string>
+    <string name="tour_people_title">Connect With Fans</string>
     <string name="basketball">Basketball</string>
     <string name="cricket">Cricket</string>
     <string name="football">Football</string>
@@ -429,9 +429,10 @@ message to verify your mobile number.</string>
     <string name="cancel">Cancel</string>
     <string name="title_activity_pole">Pole</string>
 
-    <string name="message_exit_failed">Something went wrong, try again.</string>
+    <string name="message_exit_failed">Sorry something went wrong. Please try again</string>
     <string name="news_url">http://sportsunity.co/sharednews/</string>
     <string name="poll_wait_content">You will be notified when \n the discussion begins</string>
     <string name="poll_wiait_heading">You Are Not Late \n But You Need To Wait</string>
     <string name="discuss_this">Join the Action</string>
+    <string name="no_internet">Please check internet connectivity</string>
 </resources>    

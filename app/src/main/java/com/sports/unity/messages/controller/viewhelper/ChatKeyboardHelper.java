@@ -479,6 +479,7 @@ public class ChatKeyboardHelper {
 
             tabs.setCustomTabView(R.layout.custom_tab_view, 0);
             tabs.setViewPager(pager);
+            pager.setCurrentItem(1);
         }
 
     }
